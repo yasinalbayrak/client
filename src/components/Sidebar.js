@@ -129,6 +129,18 @@ function Sidebar() {
     .catch(error => {
       console.error("Logout failed:", error);
     });
+
+
+    
+
+    const homePageURL = "http://localhost:3000"; 
+    const logoutURL = `https://login.sabanciuniv.edu/cas/logout?service=${encodeURIComponent(homePageURL)}`;
+
+    
+    window.location.href = logoutURL;
+
+
+
   }
 
   return (
@@ -229,7 +241,6 @@ function Sidebar() {
             endIcon={<LogoutIcon />}
             color= "error"
             variant="contained"
-            href="https://login.sabanciuniv.edu/cas/logout"
             onClick={handleLogout}
           >
             Log Out

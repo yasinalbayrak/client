@@ -212,7 +212,6 @@ async function validateLogin(serviceUrl, ticket) {
       ticket: ticket,
     });
     
-    console.log("yaso result: " + result.data);
     console.log(result.data);
     return result.data;
   } catch (error) {
