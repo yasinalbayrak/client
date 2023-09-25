@@ -3,7 +3,7 @@ import axios from "axios";
 const url = window.location.href;
 var apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
 if (url.indexOf("pro2") === -1) {
-  apiEndpoint = "http://localhost:8080/api/v1/auth";
+  apiEndpoint = "http://localhost:8080/api/v1";
 }
 // const apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
 // const apiEndpoint = "http://localhost:8000/api";
@@ -207,7 +207,7 @@ async function validateLogin(serviceUrl, ticket) {
       throw new Error("The service URL is not valid.");
     }
 
-    const result = await axios.post(apiEndpoint + "/authentication", {
+    const result = await axios.post(apiEndpoint + "/auth/authentication", {
       serviceUrl: serviceUrl,
       ticket: ticket,
     });
@@ -241,7 +241,7 @@ async function getTranscript(applicationId) {
 
 async function getTerms() {
   try {
-    const result = await axios.get("https://mysu.sabanciuniv.edu/apps/ods_api/getTerms.php", {
+    const result = await axios.get(apiEndpoint + "/terms", {
       headers: { "Authorization":"Basic dGVybXNfYXBpOmF5WV8zNjZUYTE=" }
     });
     return result.data;
@@ -254,7 +254,7 @@ async function logout(token) {
       'Authorization': `Bearer ${token}`
     };
 
-    const response = await axios.get(apiEndpoint + "/logout", { headers });
+    const response = await axios.get(apiEndpoint + "/auth/logout", { headers });
     
     
     return response.data;

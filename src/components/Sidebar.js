@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout, setTerm, switchIsInstructor } from "../redux/userSlice";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { getTerms, logout as invalidateToken} from "../apiCalls";
+import { getTerms, logout as invalidateToken } from "../apiCalls";
 
 const drawerWidth = 210;
 
@@ -95,10 +95,15 @@ function Sidebar() {
   const term = useSelector((state) => state.user.term);
   const token = useSelector((state) => state.user.JwtToken);
   const [termSelect, setTermSelect] = React.useState(term);
+
+  const [allTerms, setAllTerms] = React.useState([]);
+
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleListClick = () => {
+    if (!sidebarOpen) handleSidebarOpen();
     setListOpen(!listOpen);
   };
 
@@ -114,30 +119,34 @@ function Sidebar() {
   const handleSidebarClose = () => {
     setSidebarOpen(false);
     setListOpen(false);
-    console.log("Side bar closed")
   };
 
-  // useEffect(() => {
-  //   getTerms().then((res) => {
-  //     console.log(res);
-  //   });
-  // }, [])
+  useEffect(() => {
+    getTerms().then((res) => {
+      setAllTerms(res)
+      
+      if(res.length > 0)
+        dispatch(setTerm({ term: res[0] }));
+    });
+  }, [])
+
+
   const handleLogout = () => {
     token && invalidateToken(token)
-    .then(result => {
-      console.log("Logout successful");
-    })
-    .catch(error => {
-      console.error("Logout failed:", error);
-    });
+      .then(result => {
+        console.log("Logout successful");
+      })
+      .catch(error => {
+        console.error("Logout failed:", error);
+      });
 
 
-    
 
-    const homePageURL = "http://localhost:3000"; 
+
+    const homePageURL = "http://localhost:3000";
     const logoutURL = `https://login.sabanciuniv.edu/cas/logout?service=${encodeURIComponent(homePageURL)}`;
 
-    
+
     window.location.href = logoutURL;
 
 
@@ -215,7 +224,15 @@ function Sidebar() {
                   },
                 }}
               >
-                <MenuItem value="Fall 2022/23">Fall 2022/23</MenuItem>
+                {
+                  allTerms.map((term) => (
+                    <MenuItem key={term.term_code} value={term.term_desc}>
+                      {term.term_desc}
+                    </MenuItem>
+                  ))
+                }
+
+                {/* <MenuItem value="Fall 2022/23">Fall 2022/23</MenuItem>
                 <MenuItem value="Spring 2022/23">Spring 2022/23</MenuItem>
                 <MenuItem value="Summer 2022/23">Summer 2022/23</MenuItem>
                 <MenuItem value="Fall 2023/24">Fall 2023/24</MenuItem>
@@ -223,7 +240,7 @@ function Sidebar() {
                 <MenuItem value="Summer 2023/24">Summer 2023/24</MenuItem>
                 <MenuItem value="Fall 2024/25">Fall 2024/25</MenuItem>
                 <MenuItem value="Spring 2024/25">Spring 2024/25</MenuItem>
-                <MenuItem value="Summer 2024/25">Summer 2024/25</MenuItem>
+                <MenuItem value="Summer 2024/25">Summer 2024/25</MenuItem> */}
               </Select>
             </FormControl>
           </Box>
@@ -237,15 +254,31 @@ function Sidebar() {
           >
             Switch between Ins-Stu
           </Button> */}
+
+
           <Button
-            sx={{color: "white", borderColor: "white", marginLeft: "auto" }}
-            endIcon={<LogoutIcon />}
-            color= "error"
+            sx={{
+              color: "white",
+              borderColor: "white",
+              marginLeft: "auto",
+              display: "flex",
+              alignItems: "center",
+              paddingRight: 0,
+              width: "fit-content",
+              backgroundColor: "red", // Button color
+              transition: "background-color 0.3s", // Smooth transition for the hover effect
+              "&:hover": {
+                backgroundColor: "#4DB6AC", // Hover color (light blue)
+              },
+            }}
+            startIcon={<LogoutIcon />}
+            color="error"
             variant="contained"
             onClick={handleLogout}
-          >
-            Log Out
-          </Button>
+          />
+
+
+
         </Toolbar>
       </AppBar>
       <Drawer sidebarOpen={sidebarOpen} variant="permanent" PaperProps={{ sx: { backgroundColor: "#394263", color: "white" } }}>
@@ -317,7 +350,7 @@ function Sidebar() {
                 {isInstructor && "Instructor"}
                 {!isInstructor && "Student"}
               </Typography>)}
-              
+
             </Box>
           </ListItem>
           <ListItem sx={{ padding: "0px" }}>
