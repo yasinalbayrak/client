@@ -16,7 +16,7 @@ function HomePage() {
   const [value, setValue] = useState(0);
   const [rows, setRows] = useState([]);
   const isInstructor = useSelector((state) => state.user.isInstructor);
-
+  
   // useEffect(() => {
   //   getAllAnnouncements().then((results) => setRows(results));
   //   console.log(rows);

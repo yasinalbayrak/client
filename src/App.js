@@ -42,9 +42,9 @@ function App() {
             successLogin({
               jwtToken: result.token,
               username: result.user.email,
-              name: result.name,
-              surname: result.surname,
-              isInstructor: result.graduationType === "academic",
+              name: result.user.name,
+              surname: result.user.surname,
+              isInstructor: result.user.graduationType === "academic",
             })
           );
         });

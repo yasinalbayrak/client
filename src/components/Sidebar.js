@@ -114,6 +114,7 @@ function Sidebar() {
   const handleSidebarClose = () => {
     setSidebarOpen(false);
     setListOpen(false);
+    console.log("Side bar closed")
   };
 
   // useEffect(() => {
@@ -305,17 +306,18 @@ function Sidebar() {
               >
                 {name} {surname}
               </Typography>
-              <Typography
+              {sidebarOpen && (<Typography
                 sx={{
                   textAlign: "center",
                   padding: "3px",
+                  fontStyle: "italic",
                   ...(!sidebarOpen && { display: "none" }),
                 }}
               >
                 {isInstructor && "Instructor"}
                 {!isInstructor && "Student"}
-              </Typography>
-              {!sidebarOpen ? <Box sx={{ height: 91 }}></Box> : <div></div>}
+              </Typography>)}
+              
             </Box>
           </ListItem>
           <ListItem sx={{ padding: "0px" }}>
