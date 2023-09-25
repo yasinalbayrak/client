@@ -19,18 +19,18 @@ import { getApplicationByUsername } from "../apiCalls";
 import { Tooltip } from "@mui/material";
 
 function AnnouncementTable(props) {
-  // const rows = [
-  //     { id: 1, course_code: 'CS201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B+', wHour: "5", details: "lorem ipsum"},
-  //     { id: 2, course_code: 'CS210', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "5", details: "lorem ipsum"},
-  //     { id: 3, course_code: 'MATH201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A-', wHour: "5", details: "lorem ipsum"},
-  //     { id: 4, course_code: 'CS300', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "5", details: "lorem ipsum"},
-  //     { id: 5, course_code: 'MATH204', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "10", details: "lorem ipsum" },
-  //     { id: 6, course_code: 'ENS206', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B+', wHour: "10", details: "lorem ipsum"},
-  //     { id: 7, course_code: 'ECON201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B', wHour: "5", details: "lorem ipsum"},
-  //     { id: 8, course_code: 'CS301', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "10", details: "lorem ipsum"},
-  //     { id: 9, course_code: 'HUM201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B+', wHour: "5", details: "lorem ipsum"},
-  //   ];
-  const [rows, setRows] = useState([]);
+  const rows = [
+      { id: 1, course_code: 'CS201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B+', wHour: "5", details: "lorem ipsum"},
+      { id: 2, course_code: 'CS210', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "5", details: "lorem ipsum"},
+      { id: 3, course_code: 'MATH201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A-', wHour: "5", details: "lorem ipsum"},
+      { id: 4, course_code: 'CS300', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "5", details: "lorem ipsum"},
+      { id: 5, course_code: 'MATH204', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "10", details: "lorem ipsum" },
+      { id: 6, course_code: 'ENS206', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B+', wHour: "10", details: "lorem ipsum"},
+      { id: 7, course_code: 'ECON201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B', wHour: "5", details: "lorem ipsum"},
+      { id: 8, course_code: 'CS301', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "10", details: "lorem ipsum"},
+      { id: 9, course_code: 'HUM201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B+', wHour: "5", details: "lorem ipsum"},
+    ];
+  //const [rows, setRows] = useState([]);
   const [studentApplications, setStudentApplications] = useState([]);
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(props.tabValue);
@@ -42,29 +42,29 @@ function AnnouncementTable(props) {
   //const userName = "instructor1"; //mock data for instructor
   // const userName = "muratk"; //mock data for student
 
-  useEffect(() => {
-    const modifiedRows = props.rows.map((row) => {
-      // Split the instructor_name string by comma
-      const [lastName, firstName] = row.instructor_name.split(",");
+  // useEffect(() => {
+  //   const modifiedRows = props.rows.map((row) => {
+  //     // Split the instructor_name string by comma
+  //     const [lastName, firstName] = row.instructor_name.split(",");
 
-      // Rearrange the name format
-      const modifiedInstructorName = firstName.trim() + " " + lastName.trim();
-      var newTerm = row.term;
-      if (row.term == "Fall 2022") {
-        newTerm = "Fall 2022/23";
-      }
+  //     // Rearrange the name format
+  //     const modifiedInstructorName = firstName.trim() + " " + lastName.trim();
+  //     var newTerm = row.term;
+  //     if (row.term == "Fall 2022") {
+  //       newTerm = "Fall 2022/23";
+  //     }
 
-      // Return the modified row object
-      return {
-        ...row,
-        instructor_name: modifiedInstructorName,
-        term: newTerm,
-      };
-    });
-    console.log(modifiedRows);
-    setRows(modifiedRows);
-    //console.log(rows);
-  }, [props.rows, term]);
+  //     // Return the modified row object
+  //     return {
+  //       ...row,
+  //       instructor_name: modifiedInstructorName,
+  //       term: newTerm,
+  //     };
+  //   });
+  //   console.log(modifiedRows);
+  //   //setRows(modifiedRows);
+  //   //console.log(rows);
+  // }, [props.rows, term]);
 
   useEffect(() => {
     if (!isInstructor) {

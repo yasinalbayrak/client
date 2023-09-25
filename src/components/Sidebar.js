@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout, setTerm, switchIsInstructor } from "../redux/userSlice";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { getTerms } from "../apiCalls";
+import { getTerms, logout as invalidateToken} from "../apiCalls";
 
 const drawerWidth = 210;
 
@@ -93,6 +93,7 @@ function Sidebar() {
   const name = useSelector((state) => state.user.name);
   const surname = useSelector((state) => state.user.surname);
   const term = useSelector((state) => state.user.term);
+  const token = useSelector((state) => state.user.JwtToken);
   const [termSelect, setTermSelect] = React.useState(term);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -120,7 +121,15 @@ function Sidebar() {
   //     console.log(res);
   //   });
   // }, [])
-
+  const handleLogout = () => {
+    token && invalidateToken(token)
+    .then(result => {
+      console.log("Logout successful");
+    })
+    .catch(error => {
+      console.error("Logout failed:", error);
+    });
+  }
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -221,6 +230,7 @@ function Sidebar() {
             color= "error"
             variant="contained"
             href="https://login.sabanciuniv.edu/cas/logout"
+            onClick={handleLogout}
           >
             Log Out
           </Button>

@@ -29,30 +29,37 @@ function App() {
         dispatch(startLoginProcess());
         // parse and get the ticket
         const ticket = urlParams.get("ticket");
-        console.log(ticket);
-        console.log("serviceUrl: ", encodeURIComponent(path));
+        console.log("ticket: " + ticket);
+  
+        // Extract the base URL without query parameters
+        const baseUrl = url.split("?")[0];
+        console.log("serviceUrl: ", baseUrl);
+  
         // send it to backend
-        validateLogin(encodeURIComponent(path), ticket).then((result) => {
+        validateLogin(baseUrl, ticket).then((result) => {
           console.log(result);
           dispatch(
             successLogin({
-              jwtToken: result.JWT_TOKEN,
-              username: result.authenticationSuccess.attributes.cn,
-              name: result.authenticationSuccess.attributes.givenName,
-              surname: result.authenticationSuccess.attributes.sn,
-              isInstructor: result.authenticationSuccess.attributes.ou[1] === "academic", //result.authenticationSuccess.attributes.ou[1] == "academic"
+              jwtToken: result.token,
+              username: result.user.email,
+              name: result.name,
+              surname: result.surname,
+              isInstructor: result.graduationType === "academic",
             })
           );
         });
+  
         // dispatch(successLogin({username: "aa", name: "bb", surname: "cc"}));
         // check the response
         // if result is positive, dispatch loginSuccess and refresh, otherwise dispatch loginFail or logout
         urlParams.delete("ticket");
         setUrlParams(urlParams);
+
         // window.location.reload();
       }
     }
   }, []);
+  
 
   return (
     <Routes>

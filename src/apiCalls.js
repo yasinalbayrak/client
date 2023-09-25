@@ -3,7 +3,7 @@ import axios from "axios";
 const url = window.location.href;
 var apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
 if (url.indexOf("pro2") === -1) {
-  apiEndpoint = "http://localhost:8000/api";
+  apiEndpoint = "http://localhost:8080/api/v1/auth";
 }
 // const apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
 // const apiEndpoint = "http://localhost:8000/api";
@@ -200,15 +200,36 @@ async function updateApplicationById(
 
 async function validateLogin(serviceUrl, ticket) {
   try {
-    const result = await axios.post(apiEndpoint + "/serviceValidate", {
+    // Check if serviceUrl is a valid URL
+    const isValidUrl = isValidURL(serviceUrl);
+
+    if (!isValidUrl) {
+      throw new Error("The service URL is not valid.");
+    }
+
+    const result = await axios.post(apiEndpoint + "/authentication", {
       serviceUrl: serviceUrl,
       ticket: ticket,
     });
-    console.log(result);
+    
+    console.log("yaso result: " + result.data);
     console.log(result.data);
     return result.data;
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    // Handle the error appropriately, e.g., show an error message to the user.
+  }
 }
+
+function isValidURL(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 
 async function getTranscript(applicationId) {
   try {
@@ -228,6 +249,23 @@ async function getTerms() {
   } catch (error) {}
 }
 
+async function logout(token) {
+  try {
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+
+    const response = await axios.get(apiEndpoint + "/logout", { headers });
+    
+    
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error; 
+  }
+}
+
+
 export {
   getAllAnnouncements,
   getAllInstructors,
@@ -242,4 +280,5 @@ export {
   validateLogin,
   getTranscript,
   getTerms,
+  logout
 };
