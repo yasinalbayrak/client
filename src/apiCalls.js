@@ -51,7 +51,7 @@ async function getAllInstructors() {
 
 async function getAllCourses() {
   try {
-    const results = await axios.get(apiEndpoint + "/listCourse");
+    const results = await axios.get(apiEndpoint + "/courses");
     return results.data;
   } catch (error) {}
 }

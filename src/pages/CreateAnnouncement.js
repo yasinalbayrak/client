@@ -40,7 +40,9 @@ function CreateAnnouncement() {
   // ]
 
   const userName = useSelector((state) => state.user.username);
+  
   const term = useSelector((state) => state.user.term);
+  console.log('yasin: ',term )
   //const userName = "instructor1"; //mock data for testing
 
   const [authUsersList, setAuthUserList] = useState([]); //get instructors from database
@@ -60,26 +62,26 @@ function CreateAnnouncement() {
   const [inputCourseValue, setCourseInputValue] = useState(""); // for autocomplete
 
   //get all instructors
-  useEffect(() => {
-    getAllInstructors().then((results) => {
-      const filteredResults = results.filter((instructor) => { //for removing current user from options
-        return instructor.instructor_username !== userName;
-      });
+  // useEffect(() => {
+  //   getAllInstructors().then((results) => {
+  //     const filteredResults = results.filter((instructor) => { //for removing current user from options
+  //       return instructor.instructor_username !== userName;
+  //     });
 
-      const transformedResults = filteredResults.map((instructor) => {
-        const [lastName, firstName] = instructor.name.split(",");
-        const displayName = firstName.trim() + " " + lastName.trim();
-        const OptionValue = displayName + " (" + instructor.instructor_username + ")";
+  //     const transformedResults = filteredResults.map((instructor) => {
+  //       const [lastName, firstName] = instructor.name.split(",");
+  //       const displayName = firstName.trim() + " " + lastName.trim();
+  //       const OptionValue = displayName + " (" + instructor.instructor_username + ")";
 
-        return {
-          display_name: displayName,
-          username: instructor.instructor_username,
-          authOptionValue: OptionValue,
-        };
-      });
-      setAuthUserList(transformedResults);
-    });
-  }, []);
+  //       return {
+  //         display_name: displayName,
+  //         username: instructor.instructor_username,
+  //         authOptionValue: OptionValue,
+  //       };
+  //     });
+  //     setAuthUserList(transformedResults);
+  //   });
+  // }, []);
 
   // get all courses
   useEffect(() => {
@@ -309,7 +311,7 @@ function CreateAnnouncement() {
               /> */}
               <Autocomplete
                 id="controllable-states-demo"
-                options={courseList.map((course) => {
+                options={courseList && courseList.map((course) => {
                   return course;
                 })}
                 filterOptions={filterCourseCodes}
@@ -433,7 +435,7 @@ function CreateAnnouncement() {
                 sx={{ m: 2, width: 225 }}
                 onChange={handleInput}
               >
-                {WorkHour.map((option) => (
+                {WorkHour && WorkHour.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
@@ -476,7 +478,7 @@ function CreateAnnouncement() {
               >
                 <Autocomplete
                   id="controllable-states-demo"
-                  options={authUsersList.map((authUser) => {
+                  options={authUsersList && authUsersList.map((authUser) => {
                     return authUser.authOptionValue;
                   })}
                   filterOptions={filterOptions}
@@ -499,7 +501,7 @@ function CreateAnnouncement() {
                     />
                   )}
                 />
-                {authPeople.length > 0 &&
+                {authPeople &&
                   authPeople.map((authPerson, index) => {
                     return (
                       <Chip
@@ -542,11 +544,11 @@ function CreateAnnouncement() {
                 direction="column"
                 justifyContent="center"
                 alignItems="flex-start"
-                sx={{ backgroundColor: selectedCourses.length === 0 ? "#FFF" : "#F5F5F5" }}
+                sx={{ backgroundColor:(selectedCourses && selectedCourses.length === 0) ? "#FFF" : "#F5F5F5" }}
               >
                 <Autocomplete
                   id="controllable-states-demo"
-                  options={courseList.map((course) => {
+                  options={courseList && courseList.map((course) => {
                     return course;
                   })}
                   filterOptions={filterCourses}
@@ -568,9 +570,9 @@ function CreateAnnouncement() {
                       sx={{ mx: 2, mt: 1, mb: 2, width: 300 }}
                     />
                   )}
-                  disabled={courseCode.length == 0} //if it creates some problems, delete it.
+                  disabled={courseCode && courseCode.length === 0} //if it creates some problems, delete it.
                 />
-                {selectedCourses.length > 0 &&
+                {selectedCourses &&
                   selectedCourses.map((courseSelected, i) => {
                     return (
                       <Chip
@@ -696,7 +698,7 @@ function CreateAnnouncement() {
                   </ListItemIcon>
                   <ListItemText primary={
                     <Typography variant="body1">
-                      Currently selected term: <strong>"{term}"</strong>. If you want to change it, please use "Select Term" on the top of the page.
+                      Currently selected term: <strong>"{term.term_desc}"</strong>. If you want to change it, please use "Select Term" on the top of the page.
                     </Typography>
                   } />
                 </ListItem>

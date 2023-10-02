@@ -44,7 +44,8 @@ function App() {
               username: result.user.email,
               name: result.user.name,
               surname: result.user.surname,
-              isInstructor: result.user.graduationType === "academic",
+              isInstructor: true // TODO development purposes... 
+              //result.user.graduationType === "academic",
             })
           );
         });
