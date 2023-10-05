@@ -44,7 +44,7 @@ async function getAllAnnouncements() {
 
 async function getAllInstructors() {
   try {
-    const results = await axios.get(apiEndpoint + "/instructors");
+    const results = await axios.get(apiEndpoint + "/users/instructors");
     return results.data;
   } catch (error) {}
 }
@@ -55,7 +55,10 @@ async function getAllCourses() {
     return results.data;
   } catch (error) {}
 }
-
+function formatDate(dateString) {
+  const [year, month, day] = dateString.split('-');
+  return `${day}/${month}/${year}`;
+}
 function addAnnouncement(
   course_code,
   username,
@@ -73,33 +76,36 @@ function addAnnouncement(
   const faculty = "FENS";
   // const term = "Fall 2022";
   const title = "title add test";
-
-  const deadline = lastApplicationDate + " " + lastApplicationTime + ":00";
-  const transformedQuestions = questions.map((question) => ({
-    type: question.mValue,
-    ranking: question.questionNumber,
-    question: question.mQuestion,
-    multiple_choices:
-      question.mValue === "Multiple Choice" ? question.mMultiple : [],
-  }));
+  const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime ;
+  const transformedQuestions = questions.map((question) => (question.mQuestion
+  //   {
+  //   type: question.mValue,
+  //   ranking: question.questionNumber,
+  //   question: question.mQuestion,
+  //   multiple_choices: question.mValue === "Multiple Choice" ? question.mMultiple : [],
+  // }
+  
+  ));
   console.log(letterGrade);
-  const authInstructor_userNames = auth_instructors.map(
-    (user) => user.username
+  const authInstructor_ids = auth_instructors.map(
+    (user) => user.id
   );
 
-  axios.post(apiEndpoint + "/addPost", {
-    instructor_username: username,
-    faculty: faculty,
-    course_code: course_code,
-    desired_courses: desired_courses,
-    deadline: deadline,
-    term: term,
-    title: title,
-    working_hour: workHours,
-    description: details,
-    auth_instructors: authInstructor_userNames,
-    mingrade: letterGrade,
+  axios.post(apiEndpoint + "/applications", {
+    //instructor_username: username,
+    //faculty: faculty,
+    courseCode: course_code,
+    //desired_courses: desired_courses,
+    lastApplicationDate:deadline,
+    term: term.term_desc,
+    //title: title,
+    weeklyWorkHours: "PT10H",
+    jobDetails: details,
+    authorizedInstructors: authInstructor_ids,
+    minimumRequiredGrade: letterGrade,
+    desiredCourseGrade: letterGrade,
     questions: transformedQuestions,
+    laFeeMonthly: 2000.0
   });
 }
 

@@ -40,9 +40,9 @@ function CreateAnnouncement() {
   // ]
 
   const userName = useSelector((state) => state.user.username);
-  
+
   const term = useSelector((state) => state.user.term);
-  console.log('yasin: ',term )
+  console.log('yasin: ', term)
   //const userName = "instructor1"; //mock data for testing
 
   const [authUsersList, setAuthUserList] = useState([]); //get instructors from database
@@ -62,34 +62,54 @@ function CreateAnnouncement() {
   const [inputCourseValue, setCourseInputValue] = useState(""); // for autocomplete
 
   //get all instructors
-  // useEffect(() => {
-  //   getAllInstructors().then((results) => {
-  //     const filteredResults = results.filter((instructor) => { //for removing current user from options
-  //       return instructor.instructor_username !== userName;
-  //     });
+  useEffect(() => {
+    getAllInstructors().then((results) => {
+      const filteredResults = results.filter((instructor) => { //for removing current user from options
+        return instructor.instructor_username !== userName;
+      });
 
-  //     const transformedResults = filteredResults.map((instructor) => {
-  //       const [lastName, firstName] = instructor.name.split(",");
-  //       const displayName = firstName.trim() + " " + lastName.trim();
-  //       const OptionValue = displayName + " (" + instructor.instructor_username + ")";
+      const transformedResults = filteredResults.map((instructor) => {
+        const lastName = instructor.user.surname
+        const firstName = instructor.user.name
+        const displayName = firstName.trim() + " " + lastName.trim();
+        const OptionValue = displayName + " (" + instructor.user.email + ")";
 
-  //       return {
-  //         display_name: displayName,
-  //         username: instructor.instructor_username,
-  //         authOptionValue: OptionValue,
-  //       };
-  //     });
-  //     setAuthUserList(transformedResults);
-  //   });
-  // }, []);
+        return {
+          display_name: displayName,
+          username: instructor.email,
+          authOptionValue: OptionValue,
+          id: instructor.user.id
+        };
+      });
+      setAuthUserList(transformedResults);
+    });
+  }, []);
 
   // get all courses
   useEffect(() => {
-    getAllCourses().then((results) => {
-      setCourseCodeList(results);
-      setcourseList(results);
-    });
+    const fetchData = async () => {
+      try {
+        const results = await getAllCourses();
+        const [courseCodes, courseTitles] = results.reduce(
+          (acc, course) => {
+            acc[0].push(course.courseCode);
+            acc[1].push(course.courseTitle);
+            return acc;
+          },
+          [[], []]
+        );
+  
+        setCourseCodeList(courseCodes);
+        setcourseList(courseCodes);
+      } catch (error) {
+        // Handle errors here, e.g., log or show an error message.
+        console.error('Error fetching courses:', error);
+      }
+    };
+  
+    fetchData();
   }, []);
+  
 
   //console.log(authUsersList);
   //console.log(courseList);
@@ -544,7 +564,7 @@ function CreateAnnouncement() {
                 direction="column"
                 justifyContent="center"
                 alignItems="flex-start"
-                sx={{ backgroundColor:(selectedCourses && selectedCourses.length === 0) ? "#FFF" : "#F5F5F5" }}
+                sx={{ backgroundColor: (selectedCourses && selectedCourses.length === 0) ? "#FFF" : "#F5F5F5" }}
               >
                 <Autocomplete
                   id="controllable-states-demo"

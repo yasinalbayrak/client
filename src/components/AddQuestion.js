@@ -447,8 +447,8 @@ function AddQuestion(props) {
               props.AnnouncementDetails.workHours &&
               props.AnnouncementDetails.jobDetails &&
               //props.AnnouncementDetails.authInstructor.length > 0 &&
-              props.AnnouncementDetails.desiredCourses.length > 0 &&
-              questions.length > 0
+              //props.AnnouncementDetails.desiredCourses.length > 0 &&
+              questions.length > 0  
             ) {
               addAnnouncement(
                 props.AnnouncementDetails.course_code,
