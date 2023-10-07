@@ -167,11 +167,15 @@ function CreateAnnouncement() {
   function handleCourseCodeAdd(newValue) { //change here
     if (newValue !== null) {
       const selectedCourseCode = courseCodeList.find((course) => course === newValue);
-      setCourseCode(selectedCourseCode);
+      updateCourseCode(selectedCourseCode)
       setSelectedCourses([...selectedCourses, selectedCourseCode]);
     }
     // setCourseCodeValue("");
     // setCourseCodeInputValue("");
+  }
+
+  function updateCourseCode(courseCode){
+    setCourseCode(courseCode);
   }
 
   function handleCourseCodeDelete() { //change here
@@ -345,7 +349,8 @@ function CreateAnnouncement() {
                 onChange={(event, newCourseCodeValue) => {
                   if (newCourseCodeValue !== null) {
                     setCourseCodeValue(newCourseCodeValue);
-                    handleCourseCodeAdd(newCourseCodeValue);
+                    //handleCourseCodeAdd(newCourseCodeValue);
+                    updateCourseCode(newCourseCodeValue)
                   }
                 }}
                 renderInput={(params) => (
@@ -381,7 +386,7 @@ function CreateAnnouncement() {
                   />
                 )}
                 disableClearable
-                getOptionDisabled={(option) => !!courseCode && option !== courseCode}
+                //getOptionDisabled={(option) => !!courseCode && option !== courseCode}
               />
             </Grid>
             <Grid
