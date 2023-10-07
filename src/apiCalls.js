@@ -3,7 +3,7 @@ import axios from "axios";
 const url = window.location.href;
 var apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
 if (url.indexOf("pro2") === -1) {
-  apiEndpoint = "http://localhost:8080/api/v1";
+  apiEndpoint = "http://localhost:8080/api/v1"; //http://localhost:8080/api/v1/applications
 }
 // const apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
 // const apiEndpoint = "http://localhost:8000/api";
@@ -37,7 +37,7 @@ async function getAnnouncement(id) {
 
 async function getAllAnnouncements() {
   try {
-    const results = await axios.get(apiEndpoint + "/listPost");
+    const results = await axios.get(apiEndpoint + "/applications");
     return results.data;
   } catch (error) {}
 }
