@@ -77,7 +77,8 @@ function addAnnouncement(
   // const term = "Fall 2022";
   const title = "title add test";
   const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime ;
-  const transformedQuestions = questions.map((question) => (question.mQuestion
+  const transformedQuestions = questions.map((question) => (
+    question.mQuestion
   //   {
   //   type: question.mValue,
   //   ranking: question.questionNumber,
@@ -105,7 +106,7 @@ function addAnnouncement(
     minimumRequiredGrade: letterGrade,
     desiredCourseGrade: letterGrade,
     questions: transformedQuestions,
-    laFeeMonthly: 2000.0
+    previousCourseGrades: []
   });
 }
 
