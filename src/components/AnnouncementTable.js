@@ -304,7 +304,7 @@ function AnnouncementTable(props) {
                             <Button
                               variant="contained"
                               onClick={() =>
-                                navigate("/apply/" + row.id, { replace: true })
+                                navigate("/apply/" + row.applicationId, { replace: true })
                               }
                             >
                               Apply

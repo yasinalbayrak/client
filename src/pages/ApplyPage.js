@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AppBarHeader from "../components/AppBarHeader";
 import Sidebar from "../components/Sidebar";
 import {
@@ -29,6 +29,7 @@ import { useSelector } from "react-redux";
 const ApplyPage = (props) => {
   const navigate = useNavigate();
   const username = useSelector((state) => state.user.username);
+  const state = useSelector((state) => state);
   const name = useSelector((state) => state.user.name);
   const surname = useSelector((state) => state.user.surname);
   const rows = [
@@ -48,19 +49,22 @@ const ApplyPage = (props) => {
     return initialFileName;
   });
 
+  const data = useRef();
+  const isLoading = useRef();
+
   const onSubmit = () => {
     console.log(questionsAndAnswers);
     var temp = [];
-    for (var q in questionsAndAnswers) {
+    /*for (var q in questionsAndAnswers) {
       if (!questionsAndAnswers.hasOwnProperty(q)) continue;
 
-      var temp2 = {};
+      /*var temp2 = {};
       temp2.question_id = parseInt(q);
       if (!questionsAndAnswers[q]) {
         for (let index = 0; index < questions.length; index++) {
           const element = questions[index];
-          const tempList = JSON.parse(element.multiple_choices);
-          if (element.id == q && element.type === "Multiple Choice") {
+          //const tempList = JSON.parse(element.multiple_choices);
+          /*if (element.id == q && element.type === "Multiple Choice") {
             temp2.answer = tempList[0];
           }
         }
@@ -68,13 +72,15 @@ const ApplyPage = (props) => {
         temp2.answer = questionsAndAnswers[q];
       }
       temp.push(temp2);
-    }
+    }*/
     console.log(temp);
-    applyToPost(id, username, temp, transcript).then((res) => {
+    applyToPost(id, state.user.id, []).then((res) => {
       console.log(res);
     });
     navigate("/success", { replace: true, state: { successText: "You have applied successfully." } });
   };
+
+  console.log(state.user)
 
   const onAnswerChange = (e, question) => {
     e.preventDefault();
@@ -122,8 +128,29 @@ const ApplyPage = (props) => {
   };
 
   useEffect(() => {
-    getAnnouncement(id).then((results) => setAnnouncementInfo(results));
-  }, [id]);
+    // Ensure 'id' is available and not undefined or null
+    if (id) {
+      const fetchAnnouncement = async () => {
+        try {
+          // Now we're sure 'id' is passed to 'getAnnouncement'
+          const results = await getAnnouncement(id);
+          setAnnouncementInfo(results);
+          data.current = results;
+          isLoading.current = false;
+          console.log(results);
+        } catch (error) {
+          console.error('Failed to fetch announcement:', error);
+        }
+      };
+  
+      fetchAnnouncement(); // Execute the function
+    } else {
+      console.warn('Warning: missing ID.');
+    }
+  }, [id]); // Dependency array is correct, assuming 'id' changes when expected
+
+  console.log(announcementInfo);
+  console.log(id);
 
   useEffect(() => {
     setQuestions(announcementInfo.questions);
@@ -136,14 +163,17 @@ const ApplyPage = (props) => {
     }
   }, [announcementInfo]);
 
+  
   return (
+    <>
+    {(!data.current || !announcementInfo) ? (<div>Loading...</div>): (
     <Box sx={{ display: "flex" }}>
       <Sidebar></Sidebar>
       <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
         <AppBarHeader />
         <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
           <Grid item>
-            <Typography variant="h4">{announcementInfo.course_code} LA Application</Typography>
+            <Typography variant="h4">{announcementInfo.course.courseCode} LA Application</Typography>
             <Divider></Divider>
           </Grid>
           <Grid item sx={{ m: 2 }}>
@@ -238,7 +268,11 @@ const ApplyPage = (props) => {
         </Grid>
       </Box>
     </Box>
+    )}
+    </>
   );
+  
 };
+
 
 export default ApplyPage;

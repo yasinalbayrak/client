@@ -40,6 +40,7 @@ function App() {
           console.log(result);
           dispatch(
             successLogin({
+              id: result.user.id,
               jwtToken: result.token,
               username: result.user.email,
               name: result.user.name,
