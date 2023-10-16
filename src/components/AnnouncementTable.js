@@ -184,14 +184,14 @@ function AnnouncementTable(props) {
         (
           <TableBody>
             {rows
-              .filter((row) =>
+              /*.filter((row) =>
                 tabValue === 1
                   ? studentApplications.some(
                       (studentApplication) =>
                         row.id === studentApplication.post_id
                     ) && term == row.term
                   : term == row.term
-              ) //to be continued, student'in hangi posta kayıt oldugu lazim (belki vardır)
+              ) *///to be continued, student'in hangi posta kayıt oldugu lazim (belki vardır)
               .map((row, index) => (
                 <TableRow
                   key={index + 1}
@@ -205,7 +205,7 @@ function AnnouncementTable(props) {
                     component="th"
                     scope="row"
                   >
-                    {row.course_code}
+                    {row.course.courseCode}
                   </TableCell>
                   <TableCell
                     sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
@@ -214,15 +214,15 @@ function AnnouncementTable(props) {
                     {row.instructor_name}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="left">
-                    {row.deadline ? (
+                    {row.lastApplicationDate ? (
                       <>
-                        {new Date(row.deadline).toLocaleDateString("en-CA", {
+                        {new Date(row.lastApplicationDate).toLocaleDateString("en-CA", {
                           day: "2-digit",
                           month: "2-digit",
                           year: "numeric",
                         })}{" "}
                         /{" "}
-                        {new Date(row.deadline).toLocaleTimeString([], {
+                        {new Date(row.lastApplicationDate).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
@@ -235,10 +235,10 @@ function AnnouncementTable(props) {
                     sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                     align="left"
                   >
-                    {row.mingrade}
+                    {row.minimumRequiredGrade}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="left">
-                    {row.working_hour}
+                    {row.weeklyWorkHours}
                   </TableCell>
                   {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
                     {row.description}
@@ -251,7 +251,7 @@ function AnnouncementTable(props) {
                     }}
                     align="left"
                   >
-                    {row.description.length > 100 ? (
+                    {row.jobDetails.length > 100 ? (
                       <>
                         {selectedDescription === row.id ? (
                           <Dialog
@@ -266,7 +266,7 @@ function AnnouncementTable(props) {
                           >
                             <DialogTitle>Details</DialogTitle>
                             <DialogContent>
-                              {row.description}
+                              {row.jobDetails}
                               <IconButton
                                 aria-label="close"
                                 onClick={() => {
@@ -294,13 +294,13 @@ function AnnouncementTable(props) {
                         )}
                       </>
                     ) : (
-                      row.description
+                      row.jobDetails
                     )}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="center">
                     {tabValue === 0
-                      ? !studentApplications.find((o) => o.post_id === row.id)
-                        ? new Date(row.deadline) > new Date() && (
+                      ? //!studentApplications.find((o) => o.post_id === row.id)
+                         new Date(row.lastApplicationDate) > new Date() && (
                             <Button
                               variant="contained"
                               onClick={() =>
@@ -329,7 +329,8 @@ function AnnouncementTable(props) {
                               </Button>
                             </Tooltip>
                           )
-                      : studentApplications
+                              }
+                              {/*studentApplications
                           .filter(
                             (studentApplication) =>
                               row.id === studentApplication.post_id
@@ -358,7 +359,8 @@ function AnnouncementTable(props) {
                                 ? "In Progress"
                                 : studentApplication.status}
                             </Button>
-                          ))}
+                              ))*/}
+                              
                   </TableCell>
                 </TableRow>
               ))}
