@@ -55,6 +55,13 @@ async function getAllInstructors() {
   } catch (error) {}
 }
 
+async function getAllAnnouncementsOfInstructor(id){
+  try {
+    const results = await axios.get(apiEndpoint + "/applications/instructor/" + id);
+    return results.data;
+  } catch (error) {}
+}
+
 async function getAllCourses() {
   try {
     const results = await axios.get(apiEndpoint + "/courses");
@@ -302,5 +309,6 @@ export {
   getTranscript,
   getTerms,
   logout,
-  getApplicationRequestsByStudentId
+  getApplicationRequestsByStudentId,
+  getAllAnnouncementsOfInstructor
 };

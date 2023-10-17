@@ -45,8 +45,9 @@ function App() {
               username: result.user.email,
               name: result.user.name,
               surname: result.user.surname,
-              isInstructor: result.user.role == "INSTRUCTOR" 
+              //isInstructor: result.user.role == "INSTRUCTOR",
               //isInstructor: true, // TODO development purposes... 
+              isInstructor:false // TODO development purposes...
  
               //result.user.graduationType === "academic",
             })
