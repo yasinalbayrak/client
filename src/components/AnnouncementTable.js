@@ -15,7 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { getApplicationByUsername } from "../apiCalls";
+import { getApplicationByUsername, getApplicationRequestsByStudentId } from "../apiCalls";
 import { Tooltip } from "@mui/material";
 
 function AnnouncementTable(props) {
@@ -28,6 +28,7 @@ function AnnouncementTable(props) {
   //const userDisplayName = useSelector((state) => state.user.name);
   //const userDisplayName = "Instructor One" //mock data
   const userName = useSelector((state) => state.user.username);
+  const userID = useSelector((state) => state.user.id);
 
   useEffect(() => {
     const modifiedRows = props.rows.map((row) => {
@@ -55,7 +56,7 @@ function AnnouncementTable(props) {
 
   useEffect(() => {
     if (!isInstructor) {
-      getApplicationByUsername(userName)
+      getApplicationRequestsByStudentId(userID)
         .then((data) => {
           // Update the state with the retrieved user applications
           setStudentApplications(data);
@@ -65,7 +66,7 @@ function AnnouncementTable(props) {
           console.error("Failed to fetch user applications:", error);
         });
     }
-  }, [isInstructor, userName, term]);
+  }, [isInstructor, userName, term, userID]);
 
   useEffect(() => {
     setTabValue(props.tabValue);
@@ -95,7 +96,7 @@ function AnnouncementTable(props) {
         </TableHead>
         {isInstructor ? (
           <TableBody>
-            {rows
+            {tabValue === 0 &&rows
               /*.filter((row) =>
                 tabValue === 1
                   ? 
@@ -183,7 +184,7 @@ function AnnouncementTable(props) {
         //************************* */
         (
           <TableBody>
-            {rows
+            {tabValue === 0 && rows
               /*.filter((row) =>
                 tabValue === 1
                   ? studentApplications.some(
@@ -281,7 +282,7 @@ function AnnouncementTable(props) {
                           </Dialog>
                         ) : (
                           <>
-                            {row.description.substr(0, 100)}...
+                            {row.jobDetails.substr(0, 100)}...
                             <Button
                               onClick={() => {
                                 setOpen(true);
@@ -310,7 +311,7 @@ function AnnouncementTable(props) {
                               Apply
                             </Button>
                           )
-                        : new Date(row.deadline) > new Date() && (
+                        : new Date(row.lastApplicationDate) > new Date() && (
                             <Tooltip
                               title="Edit your existing application."
                               enterDelay={500}
@@ -319,7 +320,7 @@ function AnnouncementTable(props) {
                               <Button
                                 variant="contained"
                                 onClick={() =>
-                                  navigate("/edit-apply/" + row.id, {
+                                  navigate("/edit-apply/" + row.applicationId, {
                                     replace: true,
                                   })
                                 }
@@ -330,21 +331,144 @@ function AnnouncementTable(props) {
                             </Tooltip>
                           )
                               }
-                              {/*studentApplications
-                          .filter(
-                            (studentApplication) =>
-                              row.id === studentApplication.post_id
-                          )
-                          .map((studentApplication) => (
+                              
+                              
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        )}
+
+        <TableBody>
+        {tabValue === 1 && studentApplications &&
+        
+                            studentApplications
+                          .map((studentApplication, index) => (
+                            <TableRow
+                              key={index + 1}
+                              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                            >
+                              {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+                    {row.title}
+
+                  </TableCell> */}
+
+                              <TableCell
+                                sx={{ borderBottom: "none" }}
+                                component="th"
+                                scope="row"
+                              >
+                                {studentApplication.application.course.courseCode}
+                              </TableCell>
+                              <TableCell
+                                sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                                align="left"
+                              >
+                                {studentApplication.application.instructor_name}
+                              </TableCell>
+
+                              <TableCell sx={{ borderBottom: "none" }} align="left">
+                                {studentApplication.application.lastApplicationDate ? (
+                                  <>
+                                    {new Date(studentApplication.application.lastApplicationDate).toLocaleDateString("en-CA", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    })}{" "}
+                                    /{" "}
+                                    {new Date(studentApplication.application.lastApplicationDate).toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}
+                                  </>
+                                ) : (
+                                  "N/A"
+                                )}
+                              </TableCell>
+                              <TableCell
+                                sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                                align="left"
+                              >
+                                {studentApplication.application.minimumRequiredGrade}
+                              </TableCell>
+                              <TableCell sx={{ borderBottom: "none" }} align="left">
+                                {studentApplication.application.weeklyWorkHours}
+                              </TableCell>
+                              {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
+                    {row.description}
+
+                  </TableCell> */}
+
+                              <TableCell
+                                sx={{
+                                  bgcolor: "#FAFAFA",
+                                  borderBottom: "none",
+                                  maxWidth: "300px",
+                                }}
+                                align="left"
+                              >
+
+                                {studentApplication.application.jobDetails.length > 100 ? (
+                                  <>
+
+                                    {selectedDescription === studentApplication.application.id ? (
+                                      <Dialog
+                                        open={open}
+                                        onClose={() => {
+                                          setOpen(false);
+                                          setSelectedDescription("");
+                                        }}
+                                        BackdropProps={{
+                                          onClick: (event) => event.stopPropagation(), // Prevent closing when clicking on backdrop
+                                        }}
+                                      >
+                                        <DialogTitle>Details</DialogTitle>
+                                        <DialogContent>
+                                          {studentApplication.application.jobDetails}
+                                          <IconButton
+                                            aria-label="close"
+                                            onClick={() => {
+                                              setOpen(false);
+                                              setSelectedDescription("");
+                                            }}
+                                            sx={{ position: "absolute", top: 8, right: 8 }}
+                                          >
+                                            <CloseIcon />
+                                          </IconButton>
+                                        </DialogContent>
+                                      </Dialog>
+                                    ) : (
+                                      <>
+                                        {studentApplication.application.jobDetails.substr(0, 100)}...
+                                        <Button
+                                          onClick={() => {
+                                            setOpen(true);
+                                            setSelectedDescription(studentApplication.application.id);
+                                          }}
+                                        >
+                                          Show More
+                                        </Button>
+                                      </>
+                                    )}
+                                  </>
+                                ) : (
+                                  studentApplication.application.jobDetails
+                                )}
+                              </TableCell>
+
+                             
+
+                                
+
                             <Button
                               variant="contained"
-                              key={studentApplication.id}
+                              key={studentApplication.applicationRequestId}
                               style={{
                                 textDecoration: "none",
                                 backgroundColor:
-                                  studentApplication.status === "Accepted"
+                                  studentApplication.status === "ACCEPTED"
                                     ? "green"
-                                    : studentApplication.status === "Rejected"
+                                    : studentApplication.status === "REJECTED"
                                     ? "red"
                                     : "orange",
                                 color: "white",
@@ -353,19 +477,14 @@ function AnnouncementTable(props) {
                               }}
                             >
                               {studentApplication.status.toLowerCase() ===
-                                "applied" ||
-                              studentApplication.status.toLowerCase() ===
-                                "interested"
+                                "in_progress"
                                 ? "In Progress"
                                 : studentApplication.status}
                             </Button>
-                              ))*/}
-                              
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        )}
+                            </TableRow>
+                          ))}
+        </TableBody>
+
       </Table>
     </TableContainer>
   );

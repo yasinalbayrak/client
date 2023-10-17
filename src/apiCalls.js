@@ -184,7 +184,7 @@ async function getApplicationByUsername(username) {
 async function getApplicationRequestsByStudentId(studentId) {
   try {
     const results = await axios.get(
-      apiEndpoint + "/applicationRequests/student/" + studentId
+      apiEndpoint + "/applicationRequest/student/" + studentId
     );
     return results.data;
   } catch (error) {}
