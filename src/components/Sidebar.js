@@ -85,7 +85,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-function Sidebar() {
+function Sidebar({setValue}) {
   const theme = useTheme();
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
   const [listOpen, setListOpen] = React.useState(true);
@@ -374,13 +374,13 @@ function Sidebar() {
           <Collapse in={listOpen} timeout="auto">
             <List>
               <ListItem sx={{ padding: "0px" }}>
-                <ListItemButton as={Link} to="/home" style={{ textDecoration: "none", color: "white" }}>
+                <ListItemButton as={Link} to="/home" onClick={()=>setValue(0)} style={{ textDecoration: "none", color: "white" }}>
                   <ListItemText primary={"- All Announcements"} sx={{ textAlign: "center" }} />
                 </ListItemButton>
               </ListItem>
               {isInstructor && (
                 <ListItem sx={{ padding: "0px" }}>
-                  <ListItemButton as={Link} to="/applicants" style={{ textDecoration: "none", color: "white" }}>
+                  <ListItemButton as={Link} to="/applicants"  style={{ textDecoration: "none", color: "white" }}>
                     <ListItemText primary={"- Check Applications"} sx={{ textAlign: "center" }} />
                   </ListItemButton>
                 </ListItem>

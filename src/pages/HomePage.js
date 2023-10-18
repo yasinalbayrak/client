@@ -70,7 +70,8 @@ function HomePage() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Sidebar></Sidebar>
+      <Sidebar
+      setValue={setValue}></Sidebar>
       <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
         <AppBarHeader />
         <Grid container direction="column" spacing={2}>
