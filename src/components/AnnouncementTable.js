@@ -30,6 +30,7 @@ function AnnouncementTable(props) {
   const userName = useSelector((state) => state.user.username);
   const userID = useSelector((state) => state.user.id);
   const [instructorApplications, setInstructorApplications] = useState([]);
+  const [userApplications, setUserApplications] = useState([]);
 
   useEffect(() => {
     const modifiedRows = props.rows.map((row) => {
@@ -61,6 +62,7 @@ function AnnouncementTable(props) {
         .then((data) => {
           // Update the state with the retrieved user applications
           setStudentApplications(data);
+          setUserApplications(data);
         })
         .catch((error) => {
           // Handle any errors that occur during the API call
@@ -72,12 +74,30 @@ function AnnouncementTable(props) {
         .then((data) => {
           // Update the state with the retrieved user applications
           setInstructorApplications(data);
+          setUserApplications(data);
         })
         .catch((error) => {
           // Handle any errors that occur during the API call
           console.error("Failed to fetch user applications:", error);
         });
     }
+
+    const userAppModify = userApplications?.map((userApplication) => {
+      if(isInstructor){
+        return {
+          ...userApplication,
+          instructor_name: userApplication?.authorizedInstructors[0].user.name + " " + userApplication?.authorizedInstructors[0].user.surname,
+        };
+      }
+      else{
+        return {
+          ...userApplication,
+          instructor_name: userApplication?.application.authorizedInstructors[0].user.name + " " + userApplication?.application.authorizedInstructors[0].user.surname,
+        };
+      }
+      });
+      console.log(userAppModify);
+      setUserApplications(userAppModify)
   }, [isInstructor, userName, term, userID]);
 
   useEffect(() => {
@@ -193,8 +213,8 @@ function AnnouncementTable(props) {
               ))) :
               
               // *************for instructor when tabValue is 1 **********************
-              (instructorApplications &&
-                instructorApplications.map((instructorApplication, index) => (
+              (instructorApplications && userApplications &&
+                userApplications.map((userApplication, index) => (
                   <TableRow
                     key={index + 1}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -209,25 +229,25 @@ function AnnouncementTable(props) {
                       component="th"
                       scope="row"
                     >
-                      {instructorApplication.course.courseCode}
+                      {userApplication?.course.courseCode}
                     </TableCell>
                     <TableCell
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                       align="left"
                     >
-                      {instructorApplication.instructor_name}
+                      {userApplication?.instructor_name?? userApplication?.authorizedInstructors[0].user.name + " " + userApplication?.authorizedInstructors[0].user.surname}
                     </TableCell>
 
                     <TableCell sx={{ borderBottom: "none" }} align="left">
-                      {instructorApplication.lastApplicationDate ? (
+                      {userApplication?.lastApplicationDate ? (
                         <>
-                          {new Date(instructorApplication.lastApplicationDate).toLocaleDateString("en-CA", {
+                          {new Date(userApplication.lastApplicationDate).toLocaleDateString("en-CA", {
                             day: "2-digit",
                             month: "2-digit",
                             year: "numeric",
                           })}{" "}
                           /{" "}
-                          {new Date(instructorApplication.lastApplicationDate).toLocaleTimeString([], {
+                          {new Date(userApplication.lastApplicationDate).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
@@ -240,16 +260,16 @@ function AnnouncementTable(props) {
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                       align="left"
                     >
-                      {instructorApplication.minimumRequiredGrade}
+                      {userApplication.minimumRequiredGrade}
                     </TableCell>
                     <TableCell
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                       align="left"
                     >
-                      {instructorApplication.weeklyWorkHours}
+                      {userApplication.weeklyWorkHours}
                     </TableCell>
                     <TableCell sx={{ borderBottom: "none" }} align="left">
-                      {instructorApplication.jobDetails}
+                      {userApplication.jobDetails}
                     </TableCell>
                     <TableCell
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
@@ -259,7 +279,7 @@ function AnnouncementTable(props) {
                         <Button
                           variant="contained"
                           onClick={() =>
-                            navigate("/edit-announcement/" + instructorApplication.applicationId, {
+                            navigate("/edit-announcement/" + userApplication.applicationId, {
                               replace: true,
                             })
                           }
@@ -435,8 +455,8 @@ function AnnouncementTable(props) {
               (
                 studentApplications &&
         
-                  studentApplications
-                .map((studentApplication, index) => (
+                  userApplications
+                .map((userApplication, index) => (
                   <TableRow
                     key={index + 1}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -451,25 +471,25 @@ function AnnouncementTable(props) {
                       component="th"
                       scope="row"
                     >
-                      {studentApplication.application.course.courseCode}
+                      {userApplication?.application.course.courseCode}
                     </TableCell>
                     <TableCell
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                       align="left"
                     >
-                      {studentApplication.application.instructor_name}
+                      {userApplication?.instructor_name?? userApplication.application.authorizedInstructors[0].user.name + " " + userApplication?.application.authorizedInstructors[0].user.surname}
                     </TableCell>
 
                     <TableCell sx={{ borderBottom: "none" }} align="left">
-                      {studentApplication.application.lastApplicationDate ? (
+                      {userApplication?.application.lastApplicationDate ? (
                         <>
-                          {new Date(studentApplication.application.lastApplicationDate).toLocaleDateString("en-CA", {
+                          {new Date(userApplication?.application.lastApplicationDate).toLocaleDateString("en-CA", {
                             day: "2-digit",
                             month: "2-digit",
                             year: "numeric",
                           })}{" "}
                           /{" "}
-                          {new Date(studentApplication.application.lastApplicationDate).toLocaleTimeString([], {
+                          {new Date(userApplication?.application.lastApplicationDate).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
@@ -482,10 +502,10 @@ function AnnouncementTable(props) {
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                       align="left"
                     >
-                      {studentApplication.application.minimumRequiredGrade}
+                      {userApplication?.application.minimumRequiredGrade}
                     </TableCell>
                     <TableCell sx={{ borderBottom: "none" }} align="left">
-                      {studentApplication.application.weeklyWorkHours}
+                      {userApplication?.application.weeklyWorkHours}
                     </TableCell>
                     {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
           {row.description}
@@ -501,10 +521,10 @@ function AnnouncementTable(props) {
                       align="left"
                     >
 
-                      {studentApplication.application.jobDetails.length > 100 ? (
+                      {userApplication?.application.jobDetails.length > 100 ? (
                         <>
 
-                          {selectedDescription === studentApplication.application.id ? (
+                          {selectedDescription === userApplication?.application.id ? (
                             <Dialog
                               open={open}
                               onClose={() => {
@@ -517,7 +537,7 @@ function AnnouncementTable(props) {
                             >
                               <DialogTitle>Details</DialogTitle>
                               <DialogContent>
-                                {studentApplication.application.jobDetails}
+                                {userApplication?.application.jobDetails}
                                 <IconButton
                                   aria-label="close"
                                   onClick={() => {
@@ -532,11 +552,11 @@ function AnnouncementTable(props) {
                             </Dialog>
                           ) : (
                             <>
-                              {studentApplication.application.jobDetails.substr(0, 100)}...
+                              {userApplication?.application.jobDetails.substr(0, 100)}...
                               <Button
                                 onClick={() => {
                                   setOpen(true);
-                                  setSelectedDescription(studentApplication.application.id);
+                                  setSelectedDescription(userApplication?.application.id);
                                 }}
                               >
                                 Show More
@@ -545,7 +565,7 @@ function AnnouncementTable(props) {
                           )}
                         </>
                       ) : (
-                        studentApplication.application.jobDetails
+                        userApplication?.application.jobDetails
                       )}
                     </TableCell>
 
@@ -555,13 +575,13 @@ function AnnouncementTable(props) {
 
                   <Button
                     variant="contained"
-                    key={studentApplication.applicationRequestId}
+                    key={userApplication?.applicationRequestId}
                     style={{
                       textDecoration: "none",
                       backgroundColor:
-                        studentApplication.status === "ACCEPTED"
+                        userApplication?.status === "ACCEPTED"
                           ? "green"
-                          : studentApplication.status === "REJECTED"
+                          : userApplication?.status === "REJECTED"
                           ? "red"
                           : "orange",
                       color: "white",
@@ -569,10 +589,10 @@ function AnnouncementTable(props) {
                       cursor: "default",
                     }}
                   >
-                    {studentApplication.status.toLowerCase() ===
+                    {userApplication?.status.toLowerCase() ===
                       "in_progress"
                       ? "In Progress"
-                      : studentApplication.status}
+                      : userApplication?.status}
                   </Button>
                   </TableRow>
                 
