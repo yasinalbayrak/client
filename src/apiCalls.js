@@ -1,4 +1,5 @@
 import axios from "axios";
+import { async } from "q";
 
 const url = window.location.href;
 var apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
@@ -8,21 +9,21 @@ if (url.indexOf("pro2") === -1) {
 // const apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
 // const apiEndpoint = "http://localhost:8000/api";
 
-async function applyToPost(postId, username, answers, transcript) {
+async function applyToPost(postId, userID, answers) {
   try {
     var bodyFormData = new FormData();
-    bodyFormData.append("student_username", username);
+    /*bodyFormData.append("student_username", username);
     bodyFormData.append("working_hours", 10);
     bodyFormData.append("post_id", postId);
     bodyFormData.append("answers", JSON.stringify(answers));
     bodyFormData.append("status", "applied");
     bodyFormData.append("grade", 0);
     bodyFormData.append("faculty", "-");
-    bodyFormData.append("transcript", transcript);
+    bodyFormData.append("transcript", transcript);*/
     const results = await axios.post(
-      apiEndpoint + "/addApplication",
-      bodyFormData,
-      { headers: { "Content-Type": "multipart/form-data" } }
+      apiEndpoint + "/applicationRequest",
+      {applicationId: postId, studentId: userID, answers: answers},
+      { headers: { "Content-Type": "application/json" } }
     );
     return results.data;
   } catch (error) {}
@@ -30,9 +31,14 @@ async function applyToPost(postId, username, answers, transcript) {
 
 async function getAnnouncement(id) {
   try {
-    const results = await axios.get(apiEndpoint + "/applications/" + id);
+    console.log(id);
+    const results = await axios.get(`${apiEndpoint}/applications/${id}`);
+    console.log(results);
     return results.data;
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error; // rethrow the error so the caller knows it failed
+  }
 }
 
 async function getAllAnnouncements() {
@@ -45,6 +51,13 @@ async function getAllAnnouncements() {
 async function getAllInstructors() {
   try {
     const results = await axios.get(apiEndpoint + "/users/instructors");
+    return results.data;
+  } catch (error) {}
+}
+
+async function getAllAnnouncementsOfInstructor(id){
+  try {
+    const results = await axios.get(apiEndpoint + "/applications/instructor/" + id);
     return results.data;
   } catch (error) {}
 }
@@ -175,6 +188,15 @@ async function getApplicationByUsername(username) {
   } catch (error) {}
 }
 
+async function getApplicationRequestsByStudentId(studentId) {
+  try {
+    const results = await axios.get(
+      apiEndpoint + "/applicationRequest/student/" + studentId
+    );
+    return results.data;
+  } catch (error) {}
+}
+
 async function updateApplicationById(
   applicationId,
   username,
@@ -286,5 +308,7 @@ export {
   validateLogin,
   getTranscript,
   getTerms,
-  logout
+  logout,
+  getApplicationRequestsByStudentId,
+  getAllAnnouncementsOfInstructor
 };

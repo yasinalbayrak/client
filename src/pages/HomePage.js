@@ -4,7 +4,7 @@ import AnnouncementTable from "../components/AnnouncementTable";
 import AppBarHeader from "../components/AppBarHeader";
 import Sidebar from "../components/Sidebar";
 import AddIcon from "@mui/icons-material/Add";
-import { getAllAnnouncements } from "../apiCalls";
+import { getAllAnnouncements, getApplicationRequestsByStudentId } from "../apiCalls";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -15,7 +15,9 @@ function HomePage() {
 
   const [value, setValue] = useState(0);
   const [rows, setRows] = useState([]);
+  const state = useSelector((state) => state);
   const isInstructor = useSelector((state) => state.user.isInstructor);
+  const [applicationRequests, setApplicationRequests] = useState([]);
   
   // useEffect(() => {
   //   getAllAnnouncements().then((results) => setRows(results));
@@ -26,6 +28,10 @@ function HomePage() {
     const fetchAnnouncements = async () => {
       try {
         // Fetch the announcements data here using your API function
+        if(!isInstructor){
+          const applicationRequest = await getApplicationRequestsByStudentId(state.user.id);
+          setApplicationRequests(applicationRequest);
+        }
         const announcements = await getAllAnnouncements();
 
         // If the location state includes updatedAnnouncement and the update status is false, update the rows state
@@ -46,13 +52,26 @@ function HomePage() {
     fetchAnnouncements();
   }, [location, updated]); // Include the updated status in the dependencies
 
+  // useEffect(() => {
+  //   const fetchApplicationRequestByStudentId = async () => {
+  //     try{
+  //       const applicationRequest = await getApplicationRequestsByStudentId(state.user.id);
+  //       setRows(applicationRequest);
+  //     }catch(error){
+  //       console.error("Failed to fetch application request:", error);
+  //     }
+  //   };
+  //   fetchApplicationRequestByStudentId();
+  // }, [location, updated]);
+
   const handleAnnouncementTableChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Sidebar></Sidebar>
+      <Sidebar
+      setValue={setValue}></Sidebar>
       <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
         <AppBarHeader />
         <Grid container direction="column" spacing={2}>

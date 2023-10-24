@@ -6,6 +6,7 @@ const initialState = {
   username: "",
   JwtToken: "",
   term: "",
+  id: 0,
   isInstructor: true,
   isLoading: false,
   isFailed: false,
@@ -24,6 +25,7 @@ const userSlice = createSlice({
       state.username = action.payload.username;
       state.name = action.payload.name;
       state.surname = action.payload.surname;
+      state.id = action.payload.id;
       state.isFailed = false;
       state.isLoggedIn = true;
       state.isInstructor = action.payload.isInstructor;
@@ -39,6 +41,7 @@ const userSlice = createSlice({
       state.surname = "";
       state.username = "";
       state.JwtToken = "";
+      state.id = 0;
       state.isLoading = false;
       state.isFailed = false;
       state.isLoggedIn = false;
