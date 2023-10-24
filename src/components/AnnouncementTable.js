@@ -136,9 +136,9 @@ function AnnouncementTable(props) {
                   key={index + 1}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  { <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+                  {/* { <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
                     {row.title}
-                  </TableCell>}
+                  </TableCell>} */}
                   <TableCell
                     sx={{ borderBottom: "none" }}
                     component="th"
