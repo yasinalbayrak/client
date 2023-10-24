@@ -86,13 +86,13 @@ function AnnouncementTable(props) {
       if(isInstructor){
         return {
           ...userApplication,
-          instructor_name: userApplication?.authorizedInstructors[0].user.name + " " + userApplication?.authorizedInstructors[0].user.surname,
+          instructor_name: userApplication?.authorizedInstructors[0]?.user?.name + " " + userApplication?.authorizedInstructors[0]?.user?.surname,
         };
       }
       else{
         return {
           ...userApplication,
-          instructor_name: userApplication?.application.authorizedInstructors[0].user.name + " " + userApplication?.application.authorizedInstructors[0].user.surname,
+          instructor_name: userApplication?.application?.authorizedInstructors[0]?.user?.name + " " + userApplication?.application?.authorizedInstructors[0]?.user?.surname,
         };
       }
       });
@@ -472,7 +472,7 @@ function AnnouncementTable(props) {
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                       align="left"
                     >
-                      {userApplication?.instructor_name?? userApplication.application.authorizedInstructors[0].user.name + " " + userApplication?.application.authorizedInstructors[0].user.surname}
+                      {userApplication?.instructor_name?? userApplication?.application?.authorizedInstructors[0]?.user?.name + " " + userApplication?.application?.authorizedInstructors[0]?.user?.surname}
                     </TableCell>
 
                     <TableCell sx={{ borderBottom: "none" }} align="left">
