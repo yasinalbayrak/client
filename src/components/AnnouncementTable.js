@@ -15,7 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { getApplicationByUsername } from "../apiCalls";
+import { getAllAnnouncementsOfInstructor, getApplicationByUsername, getApplicationRequestsByStudentId } from "../apiCalls";
 import { Tooltip } from "@mui/material";
 
 function AnnouncementTable(props) {
@@ -27,9 +27,10 @@ function AnnouncementTable(props) {
   const term = useSelector((state) => state.user.term);
   //const userDisplayName = useSelector((state) => state.user.name);
   //const userDisplayName = "Instructor One" //mock data
-  const name= useSelector((state) => state.user.name);
-  const surname= useSelector((state) => state.user.surname);
-  const userName = name+" "+surname;
+  const userName = useSelector((state) => state.user.username);
+  const userID = useSelector((state) => state.user.id);
+  const [instructorApplications, setInstructorApplications] = useState([]);
+  const [userApplications, setUserApplications] = useState([]);
 
   useEffect(() => {
     const modifiedRows = props.rows.map((row) => {
@@ -57,17 +58,47 @@ function AnnouncementTable(props) {
 
   useEffect(() => {
     if (!isInstructor) {
-      getApplicationByUsername(userName)
+      getApplicationRequestsByStudentId(userID)
         .then((data) => {
           // Update the state with the retrieved user applications
           setStudentApplications(data);
+          setUserApplications(data);
         })
         .catch((error) => {
           // Handle any errors that occur during the API call
           console.error("Failed to fetch user applications:", error);
         });
     }
-  }, [isInstructor, userName, term]);
+    else{
+        getAllAnnouncementsOfInstructor(userID)
+        .then((data) => {
+          // Update the state with the retrieved user applications
+          setInstructorApplications(data);
+          setUserApplications(data);
+        })
+        .catch((error) => {
+          // Handle any errors that occur during the API call
+          console.error("Failed to fetch user applications:", error);
+        });
+    }
+
+    const userAppModify = userApplications?.map((userApplication) => {
+      if(isInstructor){
+        return {
+          ...userApplication,
+          instructor_name: userApplication?.authorizedInstructors[0].user.name + " " + userApplication?.authorizedInstructors[0].user.surname,
+        };
+      }
+      else{
+        return {
+          ...userApplication,
+          instructor_name: userApplication?.application.authorizedInstructors[0].user.name + " " + userApplication?.application.authorizedInstructors[0].user.surname,
+        };
+      }
+      });
+      console.log(userAppModify);
+      setUserApplications(userAppModify)
+  }, [isInstructor, userName, term, userID]);
 
   useEffect(() => {
     setTabValue(props.tabValue);
@@ -97,23 +128,17 @@ function AnnouncementTable(props) {
         </TableHead>
         {isInstructor ? (
           <TableBody>
-            {rows
-              .filter((row) =>
-                tabValue === 1
-                  ? 
-                  row.instructor_name.toLowerCase() === userName .toLowerCase()
-                  //&& term === row.term 
-                  //gelen term ve kontrol edilne term formları farklı olabilir değiştir
-                  : true//term === row.term
-              )
+            
+            {// *************for instructor when tabValue is 0 **********************
+            tabValue === 0 &&rows ? ( rows 
               .map((row, index) => (
                 <TableRow
                   key={index + 1}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+                  { <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
                     {row.title}
-                  </TableCell> */}
+                  </TableCell>}
                   <TableCell
                     sx={{ borderBottom: "none" }}
                     component="th"
@@ -180,21 +205,104 @@ function AnnouncementTable(props) {
                     )}
                   </TableCell>
                 </TableRow>
-              ))}
+              ))) :
+              
+              // *************for instructor when tabValue is 1 **********************
+              (instructorApplications && userApplications &&
+                userApplications.map((userApplication, index) => (
+                  <TableRow
+                    key={index + 1}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+          {row.title}
+
+        </TableCell> */}
+
+                    <TableCell
+                      sx={{ borderBottom: "none" }}
+                      component="th"
+                      scope="row"
+                    >
+                      {userApplication?.course.courseCode}
+                    </TableCell>
+                    <TableCell
+                      sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                      align="left"
+                    >
+                      {userApplication?.instructor_name?? userApplication?.authorizedInstructors[0].user.name + " " + userApplication?.authorizedInstructors[0].user.surname}
+                    </TableCell>
+
+                    <TableCell sx={{ borderBottom: "none" }} align="left">
+                      {userApplication?.lastApplicationDate ? (
+                        <>
+                          {new Date(userApplication.lastApplicationDate).toLocaleDateString("en-CA", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}{" "}
+                          /{" "}
+                          {new Date(userApplication.lastApplicationDate).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </>
+                      ) : (
+                        "N/A"
+                      )}
+                    </TableCell>
+                    <TableCell
+                      sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                      align="left"
+                    >
+                      {userApplication.minimumRequiredGrade}
+                    </TableCell>
+                    <TableCell
+                      sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                      align="left"
+                    >
+                      {userApplication.weeklyWorkHours}
+                    </TableCell>
+                    <TableCell sx={{ borderBottom: "none" }} align="left">
+                      {userApplication.jobDetails}
+                    </TableCell>
+                    <TableCell
+                      sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                      align="center"
+                    >
+                      
+                        <Button
+                          variant="contained"
+                          onClick={() =>
+                            navigate("/edit-announcement/" + userApplication.applicationId, {
+                              replace: true,
+                            })
+                          }
+                          startIcon={<EditIcon />}
+                        >
+                          Edit
+                        </Button>
+                      
+                    </TableCell>
+                  </TableRow>
+                )))
+            }
           </TableBody>
         ) :
         //************************* */
         (
           <TableBody>
-            {rows
-              .filter((row) =>
+            {tabValue === 0 && rows ? ( rows
+            // *************for student when tabValue is 0 **********************
+
+              /*.filter((row) =>
                 tabValue === 1
                   ? studentApplications.some(
                       (studentApplication) =>
                         row.id === studentApplication.post_id
                     ) && term == row.term
                   : term == row.term
-              ) //to be continued, student'in hangi posta kayıt oldugu lazim (belki vardır)
+              ) *///to be continued, student'in hangi posta kayıt oldugu lazim (belki vardır)
               .map((row, index) => (
                 <TableRow
                   key={index + 1}
@@ -208,7 +316,7 @@ function AnnouncementTable(props) {
                     component="th"
                     scope="row"
                   >
-                    {row.course_code}
+                    {row.course.courseCode}
                   </TableCell>
                   <TableCell
                     sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
@@ -217,15 +325,15 @@ function AnnouncementTable(props) {
                     {row.instructor_name}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="left">
-                    {row.deadline ? (
+                    {row.lastApplicationDate ? (
                       <>
-                        {new Date(row.deadline).toLocaleDateString("en-CA", {
+                        {new Date(row.lastApplicationDate).toLocaleDateString("en-CA", {
                           day: "2-digit",
                           month: "2-digit",
                           year: "numeric",
                         })}{" "}
                         /{" "}
-                        {new Date(row.deadline).toLocaleTimeString([], {
+                        {new Date(row.lastApplicationDate).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
@@ -238,10 +346,10 @@ function AnnouncementTable(props) {
                     sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                     align="left"
                   >
-                    {row.mingrade}
+                    {row.minimumRequiredGrade}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="left">
-                    {row.working_hour}
+                    {row.weeklyWorkHours}
                   </TableCell>
                   {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
                     {row.description}
@@ -254,7 +362,7 @@ function AnnouncementTable(props) {
                     }}
                     align="left"
                   >
-                    {row.description.length > 100 ? (
+                    {row.jobDetails.length > 100 ? (
                       <>
                         {selectedDescription === row.id ? (
                           <Dialog
@@ -269,7 +377,7 @@ function AnnouncementTable(props) {
                           >
                             <DialogTitle>Details</DialogTitle>
                             <DialogContent>
-                              {row.description}
+                              {row.jobDetails}
                               <IconButton
                                 aria-label="close"
                                 onClick={() => {
@@ -284,7 +392,7 @@ function AnnouncementTable(props) {
                           </Dialog>
                         ) : (
                           <>
-                            {row.description.substr(0, 100)}...
+                            {row.jobDetails.substr(0, 100)}...
                             <Button
                               onClick={() => {
                                 setOpen(true);
@@ -297,23 +405,23 @@ function AnnouncementTable(props) {
                         )}
                       </>
                     ) : (
-                      row.description
+                      row.jobDetails
                     )}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="center">
                     {tabValue === 0
-                      ? !studentApplications.find((o) => o.post_id === row.id)
-                        ? new Date(row.deadline) > new Date() && (
+                      ? //!studentApplications.find((o) => o.post_id === row.id)
+                         new Date(row.lastApplicationDate) > new Date() && (
                             <Button
                               variant="contained"
                               onClick={() =>
-                                navigate("/apply/" + row.id, { replace: true })
+                                navigate("/apply/" + row.applicationId, { replace: true })
                               }
                             >
                               Apply
                             </Button>
                           )
-                        : new Date(row.deadline) > new Date() && (
+                        : new Date(row.lastApplicationDate) > new Date() && (
                             <Tooltip
                               title="Edit your existing application."
                               enterDelay={500}
@@ -322,7 +430,7 @@ function AnnouncementTable(props) {
                               <Button
                                 variant="contained"
                                 onClick={() =>
-                                  navigate("/edit-apply/" + row.id, {
+                                  navigate("/edit-apply/" + row.applicationId, {
                                     replace: true,
                                   })
                                 }
@@ -332,41 +440,163 @@ function AnnouncementTable(props) {
                               </Button>
                             </Tooltip>
                           )
-                      : studentApplications
-                          .filter(
-                            (studentApplication) =>
-                              row.id === studentApplication.post_id
-                          )
-                          .map((studentApplication) => (
-                            <Button
-                              variant="contained"
-                              key={studentApplication.id}
-                              style={{
-                                textDecoration: "none",
-                                backgroundColor:
-                                  studentApplication.status === "Accepted"
-                                    ? "green"
-                                    : studentApplication.status === "Rejected"
-                                    ? "red"
-                                    : "orange",
-                                color: "white",
-                                pointerEvents: "none",
-                                cursor: "default",
-                              }}
-                            >
-                              {studentApplication.status.toLowerCase() ===
-                                "applied" ||
-                              studentApplication.status.toLowerCase() ===
-                                "interested"
-                                ? "In Progress"
-                                : studentApplication.status}
-                            </Button>
-                          ))}
+                              }
+                              
+                              
                   </TableCell>
                 </TableRow>
-              ))}
+              ))):
+              // *************for student when tabValue is 1**************
+              (
+                studentApplications &&
+        
+                  userApplications
+                .map((userApplication, index) => (
+                  <TableRow
+                    key={index + 1}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+          {row.title}
+
+        </TableCell> */}
+
+                    <TableCell
+                      sx={{ borderBottom: "none" }}
+                      component="th"
+                      scope="row"
+                    >
+                      {userApplication?.application.course.courseCode}
+                    </TableCell>
+                    <TableCell
+                      sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                      align="left"
+                    >
+                      {userApplication?.instructor_name?? userApplication.application.authorizedInstructors[0].user.name + " " + userApplication?.application.authorizedInstructors[0].user.surname}
+                    </TableCell>
+
+                    <TableCell sx={{ borderBottom: "none" }} align="left">
+                      {userApplication?.application.lastApplicationDate ? (
+                        <>
+                          {new Date(userApplication?.application.lastApplicationDate).toLocaleDateString("en-CA", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}{" "}
+                          /{" "}
+                          {new Date(userApplication?.application.lastApplicationDate).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </>
+                      ) : (
+                        "N/A"
+                      )}
+                    </TableCell>
+                    <TableCell
+                      sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                      align="left"
+                    >
+                      {userApplication?.application.minimumRequiredGrade}
+                    </TableCell>
+                    <TableCell sx={{ borderBottom: "none" }} align="left">
+                      {userApplication?.application.weeklyWorkHours}
+                    </TableCell>
+                    {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
+          {row.description}
+
+        </TableCell> */}
+
+                    <TableCell
+                      sx={{
+                        bgcolor: "#FAFAFA",
+                        borderBottom: "none",
+                        maxWidth: "300px",
+                      }}
+                      align="left"
+                    >
+
+                      {userApplication?.application.jobDetails.length > 100 ? (
+                        <>
+
+                          {selectedDescription === userApplication?.application.id ? (
+                            <Dialog
+                              open={open}
+                              onClose={() => {
+                                setOpen(false);
+                                setSelectedDescription("");
+                              }}
+                              BackdropProps={{
+                                onClick: (event) => event.stopPropagation(), // Prevent closing when clicking on backdrop
+                              }}
+                            >
+                              <DialogTitle>Details</DialogTitle>
+                              <DialogContent>
+                                {userApplication?.application.jobDetails}
+                                <IconButton
+                                  aria-label="close"
+                                  onClick={() => {
+                                    setOpen(false);
+                                    setSelectedDescription("");
+                                  }}
+                                  sx={{ position: "absolute", top: 8, right: 8 }}
+                                >
+                                  <CloseIcon />
+                                </IconButton>
+                              </DialogContent>
+                            </Dialog>
+                          ) : (
+                            <>
+                              {userApplication?.application.jobDetails.substr(0, 100)}...
+                              <Button
+                                onClick={() => {
+                                  setOpen(true);
+                                  setSelectedDescription(userApplication?.application.id);
+                                }}
+                              >
+                                Show More
+                              </Button>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        userApplication?.application.jobDetails
+                      )}
+                    </TableCell>
+
+                   
+
+                      
+
+                  <Button
+                    variant="contained"
+                    key={userApplication?.applicationRequestId}
+                    style={{
+                      textDecoration: "none",
+                      backgroundColor:
+                        userApplication?.status === "ACCEPTED"
+                          ? "green"
+                          : userApplication?.status === "REJECTED"
+                          ? "red"
+                          : "orange",
+                      color: "white",
+                      pointerEvents: "none",
+                      cursor: "default",
+                    }}
+                  >
+                    {userApplication?.status.toLowerCase() ===
+                      "in_progress"
+                      ? "In Progress"
+                      : userApplication?.status}
+                  </Button>
+                  </TableRow>
+                
+              )))}
           </TableBody>
         )}
+
+        
+
       </Table>
     </TableContainer>
   );

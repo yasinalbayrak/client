@@ -40,11 +40,15 @@ function App() {
           console.log(result);
           dispatch(
             successLogin({
+              id: result.user.id,
               jwtToken: result.token,
               username: result.user.email,
               name: result.user.name,
               surname: result.user.surname,
-              isInstructor: true // TODO development purposes... 
+              isInstructor: result.user.role == "INSTRUCTOR",
+              //isInstructor: true, // TODO development purposes... 
+              //isInstructor:false // TODO development purposes...
+ 
               //result.user.graduationType === "academic",
             })
           );
