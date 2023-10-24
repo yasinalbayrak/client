@@ -55,26 +55,26 @@ function EditAnnouncement() {
   const [selectedCourses, setSelectedCourses] = useState([]); //used for send request as selected from list
   const [courseValue, setCourseValue] = useState(""); // for autocomplete
   const [inputCourseValue, setCourseInputValue] = useState(""); // for autocomplete
-
-  const userName = useSelector((state) => state.user.username);
-  //const userName = "instructor1"; //mock data for testing
+  const name= useSelector((state) => state.user.name);
+  const surname= useSelector((state) => state.user.surname);
+  const userName = name+" "+surname;
   const term = useSelector((state) => state.user.term);
 
   //get all instructors
   useEffect(() => {
     getAllInstructors().then((results) => {
       const filteredResults = results.filter((instructor) => { //for removing current user from options
-        return instructor.instructor_username !== userName;
+        return (instructor.user.name+" "+instructor.user.surname).toLowerCase() !== userName.toLowerCase();
       });
 
       const transformedResults = filteredResults.map((instructor) => {
-        const [lastName, firstName] = instructor.name.split(",");
+        const [lastName, firstName] = [instructor.user.surname,instructor.user.name];
         const displayName = firstName.trim() + " " + lastName.trim();
-        const OptionValue = displayName + " (" + instructor.instructor_username + ")";
+        const OptionValue = displayName + " (" + instructor.user.email + ")";
 
         return {
           display_name: displayName,
-          username: instructor.instructor_username,
+          username: instructor.user.name+" "+instructor.user.surname,
           authOptionValue: OptionValue,
         };
       });
@@ -223,11 +223,11 @@ function EditAnnouncement() {
   const { id } = useParams(); //for taking post id
   useEffect(() => {
     getAnnouncement(id).then((results) => {
-      const deadline = results.deadline.split(" ");
-      const authInstructors = JSON.parse(results.auth_instructors);
+      const deadline = results.lastApplicationDate.split("T");
+      const authInstructors = results.authorizedInstructors;
 
       const FindAuthPeople = authInstructors.reduce((people, instructor) => {
-        const user = authUsersList.find((authUser) => authUser.username === instructor);
+        const user = authUsersList.find((authUser) => authUser.username === (instructor.user.name.toLowerCase() + " " +instructor.user.surname.toLowerCase()));
 
         if (user) {
           people.push(user);

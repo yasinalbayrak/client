@@ -27,7 +27,9 @@ function AnnouncementTable(props) {
   const term = useSelector((state) => state.user.term);
   //const userDisplayName = useSelector((state) => state.user.name);
   //const userDisplayName = "Instructor One" //mock data
-  const userName = useSelector((state) => state.user.username);
+  const name= useSelector((state) => state.user.name);
+  const surname= useSelector((state) => state.user.surname);
+  const userName = name+" "+surname;
 
   useEffect(() => {
     const modifiedRows = props.rows.map((row) => {
@@ -35,7 +37,7 @@ function AnnouncementTable(props) {
       console.log(row);
       const [lastName, firstName] = [
         row.authorizedInstructors[0]==null ?"" : row.authorizedInstructors[0].user.surname,
-        row.authorizedInstructors[0]==null ?"" :row.authorizedInstructors[0].user.name,
+        row.authorizedInstructors[0]==null ?"no instructor assigned yet" :row.authorizedInstructors[0].user.name,
       ];
       console.log(" **********************lastName is " + lastName);
       console.log("***********************Name is " + firstName);
@@ -96,14 +98,14 @@ function AnnouncementTable(props) {
         {isInstructor ? (
           <TableBody>
             {rows
-              /*.filter((row) =>
+              .filter((row) =>
                 tabValue === 1
                   ? 
-                  row.instructor_username === userName 
+                  row.instructor_name.toLowerCase() === userName .toLowerCase()
                   //&& term === row.term 
                   //gelen term ve kontrol edilne term formları farklı olabilir değiştir
-                  : term === row.term
-              )*/
+                  : true//term === row.term
+              )
               .map((row, index) => (
                 <TableRow
                   key={index + 1}
@@ -162,7 +164,8 @@ function AnnouncementTable(props) {
                     sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                     align="center"
                   >
-                    {row.instructor_username === userName && (
+                    {(row.instructor_name!=="no instructor assigned yet " && row.instructor_name.toLowerCase() === userName.toLowerCase()) && 
+                    (
                       <Button
                         variant="contained"
                         onClick={() =>

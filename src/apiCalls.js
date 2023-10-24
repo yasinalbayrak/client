@@ -30,7 +30,7 @@ async function applyToPost(postId, username, answers, transcript) {
 
 async function getAnnouncement(id) {
   try {
-    const results = await axios.get(apiEndpoint + "/post/" + id);
+    const results = await axios.get(apiEndpoint + "/applications/" + id);
     return results.data;
   } catch (error) {}
 }
