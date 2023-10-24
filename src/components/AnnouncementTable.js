@@ -155,7 +155,7 @@ function AnnouncementTable(props) {
                   <TableCell sx={{ borderBottom: "none" }} align="left">
                     {row.lastApplicationDate ? (
                       <>
-                        {new Date(row.lastApplicationDate).toLocaleDateString("en-CA", {
+                        {new Date(row.lastApplicationDate).toLocaleDateString("en-GB", {
                           day: "2-digit",
                           month: "2-digit",
                           year: "numeric",
