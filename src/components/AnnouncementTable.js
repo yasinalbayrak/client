@@ -236,7 +236,7 @@ function AnnouncementTable(props) {
                     <TableCell sx={{ borderBottom: "none" }} align="left">
                       {userApplication?.lastApplicationDate ? (
                         <>
-                          {new Date(userApplication.lastApplicationDate).toLocaleDateString("en-CA", {
+                          {new Date(userApplication.lastApplicationDate).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "2-digit",
                             year: "numeric",
@@ -327,7 +327,7 @@ function AnnouncementTable(props) {
                   <TableCell sx={{ borderBottom: "none" }} align="left">
                     {row.lastApplicationDate ? (
                       <>
-                        {new Date(row.lastApplicationDate).toLocaleDateString("en-CA", {
+                        {new Date(row.lastApplicationDate).toLocaleDateString("en-GB", {
                           day: "2-digit",
                           month: "2-digit",
                           year: "numeric",
@@ -478,7 +478,7 @@ function AnnouncementTable(props) {
                     <TableCell sx={{ borderBottom: "none" }} align="left">
                       {userApplication?.application.lastApplicationDate ? (
                         <>
-                          {new Date(userApplication?.application.lastApplicationDate).toLocaleDateString("en-CA", {
+                          {new Date(userApplication?.application.lastApplicationDate).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "2-digit",
                             year: "numeric",
