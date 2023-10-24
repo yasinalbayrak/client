@@ -41,7 +41,7 @@ const ApplyPage = (props) => {
   ];
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState({});
   const [questions, setQuestions] = useState([]);
-  const [announcementInfo, setAnnouncementInfo] = useState({});
+  const [announcementInfo, setAnnouncementInfo] = useState(null);
   const { id } = useParams();
   const [transcript, setTranscript] = useState(null);
   const [filename, setFile] = useState(() => {
@@ -152,21 +152,21 @@ const ApplyPage = (props) => {
   console.log(announcementInfo);
   console.log(id);
 
-  useEffect(() => {
-    setQuestions(announcementInfo.questions);
-    if (announcementInfo.questions !== undefined) {
-      let temp = questionsAndAnswers;
-      announcementInfo.questions.map((q) => {
-        temp[q.id] = "";
-      });
-      setQuestionsAndAnswers(temp);
-    }
-  }, [announcementInfo]);
+  // useEffect(() => {
+  //   setQuestions(announcementInfo.questions);
+  //   if (announcementInfo.questions !== undefined) {
+  //     let temp = questionsAndAnswers;
+  //     announcementInfo.questions.map((q) => {
+  //       temp[q.id] = "";
+  //     });
+  //     setQuestionsAndAnswers(temp);
+  //   }
+  // }, [announcementInfo]);
 
   
   return (
     <>
-    {(!data.current || !announcementInfo) ? (<div>Loading...</div>): (
+    {(!announcementInfo) ? (<div>Loading...</div>): (
     <Box sx={{ display: "flex" }}>
       <Sidebar></Sidebar>
       <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
