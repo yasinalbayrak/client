@@ -40,14 +40,22 @@ function AnnouncementTable(props) {
         row.authorizedInstructors[0]==null ?"" : row.authorizedInstructors[0].user.surname,
         row.authorizedInstructors[0]==null ?"no instructor assigned yet" :row.authorizedInstructors[0].user.name,
       ];
-      console.log(" **********************lastName is " + lastName);
-      console.log("***********************Name is " + firstName);
+      const formattedFirstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+      const formattedLastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
       // Rearrange the name format
-      const modifiedInstructorName = firstName.trim() + " " + lastName.trim();
+      const modifiedInstructorName = formattedFirstName.trim() + " " + formattedLastName.trim();
+
+
+      const workTime= row.weeklyWorkHours;
+      
+      const slicedHour= workTime.slice(2);
+      const modifiedWorkHour=slicedHour.slice(0,-1);
+      
 
       // Return the modified row object
       return {
         ...row,
+        weeklyWorkingTime:modifiedWorkHour,
         instructor_name: modifiedInstructorName,
       };
     });
@@ -118,7 +126,7 @@ function AnnouncementTable(props) {
             <TableCell>Course Code</TableCell>
             <TableCell align="left">Primary Instructor</TableCell>
             <TableCell align="left">Last Application Date/Time </TableCell>
-            <TableCell align="left">Desired Letter Grade</TableCell>
+            <TableCell align="left">Minimum Desired Letter Grade</TableCell>
             <TableCell align="left">Work Hours</TableCell>
             <TableCell align="left">Details</TableCell>
             <TableCell align="center">
@@ -180,7 +188,7 @@ function AnnouncementTable(props) {
                     sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                     align="left"
                   >
-                    {row.weeklyWorkHours}
+                    {row.weeklyWorkingTime}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="left">
                     {row.jobDetails}
@@ -261,7 +269,7 @@ function AnnouncementTable(props) {
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                       align="left"
                     >
-                      {userApplication.weeklyWorkHours}
+                      {userApplication.weeklyWorkingTime}
                     </TableCell>
                     <TableCell sx={{ borderBottom: "none" }} align="left">
                       {userApplication.jobDetails}
@@ -349,7 +357,7 @@ function AnnouncementTable(props) {
                     {row.minimumRequiredGrade}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="left">
-                    {row.weeklyWorkHours}
+                    {row.weeklyWorkingTime}
                   </TableCell>
                   {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
                     {row.description}
@@ -500,7 +508,7 @@ function AnnouncementTable(props) {
                       {userApplication?.application.minimumRequiredGrade}
                     </TableCell>
                     <TableCell sx={{ borderBottom: "none" }} align="left">
-                      {userApplication?.application.weeklyWorkHours}
+                      {userApplication?.application.weeklyWorkingTime}
                     </TableCell>
                     {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
           {row.description}
