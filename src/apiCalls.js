@@ -141,7 +141,7 @@ function updateAnnouncement(
   // const term = "Fall 2022";
   const title = "title update test";
 
-  const deadline = lastApplicationDate + " " + lastApplicationTime;
+  const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
   const transformedQuestions = questions.map((question) => ({
     type: question.mValue,
     ranking: question.questionNumber,
@@ -150,23 +150,25 @@ function updateAnnouncement(
       question.mValue === "Multiple Choice" ? question.mMultiple : [],
   }));
   console.log(desired_courses);
-  const authInstructor_userNames = auth_instructors.map(
-    (user) => user.username
+  const authInstructor_ids = auth_instructors.map(
+    (user) => user.id
   );
 
-  axios.put(apiEndpoint + "/updatePost/" + id, {
-    instructor_username: username,
-    faculty: faculty,
-    course_code: course_code,
-    desired_courses: desired_courses,
-    deadline: deadline,
-    term: term,
-    title: title,
-    working_hour: workHours,
-    description: details,
-    auth_instructors: authInstructor_userNames,
-    mingrade: letterGrade,
+  axios.put(apiEndpoint + "/applications/" + id, {
+    //instructor_username: username,
+    //faculty: faculty,
+    courseCode: course_code,
+    minimumRequiredGrade: letterGrade,
+    //desired_courses: desired_courses,
+    lastApplicationDate: deadline,
+    term: term.term_desc,
+    //title: title,
+    weeklyWorkHours: "PT10H",
+    jobDetails: details,
+    authorizedInstructors: authInstructor_ids,
+    desiredCourseGrade: letterGrade,
     questions: transformedQuestions,
+    previousCourseGrades: [],
   });
 }
 
