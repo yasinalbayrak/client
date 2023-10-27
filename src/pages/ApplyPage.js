@@ -32,6 +32,7 @@ const ApplyPage = (props) => {
   const state = useSelector((state) => state);
   const name = useSelector((state) => state.user.name);
   const surname = useSelector((state) => state.user.surname);
+  const userId = useSelector((state) => state.user.id)
   const rows = [
     { name: "Student ID:", val: "00000000" },
     { name: "Name - Surname:", val: name + " " + surname },
@@ -128,6 +129,7 @@ const ApplyPage = (props) => {
 
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("studentId", userId)
     console.log(formData);
 
     postTranscript(formData).then((res) => {

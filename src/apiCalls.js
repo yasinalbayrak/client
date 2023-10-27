@@ -297,7 +297,7 @@ async function logout(token) {
 
 async function postTranscript(formData){
   try{
-    const result = await axios.post(apiEndpoint + "/files/upload", formData, {
+    const result = await axios.post(apiEndpoint + "/transcript/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" }
     });
     return result.data;
