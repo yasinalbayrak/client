@@ -295,6 +295,17 @@ async function logout(token) {
   }
 }
 
+async function postTranscript(formData){
+  try{
+    const result = await axios.post(apiEndpoint + "/files/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    });
+    return result.data;
+  } catch (error) {}
+}
+
+
+
 
 export {
   getAllAnnouncements,
@@ -312,5 +323,6 @@ export {
   getTerms,
   logout,
   getApplicationRequestsByStudentId,
-  getAllAnnouncementsOfInstructor
+  getAllAnnouncementsOfInstructor,
+  postTranscript
 };
