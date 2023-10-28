@@ -14,7 +14,8 @@ import { validateLogin } from "./apiCalls";
 import CourseApplicantsPage from "./pages/CourseApplicantsPage";
 import EditApplyPage from "./pages/EditApplyPage";
 import SuccessPage from "./pages/SuccessPage";
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const [urlParams, setUrlParams] = useSearchParams();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
@@ -30,11 +31,11 @@ function App() {
         // parse and get the ticket
         const ticket = urlParams.get("ticket");
         console.log("ticket: " + ticket);
-  
+
         // Extract the base URL without query parameters
         const baseUrl = url.split("?")[0];
         console.log("serviceUrl: ", baseUrl);
-  
+
         // send it to backend
         validateLogin(baseUrl, ticket).then((result) => {
           console.log(result);
@@ -47,13 +48,13 @@ function App() {
               surname: result.user.surname,
               //isInstructor: result.user.role == "INSTRUCTOR",
               //isInstructor: true, // TODO development purposes... 
-              isInstructor:false // TODO development purposes...
- 
+              isInstructor: false // TODO development purposes...
+
               //result.user.graduationType === "academic",
             })
           );
         });
-  
+
         // dispatch(successLogin({username: "aa", name: "bb", surname: "cc"}));
         // check the response
         // if result is positive, dispatch loginSuccess and refresh, otherwise dispatch loginFail or logout
@@ -64,29 +65,32 @@ function App() {
       }
     }
   }, []);
-  
+
 
   return (
-    <Routes>
-      {isLoggedIn ? (
-        <>
-          <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
-          <Route path="/home" element={<HomePage></HomePage>}></Route>
-          <Route path="/create-announcement" element={<CreateAnnouncement></CreateAnnouncement>}></Route>
-          <Route path="/edit-announcement/:id" element={<EditAnnouncement></EditAnnouncement>}></Route>
-          <Route path="/apply/:id" element={<ApplyPage></ApplyPage>}></Route>
-          <Route path="/edit-apply/:id" element={<EditApplyPage></EditApplyPage>}></Route>
-          <Route path="/applicants" element={<CourseApplicantsPage></CourseApplicantsPage>}></Route>
-          <Route path="/application-of/:postId" element={<ApplicantsPage></ApplicantsPage>}></Route>
-          <Route path="/success" element={<SuccessPage></SuccessPage>}></Route>
-        </>
-      ) : (
-        <>
-          <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
-          <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
-        </>
-      )}
-    </Routes>
+    <>
+      <ToastContainer position="top-right" autoClose={3000} />
+      <Routes>
+        {isLoggedIn ? (
+          <>
+            <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
+            <Route path="/home" element={<HomePage></HomePage>}></Route>
+            <Route path="/create-announcement" element={<CreateAnnouncement></CreateAnnouncement>}></Route>
+            <Route path="/edit-announcement/:id" element={<EditAnnouncement></EditAnnouncement>}></Route>
+            <Route path="/apply/:id" element={<ApplyPage></ApplyPage>}></Route>
+            <Route path="/edit-apply/:id" element={<EditApplyPage></EditApplyPage>}></Route>
+            <Route path="/applicants" element={<CourseApplicantsPage></CourseApplicantsPage>}></Route>
+            <Route path="/application-of/:postId" element={<ApplicantsPage></ApplicantsPage>}></Route>
+            <Route path="/success" element={<SuccessPage></SuccessPage>}></Route>
+          </>
+        ) : (
+          <>
+            <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
+            <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
+          </>
+        )}
+      </Routes>
+    </>
   );
 }
 

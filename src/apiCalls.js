@@ -1,5 +1,6 @@
 import axios from "axios";
 import { async } from "q";
+import handleError from "./errors/GlobalErrorHandler.jsx"
 
 const url = window.location.href;
 var apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
@@ -22,11 +23,12 @@ async function applyToPost(postId, userID, answers) {
     bodyFormData.append("transcript", transcript);*/
     const results = await axios.post(
       apiEndpoint + "/applicationRequest",
-      {applicationId: postId, studentId: userID, answers: answers},
+      { applicationId: postId, studentId: userID, answers: answers },
       { headers: { "Content-Type": "application/json" } }
     );
     return results.data;
-  } catch (error) {}
+  } catch (error) { return handleError(error); }
+
 }
 
 async function getAnnouncement(id) {
@@ -36,8 +38,7 @@ async function getAnnouncement(id) {
     console.log(results);
     return results.data;
   } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error; // rethrow the error so the caller knows it failed
+    return handleError(error);
   }
 }
 
@@ -45,34 +46,42 @@ async function getAllAnnouncements() {
   try {
     const results = await axios.get(apiEndpoint + "/applications");
     return results.data;
-  } catch (error) {}
+  } catch (error) {
+    return handleError(error);
+  }
 }
 
 async function getAllInstructors() {
   try {
     const results = await axios.get(apiEndpoint + "/users/instructors");
     return results.data;
-  } catch (error) {}
+  } catch (error) {
+    return handleError(error);
+  }
 }
 
-async function getAllAnnouncementsOfInstructor(id){
+async function getAllAnnouncementsOfInstructor(id) {
   try {
     const results = await axios.get(apiEndpoint + "/applications/instructor/" + id);
     return results.data;
-  } catch (error) {}
+  } catch (error) {
+    return handleError(error);
+  }
 }
 
 async function getAllCourses() {
   try {
     const results = await axios.get(apiEndpoint + "/courses");
     return results.data;
-  } catch (error) {}
+  } catch (error) {
+    return handleError(error);
+  }
 }
 function formatDate(dateString) {
   const [year, month, day] = dateString.split('-');
   return `${day}/${month}/${year}`;
 }
-function addAnnouncement(
+async function addAnnouncement(
   course_code,
   username,
   lastApplicationDate,
@@ -89,38 +98,47 @@ function addAnnouncement(
   const faculty = "FENS";
   // const term = "Fall 2022";
   const title = "title add test";
-  const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime ;
+  const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
   const transformedQuestions = questions.map((question) => (
     question.mQuestion
-  //   {
-  //   type: question.mValue,
-  //   ranking: question.questionNumber,
-  //   question: question.mQuestion,
-  //   multiple_choices: question.mValue === "Multiple Choice" ? question.mMultiple : [],
-  // }
-  
+    //   {
+    //   type: question.mValue,
+    //   ranking: question.questionNumber,
+    //   question: question.mQuestion,
+    //   multiple_choices: question.mValue === "Multiple Choice" ? question.mMultiple : [],
+    // }
+
   ));
   console.log(letterGrade);
   const authInstructor_ids = auth_instructors.map(
     (user) => user.id
   );
 
-  axios.post(apiEndpoint + "/applications", {
-    //instructor_username: username,
-    //faculty: faculty,
-    courseCode: course_code,
-    //desired_courses: desired_courses,
-    lastApplicationDate:deadline,
-    term: term.term_desc,
-    //title: title,
-    weeklyWorkHours: "PT10H",
-    jobDetails: details,
-    authorizedInstructors: authInstructor_ids,
-    minimumRequiredGrade: letterGrade,
-    desiredCourseGrade: letterGrade,
-    questions: transformedQuestions,
-    previousCourseGrades: []
-  });
+  try {
+    const response = await axios.post(apiEndpoint + "/applications", {
+      //instructor_username: username,
+      //faculty: faculty,
+      courseCode: course_code,
+      //desired_courses: desired_courses,
+      lastApplicationDate: deadline,
+      term: term.term_desc,
+      //title: title,
+      weeklyWorkHours: "PT10H",
+      jobDetails: details,
+      authorizedInstructors: authInstructor_ids,
+      minimumRequiredGrade: letterGrade,
+      desiredCourseGrade: letterGrade,
+      questions: transformedQuestions,
+      previousCourseGrades: []
+    });
+
+    return response.data;
+    // Handle the successful response here
+  } catch (error) {
+
+    return handleError(error);
+    
+  }
 }
 
 function updateAnnouncement(
@@ -153,23 +171,27 @@ function updateAnnouncement(
   const authInstructor_ids = auth_instructors.map(
     (user) => user.id
   );
+  try {
+    axios.put(apiEndpoint + "/applications/" + id, {
+      //instructor_username: username,
+      //faculty: faculty,
+      courseCode: course_code,
+      minimumRequiredGrade: letterGrade,
+      //desired_courses: desired_courses,
+      lastApplicationDate: deadline,
+      term: term.term_desc,
+      //title: title,
+      weeklyWorkHours: "PT10H",
+      jobDetails: details,
+      authorizedInstructors: authInstructor_ids,
+      desiredCourseGrade: letterGrade,
+      questions: transformedQuestions,
+      previousCourseGrades: [],
+    });
+  } catch (error) {
+    return handleError(error)
+  }
 
-  axios.put(apiEndpoint + "/applications/" + id, {
-    //instructor_username: username,
-    //faculty: faculty,
-    courseCode: course_code,
-    minimumRequiredGrade: letterGrade,
-    //desired_courses: desired_courses,
-    lastApplicationDate: deadline,
-    term: term.term_desc,
-    //title: title,
-    weeklyWorkHours: "PT10H",
-    jobDetails: details,
-    authorizedInstructors: authInstructor_ids,
-    desiredCourseGrade: letterGrade,
-    questions: transformedQuestions,
-    previousCourseGrades: [],
-  });
 }
 
 async function getApplicationsByPost(postID) {
@@ -178,7 +200,8 @@ async function getApplicationsByPost(postID) {
       apiEndpoint + "/listPostApplication/" + postID
     );
     return results.data;
-  } catch (error) {}
+  } catch (error) { return handleError(error); }
+
 }
 
 async function getApplicationByUsername(username) {
@@ -187,7 +210,8 @@ async function getApplicationByUsername(username) {
       apiEndpoint + "/listStudentApplication/" + username
     );
     return results.data;
-  } catch (error) {}
+  } catch (error) { return handleError(error); }
+
 }
 
 async function getApplicationRequestsByStudentId(studentId) {
@@ -196,7 +220,8 @@ async function getApplicationRequestsByStudentId(studentId) {
       apiEndpoint + "/applicationRequest/student/" + studentId
     );
     return results.data;
-  } catch (error) {}
+  } catch (error) { return handleError(error); }
+
 }
 
 async function updateApplicationById(
@@ -226,7 +251,8 @@ async function updateApplicationById(
       bodyFormData, { headers: { "Content-Type": "multipart/form-data" } }
     );
     return results.data;
-  } catch (error) {}
+  } catch (error) { return handleError(error); }
+
 }
 
 async function validateLogin(serviceUrl, ticket) {
@@ -242,12 +268,11 @@ async function validateLogin(serviceUrl, ticket) {
       serviceUrl: serviceUrl,
       ticket: ticket,
     });
-    
+
     console.log(result.data);
     return result.data;
   } catch (error) {
-    console.error(error);
-    // Handle the error appropriately, e.g., show an error message to the user.
+    return handleError(error);
   }
 }
 
@@ -256,6 +281,7 @@ function isValidURL(url) {
     new URL(url);
     return true;
   } catch (error) {
+    //return handleError(error);
     return false;
   }
 }
@@ -267,16 +293,18 @@ async function getTranscript(applicationId) {
       responseType: 'blob'
     });
     return result.data;
-  } catch (error) {}
+  } catch (error) { return handleError(error); }
+
 }
 
 async function getTerms() {
   try {
     const result = await axios.get(apiEndpoint + "/terms", {
-      headers: { "Authorization":"Basic dGVybXNfYXBpOmF5WV8zNjZUYTE=" }
+      headers: { "Authorization": "Basic dGVybXNfYXBpOmF5WV8zNjZUYTE=" }
     });
     return result.data;
-  } catch (error) {}
+  } catch (error) { return handleError(error); }
+
 }
 
 async function logout(token) {
@@ -286,22 +314,22 @@ async function logout(token) {
     };
 
     const response = await axios.get(apiEndpoint + "/auth/logout", { headers });
-    
-    
+
+
     return response.data;
   } catch (error) {
-    console.error(error);
-    throw error; 
+    return handleError(error);
   }
 }
 
-async function postTranscript(formData){
-  try{
+async function postTranscript(formData) {
+  try {
     const result = await axios.post(apiEndpoint + "/transcript/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" }
     });
     return result.data;
-  } catch (error) {}
+  } catch (error) { return handleError(error); }
+
 }
 
 
