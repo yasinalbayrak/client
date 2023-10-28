@@ -77,8 +77,11 @@ const ApplyPage = (props) => {
     console.log(temp);
     applyToPost(id, state.user.id, []).then((res) => {
       console.log(res);
+      navigate("/success", { replace: true, state: { successText: "You have applied successfully." } });
+    }).catch((_)=>{
+      /* Already handled */
     });
-    navigate("/success", { replace: true, state: { successText: "You have applied successfully." } });
+    
   };
 
   console.log(state.user)
