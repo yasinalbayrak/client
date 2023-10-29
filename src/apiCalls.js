@@ -123,7 +123,7 @@ async function addAnnouncement(
       lastApplicationDate: deadline,
       term: term.term_desc,
       //title: title,
-      weeklyWorkHours: "PT10H",
+      weeklyWorkHours: workHours,
       jobDetails: details,
       authorizedInstructors: authInstructor_ids,
       minimumRequiredGrade: letterGrade,

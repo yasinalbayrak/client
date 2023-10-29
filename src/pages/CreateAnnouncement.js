@@ -26,18 +26,23 @@ function CreateAnnouncement() {
     { value: "B", label: "B" },
     { value: "B-", label: "B-" },
     { value: "C+", label: "C+" },
+    { value: "C", label: "C" },
+    { value: "C-", label: "C-" },
+    { value: "D", label: "D" },
   ];
   const WorkHour = [
-    { value: "5 Hours", label: "5 Hours" },
-    { value: "10 Hours", label: "10 Hours" },
+    { value: "PT1H", label: "1 Hour" },
+    { value: "PT2H", label: "2 Hours" },
+    { value: "PT3H", label: "3 Hours" },
+    { value: "PT4H", label: "4 Hours" },
+    { value: "PT5H", label: "5 Hours" },
+    { value: "PT6H", label: "6 Hours" },
+    { value: "PT7H", label: "7 Hours" },
+    { value: "PT8H", label: "8 Hours" },
+    { value: "PT9H", label: "9 Hours" },
+    { value: "PT10H", label: "10 Hours" },
   ];
-  // const authUsers = [
-  //   { display_name: "Murat Karaca", username: "muratkaraca" },
-  //   { display_name: "Taner Dincer", username: "tanerd" },
-  //   { display_name: "Melih Gursoy", username: "melihg" },
-  //   { display_name: "Baha Ersoy", username: "bersoy" },
-  //   { display_name: "Cem Kaya", username: "cemkaya" },
-  // ]
+  
 
   const userName = useSelector((state) => state.user.username);
 

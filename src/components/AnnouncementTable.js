@@ -15,7 +15,11 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { getAllAnnouncementsOfInstructor, getApplicationByUsername, getApplicationRequestsByStudentId } from "../apiCalls";
+import {
+  getAllAnnouncementsOfInstructor,
+  getApplicationByUsername,
+  getApplicationRequestsByStudentId,
+} from "../apiCalls";
 import { Tooltip } from "@mui/material";
 
 function AnnouncementTable(props) {
@@ -27,35 +31,47 @@ function AnnouncementTable(props) {
   const term = useSelector((state) => state.user.term);
   //const userDisplayName = useSelector((state) => state.user.name);
   //const userDisplayName = "Instructor One" //mock data
-  const userName = useSelector((state) => state.user.name + " " + state.user.surname);
+  const userName = useSelector(
+    (state) => state.user.name + " " + state.user.surname
+  );
   const userID = useSelector((state) => state.user.id);
   const [instructorApplications, setInstructorApplications] = useState([]);
   const [userApplications, setUserApplications] = useState([]);
 
   useEffect(() => {
-      const modifiedRows = props.rows.map((row) => {
+    const modifiedRows = props.rows.map((row) => {
       //Split the instructor_name string by comma
       console.log(row);
       const [lastName, firstName] = [
-        row.authorizedInstructors[0]==null ?"" : row.authorizedInstructors[0].user.surname,
-        row.authorizedInstructors[0]==null ?"no instructor assigned yet" :row.authorizedInstructors[0].user.name,
+        row.authorizedInstructors[0] == null
+          ? ""
+          : row.authorizedInstructors[0].user.surname,
+        row.authorizedInstructors[0] == null
+          ? "no instructor assigned yet"
+          : row.authorizedInstructors[0].user.name,
       ];
-      const formattedFirstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
-      const formattedLastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
+      const formattedFirstName =
+        firstName.charAt(0).toUpperCase() + firstName.slice(1);
+      const formattedLastName =
+        lastName.charAt(0).toUpperCase() + lastName.slice(1);
       // Rearrange the name format
-      const modifiedInstructorName = formattedFirstName.trim() + " " + formattedLastName.trim();
+      const modifiedInstructorName =
+        formattedFirstName.trim() + " " + formattedLastName.trim();
 
+      const workTime = row.weeklyWorkHours;
+      const slicedHour = workTime.slice(2);
+      const modifiedWorkHour = slicedHour.slice(0, -1);
 
-      const workTime= row.weeklyWorkHours;
-      const slicedHour= workTime.slice(2);
-      const modifiedWorkHour=slicedHour.slice(0,-1);
-      
+      const notSpacedCourse= row.course.courseCode;
+      const spacedCourse= notSpacedCourse.replace(/([A-Z]+)(\d+)/g, '$1 $2');
+
 
       // Return the modified row object
       return {
         ...row,
-        weeklyWorkingTime:modifiedWorkHour,
+        weeklyWorkingTime: modifiedWorkHour,
         instructor_name: modifiedInstructorName,
+        modifiedCourseCode:spacedCourse,
       };
     });
     console.log(modifiedRows);
@@ -64,65 +80,79 @@ function AnnouncementTable(props) {
   }, [props.rows]);
 
   useEffect(() => {
-    console.log("\n\n\n\n\ENTERED\n\n\n\n")
-    var userApps = null;
-    if (!isInstructor) {
-      getApplicationRequestsByStudentId(userID)
-        .then((data) => {
-          // Update the state with the retrieved user applications
-          setStudentApplications(data);
-          setUserApplications(data);
-          userApps = data
-        })
-        .catch((error) => {
-          // Handle any errors that occur during the API call
-          console.error("Failed to fetch user applications:", error);
-        });
-    }
-    else{
-        getAllAnnouncementsOfInstructor(userID)
-        .then((data) => {
-          // Update the state with the retrieved user applications
-          setInstructorApplications(data);
-          setUserApplications(data);
-          userApps = data
-        })
-        .catch((error) => {
-          // Handle any errors that occur during the API call
-          console.error("Failed to fetch user applications:", error);
-        });
-    }
-   
-      const userAppModify = userApps?.map((userApplication) => {
-      const workTime= userApplication.weeklyWorkHours;
-      const slicedHour= workTime.slice(2);
-      const modifiedWorkHour=slicedHour.slice(0,-1);
-      console.log(modifiedWorkHour);//buraya doğru döndü
+    console.log("\n\n\n\nENTERED\n\n\n\n");
 
-      if(isInstructor){
-        return {
-          ...userApplication,
-          weeklyWorkingTime: userApplication?.weeklyWorkHours?.slice(2).slice(0,-1),
-          instructor_name: userApplication?.authorizedInstructors[0]?.user?.name + " " + userApplication?.authorizedInstructors[0]?.user?.surname,
-        };
+    async function fetchData() {
+      var userApps = null;
+      try {
+        if (!isInstructor) {
+          const data = await getApplicationRequestsByStudentId(userID);
+          setStudentApplications(data);
+          userApps = data;
+        } else {
+          const data = await getAllAnnouncementsOfInstructor(userID);
+          console.log("DEBU4444\n\n\n\n:");
+          console.log(data);
+          setInstructorApplications(data);
+          userApps = data;
+        }
+        console.log("DEBU222222\n\n\n\n:");
+        console.log(userApps);
+      } catch (error) {
+        console.error("Failed to fetch user applications:", error);
       }
-      else{
-        return {
-          ...userApplication,
-          weeklyWorkingTime:modifiedWorkHour,
-          instructor_name: userApplication?.application?.authorizedInstructors[0]?.user?.name + " " + userApplication?.application?.authorizedInstructors[0]?.user?.surname,
-        };
-      }
+      const userAppModify = userApps?.map((userApplication) => {
+        const workTime = userApplication.weeklyWorkHours;
+        const slicedHour = workTime.slice(2);
+        const modifiedWorkHour = slicedHour.slice(0, -1);
+        console.log(modifiedWorkHour); //buraya doğru döndü
+        const [lastName, firstName] = [
+          userApplication.authorizedInstructors[0] == null
+            ? ""
+            : userApplication.authorizedInstructors[0].user.surname,
+            userApplication.authorizedInstructors[0] == null
+            ? "no instructor assigned yet"
+            : userApplication.authorizedInstructors[0].user.name,
+        ];
+        const formattedFirstName =
+          firstName.charAt(0).toUpperCase() + firstName.slice(1);
+        const formattedLastName =
+          lastName.charAt(0).toUpperCase() + lastName.slice(1);
+        // Rearrange the name format
+        const modifiedInstructorName =
+          formattedFirstName.trim() + " " + formattedLastName.trim();
+
+        const notSpacedCourse= userApplication.course.courseCode;
+        const spacedCourse= notSpacedCourse.replace(/([A-Z]+)(\d+)/g, '$1 $2');
+
+
+        if (isInstructor) {
+          return {
+            ...userApplication,
+            weeklyWorkingTime: modifiedWorkHour,
+            instructor_name: modifiedInstructorName,
+            modifiedCourseCode:spacedCourse,
+          };
+        } else {
+          return {
+            ...userApplication,
+            weeklyWorkingTime: modifiedWorkHour,
+            instructor_name: modifiedInstructorName,
+            modifiedCourseCode:spacedCourse,
+          };
+        }
       });
-      console.log("DEBUGGGG\n\n\n\n:");console.log( userAppModify);
-      setUserApplications(userAppModify)
-  }, [isInstructor, userName, term, userID]);
+      console.log("DEBUGGGG\n\n\n\n:");
+      console.log(userAppModify);
+      setUserApplications(userAppModify);
+    }
+
+    fetchData();
+  }, [isInstructor, userName, term, userID, tabValue]);
 
   useEffect(() => {
     setTabValue(props.tabValue);
   }, [props.tabValue]);
-
-  
 
   const [open, setOpen] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
@@ -146,87 +176,350 @@ function AnnouncementTable(props) {
         </TableHead>
         {isInstructor ? (
           <TableBody>
-            
-            {// *************for instructor when tabValue is 0 **********************
-            tabValue === 0 &&rows ? ( rows 
-              .map((row, index) => (
-                <TableRow
-                  key={index + 1}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  {/* { <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+            {
+              // *************for instructor when tabValue is 0 **********************
+              tabValue === 0 && rows
+                ? rows.map((row, index) => (
+                    <TableRow
+                      key={index + 1}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      {/* { <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
                     {row.title}
                   </TableCell>} */}
-                  <TableCell
-                    sx={{ borderBottom: "none" }}
-                    component="th"
-                    scope="row"
-                  >
-                    {row.course.courseCode}
-                  </TableCell>
-                  <TableCell
-                    sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
-                    align="left"
-                  >
-                    {row.instructor_name}
-                  </TableCell>
-                  <TableCell sx={{ borderBottom: "none" }} align="left">
-                    {row.lastApplicationDate ? (
-                      <>
-                        {new Date(row.lastApplicationDate).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}{" "}
-                        /{" "}
-                        {new Date(row.lastApplicationDate).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </>
-                    ) : (
-                      "N/A"
-                    )}
-                  </TableCell>
-                  <TableCell
-                    sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
-                    align="left"
-                  >
-                    {row.minimumRequiredGrade}
-                  </TableCell>
-                  <TableCell
-                    sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
-                    align="left"
-                  >
-                    {row.weeklyWorkingTime}
-                  </TableCell>
-                  <TableCell sx={{ borderBottom: "none" }} align="left">
-                    {row.jobDetails}
-                  </TableCell>
-                  <TableCell
-                    sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
-                    align="center"
-                  >
-                    {(row.instructor_name!=="no instructor assigned yet " && row.instructor_name.toLowerCase() === userName.toLowerCase()) && 
-                    (
-                      <Button
-                        variant="contained"
-                        onClick={() =>
-                          navigate("/edit-announcement/" + row.applicationId, {
-                            replace: true,
-                          })
-                        }
-                        startIcon={<EditIcon />}
+                      <TableCell
+                        sx={{ borderBottom: "none" }}
+                        component="th"
+                        scope="row"
                       >
-                        Edit
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))) :
-              
-              // *************for instructor when tabValue is 1 **********************
-              ( userApplications &&
+                        {row.modifiedCourseCode}
+                      </TableCell>
+                      <TableCell
+                        sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                        align="left"
+                      >
+                        {row.instructor_name}
+                      </TableCell>
+                      <TableCell sx={{ borderBottom: "none" }} align="left">
+                        {row.lastApplicationDate ? (
+                          <>
+                            {new Date(
+                              row.lastApplicationDate
+                            ).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })}{" "}
+                            /{" "}
+                            {new Date(
+                              row.lastApplicationDate
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </>
+                        ) : (
+                          "N/A"
+                        )}
+                      </TableCell>
+                      <TableCell
+                        sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                        align="left"
+                      >
+                        {row.minimumRequiredGrade}
+                      </TableCell>
+                      <TableCell
+                        sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                        align="left"
+                      >
+                        {row.weeklyWorkingTime}
+                      </TableCell>
+                      <TableCell sx={{ borderBottom: "none" }} align="left">
+                        {row.jobDetails}
+                      </TableCell>
+                      <TableCell
+                        sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                        align="center"
+                      >
+                        {row.instructor_name !==
+                          "no instructor assigned yet " &&
+                          row.instructor_name.toLowerCase() ===
+                            userName.toLowerCase() && (
+                            <Button
+                              variant="contained"
+                              onClick={() =>
+                                navigate(
+                                  "/edit-announcement/" + row.applicationId,
+                                  {
+                                    replace: true,
+                                  }
+                                )
+                              }
+                              startIcon={<EditIcon />}
+                            >
+                              Edit
+                            </Button>
+                          )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : // *************for instructor when tabValue is 1 **********************
+                  userApplications &&
+                  userApplications.map((userApplication, index) => (
+                    <TableRow
+                      key={index + 1}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+          {row.title}
+
+        </TableCell> */}
+
+                      <TableCell
+                        sx={{ borderBottom: "none" }}
+                        component="th"
+                        scope="row"
+                      >
+                        {userApplication.modifiedCourseCode}
+                      </TableCell>
+                      <TableCell
+                        sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                        align="left"
+                      >
+                        {userApplication?.instructor_name}
+                      </TableCell>
+
+                      <TableCell sx={{ borderBottom: "none" }} align="left">
+                        {userApplication?.lastApplicationDate ? (
+                          <>
+                            {new Date(
+                              userApplication.lastApplicationDate
+                            ).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })}{" "}
+                            /{" "}
+                            {new Date(
+                              userApplication.lastApplicationDate
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </>
+                        ) : (
+                          "N/A"
+                        )}
+                      </TableCell>
+                      <TableCell
+                        sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                        align="left"
+                      >
+                        {userApplication.minimumRequiredGrade}
+                      </TableCell>
+                      <TableCell
+                        sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                        align="left"
+                      >
+                        {userApplication.weeklyWorkingTime}
+                      </TableCell>
+                      <TableCell sx={{ borderBottom: "none" }} align="left">
+                        {userApplication.jobDetails}
+                      </TableCell>
+                      <TableCell
+                        sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                        align="center"
+                      >
+                        <Button
+                          variant="contained"
+                          onClick={() =>
+                            navigate(
+                              "/edit-announcement/" +
+                                userApplication.applicationId,
+                              {
+                                replace: true,
+                              }
+                            )
+                          }
+                          startIcon={<EditIcon />}
+                        >
+                          Edit
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+            }
+          </TableBody>
+        ) : (
+          //************************* */
+          <TableBody>
+            {tabValue === 0 && rows
+              ? rows
+                  // *************for student when tabValue is 0 **********************
+
+                  /*.filter((row) =>
+                tabValue === 1
+                  ? studentApplications.some(
+                      (studentApplication) =>
+                        row.id === studentApplication.post_id
+                    ) && term == row.term
+                  : term == row.term
+              ) */ //to be continued, student'in hangi posta kayıt oldugu lazim (belki vardır)
+                  .map((row, index) => (
+                    <TableRow
+                      key={index + 1}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+                    {row.title}
+                  </TableCell> */}
+                      <TableCell
+                        sx={{ borderBottom: "none" }}
+                        component="th"
+                        scope="row"
+                      >
+                        {row.modifiedCourseCode}
+                      </TableCell>
+                      <TableCell
+                        sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                        align="left"
+                      >
+                        {row.instructor_name}
+                      </TableCell>
+                      <TableCell sx={{ borderBottom: "none" }} align="left">
+                        {row.lastApplicationDate ? (
+                          <>
+                            {new Date(
+                              row.lastApplicationDate
+                            ).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })}{" "}
+                            /{" "}
+                            {new Date(
+                              row.lastApplicationDate
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </>
+                        ) : (
+                          "N/A"
+                        )}
+                      </TableCell>
+                      <TableCell
+                        sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
+                        align="left"
+                      >
+                        {row.minimumRequiredGrade}
+                      </TableCell>
+                      <TableCell sx={{ borderBottom: "none" }} align="left">
+                        {row.weeklyWorkingTime}
+                      </TableCell>
+                      {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
+                    {row.description}
+                  </TableCell> */}
+                      <TableCell
+                        sx={{
+                          bgcolor: "#FAFAFA",
+                          borderBottom: "none",
+                          maxWidth: "300px",
+                        }}
+                        align="left"
+                      >
+                        {row.jobDetails.length > 100 ? (
+                          <>
+                            {selectedDescription === row.id ? (
+                              <Dialog
+                                open={open}
+                                onClose={() => {
+                                  setOpen(false);
+                                  setSelectedDescription("");
+                                }}
+                                BackdropProps={{
+                                  onClick: (event) => event.stopPropagation(), // Prevent closing when clicking on backdrop
+                                }}
+                              >
+                                <DialogTitle>Details</DialogTitle>
+                                <DialogContent>
+                                  {row.jobDetails}
+                                  <IconButton
+                                    aria-label="close"
+                                    onClick={() => {
+                                      setOpen(false);
+                                      setSelectedDescription("");
+                                    }}
+                                    sx={{
+                                      position: "absolute",
+                                      top: 8,
+                                      right: 8,
+                                    }}
+                                  >
+                                    <CloseIcon />
+                                  </IconButton>
+                                </DialogContent>
+                              </Dialog>
+                            ) : (
+                              <>
+                                {row.jobDetails.substr(0, 100)}...
+                                <Button
+                                  onClick={() => {
+                                    setOpen(true);
+                                    setSelectedDescription(row.id);
+                                  }}
+                                >
+                                  Show More
+                                </Button>
+                              </>
+                            )}
+                          </>
+                        ) : (
+                          row.jobDetails
+                        )}
+                      </TableCell>
+                      <TableCell sx={{ borderBottom: "none" }} align="center">
+                        {tabValue === 0
+                          ? //!studentApplications.find((o) => o.post_id === row.id)
+                            new Date(row.lastApplicationDate) > new Date() && (
+                              <Button
+                                variant="contained"
+                                onClick={() =>
+                                  navigate("/apply/" + row.applicationId, {
+                                    replace: true,
+                                  })
+                                }
+                              >
+                                Apply
+                              </Button>
+                            )
+                          : new Date(row.lastApplicationDate) > new Date() && (
+                              <Tooltip
+                                title="Edit your existing application."
+                                enterDelay={500}
+                                leaveDelay={200}
+                              >
+                                <Button
+                                  variant="contained"
+                                  onClick={() =>
+                                    navigate(
+                                      "/edit-apply/" + row.applicationId,
+                                      {
+                                        replace: true,
+                                      }
+                                    )
+                                  }
+                                  endIcon={<EditIcon />}
+                                >
+                                  Edit
+                                </Button>
+                              </Tooltip>
+                            )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+              : // *************for student when tabValue is 1**************
+                studentApplications &&
                 userApplications.map((userApplication, index) => (
                   <TableRow
                     key={index + 1}
@@ -242,269 +535,29 @@ function AnnouncementTable(props) {
                       component="th"
                       scope="row"
                     >
-                      {userApplication.course.courseCode}
+                      {userApplication?.application.modifiedCourseCode}
                     </TableCell>
                     <TableCell
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                       align="left"
                     >
-                      {userApplication?.instructor_name?? userApplication?.authorizedInstructors[0].user.name + " " + userApplication?.authorizedInstructors[0].user.surname}
-                    </TableCell>
-
-                    <TableCell sx={{ borderBottom: "none" }} align="left">
-                      {userApplication?.lastApplicationDate ? (
-                        <>
-                          {new Date(userApplication.lastApplicationDate).toLocaleDateString("en-GB", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })}{" "}
-                          /{" "}
-                          {new Date(userApplication.lastApplicationDate).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </>
-                      ) : (
-                        "N/A"
-                      )}
-                    </TableCell>
-                    <TableCell
-                      sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
-                      align="left"
-                    >
-                      {userApplication.minimumRequiredGrade}
-                    </TableCell>
-                    <TableCell
-                      sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
-                      align="left"
-                    >
-                      {
-                        userApplication.weeklyWorkHours? userApplication.weeklyWorkHours.slice(2).slice(0,-1) : userApplication.weeklyWorkingTime
-                      }
-                    </TableCell>
-                    <TableCell sx={{ borderBottom: "none" }} align="left">
-                      {userApplication.jobDetails}
-                    </TableCell>
-                    <TableCell
-                      sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
-                      align="center"
-                    >
-                      
-                        <Button
-                          variant="contained"
-                          onClick={() =>
-                            navigate("/edit-announcement/" + userApplication.applicationId, {
-                              replace: true,
-                            })
-                          }
-                          startIcon={<EditIcon />}
-                        >
-                          Edit
-                        </Button>
-                      
-                    </TableCell>
-                  </TableRow>
-                )))
-            }
-          </TableBody>
-        ) :
-        //************************* */
-        (
-          <TableBody>
-            {tabValue === 0 && rows ? ( rows
-            // *************for student when tabValue is 0 **********************
-
-              /*.filter((row) =>
-                tabValue === 1
-                  ? studentApplications.some(
-                      (studentApplication) =>
-                        row.id === studentApplication.post_id
-                    ) && term == row.term
-                  : term == row.term
-              ) *///to be continued, student'in hangi posta kayıt oldugu lazim (belki vardır)
-              .map((row, index) => (
-                <TableRow
-                  key={index + 1}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
-                    {row.title}
-                  </TableCell> */}
-                  <TableCell
-                    sx={{ borderBottom: "none" }}
-                    component="th"
-                    scope="row"
-                  >
-                    {row.course.courseCode}
-                  </TableCell>
-                  <TableCell
-                    sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
-                    align="left"
-                  >
-                    {row.instructor_name}
-                  </TableCell>
-                  <TableCell sx={{ borderBottom: "none" }} align="left">
-                    {row.lastApplicationDate ? (
-                      <>
-                        {new Date(row.lastApplicationDate).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}{" "}
-                        /{" "}
-                        {new Date(row.lastApplicationDate).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </>
-                    ) : (
-                      "N/A"
-                    )}
-                  </TableCell>
-                  <TableCell
-                    sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
-                    align="left"
-                  >
-                    {row.minimumRequiredGrade}
-                  </TableCell>
-                  <TableCell sx={{ borderBottom: "none" }} align="left">
-                    {row.weeklyWorkingTime}
-                  </TableCell>
-                  {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
-                    {row.description}
-                  </TableCell> */}
-                  <TableCell
-                    sx={{
-                      bgcolor: "#FAFAFA",
-                      borderBottom: "none",
-                      maxWidth: "300px",
-                    }}
-                    align="left"
-                  >
-                    {row.jobDetails.length > 100 ? (
-                      <>
-                        {selectedDescription === row.id ? (
-                          <Dialog
-                            open={open}
-                            onClose={() => {
-                              setOpen(false);
-                              setSelectedDescription("");
-                            }}
-                            BackdropProps={{
-                              onClick: (event) => event.stopPropagation(), // Prevent closing when clicking on backdrop
-                            }}
-                          >
-                            <DialogTitle>Details</DialogTitle>
-                            <DialogContent>
-                              {row.jobDetails}
-                              <IconButton
-                                aria-label="close"
-                                onClick={() => {
-                                  setOpen(false);
-                                  setSelectedDescription("");
-                                }}
-                                sx={{ position: "absolute", top: 8, right: 8 }}
-                              >
-                                <CloseIcon />
-                              </IconButton>
-                            </DialogContent>
-                          </Dialog>
-                        ) : (
-                          <>
-                            {row.jobDetails.substr(0, 100)}...
-                            <Button
-                              onClick={() => {
-                                setOpen(true);
-                                setSelectedDescription(row.id);
-                              }}
-                            >
-                              Show More
-                            </Button>
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      row.jobDetails
-                    )}
-                  </TableCell>
-                  <TableCell sx={{ borderBottom: "none" }} align="center">
-                    {tabValue === 0
-                      ? //!studentApplications.find((o) => o.post_id === row.id)
-                         new Date(row.lastApplicationDate) > new Date() && (
-                            <Button
-                              variant="contained"
-                              onClick={() =>
-                                navigate("/apply/" + row.applicationId, { replace: true })
-                              }
-                            >
-                              Apply
-                            </Button>
-                          )
-                        : new Date(row.lastApplicationDate) > new Date() && (
-                            <Tooltip
-                              title="Edit your existing application."
-                              enterDelay={500}
-                              leaveDelay={200}
-                            >
-                              <Button
-                                variant="contained"
-                                onClick={() =>
-                                  navigate("/edit-apply/" + row.applicationId, {
-                                    replace: true,
-                                  })
-                                }
-                                endIcon={<EditIcon />}
-                              >
-                                Edit
-                              </Button>
-                            </Tooltip>
-                          )
-                              }
-                              
-                              
-                  </TableCell>
-                </TableRow>
-              ))):
-              // *************for student when tabValue is 1**************
-              (
-                studentApplications &&
-        
-                  userApplications
-                .map((userApplication, index) => (
-                  <TableRow
-                    key={index + 1}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
-          {row.title}
-
-        </TableCell> */}
-
-                    <TableCell
-                      sx={{ borderBottom: "none" }}
-                      component="th"
-                      scope="row"
-                    >
-                      {userApplication?.application.course.courseCode}
-                    </TableCell>
-                    <TableCell
-                      sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
-                      align="left"
-                    >
-                      {userApplication?.instructor_name?? userApplication?.application?.authorizedInstructors[0]?.user?.name + " " + userApplication?.application?.authorizedInstructors[0]?.user?.surname}
+                      {userApplication?.application.instructor_name}
                     </TableCell>
 
                     <TableCell sx={{ borderBottom: "none" }} align="left">
                       {userApplication?.application.lastApplicationDate ? (
                         <>
-                          {new Date(userApplication?.application.lastApplicationDate).toLocaleDateString("en-GB", {
+                          {new Date(
+                            userApplication?.application.lastApplicationDate
+                          ).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "2-digit",
                             year: "numeric",
                           })}{" "}
                           /{" "}
-                          {new Date(userApplication?.application.lastApplicationDate).toLocaleTimeString([], {
+                          {new Date(
+                            userApplication?.application.lastApplicationDate
+                          ).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
@@ -520,8 +573,7 @@ function AnnouncementTable(props) {
                       {userApplication?.application.minimumRequiredGrade}
                     </TableCell>
                     <TableCell sx={{ borderBottom: "none" }} align="left">
-                      {userApplication?.application.weeklyWorkHours? userApplication.application.weeklyWorkHours.slice(2).slice(0,-1) : userApplication.application.weeklyWorkingTime}
-                      //userApplication.weeklyWorkHours? userApplication.weeklyWorkHours.slice(2).slice(0,-1) : userApplication.weeklyWorkingTime
+                      {userApplication?.application.weeklyWorkingTime}
                     </TableCell>
                     {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
           {row.description}
@@ -536,11 +588,10 @@ function AnnouncementTable(props) {
                       }}
                       align="left"
                     >
-
                       {userApplication?.application.jobDetails.length > 100 ? (
                         <>
-
-                          {selectedDescription === userApplication?.application.id ? (
+                          {selectedDescription ===
+                          userApplication?.application.id ? (
                             <Dialog
                               open={open}
                               onClose={() => {
@@ -560,7 +611,11 @@ function AnnouncementTable(props) {
                                     setOpen(false);
                                     setSelectedDescription("");
                                   }}
-                                  sx={{ position: "absolute", top: 8, right: 8 }}
+                                  sx={{
+                                    position: "absolute",
+                                    top: 8,
+                                    right: 8,
+                                  }}
                                 >
                                   <CloseIcon />
                                 </IconButton>
@@ -568,11 +623,17 @@ function AnnouncementTable(props) {
                             </Dialog>
                           ) : (
                             <>
-                              {userApplication?.application.jobDetails.substr(0, 100)}...
+                              {userApplication?.application.jobDetails.substr(
+                                0,
+                                100
+                              )}
+                              ...
                               <Button
                                 onClick={() => {
                                   setOpen(true);
-                                  setSelectedDescription(userApplication?.application.id);
+                                  setSelectedDescription(
+                                    userApplication?.application.id
+                                  );
                                 }}
                               >
                                 Show More
@@ -585,44 +646,33 @@ function AnnouncementTable(props) {
                       )}
                     </TableCell>
 
-                   
-
-                      
-
-                  <Button
-                    variant="contained"
-                    key={userApplication?.applicationRequestId}
-                    style={{
-                      textDecoration: "none",
-                      backgroundColor:
-                        userApplication?.status === "ACCEPTED"
-                          ? "green"
-                          : userApplication?.status === "REJECTED"
-                          ? "red"
-                          : "orange",
-                      color: "white",
-                      pointerEvents: "none",
-                      cursor: "default",
-                    }}
-                  >
-                    {userApplication?.status.toLowerCase() ===
-                      "in_progress"
-                      ? "In Progress"
-                      : userApplication?.status}
-                  </Button>
+                    <Button
+                      variant="contained"
+                      key={userApplication?.applicationRequestId}
+                      style={{
+                        textDecoration: "none",
+                        backgroundColor:
+                          userApplication?.status === "ACCEPTED"
+                            ? "green"
+                            : userApplication?.status === "REJECTED"
+                            ? "red"
+                            : "orange",
+                        color: "white",
+                        pointerEvents: "none",
+                        cursor: "default",
+                      }}
+                    >
+                      {userApplication?.status.toLowerCase() === "in_progress"
+                        ? "In Progress"
+                        : userApplication?.status}
+                    </Button>
                   </TableRow>
-                
-              )))}
+                ))}
           </TableBody>
         )}
-
-        
-
       </Table>
     </TableContainer>
   );
 }
 
 export default AnnouncementTable;
-
-
