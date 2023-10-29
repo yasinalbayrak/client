@@ -33,7 +33,7 @@ function AnnouncementTable(props) {
   const [userApplications, setUserApplications] = useState([]);
 
   useEffect(() => {
-    const modifiedRows = props.rows.map((row) => {
+      const modifiedRows = props.rows.map((row) => {
       //Split the instructor_name string by comma
       console.log(row);
       const [lastName, firstName] = [
@@ -47,7 +47,6 @@ function AnnouncementTable(props) {
 
 
       const workTime= row.weeklyWorkHours;
-      
       const slicedHour= workTime.slice(2);
       const modifiedWorkHour=slicedHour.slice(0,-1);
       
@@ -65,12 +64,15 @@ function AnnouncementTable(props) {
   }, [props.rows]);
 
   useEffect(() => {
+    console.log("\n\n\n\n\ENTERED\n\n\n\n")
+    var userApps = null;
     if (!isInstructor) {
       getApplicationRequestsByStudentId(userID)
         .then((data) => {
           // Update the state with the retrieved user applications
           setStudentApplications(data);
           setUserApplications(data);
+          userApps = data
         })
         .catch((error) => {
           // Handle any errors that occur during the API call
@@ -83,28 +85,36 @@ function AnnouncementTable(props) {
           // Update the state with the retrieved user applications
           setInstructorApplications(data);
           setUserApplications(data);
+          userApps = data
         })
         .catch((error) => {
           // Handle any errors that occur during the API call
           console.error("Failed to fetch user applications:", error);
         });
     }
+   
+      const userAppModify = userApps?.map((userApplication) => {
+      const workTime= userApplication.weeklyWorkHours;
+      const slicedHour= workTime.slice(2);
+      const modifiedWorkHour=slicedHour.slice(0,-1);
+      console.log(modifiedWorkHour);//buraya doğru döndü
 
-    const userAppModify = userApplications?.map((userApplication) => {
       if(isInstructor){
         return {
           ...userApplication,
+          weeklyWorkingTime: userApplication?.weeklyWorkHours?.slice(2).slice(0,-1),
           instructor_name: userApplication?.authorizedInstructors[0]?.user?.name + " " + userApplication?.authorizedInstructors[0]?.user?.surname,
         };
       }
       else{
         return {
           ...userApplication,
+          weeklyWorkingTime:modifiedWorkHour,
           instructor_name: userApplication?.application?.authorizedInstructors[0]?.user?.name + " " + userApplication?.application?.authorizedInstructors[0]?.user?.surname,
         };
       }
       });
-      console.log(userAppModify);
+      console.log("DEBUGGGG\n\n\n\n:");console.log( userAppModify);
       setUserApplications(userAppModify)
   }, [isInstructor, userName, term, userID]);
 
@@ -112,7 +122,7 @@ function AnnouncementTable(props) {
     setTabValue(props.tabValue);
   }, [props.tabValue]);
 
-  //console.log(studentApplications[0].post_id);
+  
 
   const [open, setOpen] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
@@ -216,7 +226,7 @@ function AnnouncementTable(props) {
               ))) :
               
               // *************for instructor when tabValue is 1 **********************
-              (instructorApplications && userApplications &&
+              ( userApplications &&
                 userApplications.map((userApplication, index) => (
                   <TableRow
                     key={index + 1}
@@ -232,7 +242,7 @@ function AnnouncementTable(props) {
                       component="th"
                       scope="row"
                     >
-                      {userApplication?.course.courseCode}
+                      {userApplication.course.courseCode}
                     </TableCell>
                     <TableCell
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
@@ -269,7 +279,9 @@ function AnnouncementTable(props) {
                       sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }}
                       align="left"
                     >
-                      {userApplication.weeklyWorkingTime}
+                      {
+                        userApplication.weeklyWorkHours? userApplication.weeklyWorkHours.slice(2).slice(0,-1) : userApplication.weeklyWorkingTime
+                      }
                     </TableCell>
                     <TableCell sx={{ borderBottom: "none" }} align="left">
                       {userApplication.jobDetails}
@@ -508,7 +520,8 @@ function AnnouncementTable(props) {
                       {userApplication?.application.minimumRequiredGrade}
                     </TableCell>
                     <TableCell sx={{ borderBottom: "none" }} align="left">
-                      {userApplication?.application.weeklyWorkingTime}
+                      {userApplication?.application.weeklyWorkHours? userApplication.application.weeklyWorkHours.slice(2).slice(0,-1) : userApplication.application.weeklyWorkingTime}
+                      //userApplication.weeklyWorkHours? userApplication.weeklyWorkHours.slice(2).slice(0,-1) : userApplication.weeklyWorkingTime
                     </TableCell>
                     {/* <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxLines: 1}} align="left">
           {row.description}
