@@ -85,7 +85,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-function Sidebar({setValue}) {
+function Sidebar({ setValue }) {
   const theme = useTheme();
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
   const [listOpen, setListOpen] = React.useState(true);
@@ -124,9 +124,13 @@ function Sidebar({setValue}) {
   useEffect(() => {
     getTerms().then((res) => {
       setAllTerms(res)
-      
-      if(res.length > 0)
+
+      if (res.length > 0){
         dispatch(setTerm({ term: res[0] }));
+        setTermSelect( res[0] )
+      }
+    }).catch(() => {
+      /* Already Handled */
     });
   }, [])
 
@@ -226,35 +230,14 @@ function Sidebar({setValue}) {
               >
                 {
                   allTerms.map((term) => (
-                    <MenuItem key={term.term_code} value={term.term_desc}>
+                    <MenuItem key={term.term_code} value={term}>
                       {term.term_desc}
                     </MenuItem>
                   ))
                 }
-
-                {/* <MenuItem value="Fall 2022/23">Fall 2022/23</MenuItem>
-                <MenuItem value="Spring 2022/23">Spring 2022/23</MenuItem>
-                <MenuItem value="Summer 2022/23">Summer 2022/23</MenuItem>
-                <MenuItem value="Fall 2023/24">Fall 2023/24</MenuItem>
-                <MenuItem value="Spring 2023/24">Spring 2023/24</MenuItem>
-                <MenuItem value="Summer 2023/24">Summer 2023/24</MenuItem>
-                <MenuItem value="Fall 2024/25">Fall 2024/25</MenuItem>
-                <MenuItem value="Spring 2024/25">Spring 2024/25</MenuItem>
-                <MenuItem value="Summer 2024/25">Summer 2024/25</MenuItem> */}
               </Select>
             </FormControl>
           </Box>
-          {/* <Button
-            sx={{ backgroundColor: "#394263", color: "white", borderColor: "white", marginLeft: "auto" }}
-            variant="outlined"
-            onClick={(e) => {
-              dispatch(switchIsInstructor());
-              navigate("/home", { replace: true });
-            }}
-          >
-            Switch between Ins-Stu
-          </Button> */}
-
 
           <Button
             sx={{
@@ -276,8 +259,6 @@ function Sidebar({setValue}) {
             variant="contained"
             onClick={handleLogout}
           />
-
-
 
         </Toolbar>
       </AppBar>
@@ -380,7 +361,7 @@ function Sidebar({setValue}) {
               </ListItem>
               {isInstructor && (
                 <ListItem sx={{ padding: "0px" }}>
-                  <ListItemButton as={Link} to="/applicants"  style={{ textDecoration: "none", color: "white" }}>
+                  <ListItemButton as={Link} to="/applicants" style={{ textDecoration: "none", color: "white" }}>
                     <ListItemText primary={"- Check Applications"} sx={{ textAlign: "center" }} />
                   </ListItemButton>
                 </ListItem>
