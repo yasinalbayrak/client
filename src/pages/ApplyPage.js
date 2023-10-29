@@ -78,10 +78,10 @@ const ApplyPage = (props) => {
     applyToPost(id, state.user.id, []).then((res) => {
       console.log(res);
       navigate("/success", { replace: true, state: { successText: "You have applied successfully." } });
-    }).catch((_)=>{
+    }).catch((_) => {
       /* Already handled */
     });
-    
+
   };
 
   console.log(state.user)
@@ -142,7 +142,7 @@ const ApplyPage = (props) => {
   };
 
   const onFileSubmit = () => {
-    
+
   }
 
   useEffect(() => {
@@ -168,7 +168,7 @@ const ApplyPage = (props) => {
           console.error('Failed to fetch announcement:', error);
         }
       };
-  
+
       fetchAnnouncement(); // Execute the function
     } else {
       console.warn('Warning: missing ID.');
@@ -189,115 +189,115 @@ const ApplyPage = (props) => {
   //   }
   // }, [announcementInfo]);
 
-  
+
   return (
     <>
-    {(!announcementInfo) ? (<div>Loading...</div>): (
-    <Box sx={{ display: "flex" }}>
-      <Sidebar></Sidebar>
-      <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
-        <AppBarHeader />
-        <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
-          <Grid item>
-            <Typography variant="h4">{announcementInfo.course.courseCode} LA Application</Typography>
-            <Divider></Divider>
-          </Grid>
-          <Grid item sx={{ m: 2 }}>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 500, border: 1.5, borderColor: "#cccccc" }} aria-label="simple table">
-                <TableBody>
-                  {rows.map((row, index) => (
-                    <TableRow key={row.name}>
-                      <TableCell component="th" scope="row" align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
-                        {row.val}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
-          <Grid item>
-            <Typography variant="h5">Questions</Typography>
-          </Grid>
-          {questions &&
-            questions.map((question, index) => (
-              <Grid item container direction="column" sx={{ border: 1, borderRadius: 3, borderColor: "#cccccc", backgroundColor: "#f5f5f5", marginY: 2, p: 2 }}>
-                <Grid item sx={{ m: 1 }}>
-                  <Typography>Question {index + 1} - {question.question}</Typography>
+      {(!announcementInfo) ? (<div>Loading...</div>) : (
+        <Box sx={{ display: "flex" }}>
+          <Sidebar></Sidebar>
+          <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
+            <AppBarHeader />
+            <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
+              <Grid item>
+                <Typography variant="h4">{announcementInfo.course.courseCode} LA Application</Typography>
+                <Divider></Divider>
+              </Grid>
+              <Grid item sx={{ m: 2 }}>
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 500, border: 1.5, borderColor: "#cccccc" }} aria-label="simple table">
+                    <TableBody>
+                      {rows.map((row, index) => (
+                        <TableRow key={row.name}>
+                          <TableCell component="th" scope="row" align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
+                            {row.name}
+                          </TableCell>
+                          <TableCell align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
+                            {row.val}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Grid>
+              <Grid item>
+                <Typography variant="h5">Questions</Typography>
+              </Grid>
+              {questions &&
+                questions.map((question, index) => (
+                  <Grid item container direction="column" sx={{ border: 1, borderRadius: 3, borderColor: "#cccccc", backgroundColor: "#f5f5f5", marginY: 2, p: 2 }}>
+                    <Grid item sx={{ m: 1 }}>
+                      <Typography>Question {index + 1} - {question.question}</Typography>
+                    </Grid>
+                    <Grid item sx={{ m: 1 }}>
+                      {question.type === "Multiple Choice" && (
+                        <FormControl>
+                          <RadioGroup
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            defaultValue={JSON.parse(question.multiple_choices)[0]}
+                            name="radio-buttons-group"
+                            onChange={(e) => {
+                              onMultipleChoiceAnswerChange(e, question);
+                            }}
+                          >
+                            {JSON.parse(question.multiple_choices).map((ans, index) => (
+                              <FormControlLabel value={ans} control={<Radio />} label={ans}></FormControlLabel>
+                            ))}
+                          </RadioGroup>
+                        </FormControl>
+                      )}
+                      {question.type !== "Multiple Choice" && (
+                        <TextField
+                          name={question}
+                          value={questionsAndAnswers.question}
+                          onChange={(e) => {
+                            onAnswerChange(e, question);
+                          }}
+                          multiline
+                          fullWidth
+                          sx={{ backgroundColor: "white", display: "flex" }}
+                        ></TextField>
+                      )}
+                    </Grid>
+                  </Grid>
+                ))}
+              <Grid item container direction="rows" alignItems="center" justifyContent="center" sx={{ m: 1, marginBottom: 3 }}>
+                <Grid item xs={2}></Grid>
+                <Grid item xs={2}>
+                  <Typography textAlign="center">Upload your transcript:</Typography>
                 </Grid>
-                <Grid item sx={{ m: 1 }}>
-                  {question.type === "Multiple Choice" && (
-                    <FormControl>
-                      <RadioGroup
-                        aria-labelledby="demo-radio-buttons-group-label"
-                        defaultValue={JSON.parse(question.multiple_choices)[0]}
-                        name="radio-buttons-group"
-                        onChange={(e) => {
-                          onMultipleChoiceAnswerChange(e, question);
-                        }}
-                      >
-                        {JSON.parse(question.multiple_choices).map((ans, index) => (
-                          <FormControlLabel value={ans} control={<Radio />} label={ans}></FormControlLabel>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                  )}
-                  {question.type !== "Multiple Choice" && (
-                    <TextField
-                      name={question}
-                      value={questionsAndAnswers.question}
-                      onChange={(e) => {
-                        onAnswerChange(e, question);
-                      }}
-                      multiline
-                      fullWidth
-                      sx={{ backgroundColor: "white", display: "flex" }}
-                    ></TextField>
-                  )}
+                <Grid item xs={6}>
+                  <Grid item container direction="rows">
+                    <Button variant="contained" component="label" onClick={onFileSubmit}>
+                      Upload File
+                      <input type="file" hidden onChange={onFileChange} />
+                    </Button>
+                    <Typography alignItems="center" justifyContent="center" textAlign="center" m={2}>
+                      {filename}
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid item xs={2}></Grid>
+              </Grid>
+              <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
+                <Grid item>
+                  <Button variant="contained" startIcon={<CloseIcon />} onClick={() => navigate("/home", { replace: true })} color="error">
+                    Cancel
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button variant="contained" startIcon={<SendIcon />} color="success" onClick={onSubmit}>
+                    Submit
+                  </Button>
                 </Grid>
               </Grid>
-            ))}
-            <Grid item container direction="rows" alignItems="center" justifyContent="center" sx={{ m: 1, marginBottom: 3 }}>
-            <Grid item xs={2}></Grid>
-            <Grid item xs={2}>
-              <Typography textAlign="center">Upload your transcript:</Typography>
             </Grid>
-            <Grid item xs={6}>
-              <Grid item container direction="rows">
-                <Button variant="contained" component="label" onClick={onFileSubmit}>
-                  Upload File
-                  <input type="file" hidden onChange={onFileChange} />
-                </Button>
-                <Typography alignItems="center" justifyContent="center" textAlign="center" m={2}>
-                  {filename}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid item xs={2}></Grid>
-          </Grid>
-          <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
-            <Grid item>
-              <Button variant="contained" startIcon={<CloseIcon />} onClick={() => navigate("/home", { replace: true })} color="error">
-                Cancel
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button variant="contained" startIcon={<SendIcon />} color="success" onClick={onSubmit}>
-                Submit
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Box>
-    </Box>
-    )}
+          </Box>
+        </Box>
+      )}
     </>
   );
-  
+
 };
 
 
