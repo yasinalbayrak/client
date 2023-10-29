@@ -567,7 +567,7 @@ function CreateAnnouncement() {
               alignItems="flex-start"
               sx={{ my: 2 }}
             >
-              <Typography sx={{ my: 2 }}>Desired Course Grade(s)<span style={{ color: 'red' }}>*</span>:</Typography>
+              <Typography sx={{ my: 2 }}>Desired Course Grade(s):</Typography>
               <Grid
                 item
                 xs={6}
