@@ -15,7 +15,7 @@ import {
   FormLabel,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { applyToPost, getAnnouncement } from "../apiCalls";
+import { applyToPost, getAnnouncement, postTranscript } from "../apiCalls";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -32,6 +32,7 @@ const ApplyPage = (props) => {
   const state = useSelector((state) => state);
   const name = useSelector((state) => state.user.name);
   const surname = useSelector((state) => state.user.surname);
+  const userId = useSelector((state) => state.user.id)
   const rows = [
     { name: "Student ID:", val: "00000000" },
     { name: "Name - Surname:", val: name + " " + surname },
@@ -76,8 +77,11 @@ const ApplyPage = (props) => {
     console.log(temp);
     applyToPost(id, state.user.id, []).then((res) => {
       console.log(res);
+      navigate("/success", { replace: true, state: { successText: "You have applied successfully." } });
+    }).catch((_)=>{
+      /* Already handled */
     });
-    navigate("/success", { replace: true, state: { successText: "You have applied successfully." } });
+    
   };
 
   console.log(state.user)
@@ -125,7 +129,29 @@ const ApplyPage = (props) => {
     setTranscript(file);
     const { name } = file;
     setFile(name);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("studentId", userId)
+    console.log(formData);
+
+    postTranscript(formData).then((res) => {
+      console.log(res);
+    }
+    );
   };
+
+  const onFileSubmit = () => {
+    
+  }
+
+  useEffect(() => {
+    if (transcript) {
+      console.log("Transcript is added correctly:" + transcript);
+    } else {
+      console.log("Transcript is not added correctly.");
+    }
+  }, [transcript]);
 
   useEffect(() => {
     // Ensure 'id' is available and not undefined or null
@@ -242,7 +268,7 @@ const ApplyPage = (props) => {
             </Grid>
             <Grid item xs={6}>
               <Grid item container direction="rows">
-                <Button variant="contained" component="label">
+                <Button variant="contained" component="label" onClick={onFileSubmit}>
                   Upload File
                   <input type="file" hidden onChange={onFileChange} />
                 </Button>

@@ -27,7 +27,7 @@ function AnnouncementTable(props) {
   const term = useSelector((state) => state.user.term);
   //const userDisplayName = useSelector((state) => state.user.name);
   //const userDisplayName = "Instructor One" //mock data
-  const userName = useSelector((state) => state.user.username);
+  const userName = useSelector((state) => state.user.name + " " + state.user.surname);
   const userID = useSelector((state) => state.user.id);
   const [instructorApplications, setInstructorApplications] = useState([]);
   const [userApplications, setUserApplications] = useState([]);

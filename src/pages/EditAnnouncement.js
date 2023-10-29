@@ -76,6 +76,7 @@ function EditAnnouncement() {
           display_name: displayName,
           username: instructor.user.name+" "+instructor.user.surname,
           authOptionValue: OptionValue,
+          id: instructor.user.id,
         };
       });
       setAuthUserList(transformedResults);
@@ -86,7 +87,11 @@ function EditAnnouncement() {
   useEffect(() => {
     getAllCourses().then((results) => {
       setCourseCodeList(results);
-      setcourseList(results);
+      //setcourseList(results);
+      results.map((course) => {
+        setcourseList((prev) => [...prev, course.courseCode]);
+      }
+      );
     });
   }, []);
 
@@ -140,6 +145,10 @@ function EditAnnouncement() {
     }
     // setCourseCodeValue("");
     // setCourseCodeInputValue("");
+  }
+
+  function updateCourseCode(courseCode){
+    setCourseCode(courseCode);
   }
 
   function handleCourseCodeDelete() { //change here
@@ -216,13 +225,14 @@ function EditAnnouncement() {
     return filtered;
   }
 
-  const [announcementDetails, setAnnouncementDetails] = useState({});
+  const [announcementDetails, setAnnouncementDetails] = useState(null);
   const [UserDetails, setUserDetails] = useState({});
   const [GetQuestions, setGetQuestions] = useState([]);
 
   const { id } = useParams(); //for taking post id
   useEffect(() => {
     getAnnouncement(id).then((results) => {
+      console.log(results);
       const deadline = results.lastApplicationDate.split("T");
       const authInstructors = results.authorizedInstructors;
 
@@ -236,7 +246,9 @@ function EditAnnouncement() {
         return people;
       }, []);
 
-      const desiredCourses = JSON.parse(results.desired_courses);
+      console.log(results)
+
+      const desiredCourses = results.previousCourseGrades;
 
       const FindDesiredCourses = desiredCourses.reduce((courses, desiredCourse) => {
         courses.push(desiredCourse);
@@ -244,44 +256,46 @@ function EditAnnouncement() {
       }, []);
 
       console.log(FindAuthPeople);
-      console.log(FindDesiredCourses);
+      //console.log(FindDesiredCourses);
       const PostResult = {
-        course_code: results.course_code,
+        course_code: results.course.courseCode,
         lastApplicationDate: deadline[0],
         lastApplicationTime: deadline[1],
-        letterGrade: results.mingrade,
-        workHours: results.working_hour,
-        jobDetails: results.description,
+        letterGrade: results.minimumRequiredGrade,
+        workHours: results.weeklyWorkHours,
+        jobDetails: results.jobDetails,
         authInstructor: FindAuthPeople, //change there JSON.parse(results.auth_instructors) //completely follow different approach
         desiredCourses: FindDesiredCourses,
       };
 
-      const UserResult = {
-        instructor_username: results.instructor_username,
-        faculty: results.faculty,
-        term: results.term,
-      }; //temp it will be replaced
+      console.log(PostResult);
+
+      // const UserResult = {
+      //   instructor_username: results.instructor_username,
+      //   faculty: results.faculty,
+      //   term: results.term,
+      // }; //temp it will be replaced
 
       const QuestionsResult = results.questions;
-      const transformedResultQuestions = QuestionsResult.map((question) => {
-        return {
-          questionNumber: question.ranking,
-          mQuestion: question.question,
-          mValue: question.type,
-          mMultiple: question.multiple_choices === "[]" ? ["", ""] : JSON.parse(question.multiple_choices),
-        };
-      });
+      // // const transformedResultQuestions = QuestionsResult.map((question) => {
+      // //   return {
+      // //     questionNumber: question.ranking,
+      // //     mQuestion: question.question,
+      // //     mValue: question.type,
+      // //     mMultiple: question.multiple_choices === "[]" ? ["", ""] : JSON.parse(question.multiple_choices),
+      // //   };
+      // });
 
-      setCourseCode(results.course_code);
-      setCourseCodeValue(results.course_code);
-      setCourseCodeInputValue(results.course_code);
+      setCourseCode(results.course.courseCode);
+      setCourseCodeValue(results.course.courseCode);
+      setCourseCodeInputValue(results.course.courseCode);
 
       setAuthPeople(FindAuthPeople);
       setSelectedCourses(FindDesiredCourses);
 
       setAnnouncementDetails(PostResult);
-      setGetQuestions([...transformedResultQuestions]);
-      setUserDetails(UserResult);
+      //setGetQuestions([...transformedResultQuestions]);
+      //setUserDetails(UserResult);
     });
   }, [id, authUsersList, courseCodeList, courseList]);
 
@@ -304,7 +318,7 @@ function EditAnnouncement() {
   }
 
   console.log(announcementDetails); //for debugging announcement details
-
+  if(!announcementDetails) return (<div>Loading...</div>);
   return (
     <Box sx={{ display: "flex" }}>
       <Sidebar></Sidebar>
@@ -351,7 +365,8 @@ function EditAnnouncement() {
                 onChange={(event, newCourseCodeValue) => {
                   if (newCourseCodeValue !== null) {
                     setCourseCodeValue(newCourseCodeValue);
-                    handleCourseCodeAdd(newCourseCodeValue);
+                    //handleCourseCodeAdd(newCourseCodeValue);
+                    updateCourseCode(newCourseCodeValue);
                   }
                 }}
                 renderInput={(params) => (
@@ -549,7 +564,7 @@ function EditAnnouncement() {
                       sx={{ mx: 2, mt: 1, mb: 2, width: 300 }}
                     />
                   )}
-                  disabled = {courseCode.length == 0} //if it creates some problems, delete it.
+                  //disabled = {courseCode.length == 0} //if it creates some problems, delete it.
                 />
                 {selectedCourses.length > 0 &&
                   selectedCourses.map((courseSelected, i) => {
@@ -566,7 +581,7 @@ function EditAnnouncement() {
                             }}
                           >
                             <Typography fontSize="small" sx={{ color: "white" }}>
-                              {courseSelected.split(" ")[0][0]}
+                              {courseSelected}
                             </Typography>
                           </Avatar>
                         }
@@ -633,11 +648,11 @@ function EditAnnouncement() {
                   <ListItemIcon sx={{ minWidth: "unset", marginRight: "8px" }}>
                     <FiberManualRecordIcon fontSize="inherit" />
                   </ListItemIcon>
-                  <ListItemText primary={
+                  {/* <ListItemText primary={
                     <Typography variant="body1">
                       Currently selected term: <strong>"{term}"</strong>. If you want to change it, please use "Select Term" on the top of the page.
                     </Typography>
-                  } />
+                  } /> */}
                 </ListItem>
               </List>
             </Box>

@@ -359,10 +359,10 @@ function EditQuestion(props) {
                         props.AnnouncementDetails.lastApplicationTime &&
                         props.AnnouncementDetails.letterGrade &&
                         props.AnnouncementDetails.workHours &&
-                        props.AnnouncementDetails.jobDetails &&
+                        props.AnnouncementDetails.jobDetails 
                         //props.AnnouncementDetails.authInstructor.length > 0 &&
-                        props.AnnouncementDetails.desiredCourses.length > 0 &&
-                        questions.length > 0
+                        //props.AnnouncementDetails.desiredCourses.length > 0 &&
+                        //questions.length > 0
                     ) {
                         updateAnnouncement(
                             props.postID,

@@ -241,6 +241,7 @@ function AddQuestion(props) {
   //console.log(typeof props.AnnouncementDetails.lastApplicationDate)
 
   return (
+    <>
     <div>
       <Grid container spacing={2}>
         <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -462,11 +463,15 @@ function AddQuestion(props) {
                 props.AnnouncementDetails.desiredCourses,
                 questions,
                 term
-              );
-              navigate("/success", {
-                replace: true,
-                state: { successText: "Your announcement has been successfully added." },
+              ).then((data) => {
+                navigate("/success", {
+                  replace: true,
+                  state: { successText: "Your announcement has been successfully added." },
+                });
+              }).catch((error) => {
+                /* Error is already printed */
               });
+
             } else {
               alert("Please fill out all necessary fields before creating the annoucement.");
             }
@@ -485,7 +490,7 @@ function AddQuestion(props) {
         </Button>
       </Grid>
     </div>
-  );
+    </>);
 }
 
 export default AddQuestion;
