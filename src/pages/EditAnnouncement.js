@@ -272,7 +272,7 @@ function EditAnnouncement() {
         course_code: results.course.courseCode,
         lastApplicationDate: deadline[0],
         lastApplicationTime: deadline[1],
-        letterGrade: results.minimumRequiredGrade,
+        letterGrade: results.minRequiredGrade,
         workHours: results.weeklyWorkHours,
         jobDetails: results.jobDetails,
         authInstructor: FindAuthPeople, //change there JSON.parse(results.auth_instructors) //completely follow different approach
