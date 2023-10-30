@@ -27,10 +27,21 @@ function EditAnnouncement() {
     { value: "B", label: "B" },
     { value: "B-", label: "B-" },
     { value: "C+", label: "C+" },
+    { value: "C", label: "C" },
+    { value: "C-", label: "C-" },
+    { value: "D", label: "D" },
   ];
   const WorkHour = [
-    { value: "5 Hours", label: "5 Hours" },
-    { value: "10 Hours", label: "10 Hours" },
+    { value: "PT1H", label: "1 Hour" },
+    { value: "PT2H", label: "2 Hours" },
+    { value: "PT3H", label: "3 Hours" },
+    { value: "PT4H", label: "4 Hours" },
+    { value: "PT5H", label: "5 Hours" },
+    { value: "PT6H", label: "6 Hours" },
+    { value: "PT7H", label: "7 Hours" },
+    { value: "PT8H", label: "8 Hours" },
+    { value: "PT9H", label: "9 Hours" },
+    { value: "PT10H", label: "10 Hours" },
   ];
   const authUsers = [
     { display_name: "Murat Karaca", username: "muratkaraca" },
@@ -451,7 +462,7 @@ function EditAnnouncement() {
               </TextField>
             </Grid>
             <Grid container direction="row" justifyContent="start" alignItems="center">
-              <Typography>Work Hours<span style={{ color: 'red' }}>*</span>:</Typography>
+              <Typography>Weekly Work Hours<span style={{ color: 'red' }}>*</span>:</Typography>
               <TextField
                 id="outlined-select-currency"
                 name="workHours"
@@ -531,7 +542,7 @@ function EditAnnouncement() {
               alignItems="flex-start"
               sx={{ my: 2 }}
             >
-              <Typography sx={{ my: 2 }}>Desired Course Grade(s)<span style={{ color: 'red' }}>*</span>:</Typography>
+              <Typography sx={{ my: 2 }}>Desired Course Grade(s):</Typography>
               <Grid
                 item
                 xs={6}
