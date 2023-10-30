@@ -167,7 +167,7 @@ function AnnouncementTable(props) {
             <TableCell align="left">Primary Instructor</TableCell>
             <TableCell align="left">Last Application Date/Time </TableCell>
             <TableCell align="left">Minimum Desired Letter Grade</TableCell>
-            <TableCell align="left">Work Hours</TableCell>
+            <TableCell align="left">Weekly Work Hours</TableCell>
             <TableCell align="left">Details</TableCell>
             <TableCell align="center">
               {tabValue === 1 && !isInstructor && "Application Status"}
