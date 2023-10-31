@@ -5,9 +5,67 @@ import TableRow from "@mui/material/TableRow";
 
 import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
+import { red } from '@mui/material/colors';
 
 export default function AnnouncementRow({ data, tabValue, userName, navigate, isInstructor }) {
-  const { modifiedCourseCode, instructor_name, lastApplicationDate, minimumRequiredGrade, weeklyWorkingTime, jobDetails, applicationId } = data;
+  console.log("data", data);
+  const { modifiedCourseCode, instructor_name,weeklyWorkingTime } = data;
+  //const modifiedCourseCode = data.modifiedCourseCode;
+  //const instructor_name = data.instructor_name;
+  const lastApplicationDate = data.lastApplicationDate??data.application.lastApplicationDate;
+  const minimumRequiredGrade = data.minimumRequiredGrade??data.application.minimumRequiredGrade;
+  const jobDetails = data.jobDetails??data.application.jobDetails;
+  const applicationId = data.applicationId??data.application.applicationId;
+  const applicationStatus = data.status;
+  console.log("applicationStatus", applicationStatus);
+
+  const renderButton = () => {
+    // Condition for instructor
+    if (isInstructor) {
+      if (instructor_name !== "no instructor assigned yet" && instructor_name.toLowerCase() === userName.toLowerCase()) {
+        return (
+          <Button
+            variant="contained"
+            onClick={() => navigate("/edit-announcement/" + applicationId, { replace: true })}
+            startIcon={<EditIcon />}
+          >
+            Edit
+          </Button>
+        );
+      }
+      return null;  // or return some default state for isInstructor = true but doesn't meet the nested condition
+    }
+  
+    // Conditions for non-instructor
+    if (tabValue === 0) {
+      return (
+        <Button
+          variant="contained"
+          onClick={() => navigate("/apply/" + applicationId, { replace: true })}
+        >
+          Apply
+        </Button>
+      );
+    }
+    let statusColor;
+  switch (applicationStatus) {
+    case 'ACCEPTED':
+      statusColor = 'green';
+      break;
+    case 'REJECTED':
+      statusColor = 'red';
+      break;
+    default:
+      statusColor = 'black';
+      break;
+  }
+
+  return (
+    <span style={{ color: statusColor }}>
+      {applicationStatus}
+    </span>
+  );
+  };
 
   return (modifiedCourseCode &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
@@ -45,29 +103,7 @@ export default function AnnouncementRow({ data, tabValue, userName, navigate, is
         {jobDetails}
       </TableCell>
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
-        {isInstructor ? (instructor_name !== "no instructor assigned yet" && instructor_name.toLowerCase() === userName.toLowerCase() && (
-          <Button
-            variant="contained"
-            onClick={() => navigate("/edit-announcement/" + applicationId, { replace: true })}
-            startIcon={<EditIcon />}
-          >
-            Edit
-          </Button>
-        )) :
-          <Button
-            variant="contained"
-            onClick={() =>
-              navigate("/apply/" + applicationId, {
-                replace: true,
-              })
-            }
-          >
-            Apply
-          </Button>
-
-
-
-        }
+        {renderButton()}
       </TableCell>
     </TableRow>
   );

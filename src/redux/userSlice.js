@@ -28,7 +28,7 @@ const userSlice = createSlice({
       state.id = action.payload.id;
       state.isFailed = false;
       state.isLoggedIn = true;
-      state.isInstructor = true;//action.payload.isInstructor;
+      state.isInstructor = action.payload.isInstructor;
       state.JwtToken = action.payload.jwtToken;
     },
     failLogin: (state) => {

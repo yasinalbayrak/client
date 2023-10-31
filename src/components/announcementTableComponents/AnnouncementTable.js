@@ -33,18 +33,20 @@ export default function AnnouncementTable(props) {
         
         const modifiedUserApplications = data.map((userApplication) => {
           
+          
           const modifiedUserApplication = { ...userApplication };
           if(!isInstructor){
 
           }
-          const workTime = userApplication.weeklyWorkHours;
+          const workTime = userApplication.weeklyWorkHours?? userApplication.application.weeklyWorkHours;
           const slicedHour = workTime.slice(2);
           const modifiedWorkHour = slicedHour.slice(0, -1);
-          const [firstName, lastName] = [(userApplication.authorizedInstructors[0]?.user.name || 'no instructor assigned yet'), userApplication.authorizedInstructors[0]?.user.surname || ''];
+          const authInsts = userApplication.authorizedInstructors ?? userApplication.application.authorizedInstructors;
+          const [firstName, lastName] = [(authInsts[0]?.user.name || 'no instructor assigned yet'), authInsts[0]?.user.surname || ''];
           const formattedFirstName = (firstName || "no instructor assigned yet").charAt(0).toUpperCase() + (firstName || "no instructor assigned yet").slice(1);
           const formattedLastName = (lastName || "").charAt(0).toUpperCase() + (lastName || "").slice(1);
           const modifiedInstructorName = formattedFirstName.trim() + " " + formattedLastName.trim();
-          const notSpacedCourse = userApplication.course.courseCode;
+          const notSpacedCourse = userApplication.course?.courseCode?? userApplication.application?.course?.courseCode;
           const spacedCourse = notSpacedCourse.replace(/([A-Z]+)(\d+)/g, '$1 $2');
   
           return {
@@ -105,7 +107,7 @@ export default function AnnouncementTable(props) {
           ).map((rowData, index) => (
             <AnnouncementRow
               key={index}
-              data={tabValue === 0 || isInstructor ? rowData : rowData.application   }
+              data={tabValue === 0 || isInstructor ? rowData : rowData   }
               tabValue={tabValue}
               userName={userName}
               navigate={navigate}
