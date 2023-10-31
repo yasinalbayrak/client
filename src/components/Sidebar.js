@@ -85,7 +85,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-function Sidebar({ setValue }) {
+function Sidebar({ setTabInitial }) {
   const theme = useTheme();
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
   const [listOpen, setListOpen] = React.useState(true);
@@ -335,7 +335,7 @@ function Sidebar({ setValue }) {
             </Box>
           </ListItem>
           <ListItem sx={{ padding: "0px" }}>
-            <ListItemButton as={Link} to="/home" style={{ textDecoration: "none", color: "white" }}>
+            <ListItemButton onClick={setTabInitial} to="/home" style={{ textDecoration: "none", color: "white" }}>
               <ListItemIcon sx={{ minWidth: "30px" }}>
                 <HomeIcon sx={{ color: "white" }} />
               </ListItemIcon>
