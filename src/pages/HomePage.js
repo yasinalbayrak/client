@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Tab, Tabs } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import AnnouncementTable from "../components/AnnouncementTable";
+import AnnouncementTable from "../components/announcementTableComponents/AnnouncementTable";
 import AppBarHeader from "../components/AppBarHeader";
 import Sidebar from "../components/Sidebar";
 import AddIcon from "@mui/icons-material/Add";
@@ -68,10 +68,13 @@ function HomePage() {
     setValue(newValue);
   };
 
+  const setTabInitial = () => {
+  }
+
   return (
     <Box sx={{ display: "flex" }}>
       <Sidebar
-      setValue={setValue}></Sidebar>
+      setValue={setTabInitial}></Sidebar>
       <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
         <AppBarHeader />
         <Grid container direction="column" spacing={2}>
