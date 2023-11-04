@@ -33,11 +33,6 @@ export default function AnnouncementTable(props) {
         
         const modifiedUserApplications = data.map((userApplication) => {
           
-          
-          const modifiedUserApplication = { ...userApplication };
-          if(!isInstructor){
-
-          }
           const workTime = userApplication.weeklyWorkHours?? userApplication.application.weeklyWorkHours;
           const slicedHour = workTime.slice(2);
           const modifiedWorkHour = slicedHour.slice(0, -1);
@@ -104,10 +99,12 @@ export default function AnnouncementTable(props) {
           { ( tabValue === 1
             ? userApplications 
             : rows 
-          ).map((rowData, index) => (
+          )
+          .filter((rowData)=> (rowData.term === term.term_desc))
+          .map((rowData, index) => (
             <AnnouncementRow
               key={index}
-              data={tabValue === 0 || isInstructor ? rowData : rowData   }
+              data={ rowData   }
               tabValue={tabValue}
               userName={userName}
               navigate={navigate}

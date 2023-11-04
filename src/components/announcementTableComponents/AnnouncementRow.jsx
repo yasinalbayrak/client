@@ -9,7 +9,7 @@ import { red } from '@mui/material/colors';
 
 export default function AnnouncementRow({ data, tabValue, userName, navigate, isInstructor }) {
   console.log("data", data);
-  const { modifiedCourseCode, instructor_name,weeklyWorkingTime } = data;
+  const { modifiedCourseCode, instructor_name,weeklyWorkingTime, term } = data;
   //const modifiedCourseCode = data.modifiedCourseCode;
   //const instructor_name = data.instructor_name;
   const lastApplicationDate = data.lastApplicationDate??data.application.lastApplicationDate;
@@ -33,7 +33,7 @@ export default function AnnouncementRow({ data, tabValue, userName, navigate, is
           </Button>
         );
       }
-      return null;  // or return some default state for isInstructor = true but doesn't meet the nested condition
+      return null;  
     }
   
     // Conditions for non-instructor
@@ -92,6 +92,9 @@ export default function AnnouncementRow({ data, tabValue, userName, navigate, is
         ) : (
           "N/A"
         )}
+      </TableCell>
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+        {term}
       </TableCell>
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
         {minimumRequiredGrade}

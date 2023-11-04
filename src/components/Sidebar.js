@@ -123,16 +123,20 @@ function Sidebar({ setTabInitial }) {
 
   useEffect(() => {
     getTerms().then((res) => {
-      setAllTerms(res)
-
-      if (res.length > 0){
-        dispatch(setTerm({ term: res[0] }));
-        setTermSelect( res[0] )
+      setAllTerms(res);
+  
+      if (res.length > 0) {
+        const activeTerm = res.find(term => term.is_active === '1');
+        if (activeTerm) {
+          dispatch(setTerm({ term: activeTerm }));
+          setTermSelect(activeTerm);
+        }
       }
     }).catch(() => {
-      /* Already Handled */
+      // Handle any errors if needed
     });
-  }, [])
+  }, []);
+  
 
 
   const handleLogout = () => {

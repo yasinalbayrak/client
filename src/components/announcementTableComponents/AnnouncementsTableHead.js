@@ -10,6 +10,7 @@ function AnnouncementsTableHead({ tabValue, isInstructor }) {
         <TableCell>Course Code</TableCell>
         <TableCell align="left">Primary Instructor</TableCell>
         <TableCell align="left">Last Application Date/Time</TableCell>
+        <TableCell align="left">Term</TableCell>
         <TableCell align="left">Minimum Desired Letter Grade</TableCell>
         <TableCell align="left">Weekly Work Hours</TableCell>
         <TableCell align="left">Details</TableCell>
