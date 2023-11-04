@@ -16,7 +16,24 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import IconButton from '@mui/material/IconButton';
 import ClearIcon from '@mui/icons-material/Clear';
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import { getAllInstructors, getAllCourses } from "../apiCalls";
+
+import InputLabel from '@mui/material/InputLabel';
+
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { getTerms, getAllInstructors, getAllCourses } from "../apiCalls";
+import { makeStyles } from '@mui/styles';
+
+const useStyles = makeStyles((theme) => ({
+  activeItem: {
+    backgroundColor: 'lightgreen',
+
+    '&:hover': {
+      color: 'black', 
+      fontWeight: 'normal'
+    },
+  },
+}));
 
 function CreateAnnouncement() {
   const grades = [
@@ -42,7 +59,7 @@ function CreateAnnouncement() {
     { value: "PT9H", label: "9 Hours" },
     { value: "PT10H", label: "10 Hours" },
   ];
-  
+
 
   const userName = useSelector((state) => state.user.username);
 
@@ -65,6 +82,12 @@ function CreateAnnouncement() {
   const [selectedCourses, setSelectedCourses] = useState([]); //used for send request as selected from list to desired courses
   const [courseValue, setCourseValue] = useState(""); // for autocomplete
   const [inputCourseValue, setCourseInputValue] = useState(""); // for autocomplete
+
+  const [allTerms, setAllTerms] = useState([])
+  const [selectedTerm, setSelectedTerm] = useState(null)
+
+
+  const classes = useStyles();
 
   //get all instructors
   useEffect(() => {
@@ -90,6 +113,24 @@ function CreateAnnouncement() {
     });
   }, []);
 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getTerms();
+        setAllTerms(res);
+      } catch (error) {
+        // Handle any errors if needed
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+
+
+
   // get all courses
   useEffect(() => {
     const fetchData = async () => {
@@ -103,7 +144,7 @@ function CreateAnnouncement() {
           },
           [[], []]
         );
-  
+
         setCourseCodeList(courseCodes);
         setcourseList(courseCodes);
       } catch (error) {
@@ -111,10 +152,10 @@ function CreateAnnouncement() {
         console.error('Error fetching courses:', error);
       }
     };
-  
+
     fetchData();
   }, []);
-  
+
 
   //console.log(authUsersList);
   //console.log(courseList);
@@ -179,7 +220,7 @@ function CreateAnnouncement() {
     // setCourseCodeInputValue("");
   }
 
-  function updateCourseCode(courseCode){
+  function updateCourseCode(courseCode) {
     setCourseCode(courseCode);
   }
 
@@ -257,7 +298,12 @@ function CreateAnnouncement() {
     return filtered;
   }
 
+  const handleTermChange = (event) => {
+    setSelectedTerm(event.target.value)
+  }
+
   const [announcementDetails, setAnnouncementDetails] = useState({
+    term: {},
     course_code: courseCode,
     lastApplicationDate: new Date().toLocaleDateString("en-CA"),
     lastApplicationTime: new Date()
@@ -319,6 +365,52 @@ function CreateAnnouncement() {
             >
               Announcement Details:
             </Typography>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="center"
+              marginY={2}
+            >
+              <Typography>Term <span style={{ color: 'red' }}>*</span>:</Typography>
+              <Box sx={{ minWidth: 150, marginX: 2 }}>
+                <FormControl fullWidth>
+
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={announcementDetails.term}
+                    name="term"
+                    MenuProps={{
+                      style: { maxHeight: '360px' },
+                      autoFocus: false
+                    }}
+                    onChange={handleInput}
+
+                  >
+                    {
+                      allTerms.map((eachTerm, index) => (
+                        <MenuItem
+                          key={eachTerm.term_desc}
+                          value={eachTerm}
+                          className={
+                            eachTerm.is_active === '1'
+                              ? classes.activeItem
+                              : ''
+                          } 
+                        >
+                          {eachTerm.term_desc}
+                        </MenuItem>
+                      ))
+                    }
+
+                  </Select>
+                </FormControl>
+              </Box>
+              {
+
+              }
+            </Grid>
             <Grid
               container
               direction="row"
@@ -391,7 +483,7 @@ function CreateAnnouncement() {
                   />
                 )}
                 disableClearable
-                //getOptionDisabled={(option) => !!courseCode && option !== courseCode}
+              //getOptionDisabled={(option) => !!courseCode && option !== courseCode}
               />
             </Grid>
             <Grid
@@ -636,5 +728,6 @@ function CreateAnnouncement() {
     </Box>
   );
 }
+
 
 export default CreateAnnouncement;
