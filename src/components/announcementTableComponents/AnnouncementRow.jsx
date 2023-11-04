@@ -8,15 +8,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import { red } from '@mui/material/colors';
 
 export default function AnnouncementRow({ data, tabValue, userName, navigate, isInstructor }) {
-  console.log("data", data);
-  const { modifiedCourseCode, instructor_name,weeklyWorkingTime, term } = data;
-  //const modifiedCourseCode = data.modifiedCourseCode;
-  //const instructor_name = data.instructor_name;
-  const lastApplicationDate = data.lastApplicationDate??data.application.lastApplicationDate;
-  const minimumRequiredGrade = data.minimumRequiredGrade??data.application.minimumRequiredGrade;
-  const jobDetails = data.jobDetails??data.application.jobDetails;
-  const applicationId = data.applicationId??data.application.applicationId;
-  const applicationStatus = data.status;
+ 
+  const { modifiedCourseCode, instructor_name,weeklyWorkingTime, term , status : applicationStatus } = data;
+
+  const {lastApplicationDate ,
+   minimumRequiredGrade ,
+   jobDetails ,
+   applicationId} = data.application ??data;
+  
   console.log("applicationStatus", applicationStatus);
 
   const renderButton = () => {

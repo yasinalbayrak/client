@@ -32,26 +32,31 @@ export default function AnnouncementTable(props) {
   
         
         const modifiedUserApplications = data.map((userApplication) => {
-          
-          const workTime = userApplication.weeklyWorkHours?? userApplication.application.weeklyWorkHours;
+          let app = userApplication
+          if(!isInstructor) {
+            app = userApplication.application
+          }
+          const workTime = app.weeklyWorkHours?? app.application.weeklyWorkHours;
           const slicedHour = workTime.slice(2);
           const modifiedWorkHour = slicedHour.slice(0, -1);
-          const authInsts = userApplication.authorizedInstructors ?? userApplication.application.authorizedInstructors;
+          const authInsts = app.authorizedInstructors ?? app.application.authorizedInstructors;
           const [firstName, lastName] = [(authInsts[0]?.user.name || 'no instructor assigned yet'), authInsts[0]?.user.surname || ''];
           const formattedFirstName = (firstName || "no instructor assigned yet").charAt(0).toUpperCase() + (firstName || "no instructor assigned yet").slice(1);
           const formattedLastName = (lastName || "").charAt(0).toUpperCase() + (lastName || "").slice(1);
           const modifiedInstructorName = formattedFirstName.trim() + " " + formattedLastName.trim();
-          const notSpacedCourse = userApplication.course?.courseCode?? userApplication.application?.course?.courseCode;
+          const notSpacedCourse = app.course?.courseCode?? app.application?.course?.courseCode;
           const spacedCourse = notSpacedCourse.replace(/([A-Z]+)(\d+)/g, '$1 $2');
-  
+          
           return {
             ...userApplication,
             weeklyWorkingTime: modifiedWorkHour,
             instructor_name: modifiedInstructorName,
             modifiedCourseCode: spacedCourse,
+            term: app.term,
+            ...(isInstructor ? { application: app } : {}) 
           };
         });
-  
+        console.log(modifiedUserApplications)
         setUserApplications(modifiedUserApplications);
       } catch (error) {
         console.error("Failed to fetch user applications:", error);
@@ -101,17 +106,19 @@ export default function AnnouncementTable(props) {
             : rows 
           )
           .filter((rowData)=> (rowData.term === term.term_desc))
-          .map((rowData, index) => (
+          .map((rowData, index) => {
+            console.log(rowData)
+            return (
             <AnnouncementRow
               key={index}
-              data={ rowData   }
+              data={rowData}
               tabValue={tabValue}
               userName={userName}
               navigate={navigate}
               isInstructor={isInstructor}
 
             />
-          ))}
+          )})}
         </TableBody>
       </Table>
     </TableContainer>
