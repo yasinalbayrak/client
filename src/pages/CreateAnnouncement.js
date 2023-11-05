@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar";
 import AddQuestion from "../components/AddQuestion";
 import { Typography, Box, Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
@@ -23,18 +23,26 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { getTerms, getAllInstructors, getAllCourses } from "../apiCalls";
 import { makeStyles } from '@mui/styles';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import { NewspaperTwoTone } from "@mui/icons-material";
+
 
 const useStyles = makeStyles((theme) => ({
   activeItem: {
     backgroundColor: 'lightgreen',
 
     '&:hover': {
-      color: 'black', 
+      color: 'black',
       fontWeight: 'normal'
     },
   },
 }));
-
+const filter = createFilterOptions();
 function CreateAnnouncement() {
   const grades = [
     { value: "A", label: "A" },
@@ -64,8 +72,6 @@ function CreateAnnouncement() {
   const userName = useSelector((state) => state.user.username);
 
   const term = useSelector((state) => state.user.term);
-  console.log('yasin: ', term)
-  //const userName = "instructor1"; //mock data for testing
 
   const [authUsersList, setAuthUserList] = useState([]); //get instructors from database
   const [authPeople, setAuthPeople] = useState([]); //used for send request as selected from list
@@ -84,9 +90,10 @@ function CreateAnnouncement() {
   const [inputCourseValue, setCourseInputValue] = useState(""); // for autocomplete
 
   const [allTerms, setAllTerms] = useState([])
-  const [selectedTerm, setSelectedTerm] = useState(null)
 
 
+  const [open, setOpen] = React.useState(false);
+  const [showAddButton, setShowAddButton] = useState(false);
   const classes = useStyles();
 
   //get all instructors
@@ -136,33 +143,24 @@ function CreateAnnouncement() {
     const fetchData = async () => {
       try {
         const results = await getAllCourses();
-        const [courseCodes, courseTitles] = results.reduce(
-          (acc, course) => {
-            acc[0].push(course.courseCode);
-            acc[1].push(course.courseTitle);
-            return acc;
-          },
-          [[], []]
-        );
+
+
+        const courseCodes = results.map((course) => {
+          return {
+            title: course.courseCode
+          }
+        })
 
         setCourseCodeList(courseCodes);
         setcourseList(courseCodes);
       } catch (error) {
-        // Handle errors here, e.g., log or show an error message.
-        console.error('Error fetching courses:', error);
+
       }
     };
 
     fetchData();
   }, []);
 
-
-  //console.log(authUsersList);
-  //console.log(courseList);
-
-  // console.log(courseCode)
-  // console.log(courseCodeValue)
-  // console.log(inputCourseCodeValue)
 
   //used in autocomplete for keeping value and input value
   function handleAuthAdd(newValue) {
@@ -237,25 +235,34 @@ function CreateAnnouncement() {
   }
 
   function filterCourseCodes(optionCourseCodes, { inputValue }) {
+
     const filtered = optionCourseCodes.filter((option) => {
-      if (courseCode === option) {
+      if (courseCode === option.title) {
         return false; // filter out if already in selectedCourses
       }
-      return option.toLowerCase().includes(inputValue.toLowerCase());
+      return option.title.toLowerCase().includes(inputValue.trim().toLowerCase());
     });
 
     // sort the filtered options based on their match with the input value
     const inputValueLowerCase = inputValue.toLowerCase();
     filtered.sort((a, b) => {
-      const aIndex = a.toLowerCase().indexOf(inputValueLowerCase);
-      const bIndex = b.toLowerCase().indexOf(inputValueLowerCase);
+      const aIndex = a.title.toLowerCase().indexOf(inputValueLowerCase);
+      const bIndex = b.title.toLowerCase().indexOf(inputValueLowerCase);
       if (aIndex !== bIndex) {
         return aIndex - bIndex;
       }
-      return a.localeCompare(b);
+      return a.title.localeCompare(b.title);
     });
+    const isExisting = optionCourseCodes.some((option) => inputValue.trim() === option.title);
+    if (inputValue && !isExisting) {
+      filtered.push({
+        inputValue,
+        title: `Add "${inputValue.trim()}"`
+      })
+    }
 
     return filtered;
+
   }
 
   //used in autocomplete for keeping value and input value
@@ -276,31 +283,7 @@ function CreateAnnouncement() {
     setSelectedCourses(updatedSelectedCourses);
   }
 
-  function filterCourses(optionCourses, { inputValue }) {
-    const filtered = optionCourses.filter((option) => {
-      if (selectedCourses.some((course) => course === option)) {
-        return false; // filter out if already in selectedCourses
-      }
-      return option.toLowerCase().includes(inputValue.toLowerCase());
-    });
 
-    // sort the filtered options based on their match with the input value
-    const inputValueLowerCase = inputValue.toLowerCase();
-    filtered.sort((a, b) => {
-      const aIndex = a.toLowerCase().indexOf(inputValueLowerCase);
-      const bIndex = b.toLowerCase().indexOf(inputValueLowerCase);
-      if (aIndex !== bIndex) {
-        return aIndex - bIndex;
-      }
-      return a.localeCompare(b);
-    });
-
-    return filtered;
-  }
-
-  const handleTermChange = (event) => {
-    setSelectedTerm(event.target.value)
-  }
 
   const [announcementDetails, setAnnouncementDetails] = useState({
     term: {},
@@ -334,8 +317,47 @@ function CreateAnnouncement() {
     }));
   }
 
-  console.log(announcementDetails) //for debugging announcement details
-  console.log(courseCode.length) //for debugging announcement details
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason !== 'backdropClick') {
+      setOpen(false);
+    }
+  };
+
+  const handleChange = (event, newValue) => {
+    if (newValue) {
+
+      var trimmedValue;
+      if (typeof newValue === 'string') {
+
+        trimmedValue = newValue;
+      }
+      // Add "xxx" option created dynamically
+      else if (newValue.inputValue) {
+
+        trimmedValue = newValue.inputValue;
+      }
+      else {
+
+        trimmedValue = newValue.title;
+      }
+
+      trimmedValue.trim()
+
+      setCourseCodeValue(trimmedValue);
+      setCourseCode(trimmedValue);
+
+      if (!courseList.some(course => course.title === trimmedValue)) {
+        setcourseList((prev) => [...prev, { title: trimmedValue }]);
+      }
+    }
+
+  }
+
+
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -397,7 +419,7 @@ function CreateAnnouncement() {
                             eachTerm.is_active === '1'
                               ? classes.activeItem
                               : ''
-                          } 
+                          }
                         >
                           {eachTerm.term_desc}
                         </MenuItem>
@@ -418,43 +440,52 @@ function CreateAnnouncement() {
               alignItems="center"
             >
               <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
-              {/* <TextField
-                id="outlined-required"
-                name="course_code"
-                label="Enter course code"
-                variant="outlined"
-                size="small"
-                multiline
-                maxRows={20}
-                sx={{ m: 2, width: 350 }}
-                value={announcementDetails.course_code}
-                onChange={handleInput}
-              /> */}
+
               <Autocomplete
-                id="controllable-states-demo"
-                options={courseList && courseList.map((course) => {
-                  return course;
-                })}
-                filterOptions={filterCourseCodes}
                 value={courseCodeValue}
-                inputValue={inputCourseCodeValue}
-                onInputChange={(event, newInputCourseCodeValue) => {
-                  if (newInputCourseCodeValue !== null) {
-                    setCourseCodeInputValue(newInputCourseCodeValue);
+                onChange={handleChange}
+                filterOptions={filterCourseCodes}
+
+                selectOnFocus
+                clearOnBlur
+                handleHomeEndKeys
+                id="free-solo-with-text-demo"
+                options={courseList}
+                getOptionLabel={(option) => {
+                  // Value selected with enter, right from the input
+                  if (typeof option === 'string') {
+                    return option;
                   }
-                }}
-                onChange={(event, newCourseCodeValue) => {
-                  if (newCourseCodeValue !== null) {
-                    setCourseCodeValue(newCourseCodeValue);
-                    //handleCourseCodeAdd(newCourseCodeValue);
-                    updateCourseCode(newCourseCodeValue)
+                  // Add "xxx" option created dynamically
+                  if (option.inputValue) {
+                    return option.inputValue;
                   }
+                  // Regular option
+                  return option.title;
                 }}
+                renderOption={(props, option) => <li {...props}>{option.title}</li>}
+                sx={{ width: 300 }}
+                freeSolo
                 renderInput={(params) => (
                   <TextField
                     {...params}
+
                     multiline
                     size="small"
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        event.preventDefault();
+                      }
+                    }}
+                    onKeyPress={(event) => {
+                      const key = event.key;
+                      const regex = /^[A-Za-z0-9]+$/;
+                  
+                      if (!regex.test(key) && key !== 'Enter') {
+                        event.preventDefault();
+                      }
+                    
+                    }}
                     sx={{
                       mx: 2, mt: 1, mb: 2, width: 300,
                       ...(params.disabled && {
@@ -483,8 +514,12 @@ function CreateAnnouncement() {
                   />
                 )}
                 disableClearable
-              //getOptionDisabled={(option) => !!courseCode && option !== courseCode}
               />
+
+
+
+
+
             </Grid>
             <Grid
               container
@@ -668,7 +703,7 @@ function CreateAnnouncement() {
                 alignItems="flex-start"
                 sx={{ backgroundColor: (selectedCourses && selectedCourses.length === 0) ? "#FFF" : "#F5F5F5" }}
               >
-                <Autocomplete
+                {/*<Autocomplete
                   id="controllable-states-demo"
                   options={courseList && courseList.map((course) => {
                     return course;
@@ -693,7 +728,92 @@ function CreateAnnouncement() {
                     />
                   )}
                   disabled={courseCode && courseCode.length === 0} //if it creates some problems, delete it.
-                />
+                />*/}
+                <Button onClick={handleClickOpen}>Open select dialog</Button>
+                <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
+                  <DialogTitle>Fill the form</DialogTitle>
+                  <DialogContent>
+                    <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                      <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel htmlFor="demo-dialog-native">Age</InputLabel>
+
+                        <Autocomplete
+                          id="controllable-states-demo"
+                          options={courseList && courseList.map((course) => {
+                            return course;
+                          })}
+                          filterOptions={filterCourseCodes}
+                          value={courseCodeValue}
+                          inputValue={inputCourseCodeValue}
+                          onInputChange={(event, newInputCourseCodeValue) => {
+                            if (newInputCourseCodeValue !== null) {
+                              setCourseCodeInputValue(newInputCourseCodeValue);
+                            }
+                          }}
+                          onChange={(event, newCourseCodeValue) => {
+                            if (newCourseCodeValue !== null) {
+                              setCourseCodeValue(newCourseCodeValue);
+                              //handleCourseCodeAdd(newCourseCodeValue);
+                              updateCourseCode(newCourseCodeValue)
+                            }
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              multiline
+                              size="small"
+                              sx={{
+                                mx: 2, mt: 1, mb: 2, width: 300,
+                                ...(params.disabled && {
+                                  backgroundColor: 'transparent',
+                                  color: 'inherit',
+                                  pointerEvents: 'none',
+                                }),
+                              }}
+                              InputProps={{
+                                ...params.InputProps,
+                                endAdornment: (
+                                  <>
+                                    {params.InputProps.endAdornment}
+                                    {courseCode && (
+                                      <IconButton
+                                        onClick={handleCourseCodeDelete}
+                                        aria-label="Clear"
+                                        size="small"
+                                      >
+                                        <ClearIcon />
+                                      </IconButton>
+                                    )}
+                                  </>
+                                ),
+                              }}
+                            />
+                          )}
+                          disableClearable
+                        //getOptionDisabled={(option) => !!courseCode && option !== courseCode}
+                        />
+                      </FormControl>
+                      <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id="demo-dialog-select-label">Age</InputLabel>
+                        <Select
+                          labelId="demo-dialog-select-label"
+                          id="demo-dialog-select"
+                          value={null}
+                          onChange={(event, newCourseValue) => {
+                            if (newCourseValue !== null) handleCourseAdd(newCourseValue);
+                          }}
+                          input={<OutlinedInput label="Age" />}
+                        >
+
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleClose}>Ok</Button>
+                  </DialogActions>
+                </Dialog>
                 {selectedCourses &&
                   selectedCourses.map((courseSelected, i) => {
                     return (
