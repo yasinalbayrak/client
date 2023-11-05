@@ -257,12 +257,19 @@ function CreateAnnouncement() {
     return filtered;
   }
 
+  const istanbulTime = new Date().toLocaleTimeString("en-GB", {
+    timeZone: "Europe/Istanbul",
+    hour12: false, 
+  });
+
+  const istanbulDate = new Date().toLocaleDateString("en-GB", {
+    timeZone: "Europe/Istanbul",
+  });
+  
   const [announcementDetails, setAnnouncementDetails] = useState({
     course_code: courseCode,
-    lastApplicationDate: new Date().toLocaleDateString("en-CA"),
-    lastApplicationTime: new Date()
-      .toLocaleTimeString()
-      .replace(/(.*)\D\d+/, "$1"),
+    lastApplicationDate: istanbulDate,
+    lastApplicationTime: istanbulTime.replace(/(.*)\D\d+/, "$1"),
     letterGrade: "A",
     workHours: "5 Hours",
     jobDetails: "",

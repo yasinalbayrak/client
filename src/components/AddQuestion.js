@@ -13,6 +13,14 @@ import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
 import { addAnnouncement } from "../apiCalls";
 import { useSelector } from "react-redux";
+import IconButton from '@mui/material/IconButton';
+import HtmlTooltip from '@mui/material/Tooltip';
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 const questionType = [
   { value: "Text Answer", label: "Text Answer" },
@@ -248,9 +256,41 @@ function AddQuestion(props) {
           <Droppable droppableId="questions">
             {(provided) => (
               <Grid item xs={8} {...provided.droppableProps} ref={provided.innerRef}>
-                <Typography variant="h5" sx={{ textDecoration: "underline", mt: 8, mb: 2, fontWeight: "bold" }}>
-                  Additional Questions for Students:
-                </Typography>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    <Typography variant="h5" sx={{ textDecoration: "underline", mt: 8, mb: 2, fontWeight: "bold" }}>
+                      Additional Questions for Students:
+                    </Typography>
+                    <HtmlTooltip 
+                    title={<List>
+                    <ListItem>
+                      <ListItemText primary="These information will be provided automatically to you, please do not ask them as questions:" />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText secondary="Name" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText secondary="ID" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px" , color: "white"} }} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText secondary="Faculty" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText secondary="Previous Grade" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText secondary="Class" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText secondary="GPA" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px" , color: "white"} }} />
+                    </ListItem>
+                  </List> }
+                    placement="right"
+                    >
+                      <IconButton sx={{ marginLeft: '20px', marginTop: '40px' }}>
+                        <ErrorOutlinedIcon sx={{ fontSize: 35,color:"red"}}/>
+                      </IconButton>
+                    </HtmlTooltip>
+                    </div>
                 {questions.map((question, index) => {
                   return (
                     <Draggable key={question.questionNumber} draggableId={question.questionNumber.toString()} index={index}>
@@ -271,7 +311,7 @@ function AddQuestion(props) {
                             id="outlined-required"
                             name="mQuestion"
                             multiline
-                            maxRows={20}
+                            maxRows={10}
                             value={question.mQuestion}
                             label=""
                             variant="outlined"
@@ -322,7 +362,7 @@ function AddQuestion(props) {
                                       id="outlined-required"
                                       name="mMultiple"
                                       multiline
-                                      maxRows={20}
+                                      maxRows={10}
                                       value={multiple}
                                       label=""
                                       variant="outlined"
@@ -377,7 +417,7 @@ function AddQuestion(props) {
                 })}
                 {provided.placeholder}
                 <Grid container direction="row" justifyContent="start" alignItems="center">
-                  {questions.length < 20 && (
+                  {questions.length < 10 ? (
                     <Button
                       variant="contained"
                       size="large"
@@ -387,6 +427,12 @@ function AddQuestion(props) {
                     >
                       Add Question
                     </Button>
+                  ):
+                  (
+                    <Stack sx={{ width: '100%' }} spacing={2}>
+                      <br></br>
+                    <Alert severity="info">You can add maximum of 10 questions!</Alert>
+                  </Stack>
                   )}
                 </Grid>
               </Grid>
@@ -424,7 +470,7 @@ function AddQuestion(props) {
                     justifyContent: "space-between", 
                   }}
                   onClick={() => handleButtonClick(idx)}
-                  disabled = {questions.length >= 20}
+                  disabled = {questions.length >= 10}
                 >
                   {e.sQuestion}
                 </Button>

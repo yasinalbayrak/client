@@ -11,6 +11,7 @@ const initialState = {
   isLoading: false,
   isFailed: false,
   isLoggedIn: false,
+  isTranscriptUploded:false,
 };
 
 const userSlice = createSlice({
@@ -37,6 +38,11 @@ const userSlice = createSlice({
       state.isLoading = false;
       state.isLoggedIn = false;
     },
+    
+    uploadedTranscript:(state)=>{
+      state.isTranscriptUploded=true;
+    },
+
     logout: (state) => {
       state.name = "";
       state.surname = "";

@@ -1,6 +1,6 @@
 import "./App.css";
 import MockCAS from "./pages/MockCAS";
-import { Routes, Route, useSearchParams } from "react-router-dom";
+import { Routes, Route, useSearchParams, Navigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import CreateAnnouncement from "./pages/CreateAnnouncement";
 import EditAnnouncement from "./pages/EditAnnouncement";
@@ -16,10 +16,13 @@ import EditApplyPage from "./pages/EditApplyPage";
 import SuccessPage from "./pages/SuccessPage";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import TranscriptPage from "./components/transcriptPageComponents/transcriptPage";
 function App() {
   const [urlParams, setUrlParams] = useSearchParams();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
+  const isTranscriptUploded = useSelector((state) => state.user.isTranscriptUploded);
+  const isInstructor = useSelector((state) => state.user.isInstructor);
   const dispatch = useDispatch();
   const url = window.location.href;
   let path = window.location.href.split("?")[0];
@@ -73,6 +76,8 @@ function App() {
       <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         {isLoggedIn ? (
+          isTranscriptUploded||isInstructor?
+          
           <>
             <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
             <Route path="/home" element={<HomePage></HomePage>}></Route>
@@ -83,6 +88,13 @@ function App() {
             <Route path="/applicants" element={<CourseApplicantsPage></CourseApplicantsPage>}></Route>
             <Route path="/application-of/:postId" element={<ApplicantsPage></ApplicantsPage>}></Route>
             <Route path="/success" element={<SuccessPage></SuccessPage>}></Route>
+            <Route path="/transcriptpage" element={<TranscriptPage></TranscriptPage>}></Route>
+
+          </>
+          :
+          <>
+            <Route exact path="/transcriptpage" element={<TranscriptPage></TranscriptPage>}></Route>
+            <Route path="*" element={<Navigate to="/transcriptpage" />}></Route>
           </>
         ) : (
           <>
