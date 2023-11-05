@@ -21,6 +21,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
+import { toast } from 'react-toastify';
 
 const questionType = [
   { value: "Text Answer", label: "Text Answer" },
@@ -493,9 +494,8 @@ function AddQuestion(props) {
               props.AnnouncementDetails.letterGrade &&
               props.AnnouncementDetails.workHours &&
               props.AnnouncementDetails.jobDetails &&
-              //props.AnnouncementDetails.authInstructor.length > 0 &&
-              //props.AnnouncementDetails.desiredCourses.length > 0 &&
-              questions.length > 0  
+              props.AnnouncementDetails.term 
+            
             ) {
               addAnnouncement(
                 props.AnnouncementDetails.course_code,
@@ -508,13 +508,13 @@ function AddQuestion(props) {
                 props.AnnouncementDetails.authInstructor,
                 props.AnnouncementDetails.desiredCourses,
                 questions,
-                term
+                props.AnnouncementDetails.term
               ).then((data) => {
-                navigate("/success", {
-                  replace: true,
-                  state: { successText: "Your announcement has been successfully added." },
+                navigate("/Home", {
+                  replace: true
                 });
-              }).catch((error) => {
+                toast.success("Your announcement has been successfully added.")
+              }).catch((_) => {
                 /* Error is already printed */
               });
 
