@@ -70,11 +70,19 @@ function CreateAnnouncement() {
 
 
   const userName = useSelector((state) => state.user.username);
-
+  const name = useSelector((state) => state.user.name);
+  const surname = useSelector((state) => state.user.surname);
+  
   const term = useSelector((state) => state.user.term);
 
+  const userId = useSelector((state) => state.user.id);
+
   const [authUsersList, setAuthUserList] = useState([]); //get instructors from database
-  const [authPeople, setAuthPeople] = useState([]); //used for send request as selected from list
+  const [authPeople, setAuthPeople] = useState([
+    {display_name: name + " " + surname,
+    username: userName,
+    authOptionValue: name + " " + surname  + " (" + userName + ")",
+    id: userId}]); //used for send request as selected from list
   const [authValue, setAuthValue] = useState(""); // for autocomplete
   const [inputAuthValue, setAuthInputValue] = useState(""); // for autocomplete
 
@@ -111,7 +119,7 @@ function CreateAnnouncement() {
 
         return {
           display_name: displayName,
-          username: instructor.email,
+          username: instructor.user.email,
           authOptionValue: OptionValue,
           id: instructor.user.id
         };
@@ -356,6 +364,11 @@ function CreateAnnouncement() {
     }
 
   }
+
+  // useEffect(() => {
+  //   console.log(announcementDetails)
+  // }
+  //   , [announcementDetails])
 
 
 
