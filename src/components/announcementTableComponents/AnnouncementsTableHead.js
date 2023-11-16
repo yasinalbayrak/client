@@ -17,6 +17,8 @@ function AnnouncementsTableHead({ tabValue, isInstructor }) {
         <TableCell align="center">
           {tabValue === 1 && !isInstructor && "Application Status"}
         </TableCell>
+        {tabValue === 1 && !isInstructor && 
+        <TableCell align="center">Actions</TableCell>}
       </TableRow>
     </TableHead>
   );

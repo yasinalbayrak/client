@@ -6,6 +6,7 @@ import TableRow from "@mui/material/TableRow";
 import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import { red } from '@mui/material/colors';
+import { Table } from '@mui/material';
 
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, indxx }) {
  
@@ -41,15 +42,12 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
        console.log("isApplied", isApplied(data.applicationId));
       // console.log("key", key);
       // console.log("indxx", indxx);
-      const applicationId = data.applicationId;
+      //const applicationId = data.applicationId;
       if(isApplied(applicationId)) {
         return(
-          <Button
-            variant="contained"
-            onClick={() => navigate("/apply/" + applicationId, { replace: true })}
-          >
-            Edit Application
-          </Button>
+          <span style={{ color: 'green' }}>
+            Applied
+          </span>
         );
       }
       else {
@@ -63,6 +61,9 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       );
       }
     }
+
+   
+
 
     let statusColor;
   switch (applicationStatus) {
@@ -125,6 +126,15 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
         {renderButton()}
       </TableCell>
+      
+      {!isInstructor && tabValue === 1 &&<TableCell sx={{ bgcolor: "#FAFAFA",borderBottom: "none" }} align="center">
+        <Button
+        variant='contained'
+        onClick={() => navigate("/apply/" + applicationId, { replace: true })}
+        startIcon = {<EditIcon />} >
+          Edit
+        </Button>
+      </TableCell>}
     </TableRow>
   );
 }
