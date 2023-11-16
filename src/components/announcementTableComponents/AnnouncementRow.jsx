@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import { red } from '@mui/material/colors';
 
-export default function AnnouncementRow({ data, tabValue, userName, navigate, isInstructor }) {
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, indxx }) {
  
   const { modifiedCourseCode, instructor_name,weeklyWorkingTime, term , status : applicationStatus } = data;
 
@@ -37,6 +37,22 @@ export default function AnnouncementRow({ data, tabValue, userName, navigate, is
   
     // Conditions for non-instructor
     if (tabValue === 0) {
+      // console.log(data)
+       console.log("isApplied", isApplied(data.applicationId));
+      // console.log("key", key);
+      // console.log("indxx", indxx);
+      const applicationId = data.applicationId;
+      if(isApplied(applicationId)) {
+        return(
+          <Button
+            variant="contained"
+            onClick={() => navigate("/apply/" + applicationId, { replace: true })}
+          >
+            Edit Application
+          </Button>
+        );
+      }
+      else {
       return (
         <Button
           variant="contained"
@@ -45,7 +61,9 @@ export default function AnnouncementRow({ data, tabValue, userName, navigate, is
           Apply
         </Button>
       );
+      }
     }
+
     let statusColor;
   switch (applicationStatus) {
     case 'ACCEPTED':

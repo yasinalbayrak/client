@@ -69,6 +69,10 @@ export default function AnnouncementTable(props) {
   useEffect(() => {
     setTabValue(props.tabValue);
   }, [props.tabValue]);
+
+  // useEffect(() => {
+  //   console.log(userApplications)
+  // }, [userApplications]);
   
   useEffect(() => {
     if (props.rows && props.rows.length > 0) {
@@ -95,6 +99,12 @@ export default function AnnouncementTable(props) {
       setRows(modifiedRows);
     }
   }, [props.rows]);
+
+  const isApplied = (applicationID) => {
+    return userApplications.some((userApplication) => {
+      return userApplication.application?.applicationId === applicationID;
+    });
+  }
   
   return (
     <TableContainer component={Paper}>
@@ -116,6 +126,7 @@ export default function AnnouncementTable(props) {
               userName={userName}
               navigate={navigate}
               isInstructor={isInstructor}
+              isApplied = {isApplied}
 
             />
           )})}
