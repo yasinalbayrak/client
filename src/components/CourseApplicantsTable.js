@@ -29,21 +29,23 @@ function CourseApplicantsTable(props) {
           </TableHead>
           <TableBody>
             {props.rows &&
-              props.rows.filter((row) => (row.term == term)).map((row, index) => (
+              props.rows
+              .filter((row) => (row.term == term.term_desc))
+              .map((row, index) => (
                 <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                   <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
-                    {row.course_code}
+                    {row.course.courseCode}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="center">
                     {row.term}
                   </TableCell>
                   <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
-                    {row.deadline}
+                    {row.lastApplicationDate.slice(0,10)}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="center">
                     <Button
                       variant="contained"
-                      onClick={() => navigate("/application-of/" + row.id, { replace: true })}
+                      onClick={() => navigate("/application-of/" + row.applicationId, { replace: true })}
                       endIcon={<ChevronRightIcon />}
                     >
                       Check Applicants

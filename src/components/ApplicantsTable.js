@@ -15,7 +15,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import { getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements } from "../apiCalls";
+import {getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements } from "../apiCalls";
 import { useParams } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 
@@ -33,7 +33,7 @@ function CustomRow(props) {
   const [courseHistory, setCourseHistory] = React.useState([]);
   const [announcements, setAnnouncements] = React.useState([]);
   const [courseTitle, setCourseTitle] = React.useState("");
-
+  const [studentDetails,setStudentDetails] = React.useState({});
   useEffect(() => {
     var temp = [];
     if (questions.length !== 0 && row) {
@@ -83,44 +83,53 @@ function CustomRow(props) {
   }
 
   useEffect(() => {
-    getAllAnnouncements().then((res) => {
-      setAnnouncements(res);
+    getCurrentTranscript(row.student.user.id).then((res) => {
+      setStudentDetails(res);
+    }).catch(_=>{
+      setStudentDetails(null);
     });
   }, [])
   
-  useEffect(() => {
-    var tmp2 = announcements.filter((annc) => annc.id == row.post_id);
-    if (tmp2.length != 0) {
-      setCourseTitle(tmp2[0].course_code);
-    }
-    getApplicationByUsername(row.student_username).then((res) => {
-      setLaHistory(res.filter((application) => application.status.toLowerCase() == "accepted"));
+  // useEffect(() => {
+  //   var tmp2 = announcements.filter((annc) => annc.id == row.post_id);
+  //   if (tmp2.length != 0) {
+  //     setCourseTitle(tmp2[0].course_code);
+  //   }
+  //   getApplicationByUsername(row.student_username).then((res) => {
+  //     setLaHistory(res.filter((application) => application.status.toLowerCase() == "accepted"));
 
-      var tempList = [];
-      res.map((application) => {
-        var tmp = announcements.filter((annc) => annc.id == application.post_id);
-        if (tmp.length != 0 && tmp[0].course_code == courseTitle && row.term != application.term) {
-          tempList.push(application);
-        }
-      });
-      setCourseHistory(tempList);
-    });
-  }, [announcements, courseTitle])
+  //     var tempList = [];
+  //     res.map((application) => {
+  //       var tmp = announcements.filter((annc) => annc.id == application.post_id);
+  //       if (tmp.length != 0 && tmp[0].course_code == courseTitle && row.term != application.term) {
+  //         tempList.push(application);
+  //       }
+  //     });
+  //     setCourseHistory(tempList);
+  //   });
+  // }, [announcements, courseTitle])
 
   return (
     <>
       <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
-          {changeName(row.student_name)}
+          {row.student.user.name + row.student.user.surname}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
-          {row.faculty}
+          {
+          // TODO 
+          studentDetails && studentDetails.program
+          }
         </TableCell>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
-          {row.grade}
+          {
+          // TODO
+          studentDetails?.course && studentDetails.course[0].slice(-1)}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} align="left">
-          {row.working_hours}
+          {
+          // TODO
+          row.working_hours}
         </TableCell>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: 120 }} align="left">
           {row.status}
@@ -146,7 +155,7 @@ function CustomRow(props) {
           <Collapse in={open} component="tr" style={{ display: "block" }}>
             <td>
               <Grid container direction="column" alignItems="center" justifyContent="center">
-                {qAndA.map((element) => (
+                {qAndA.length > 0 && qAndA.map((element) => (
                   <Grid item container m={2}>
                   <Grid item>
                     <Typography>{element[0]}:</Typography>
@@ -166,7 +175,7 @@ function CustomRow(props) {
                 </Grid>
                 <Grid item container direction="row" alignItems="center" justifyContent="space-evenly">
                   <Grid item container direction="column" justifyContent="flex-start" xs={6}>
-                    {LaHistory.map((application) => (
+                    {LaHistory && LaHistory.map((application) => (
                       <Grid item>
                         {announcements.filter((annc) => annc.id == application.post_id).map((elem) => (
                           <Typography>{elem.course_code}</Typography>
@@ -183,7 +192,7 @@ function CustomRow(props) {
                     <Grid>
                       <Typography variant="caption" color="gray">(Including rejected)</Typography>
                     </Grid>
-                    {courseHistory.map((application) => (
+                    {courseHistory && courseHistory.map((application) => (
                       <Grid item>
                         <Typography>{application.status} - {application.term}</Typography>
                       </Grid>
@@ -262,15 +271,15 @@ function ApplicantsTable(props) {
   //   ];
   const [rows, setRows] = React.useState([]);
   const [questions, setQuestions] = React.useState([]);
-  const { postId } = useParams();
+  const { appId } = useParams();
 
-  useEffect(() => {
-    getApplicationsByPost(postId).then((results) => setRows(results));
-    getAnnouncement(postId).then((res) => {
-      setQuestions(res.questions);
-    });
-    console.log(rows);
-  }, [props]);
+  // useEffect(() => {
+  //   getApplicationsByPost(appId).then((results) => setRows(results));
+  //   getAnnouncement(postId).then((res) => {
+  //     setQuestions(res.questions);
+  //   });
+  //   console.log(rows);
+  // }, [props]);
 
   return (
     <TableContainer component={Paper}>
@@ -287,7 +296,7 @@ function ApplicantsTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
+          {props.rows.map((row, index) => (
             <CustomRow row={row} index={index} questions={questions}></CustomRow>
           ))}
         </TableBody>
