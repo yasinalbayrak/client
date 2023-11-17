@@ -76,7 +76,7 @@ function App() {
       <ToastContainer position="top-right" autoClose={false} />
       <Routes>
         {isLoggedIn ? (
-          isTranscriptUploded||isInstructor?
+          /*isTranscriptUploded||isInstructor?*/
           
           <>
             <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
@@ -91,11 +91,11 @@ function App() {
             <Route path="/transcriptpage" element={<TranscriptPage></TranscriptPage>}></Route>
 
           </>
-          :
+          /*:
           <>
             <Route exact path="/transcriptpage" element={<TranscriptPage></TranscriptPage>}></Route>
             <Route path="*" element={<Navigate to="/transcriptpage" />}></Route>
-          </>
+          </>*/
         ) : (
           <>
             <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
