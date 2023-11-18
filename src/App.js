@@ -86,7 +86,7 @@ function App() {
             <Route path="/apply/:id" element={<ApplyPage></ApplyPage>}></Route>
             <Route path="/edit-apply/:id" element={<EditApplyPage></EditApplyPage>}></Route>
             <Route path="/applicants" element={<CourseApplicantsPage></CourseApplicantsPage>}></Route>
-            <Route path="/application-of/:postId" element={<ApplicantsPage></ApplicantsPage>}></Route>
+            <Route path="/application-of/:appId" element={<ApplicantsPage></ApplicantsPage>}></Route>
             <Route path="/success" element={<SuccessPage></SuccessPage>}></Route>
             <Route path="/transcriptUploadPage" element={<TranscriptPage></TranscriptPage>}></Route>
 

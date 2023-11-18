@@ -224,6 +224,16 @@ async function getApplicationRequestsByStudentId(studentId) {
 
 }
 
+async function getApplicationRequestsByApplicationId(applicationId) {
+  try {
+    const results = await axios.get(
+      apiEndpoint + "/applications/" + applicationId +"/applicationRequests"
+    );
+    return results.data;
+  } catch (error) { return handleError(error); }
+
+}
+
 async function updateApplicationById(
   applicationId,
   username,
@@ -332,6 +342,13 @@ async function postTranscript(formData) {
 
 }
 
+async function getCurrentTranscript(studentId) {
+  try {
+    const result = await axios.get(apiEndpoint + "/transcript/get-current-transcript/" + studentId);
+    return result.data;
+  } catch (error) {  }
+}
+
 
 
 
@@ -352,5 +369,7 @@ export {
   logout,
   getApplicationRequestsByStudentId,
   getAllAnnouncementsOfInstructor,
-  postTranscript
+  postTranscript,
+  getApplicationRequestsByApplicationId,
+  getCurrentTranscript
 };
