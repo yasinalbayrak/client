@@ -30,6 +30,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { NewspaperTwoTone } from "@mui/icons-material";
+import HelpCenterIcon from '@mui/icons-material/HelpCenter';
+import Tooltip from '@mui/material/Tooltip';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
+
+
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -535,11 +541,6 @@ function CreateAnnouncement() {
                 )}
                 disableClearable
               />
-
-
-
-
-
             </Grid>
             <Grid
               container
@@ -572,6 +573,11 @@ function CreateAnnouncement() {
                 sx={{ m: 2 }}
                 onChange={handleInput}
               />
+              <Tooltip title="The time you select is adjusted to Istanbul local time." placement="right">
+                <IconButton>
+                  <HelpCenterIcon />
+                </IconButton>
+              </Tooltip>
             </Grid>
             <Grid
               container
@@ -625,19 +631,30 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="flex-start"
             >
-              <Typography paddingTop={3}>Job Details<span style={{ color: 'red' }}>*</span>:</Typography>
-              <TextField
-                placeholder="Enter Job Details..."
-                name="jobDetails"
-                value={announcementDetails.jobDetails}
-                multiline
-                size="small"
-                rows={5}
-                maxRows={20}
-                sx={{ m: 2, width: 400 }}
-                onChange={handleInput}
-                required
-              />
+              <Typography paddingTop={3}>Job Details:</Typography>
+              <div style={{ margin: '15px 15px' }}>
+                <TextareaAutosize
+                  minRows={1} // Minimum number of rows
+                  maxRows={20} // Maximum number of rows
+                  rows={1}
+                  size="small"
+                  name="jobDetails"
+                  multiline
+                  sx={{ m: 2, width: 400 }}
+                  value={announcementDetails.jobDetails}
+                  onChange={handleInput}
+                  placeholder="Enter Job Details..."
+                  style={{
+                    width: '210%', // Adjusting width to account for padding and border
+                    border: '1px solid #c1c4bc',
+                    borderRadius: '5px',
+                    padding: '8px', // Adjusted padding to give space between text and border
+                    outline: 'none',
+                    fontFamily: 'Arial, sans-serif', // Change the font family
+                    fontSize: '15px', // Change the font size
+                  }}
+                />
+              </div>
             </Grid>
             <Grid
               container

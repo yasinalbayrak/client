@@ -16,7 +16,7 @@ import EditApplyPage from "./pages/EditApplyPage";
 import SuccessPage from "./pages/SuccessPage";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import TranscriptPage from "./components/transcriptPageComponents/transcriptPage";
+import TranscriptPage from "./components/transcriptPageComponents/transcriptUploadPage";
 function App() {
   const [urlParams, setUrlParams] = useSearchParams();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
@@ -88,7 +88,7 @@ function App() {
             <Route path="/applicants" element={<CourseApplicantsPage></CourseApplicantsPage>}></Route>
             <Route path="/application-of/:postId" element={<ApplicantsPage></ApplicantsPage>}></Route>
             <Route path="/success" element={<SuccessPage></SuccessPage>}></Route>
-            <Route path="/transcriptpage" element={<TranscriptPage></TranscriptPage>}></Route>
+            <Route path="/transcriptUploadPage" element={<TranscriptPage></TranscriptPage>}></Route>
 
           </>
           /*:

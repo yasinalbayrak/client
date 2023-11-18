@@ -15,6 +15,8 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import { useSelector } from "react-redux";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 const TranscriptPage = (props) => {
     const navigate = useNavigate();
@@ -118,6 +120,9 @@ const TranscriptPage = (props) => {
                   </Grid>
                   <Grid item xs={2}></Grid>
                 </Grid>
+                <Grid>  
+                  <FormControlLabel required control={<Checkbox />} label="By uploading my transcript, I consent to the collection and use of this personal data for the purpose of LA application." />
+                </Grid>
                 <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                     
                   <Grid item>
@@ -133,6 +138,7 @@ const TranscriptPage = (props) => {
                     </Button>
                   </Grid>
                 </Grid>
+                
               </Grid>
             </Box>
           </Box>
