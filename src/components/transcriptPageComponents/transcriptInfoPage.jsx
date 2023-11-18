@@ -29,40 +29,29 @@ const TranscriptInfo=(props)=> {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = [];
-        data=getCurrentTranscript(userID);
-        console.log(data);
-        setstudentInfo(data);
-        
-        const transcripInfo = data.map((studentInfo) => {
-          
-          const faculty= "istendi";
-          const program= studentInfo.program.majors[0];//değişecek
-          
-          
-          
-          return {
-            ...studentInfo, 
-            modifiedprogram:program,
-          };
-        });
-        setstudentInfo(transcripInfo);
+        const currentTranscript = await getCurrentTranscript(userID);
+        setstudentInfo(currentTranscript);
+
       } catch (error) {
-        console.error("Failed to fetch student info:", error);
+        // Centralized error handling or log the error
+        console.error("Error fetching data:", error);
+        setstudentInfo(null);
       }
-    }
+    };
+
     fetchData();
-  }, []);
+  }, [userID]);
 
 
   const rows = [
-    { name: "Student ID:", val: studentInfo.studentId },
-    { name: "Name Surname:", val: studentInfo.studentName },
-    { name: "GPA:", val: "" },
-    { name: "Current term:", val: "-" },
-    { name: "Faculty:", val: "-" },
-    { name: "Program:", val: "-" },
-    { name: "Year:", val: "-" },
+    { name: "Student ID:", val: studentInfo?.studentSuId },
+    { name: "Name Surname:", val: studentInfo?.studentName },
+    { name: "GPA:", val: studentInfo?.cumulativeGPA },
+    { name: "Current term:", val: studentInfo?.term },
+    { name: "Faculty:", val: "istendi" },
+    { name: "Major:", val: studentInfo?.program?.majors},
+    { name: "Minor:", val: studentInfo?.program?.minors },
+    { name: "Year:", val: studentInfo?.year },
 
   ];
 
@@ -112,19 +101,16 @@ const TranscriptInfo=(props)=> {
               <br></br>
               <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                 <Grid item>
-                  <Button variant="contained" startIcon={<ArrowBackIcon />} onClick={() => navigate("/home", { replace: true })} color="error">
+                  <Button variant="contained" startIcon={<ArrowBackIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="error">
                     Upload new transcript
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="contained" startIcon={<ArrowForwardIcon />} color="success" >
+                  <Button variant="contained" startIcon={<ArrowForwardIcon />} onClick={() => navigate("/home")} color="success" >
                   Continue with this information
                   </Button>
                 </Grid>
               </Grid>
-              
-              
-              
             </Grid>
             </Box>
           </Box>
