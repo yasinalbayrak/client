@@ -40,7 +40,7 @@ const userSlice = createSlice({
     },
     
     uploadedTranscript:(state)=>{
-      state.isTranscriptUploded=true;
+      state.isTranscriptUploded=false;
     },
 
     logout: (state) => {

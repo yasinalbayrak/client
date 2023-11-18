@@ -8,10 +8,10 @@ import {
     Grid,
     Divider,
   } from "@mui/material";
-  import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { postTranscript } from "../../apiCalls";
 import CloseIcon from "@mui/icons-material/Close";
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import DoneIcon from '@mui/icons-material/Done';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import { useSelector } from "react-redux";
@@ -19,33 +19,38 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
 const TranscriptPage = (props) => {
-    const navigate = useNavigate();
-    const username = useSelector((state) => state.user.username);
-    const state = useSelector((state) => state);
-    const name = useSelector((state) => state.user.name);
-    const surname = useSelector((state) => state.user.surname);
-    const userId = useSelector((state) => state.user.id)
+  const navigate = useNavigate();
+  const username = useSelector((state) => state.user.username);
+  const state = useSelector((state) => state);
+  const name = useSelector((state) => state.user.name);
+  const surname = useSelector((state) => state.user.surname);
+  const userId = useSelector((state) => state.user.id)
+  const [isTranscriptUploded, setIsTranscriptUploded] = useState(false);
+  const { id } = useParams();
+  const [transcript, setTranscript] = useState(null);
+  const [consentChecked, setConsentChecked] = useState(false);
+  const [filename, setFile] = useState(() => {
+    const initialFileName = "No File Uploaded";
+    return initialFileName;
+  });
+  
+  const onCheckboxChange = (e) => {
+    setConsentChecked(e.target.checked);
+  };
 
-    const { id } = useParams();
-    const [transcript, setTranscript] = useState(null);
-    const [filename, setFile] = useState(() => {
-      const initialFileName = "No File Uploaded";
-      return initialFileName;
-    });
-  
-  
-    const onSubmit = () => {
-      var temp = [];
-      console.log(temp);
-      postTranscript(id, state.user.id, []).then((res) => {
-        console.log(res);
-        navigate("/success", { replace: true, state: { successText: "You have applied successfully." } });
-      }).catch((_) => {
-        /* Already handled */
-      });
-  
-    };
-  
+  const onSubmit = () => {
+    if (!isTranscriptUploded)
+      console.error("You should upload your transcript to contiune.")
+    else if (!consentChecked) {
+      // Display an error or prevent submission
+      console.error("Please consent to the terms before submitting.");
+      return;
+    }
+    else 
+      navigate("/transcriptInfoPage")
+  };
+
+
     const onFileChange = (e) => {
       if (!e.target.files) {
         return;
@@ -63,12 +68,14 @@ const TranscriptPage = (props) => {
   
       postTranscript(formData).then((res) => {
         console.log(res);
+        setIsTranscriptUploded(true);
       }
-      );
+      ); 
+
     };
   
     const onFileSubmit = () => {
-  
+      
     }
   
     useEffect(() => {
@@ -121,7 +128,9 @@ const TranscriptPage = (props) => {
                   <Grid item xs={2}></Grid>
                 </Grid>
                 <Grid>  
-                  <FormControlLabel required control={<Checkbox />} label="By uploading my transcript, I consent to the collection and use of this personal data for the purpose of LA application." />
+                  <FormControlLabel
+                   required
+                   control={<Checkbox onChange={onCheckboxChange}/>} label="By uploading my transcript, I consent to the collection and use of this personal data for the purpose of LA application." />
                 </Grid>
                 <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                     
@@ -133,8 +142,8 @@ const TranscriptPage = (props) => {
                   </Grid>
                   <Grid item>
                   <br></br>
-                    <Button variant="contained" startIcon={<FileUploadIcon />} color="success" onClick={onSubmit}>
-                      Upload
+                    <Button variant="contained" startIcon={<DoneIcon />} color="success" onClick={onSubmit}>
+                      DONE
                     </Button>
                   </Grid>
                 </Grid>
@@ -146,7 +155,7 @@ const TranscriptPage = (props) => {
       </>
     );
   
-  };
+};
   
-  export default TranscriptPage;
+export default TranscriptPage;
   
