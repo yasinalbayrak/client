@@ -299,13 +299,13 @@ function isValidURL(url) {
 
 async function getTranscript(applicationId) {
   try {
-    const result = await axios.get(apiEndpoint + "/applicationTranscript/" + applicationId, {
-      responseType: 'blob'
-    });
+    const result = await axios.get(apiEndpoint + "/transcript/get-transcript-file/" + applicationId);
     return result.data;
   } catch (error) { return handleError(error); }
 
 }
+
+
 
 async function getTerms() {
   try {
@@ -349,10 +349,24 @@ async function getCurrentTranscript(studentId) {
   } catch (error) {  }
 }
 
+async function getCourseGrades(studentId, courseIds) {
+  try {
+    const result = await axios.post(
+      apiEndpoint + "/transcript/course-grades/" + studentId,
+      {courses: courseIds},
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    return result.data;
+  }catch (error) {  }
+
+}
+
 
 
 
 export {
+  getCourseGrades,
   getAllAnnouncements,
   getAllInstructors,
   getAllCourses,

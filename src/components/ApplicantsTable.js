@@ -15,7 +15,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import {getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements } from "../apiCalls";
+import { getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements } from "../apiCalls";
 import { useParams } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 
@@ -33,7 +33,7 @@ function CustomRow(props) {
   const [courseHistory, setCourseHistory] = React.useState([]);
   const [announcements, setAnnouncements] = React.useState([]);
   const [courseTitle, setCourseTitle] = React.useState("");
-  const [studentDetails,setStudentDetails] = React.useState({});
+  const [studentDetails, setStudentDetails] = React.useState({});
   useEffect(() => {
     var temp = [];
     if (questions.length !== 0 && row) {
@@ -83,13 +83,32 @@ function CustomRow(props) {
   }
 
   useEffect(() => {
-    getCurrentTranscript(row.student.user.id).then((res) => {
-      setStudentDetails(res);
-    }).catch(_=>{
-      setStudentDetails(null);
-    });
-  }, [])
-  
+    const fetchData = async () => {
+      try {
+        const currentTranscript = await getCurrentTranscript(row.student.user.id);
+        setStudentDetails(currentTranscript);
+
+        const courseGrades = await getCourseGrades(row.student.user.id, [props.courseCode]);
+        if (courseGrades.length > 0) {
+          setStudentDetails((prev) => ({
+            ...prev,
+            course: {
+              courseCode: props.courseCode,
+              grade: courseGrades[0].grade,
+            },
+          }));
+        }
+      } catch (error) {
+        // Centralized error handling or log the error
+        console.error("Error fetching data:", error);
+        setStudentDetails(null);
+      }
+    };
+
+    fetchData();
+  }, [row.student.user.id, props.courseCode]);
+
+
   // useEffect(() => {
   //   var tmp2 = announcements.filter((annc) => annc.id == row.post_id);
   //   if (tmp2.length != 0) {
@@ -113,23 +132,23 @@ function CustomRow(props) {
     <>
       <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
-          {row.student.user.name + row.student.user.surname}
+          {row.student.user.name + " " + row.student.user.surname}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
           {
-          // TODO 
-          studentDetails && studentDetails.program
+            // TODO 
+            studentDetails && studentDetails.program
           }
         </TableCell>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
           {
-          // TODO
-          studentDetails?.course && studentDetails.course[0].slice(-1)}
+            // TODO
+            studentDetails?.course && studentDetails.course.grade}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} align="left">
           {
-          // TODO
-          row.working_hours}
+            // TODO
+            row.working_hours}
         </TableCell>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: 120 }} align="left">
           {row.status}
@@ -157,13 +176,13 @@ function CustomRow(props) {
               <Grid container direction="column" alignItems="center" justifyContent="center">
                 {qAndA.length > 0 && qAndA.map((element) => (
                   <Grid item container m={2}>
-                  <Grid item>
-                    <Typography>{element[0]}:</Typography>
+                    <Grid item>
+                      <Typography>{element[0]}:</Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography>{element[1]}</Typography>
+                    </Grid>
                   </Grid>
-                      <Grid item>
-                        <Typography>{element[1]}</Typography>
-                      </Grid>
-                      </Grid>
                 ))}
                 <Grid item container direction="row" alignItems="center" justifyContent="center">
                   <Grid item xs={6}>
@@ -182,10 +201,10 @@ function CustomRow(props) {
                         ))}
                       </Grid>
                     ))}
-                    {(LaHistory.length == 0) && 
-                    <Grid>
-                      <Typography>None</Typography>
-                    </Grid>
+                    {(LaHistory.length == 0) &&
+                      <Grid>
+                        <Typography>None</Typography>
+                      </Grid>
                     }
                   </Grid>
                   <Grid item container direction="column" justifyContent="flex-start" xs={6}>
@@ -197,14 +216,14 @@ function CustomRow(props) {
                         <Typography>{application.status} - {application.term}</Typography>
                       </Grid>
                     ))}
-                    {(courseHistory.length == 0) && 
-                    <Grid>
-                      <Typography>None</Typography>
-                    </Grid>
+                    {(courseHistory.length == 0) &&
+                      <Grid>
+                        <Typography>None</Typography>
+                      </Grid>
                     }
                   </Grid>
                   <Grid item container m={1}>
-                      </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
             </td>
@@ -234,21 +253,34 @@ function CustomRow(props) {
                   <MenuItem value={"Interested"}>Interested</MenuItem>
                 </Select>
               </FormControl>
-              <Button variant="outlined" endIcon={<DownloadIcon />} sx={{ m: "20px", marginTop: "35px" }} onClick={() => {
-                getTranscript(row.id).then((res) => {
-                  const file = new Blob(
-                    [res], 
-                    {type: 'application/pdf'});
-                  //Build a URL from the file
-                  const fileURL = URL.createObjectURL(file);
-                  // Open the URL on new Window
-                  window.open(fileURL);
-                  // const link = document.createElement("a");
-                  // link.download = 'pdf.pdf';
-                  // link.href = fileURL;
-                  // link.click();
-                });
-              }}>Transcript</Button>
+              <Button
+                variant="outlined"
+                endIcon={<DownloadIcon />}
+                sx={{ m: "20px", marginTop: "35px" }}
+                onClick={() => {
+                  getTranscript(studentDetails.transcriptId).then((res) => {
+                    // Assuming res.content is the base64-encoded PDF content
+                    const base64Content = res.content;
+
+                    // Decode the base64 content
+                    const byteCharacters = atob(base64Content);
+                    const byteArray = new Uint8Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                      byteArray[i] = byteCharacters.charCodeAt(i);
+                    }
+
+                    // Create a Blob from the byte array
+                    const file = new Blob([byteArray], { type: 'application/pdf' });
+
+                    // Open the PDF in a new window
+                    const fileURL = URL.createObjectURL(file);
+                    window.open(fileURL, '_blank');
+                  });
+                }}
+              >
+                Transcript
+              </Button>
+
             </Box>
           </Collapse>
         </TableCell>
@@ -297,7 +329,7 @@ function ApplicantsTable(props) {
         </TableHead>
         <TableBody>
           {props.rows.map((row, index) => (
-            <CustomRow row={row} index={index} questions={questions}></CustomRow>
+            <CustomRow row={row} courseCode={props.courseCode} index={index} questions={questions}></CustomRow>
           ))}
         </TableBody>
       </Table>

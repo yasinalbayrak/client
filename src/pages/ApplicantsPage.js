@@ -36,7 +36,7 @@ function ApplicantsPage() {
               </Typography>
             </Grid>
             <Grid item>
-              <ApplicantsTable rows={rows}></ApplicantsTable>
+              <ApplicantsTable rows={rows} courseCode={title}></ApplicantsTable>
             </Grid>
           </Grid>
         </Box>
