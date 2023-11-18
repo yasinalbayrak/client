@@ -299,13 +299,13 @@ function isValidURL(url) {
 
 async function getTranscript(applicationId) {
   try {
-    const result = await axios.get(apiEndpoint + "/applicationTranscript/" + applicationId, {
-      responseType: 'blob'
-    });
+    const result = await axios.get(apiEndpoint + "/transcript/get-transcript-file/" + applicationId);
     return result.data;
   } catch (error) { return handleError(error); }
 
 }
+
+
 
 async function getTerms() {
   try {
@@ -349,10 +349,48 @@ async function getCurrentTranscript(studentId) {
   } catch (error) {  }
 }
 
+async function getCourseGrades(studentId, courseIds) {
+  try {
+    const result = await axios.post(
+      apiEndpoint + "/transcript/course-grades/" + studentId,
+      {courses: courseIds},
+      { headers: { "Content-Type": "application/json" } }
+    );
 
+    return result.data;
+  }catch (error) {  }
+
+}
+
+async function updateApplicationRequestStatus(applicationRequestId,status) {
+  try {
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/"+ applicationRequestId +"/status",
+      {status: status},
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    return result.data;
+  }catch (error) { handleError(error)  }
+
+}
+
+async function getAcceptedApplicationRequestsByStudent(studentId) {
+  try {
+    const result = await axios.get(
+      apiEndpoint + "/applicationRequest/accepted-application-requests/" + studentId
+    );
+
+    return result.data;
+  }catch (error) {  }
+
+}
 
 
 export {
+  getAcceptedApplicationRequestsByStudent,
+  updateApplicationRequestStatus,
+  getCourseGrades,
   getAllAnnouncements,
   getAllInstructors,
   getAllCourses,

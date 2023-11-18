@@ -11,3 +11,7 @@ export default function handleError(error) {
   
   throw error
 };
+
+export function handleInfo(info) {
+  toast.info(info);
+};
