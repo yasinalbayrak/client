@@ -12,7 +12,7 @@ function ApplicantsPage() {
   const [rows, setRows] = React.useState([]);
   const [title, setTitle] = React.useState("");
   const { appId } = useParams();
-
+  
   useEffect(() => {
     
     getApplicationRequestsByApplicationId(appId).then((results) =>{ 
@@ -32,11 +32,11 @@ function ApplicantsPage() {
           <Grid container direction="column" justifyContent="center" alignItems="center">
             <Grid item>
               <Typography variant="h4" marginBottom={2} marginRight={1}>
-                {title} Applicants for term {term.term_desc}
+                {title} Applicants
               </Typography>
             </Grid>
             <Grid item>
-              <ApplicantsTable rows={rows} courseCode={title}></ApplicantsTable>
+              <ApplicantsTable rows={rows} courseCode={title} appId = {appId}></ApplicantsTable>
             </Grid>
           </Grid>
         </Box>

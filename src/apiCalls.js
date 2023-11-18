@@ -362,10 +362,34 @@ async function getCourseGrades(studentId, courseIds) {
 
 }
 
+async function updateApplicationRequestStatus(applicationRequestId,status) {
+  try {
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/"+ applicationRequestId +"/status",
+      {status: status},
+      { headers: { "Content-Type": "application/json" } }
+    );
 
+    return result.data;
+  }catch (error) { handleError(error)  }
+
+}
+
+async function getAcceptedApplicationRequestsByStudent(studentId) {
+  try {
+    const result = await axios.get(
+      apiEndpoint + "/applicationRequest/accepted-application-requests/" + studentId
+    );
+
+    return result.data;
+  }catch (error) {  }
+
+}
 
 
 export {
+  getAcceptedApplicationRequestsByStudent,
+  updateApplicationRequestStatus,
   getCourseGrades,
   getAllAnnouncements,
   getAllInstructors,

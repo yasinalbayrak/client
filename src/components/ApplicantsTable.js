@@ -15,7 +15,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import { getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements } from "../apiCalls";
+import {getAcceptedApplicationRequestsByStudent,updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements } from "../apiCalls";
 import { useParams } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 
@@ -24,7 +24,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 function CustomRow(props) {
-  const { row, index, questions } = props;
+  const { row, index, questions, appId, courseCode} = props;
   const [open, setOpen] = React.useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [status, setStatus] = React.useState("");
@@ -32,7 +32,7 @@ function CustomRow(props) {
   const [LaHistory, setLaHistory] = React.useState([]);
   const [courseHistory, setCourseHistory] = React.useState([]);
   const [announcements, setAnnouncements] = React.useState([]);
-  const [courseTitle, setCourseTitle] = React.useState("");
+  
   const [studentDetails, setStudentDetails] = React.useState({});
   useEffect(() => {
     var temp = [];
@@ -59,18 +59,10 @@ function CustomRow(props) {
   };
 
   const handleChange = (event) => {
-    setStatus(event.target.value);
-    updateApplicationById(
-      row.id,
-      row.student_username,
-      row.grade,
-      row.faculty,
-      row.working_hours,
-      event.target.value,
-      row.post_id,
-      row.answers
-    ).then((res) => {
-      row.status = event.target.value;
+    const toStatus = event.target.value
+    setStatus(toStatus);
+    updateApplicationRequestStatus(row.applicationRequestId, toStatus).then((res) => {
+      row.status = toStatus;
       setSnackOpen(true);
       console.log(res);
     });
@@ -108,6 +100,24 @@ function CustomRow(props) {
     fetchData();
   }, [row.student.user.id, props.courseCode]);
 
+  useEffect(() => {
+    getAcceptedApplicationRequestsByStudent(row.student.user.id)
+      .then((res) => {
+        const { courseHistory, laHistory } = res.reduce(
+          (acc, each) => {
+            each.application.course.courseCode === courseCode ? acc.courseHistory.push(each) : acc.laHistory.push(each);
+            return acc;
+          },
+          { courseHistory: [], laHistory: [] }
+        );
+  
+        setLaHistory(laHistory);
+        setCourseHistory(courseHistory);
+      })
+      .catch((_) => {
+      });
+  }, [row.student.user.id, courseCode]);
+  
 
   // useEffect(() => {
   //   var tmp2 = announcements.filter((annc) => annc.id == row.post_id);
@@ -137,19 +147,19 @@ function CustomRow(props) {
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
           {
             // TODO 
-            studentDetails && studentDetails.program
+            studentDetails?.program && studentDetails.program.majors
           }
         </TableCell>
-        <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+        <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} component="th" scope="row">
           {
-            // TODO
-            studentDetails?.course && studentDetails.course.grade}
+            // TODO 
+            studentDetails?.program && studentDetails.program.minors
+          }
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} align="left">
-          {
-            // TODO
-            row.working_hours}
+          { studentDetails?.course && studentDetails.course.grade}
         </TableCell>
+
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: 120 }} align="left">
           {row.status}
         </TableCell>
@@ -170,9 +180,9 @@ function CustomRow(props) {
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} component="tr" style={{ display: "block" }}>
-            <td>
+            <td style={{width: "20rem"}}>
               <Grid container direction="column" alignItems="center" justifyContent="center">
                 {qAndA.length > 0 && qAndA.map((element) => (
                   <Grid item container m={2}>
@@ -185,20 +195,20 @@ function CustomRow(props) {
                   </Grid>
                 ))}
                 <Grid item container direction="row" alignItems="center" justifyContent="center">
-                  <Grid item xs={6}>
+                  <Grid item lg={6}>
                     <Typography><strong>LA History</strong></Typography>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Typography><strong>{courseTitle} History</strong></Typography>
+                  <Grid item lg={6} >
+                    <Typography><strong>{courseCode} History</strong></Typography>
                   </Grid>
                 </Grid>
                 <Grid item container direction="row" alignItems="center" justifyContent="space-evenly">
-                  <Grid item container direction="column" justifyContent="flex-start" xs={6}>
-                    {LaHistory && LaHistory.map((application) => (
+                  <Grid item container direction="column" justifyContent="flex-start" lg={6}>
+                    {LaHistory && LaHistory.map((appRequest) => (
                       <Grid item>
-                        {announcements.filter((annc) => annc.id == application.post_id).map((elem) => (
-                          <Typography>{elem.course_code}</Typography>
-                        ))}
+                        
+                        <Typography>{appRequest.application.course.courseCode}</Typography>
+                        
                       </Grid>
                     ))}
                     {(LaHistory.length == 0) &&
@@ -207,13 +217,13 @@ function CustomRow(props) {
                       </Grid>
                     }
                   </Grid>
-                  <Grid item container direction="column" justifyContent="flex-start" xs={6}>
+                  <Grid item container direction="column" justifyContent="flex-start" lg={6}>
                     <Grid>
                       <Typography variant="caption" color="gray">(Including rejected)</Typography>
                     </Grid>
                     {courseHistory && courseHistory.map((application) => (
                       <Grid item>
-                        <Typography>{application.status} - {application.term}</Typography>
+                        <Typography>{application.status} - {application.application.term}</Typography>
                       </Grid>
                     ))}
                     {(courseHistory.length == 0) &&
@@ -222,8 +232,7 @@ function CustomRow(props) {
                       </Grid>
                     }
                   </Grid>
-                  <Grid item container m={1}>
-                  </Grid>
+                  
                 </Grid>
               </Grid>
             </td>
@@ -245,12 +254,10 @@ function CustomRow(props) {
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Status</InputLabel>
                 <Select labelId="demo-simple-select-label" id="demo-simple-select" value={status} label="Status" onChange={handleChange}>
-                  <MenuItem value={"Applied"}>
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={"Accepted"}>Accepted</MenuItem>
-                  <MenuItem value={"Rejected"}>Rejected</MenuItem>
-                  <MenuItem value={"Interested"}>Interested</MenuItem>
+                  <MenuItem value={"ACCEPTED"}>Accepted</MenuItem>
+                  <MenuItem value={"REJECTED"}>Rejected</MenuItem>
+                  <MenuItem value={"IN_PROGRESS"}>In Progress</MenuItem>
+                  <MenuItem value={"WAIT_LISTED"}>Wait Listed</MenuItem>
                 </Select>
               </FormControl>
               <Button
@@ -259,7 +266,6 @@ function CustomRow(props) {
                 sx={{ m: "20px", marginTop: "35px" }}
                 onClick={() => {
                   getTranscript(studentDetails.transcriptId).then((res) => {
-                    // Assuming res.content is the base64-encoded PDF content
                     const base64Content = res.content;
 
                     // Decode the base64 content
@@ -319,9 +325,9 @@ function ApplicantsTable(props) {
         <TableHead>
           <TableRow sx={{ bgcolor: "#eeeeee" }}>
             <TableCell align="left">Student Name</TableCell>
-            <TableCell align="left">Faculty</TableCell>
+            <TableCell align="left">Majors</TableCell>
+            <TableCell align="left">Minors</TableCell>
             <TableCell>Grade</TableCell>
-            <TableCell align="left">Working hours</TableCell>
             <TableCell align="left">Status</TableCell>
             <TableCell align="left">Details</TableCell>
             <TableCell align="left"></TableCell>
@@ -329,7 +335,7 @@ function ApplicantsTable(props) {
         </TableHead>
         <TableBody>
           {props.rows.map((row, index) => (
-            <CustomRow row={row} courseCode={props.courseCode} index={index} questions={questions}></CustomRow>
+            <CustomRow appId = {appId} row={row} courseCode={props.courseCode} index={index} questions={questions}></CustomRow>
           ))}
         </TableBody>
       </Table>
