@@ -407,8 +407,9 @@ function CreateAnnouncement() {
               alignItems="center"
               marginY={2}
             >
+              
+              <Box sx={{ minWidth: 150}}>
               <Typography>Term <span style={{ color: 'red' }}>*</span>:</Typography>
-              <Box sx={{ minWidth: 150, marginX: 2 }}>
                 <FormControl fullWidth>
 
                   <Select
@@ -452,13 +453,14 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
+              <Box sx={{ minWidth: 150 }}>
               <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
               <Autocomplete
                 value={courseCodeValue}
                 onChange={handleChange}
                 filterOptions={filterCourseCodes}
-
+                
                 selectOnFocus
                 clearOnBlur
                 handleHomeEndKeys
@@ -477,7 +479,7 @@ function CreateAnnouncement() {
                   return option.title;
                 }}
                 renderOption={(props, option) => <li {...props}>{option.title}</li>}
-                sx={{ width: 300 }}
+                sx={{ width: 300, ml: -2 }}
                 freeSolo
                 renderInput={(params) => (
                   <TextField
@@ -529,7 +531,7 @@ function CreateAnnouncement() {
                 disableClearable
               />
 
-
+              </Box>
 
 
 
@@ -644,7 +646,7 @@ function CreateAnnouncement() {
                 xs={6}
                 direction="column"
                 justifyContent="center"
-                alignItems="flex-start"
+                alignItems="flex-center"
               >
                 <Autocomplete
                   id="controllable-states-demo"
