@@ -462,7 +462,8 @@ function AddQuestion(props) {
                 props.AnnouncementDetails.authInstructor,
                 props.AnnouncementDetails.desiredCourses,
                 questions,
-                props.AnnouncementDetails.term
+                props.AnnouncementDetails.term,
+                props.AnnouncementDetails.isInprogressAllowed
               ).then((data) => {
                 navigate("/Home", {
                   replace: true
