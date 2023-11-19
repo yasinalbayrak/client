@@ -17,6 +17,7 @@ import Stack from '@mui/material/Stack';
 import { useSelector } from "react-redux";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import {handleInfo} from "../../errors/GlobalErrorHandler"
 
 const TranscriptPage = (props) => {
   const navigate = useNavigate();
@@ -40,10 +41,10 @@ const TranscriptPage = (props) => {
 
   const onSubmit = () => {
     if (!isTranscriptUploded)
-      console.error("You should upload your transcript to contiune.")
+      handleInfo("You should upload your transcript to contiune.")
     else if (!consentChecked) {
       // Display an error or prevent submission
-      console.error("Please consent to the terms before submitting.");
+      handleInfo("Please consent to the terms before submitting.");
       return;
     }
     else 
