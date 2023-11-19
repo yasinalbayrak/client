@@ -98,7 +98,8 @@ async function addAnnouncement(
   const faculty = "FENS";
   // const term = "Fall 2022";
   const title = "title add test";
-  const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
+
+  const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime.$H.toString().padStart(2, '0')+":"+lastApplicationTime.$m.toString().padStart(2, '0');
   const transformedQuestions = questions.map((question) => (
     question.mQuestion
     //   {
