@@ -15,7 +15,10 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import IconButton from '@mui/material/IconButton';
 import ClearIcon from '@mui/icons-material/Clear';
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import Alert from '@mui/material/Alert';
 import InputLabel from '@mui/material/InputLabel';
+import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { getTerms, getAllInstructors, getAllCourses } from "../apiCalls";
@@ -41,6 +44,10 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
 
 
+import AddIcon from '@mui/icons-material/Add';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const useStyles = makeStyles((theme) => ({
   activeItem: {
     backgroundColor: 'lightgreen',
@@ -63,6 +70,7 @@ function CreateAnnouncement() {
     { value: "C", label: "C" },
     { value: "C-", label: "C-" },
     { value: "D", label: "D" },
+    { value: "S", label: "S" },
   ];
   const WorkHour = [
     { value: "PT1H", label: "1 Hour" },
@@ -77,27 +85,56 @@ function CreateAnnouncement() {
     { value: "PT10H", label: "10 Hours" },
   ];
 
+  const getColorForGrade = (grade) => {
+    switch (grade) {
+      case 'A':
+      case 'A-':
+        return 'success';
+      case 'B+':
+      case 'B':
+      case 'B-':
+        return 'info';
+      case 'C+':
+      case 'C':
+      case 'C-':
+        return 'primary';
+      case 'D':
+        return 'warning';
+      case 'S':
+        return 'default';
+      default:
+        return 'default';
+    }
+  };
 
   const userName = useSelector((state) => state.user.username);
   const name = useSelector((state) => state.user.name);
   const surname = useSelector((state) => state.user.surname);
-  
+
   const term = useSelector((state) => state.user.term);
 
   const userId = useSelector((state) => state.user.id);
 
   const [authUsersList, setAuthUserList] = useState([]); //get instructors from database
   const [authPeople, setAuthPeople] = useState([
-    {display_name: name + " " + surname,
-    username: userName,
-    authOptionValue: name + " " + surname  + " (" + userName + ")",
-    id: userId}]); //used for send request as selected from list
+    {
+      display_name: name + " " + surname,
+      username: userName,
+      authOptionValue: name + " " + surname + " (" + userName + ")",
+      id: userId
+    }]); //used for send request as selected from list
   const [authValue, setAuthValue] = useState(""); // for autocomplete
   const [inputAuthValue, setAuthInputValue] = useState(""); // for autocomplete
 
   const [courseCodeList, setCourseCodeList] = useState([]); //get course codes from database
-  const [courseList, setcourseList] = useState([]); //get courses from database
 
+  const [desiredCourseCode, setDesiredCourseCode] = useState("");
+  const [desiredCourseList, setDesiredCourseList] = useState([]); //get courses from database
+  const [desiredCourseCodeValue, setDesiredCourseCodeValue] = useState(""); // for autocomplete
+  const [desiredCourseCodeInputValue, setDesiredCourseCodeInputValue] = useState(""); // for autocomplete
+  const [isInprogressAllowed, setIsInprogressAllowed] = useState(false);
+
+  const [courseList, setcourseList] = useState([]); //get courses from database
   const [courseCode, setCourseCode] = useState(""); //used for send request as selected from list to course code
   const [courseCodeValue, setCourseCodeValue] = useState(""); // for autocomplete
   const [inputCourseCodeValue, setCourseCodeInputValue] = useState(""); // for autocomplete
@@ -111,6 +148,10 @@ function CreateAnnouncement() {
 
   const [open, setOpen] = React.useState(false);
   const [showAddButton, setShowAddButton] = useState(false);
+
+  const [desiredLetterGrade, setDesiredLetterGrade] = useState({});
+
+  const [error, setError] = React.useState(false);
   const classes = useStyles();
 
   //get all instructors
@@ -170,6 +211,7 @@ function CreateAnnouncement() {
 
         setCourseCodeList(courseCodes);
         setcourseList(courseCodes);
+        setDesiredCourseList(courseCodes)
       } catch (error) {
 
       }
@@ -250,7 +292,17 @@ function CreateAnnouncement() {
     setCourseCodeInputValue("");
     setCourseCode("");
   }
-
+  function handleDesiredCourseCodeDelete() { //change here
+    //console.log("Deleting course code");
+    // const updatedSelectedCourses = selectedCourses.filter(
+    //   (course) => course !== courseCode
+    // );
+    // setSelectedCourses(updatedSelectedCourses); //this leads some bug issues
+    //setSelectedCourses([]);
+    setDesiredCourseCodeValue("");
+    setDesiredCourseCodeInputValue("");
+    setDesiredCourseCode("");
+  }
   function filterCourseCodes(optionCourseCodes, { inputValue }) {
 
     const filtered = optionCourseCodes.filter((option) => {
@@ -294,7 +346,7 @@ function CreateAnnouncement() {
 
   function handleCourseDelete(courseToDelete) {
     const updatedSelectedCourses = selectedCourses.filter(
-      (course) => course !== courseToDelete
+      (course) => course.courseCode !== courseToDelete
     );
     // console.log(updatedSelectedCourses)
     setSelectedCourses(updatedSelectedCourses);
@@ -321,10 +373,12 @@ function CreateAnnouncement() {
     jobDetails: "",
     authInstructor: authPeople,
     desiredCourses: selectedCourses,
+    isInprogressAllowed: false
   });
 
   // set changes for autocomplete
   useEffect(() => {
+    console.log(selectedCourses);
     setAnnouncementDetails((prevDetails) => ({
       ...prevDetails,
       course_code: courseCode,
@@ -346,9 +400,12 @@ function CreateAnnouncement() {
   };
 
   const handleClose = (event, reason) => {
+    handleDesiredCourseCodeDelete();
+    setDesiredLetterGrade(null);
     if (reason !== 'backdropClick') {
       setOpen(false);
     }
+    setIsInprogressAllowed(false);
   };
 
   const handleChange = (event, newValue) => {
@@ -380,12 +437,71 @@ function CreateAnnouncement() {
     }
 
   }
+  const handleChangeDesired = (event, newValue) => {
+    if (newValue) {
+
+      var trimmedValue;
+      if (typeof newValue === 'string') {
+
+        trimmedValue = newValue;
+      }
+      // Add "xxx" option created dynamically
+      else if (newValue.inputValue) {
+
+        trimmedValue = newValue.inputValue;
+      }
+      else {
+
+        trimmedValue = newValue.title;
+      }
+
+      trimmedValue.trim()
+
+      setDesiredCourseCodeValue(trimmedValue);
+      setDesiredCourseCode(trimmedValue);
+
+      if (!desiredCourseList.some(course => course.title === trimmedValue)) {
+        setDesiredCourseList((prev) => [...prev, { title: trimmedValue }]);
+      }
+    }
+
+  }
+
+  function extractSubstring(inputString) {
+    const result = inputString.match(/^[^\s\d]+/);
+    return result ? result[0].length : 2;
+  }
+  const handleAdd = () => {
+
+
+    if (!desiredCourseCode || !desiredLetterGrade) {
+      setError("Fill out the form.")
+    }
+    else if (selectedCourses.some((course) => course.courseCode === desiredCourseCode)) {
+      setError("There is already requirement for this course.");
+    }
+
+    else {
+
+      setSelectedCourses((prev) => ([
+        ...prev,
+        {
+          courseCode: desiredCourseCode,
+          grade: desiredLetterGrade,
+          isInprogressAllowed: isInprogressAllowed
+        }
+      ]))
+      handleClose();
+    }
+
+  }
 
   // useEffect(() => {
   //   console.log(announcementDetails)
   // }
   //   , [announcementDetails])
 
+  useEffect(() => { setError(null) }, [desiredCourseCode, desiredCourseList])
 
 
   return (
@@ -404,8 +520,8 @@ function CreateAnnouncement() {
             Create Announcement
           </Typography>
         </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
+        <Grid container spacing={4}>
+          <Grid item xs={8}>
             <Typography
               variant="h5"
               sx={{
@@ -423,8 +539,9 @@ function CreateAnnouncement() {
               alignItems="center"
               marginY={2}
             >
+              
+              <Box sx={{ minWidth: 150}}>
               <Typography>Term <span style={{ color: 'red' }}>*</span>:</Typography>
-              <Box sx={{ minWidth: 150, marginX: 2 }}>
                 <FormControl fullWidth>
 
                   <Select
@@ -432,6 +549,7 @@ function CreateAnnouncement() {
                     id="demo-simple-select"
                     value={announcementDetails.term}
                     name="term"
+                    sx={{ minWidth: 150, mt: 2 }}
                     MenuProps={{
                       style: { maxHeight: '360px' },
                       autoFocus: false
@@ -444,6 +562,7 @@ function CreateAnnouncement() {
                         <MenuItem
                           key={eachTerm.term_desc}
                           value={eachTerm}
+                          sx={{ maxHeight: '360px' }}
                           className={
                             eachTerm.is_active === '1'
                               ? classes.activeItem
@@ -468,13 +587,14 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
+              <Box sx={{ minWidth: 150 }}>
               <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
               <Autocomplete
                 value={courseCodeValue}
                 onChange={handleChange}
                 filterOptions={filterCourseCodes}
-
+                
                 selectOnFocus
                 clearOnBlur
                 handleHomeEndKeys
@@ -493,7 +613,7 @@ function CreateAnnouncement() {
                   return option.title;
                 }}
                 renderOption={(props, option) => <li {...props}>{option.title}</li>}
-                sx={{ width: 300 }}
+                sx={{ width: 300, ml: -2 }}
                 freeSolo
                 renderInput={(params) => (
                   <TextField
@@ -509,11 +629,11 @@ function CreateAnnouncement() {
                     onKeyPress={(event) => {
                       const key = event.key;
                       const regex = /^[A-Za-z0-9]+$/;
-                  
+
                       if (!regex.test(key) && key !== 'Enter') {
                         event.preventDefault();
                       }
-                    
+
                     }}
                     sx={{
                       mx: 2, mt: 1, mb: 2, width: 300,
@@ -544,6 +664,11 @@ function CreateAnnouncement() {
                 )}
                 disableClearable
               />
+
+              </Box>
+
+
+
             </Grid>
             <Grid
               container
@@ -551,6 +676,7 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
+              <Box sx={{ minWidth: 150 }}>
               <Typography>Last Application Date<span style={{ color: 'red' }}>*</span>:</Typography>
               <TextField
                 id="outlined-required"
@@ -561,7 +687,7 @@ function CreateAnnouncement() {
                 value={announcementDetails.lastApplicationDate}
                 InputLabelProps={{ shrink: true }}
                 size="small"
-                sx={{ m: 2 }}
+                sx={{ mt:2 }}
                 onChange={handleInput}
               />
               
@@ -640,6 +766,19 @@ function CreateAnnouncement() {
                   <HelpCenterIcon />
                 </IconButton>
               </Tooltip>
+              <TextField
+                id="outlined-required"
+                name="lastApplicationTime"
+                label="Enter deadline"
+                variant="outlined"
+                type="time"
+                value={announcementDetails.lastApplicationTime}
+                InputLabelProps={{ shrink: true }}
+                size="small"
+                sx={{ mt:2, ml: 2 }}
+                onChange={handleInput}
+              />
+              </Box>
             </Grid>
             <Grid
               container
@@ -647,6 +786,8 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
+
+              <Box sx={{ minWidth: 150, mt:2 }}>
               <Typography> Minimum Desired Letter Grade<span style={{ color: 'red' }}>*</span>:</Typography>
               <TextField
                 id="outlined-select-currency"
@@ -654,7 +795,7 @@ function CreateAnnouncement() {
                 select
                 value={announcementDetails.letterGrade}
                 size="small"
-                sx={{ m: 2, width: 225 }}
+                sx={{ mt:2, width: 225 }}
                 onChange={handleInput}
               >
                 {grades.map((option) => (
@@ -663,6 +804,22 @@ function CreateAnnouncement() {
                   </MenuItem>
                 ))}
               </TextField>
+
+              <FormControlLabel
+                value={announcementDetails.isInprogressAllowed}
+                onChange={(event) => {
+                  setAnnouncementDetails((prevDetails) => ({
+                    ...prevDetails,
+                    isInprogressAllowed: event.target.checked, // Use event.target.checked for checkbox
+                  }));
+                }}
+                control={<Checkbox  />}
+                label="Allow In Progress Applicants"
+                sx={{ mt: 2, ml: 2 }}
+              />
+
+              </Box>
+
             </Grid>
             <Grid
               container
@@ -670,6 +827,7 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
+              <Box sx={{ minWidth: 150, mt:2 }}>
               <Typography>Weekly Work Hours<span style={{ color: 'red' }}>*</span>:</Typography>
               <TextField
                 id="outlined-select-currency"
@@ -677,7 +835,7 @@ function CreateAnnouncement() {
                 select
                 value={announcementDetails.workHours}
                 size="small"
-                sx={{ m: 2, width: 225 }}
+                sx={{ mt: 2, width: 225 }}
                 onChange={handleInput}
               >
                 {WorkHour && WorkHour.map((option) => (
@@ -686,7 +844,9 @@ function CreateAnnouncement() {
                   </MenuItem>
                 ))}
               </TextField>
+              </Box>
             </Grid>
+
             <Grid
               container
               direction="row"
@@ -717,6 +877,21 @@ function CreateAnnouncement() {
                   }}
                 />
               </div>
+              <Box sx={{ minWidth: 150, mt:2 }}>
+              <Typography paddingTop={3}>Job Details:</Typography>
+              <TextField
+                placeholder="Enter Job Details..."
+                name="jobDetails"
+                value={announcementDetails.jobDetails}
+                multiline
+                size="small"
+                rows={5}
+                maxRows={20}
+                sx={{ mt: 2, width: 400 }}
+                onChange={handleInput}
+                required
+              />
+              </Box>
             </Grid>
             <Grid
               container
@@ -724,13 +899,14 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="flex-start"
             >
+              <Box sx={{ minWidth: 150, mt:2 }}>
               <Typography sx={{ my: 2 }}>Authorized Instructor(s):</Typography>
               <Grid
                 item
                 xs={6}
                 direction="column"
                 justifyContent="center"
-                alignItems="flex-start"
+                alignItems="flex-center"
               >
                 <Autocomplete
                   id="controllable-states-demo"
@@ -753,7 +929,7 @@ function CreateAnnouncement() {
                       {...params}
                       multiline
                       size="small"
-                      sx={{ mx: 2, mt: 1, mb: 2, width: 300 }}
+                      sx={{mb:1, mt: 1, width: 300 }}
                     />
                   )}
                 />
@@ -762,13 +938,13 @@ function CreateAnnouncement() {
                     return (
                       <Chip
                         key={authPerson.username}
-                        label={authPerson.display_name}
+                        label={authPerson.display_name + (authPerson.username === userName ? " (You)" : "")}
                         variant="outlined"
                         avatar={
                           <Avatar
                             sx={{
-                              backgroundColor:
-                                index % 2 === 0 ? "#6A759C" : "#4D5571",
+                              backgroundColor: index % 2 === 0 ? "#6A759C" : "#4D5571",
+
                             }}
                           >
                             <Typography
@@ -779,12 +955,14 @@ function CreateAnnouncement() {
                             </Typography>
                           </Avatar>
                         }
-                        sx={{ m: 1 }}
+                        sx={{ mt: 1 }}
                         onDelete={() => handleAuthDelete(authPerson)}
+                        disabled={authPerson.username === userName}
                       />
                     );
                   })}
               </Grid>
+              </Box>
             </Grid>
             <Grid
               container
@@ -799,8 +977,14 @@ function CreateAnnouncement() {
                 xs={6}
                 direction="column"
                 justifyContent="center"
-                alignItems="flex-start"
-                sx={{ backgroundColor: (selectedCourses && selectedCourses.length === 0) ? "#FFF" : "#F5F5F5" }}
+                alignItems="center"
+                sx={{
+                  backgroundColor: (selectedCourses && selectedCourses.length === 0) ? "#FFF" : "#F5F5F5",
+                  borderRadius: "5%",
+                  marginTop: "0.5rem",
+                  marginLeft: "1rem",
+                  minWidth: "fit-content"
+                }}
               >
                 {/*<Autocomplete
                   id="controllable-states-demo"
@@ -828,116 +1012,229 @@ function CreateAnnouncement() {
                   )}
                   disabled={courseCode && courseCode.length === 0} //if it creates some problems, delete it.
                 />*/}
-                <Button onClick={handleClickOpen}>Open select dialog</Button>
+
+
+
+
+                <Grid container justifyContent={selectedCourses.length > 0 ? "center" : "flex-start"}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleClickOpen}
+                    sx={{
+                      backgroundColor: "#9ADE7B",
+                      padding: '4px',
+                      width: "0.5rem",
+                      '& .MuiButton-startIcon': {
+                        marginLeft: 0,
+                        fontSize: '1rem',
+                      },
+                    }}
+                  >
+                    <AddIcon />
+                  </Button>
+                </Grid>
+
+
+
                 <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
-                  <DialogTitle>Fill the form</DialogTitle>
+                  <DialogTitle>New Requirement</DialogTitle>
                   <DialogContent>
                     <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
                       <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <InputLabel htmlFor="demo-dialog-native">Age</InputLabel>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="start"
+                          alignItems="center"
+                        >
+                          <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
-                        <Autocomplete
-                          id="controllable-states-demo"
-                          options={courseList && courseList.map((course) => {
-                            return course;
-                          })}
-                          filterOptions={filterCourseCodes}
-                          value={courseCodeValue}
-                          inputValue={inputCourseCodeValue}
-                          onInputChange={(event, newInputCourseCodeValue) => {
-                            if (newInputCourseCodeValue !== null) {
-                              setCourseCodeInputValue(newInputCourseCodeValue);
-                            }
-                          }}
-                          onChange={(event, newCourseCodeValue) => {
-                            if (newCourseCodeValue !== null) {
-                              setCourseCodeValue(newCourseCodeValue);
-                              //handleCourseCodeAdd(newCourseCodeValue);
-                              updateCourseCode(newCourseCodeValue)
-                            }
-                          }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              multiline
-                              size="small"
-                              sx={{
-                                mx: 2, mt: 1, mb: 2, width: 300,
-                                ...(params.disabled && {
-                                  backgroundColor: 'transparent',
-                                  color: 'inherit',
-                                  pointerEvents: 'none',
-                                }),
-                              }}
-                              InputProps={{
-                                ...params.InputProps,
-                                endAdornment: (
-                                  <>
-                                    {params.InputProps.endAdornment}
-                                    {courseCode && (
-                                      <IconButton
-                                        onClick={handleCourseCodeDelete}
-                                        aria-label="Clear"
-                                        size="small"
-                                      >
-                                        <ClearIcon />
-                                      </IconButton>
-                                    )}
-                                  </>
-                                ),
-                              }}
-                            />
-                          )}
-                          disableClearable
-                        //getOptionDisabled={(option) => !!courseCode && option !== courseCode}
-                        />
+                          <Autocomplete
+                            value={desiredCourseCodeValue}
+                            onChange={handleChangeDesired}
+                            filterOptions={filterCourseCodes}
+                            label="course"
+                            selectOnFocus
+                            clearOnBlur
+                            handleHomeEndKeys
+                            id="free-solo-with-text-demo"
+                            options={desiredCourseList}
+                            getOptionLabel={(option) => {
+                              // Value selected with enter, right from the input
+                              if (typeof option === 'string') {
+                                return option;
+                              }
+                              // Add "xxx" option created dynamically
+                              if (option.inputValue) {
+                                return option.inputValue;
+                              }
+                              // Regular option
+                              return option.title;
+                            }}
+                            renderOption={(props, option) => <li {...props}>{option.title}</li>}
+                            sx={{ width: 'fit-content', marginRight: "1rem" }}
+                            freeSolo
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+
+                                multiline
+                                size="small"
+                                onKeyDown={(event) => {
+                                  if (event.key === 'Enter') {
+                                    event.preventDefault();
+                                  }
+                                }}
+                                onKeyPress={(event) => {
+                                  const key = event.key;
+                                  const regex = /^[A-Za-z0-9]+$/;
+
+                                  if (!regex.test(key) && key !== 'Enter') {
+                                    event.preventDefault();
+                                  }
+
+                                }}
+                                sx={{
+                                  mx: 2, mt: 1, mb: 2, width: 150,
+                                  ...(params.disabled && {
+                                    backgroundColor: 'transparent',
+                                    color: 'inherit',
+                                    pointerEvents: 'none',
+                                  }),
+                                }}
+                                InputProps={{
+                                  ...params.InputProps,
+                                  endAdornment: (
+                                    <>
+                                      {params.InputProps.endAdornment}
+                                      {desiredCourseCode && (
+                                        <IconButton
+                                          onClick={handleDesiredCourseCodeDelete}
+                                          aria-label="Clear"
+                                          size="small"
+                                        >
+                                          <ClearIcon />
+                                        </IconButton>
+                                      )}
+                                    </>
+                                  ),
+                                }}
+                              />
+                            )}
+                            disableClearable
+                          />
+
+
+
+
+                        </Grid>
                       </FormControl>
                       <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <InputLabel id="demo-dialog-select-label">Age</InputLabel>
-                        <Select
-                          labelId="demo-dialog-select-label"
-                          id="demo-dialog-select"
-                          value={null}
-                          onChange={(event, newCourseValue) => {
-                            if (newCourseValue !== null) handleCourseAdd(newCourseValue);
-                          }}
-                          input={<OutlinedInput label="Age" />}
-                        >
 
-                        </Select>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="start"
+                          alignItems="center"
+                        >
+                          <Typography> Minimum Desired Letter Grade<span style={{ color: 'red' }}>*</span>:</Typography>
+                          <TextField
+                            id="outlined-select-currency"
+                            name="letterGrade"
+                            select
+                            value={desiredLetterGrade}
+                            size="small"
+                            sx={{ m: 2, width: 225 }}
+                            onChange={(event) => {
+                              setDesiredLetterGrade(event.target.value)
+                            }}
+                          >
+                            {grades.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </Grid>
+
+
+
+
+                      </FormControl>
+                      <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="start"
+                          alignItems="center"
+                        >
+                          <FormControlLabel
+                            value={isInprogressAllowed}
+                            onChange= {(_)=> {
+                              setIsInprogressAllowed((prev)=> !prev)
+                            }}
+                              
+                      
+                            control={<Checkbox />}
+                            label="Allow In Progress Applicants"
+                          />
+                        </Grid>
+                        {error && <Alert severity="error">{error}</Alert>}
                       </FormControl>
                     </Box>
                   </DialogContent>
                   <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleClose}>Ok</Button>
+                    <Button onClick={() => {
+                      handleAdd();
+                    }}>Add</Button>
                   </DialogActions>
                 </Dialog>
-                {selectedCourses &&
-                  selectedCourses.map((courseSelected, i) => {
-                    return (
-                      <Chip
-                        key={courseSelected}
-                        label={courseSelected}
-                        variant="outlined"
-                        avatar={
-                          <Avatar
-                            sx={{
-                              backgroundColor:
-                                i % 2 === 0 ? "#5FB3F6" : "#2196F3",
-                            }}
-                          >
-                            <Typography fontSize="small" sx={{ color: "white" }}>
-                              {courseSelected.split(" ")[0][0]}
-                            </Typography>
-                          </Avatar>
-                        }
-                        color={courseSelected === courseCode ? "error" : "default"}
-                        sx={{ m: 1 }}
-                        onDelete={() => handleCourseDelete(courseSelected)}
-                      />
-                    );
-                  })}
+                {selectedCourses.length > 0 && <Table>
+
+                  <TableBody>
+
+                    {selectedCourses.map((courseSelected, i) => (
+                      <TableRow key={courseSelected.courseCode}>
+                        <TableCell>
+                          <Chip
+                            label={courseSelected.courseCode}
+                            variant="outlined"
+                            avatar={
+                              <Avatar
+                                sx={{
+                                  backgroundColor: i % 2 === 0 ? "#5FB3F6" : "#2196F3",
+                                }}
+                              >
+                                <Typography fontSize="small" sx={{ color: "white" }}>
+                                  {
+                                    courseSelected.courseCode.slice(0, extractSubstring(courseSelected.courseCode))}
+                                </Typography>
+                              </Avatar>
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={courseSelected.grade}
+                            color={getColorForGrade(courseSelected.grade)}
+                            variant="outlined"
+                          />
+
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label="Delete"
+                            color="error"
+                            sx={{ cursor: 'pointer' }}
+                            onClick={() => handleCourseDelete(courseSelected.courseCode)}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>}
               </Grid>
             </Grid>
           </Grid>
