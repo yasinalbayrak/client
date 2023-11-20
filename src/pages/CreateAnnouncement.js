@@ -877,21 +877,7 @@ function CreateAnnouncement() {
                   }}
                 />
               </div>
-              <Box sx={{ minWidth: 150, mt:2 }}>
-              <Typography paddingTop={3}>Job Details:</Typography>
-              <TextField
-                placeholder="Enter Job Details..."
-                name="jobDetails"
-                value={announcementDetails.jobDetails}
-                multiline
-                size="small"
-                rows={5}
-                maxRows={20}
-                sx={{ mt: 2, width: 400 }}
-                onChange={handleInput}
-                required
-              />
-              </Box>
+              
             </Grid>
             <Grid
               container
