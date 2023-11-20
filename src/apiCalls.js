@@ -92,7 +92,8 @@ async function addAnnouncement(
   auth_instructors,
   desired_courses,
   questions,
-  term
+  term,
+  isInprogressAllowed
 ) {
   //const mockUserName = "instructor1";
   const faculty = "FENS";
@@ -119,7 +120,7 @@ async function addAnnouncement(
       //instructor_username: username,
       //faculty: faculty,
       courseCode: course_code,
-      //desired_courses: desired_courses,
+      previousCourseGrades: desired_courses,
       lastApplicationDate: deadline,
       term: term.term_desc,
       //title: title,
@@ -129,7 +130,7 @@ async function addAnnouncement(
       minimumRequiredGrade: letterGrade,
       desiredCourseGrade: letterGrade,
       questions: transformedQuestions,
-      previousCourseGrades: []
+      isInprogressAllowed: isInprogressAllowed
     });
 
     return response.data;
@@ -362,10 +363,34 @@ async function getCourseGrades(studentId, courseIds) {
 
 }
 
+async function updateApplicationRequestStatus(applicationRequestId,status) {
+  try {
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/"+ applicationRequestId +"/status",
+      {status: status},
+      { headers: { "Content-Type": "application/json" } }
+    );
 
+    return result.data;
+  }catch (error) { handleError(error)  }
+
+}
+
+async function getAcceptedApplicationRequestsByStudent(studentId) {
+  try {
+    const result = await axios.get(
+      apiEndpoint + "/applicationRequest/accepted-application-requests/" + studentId
+    );
+
+    return result.data;
+  }catch (error) {  }
+
+}
 
 
 export {
+  getAcceptedApplicationRequestsByStudent,
+  updateApplicationRequestStatus,
   getCourseGrades,
   getAllAnnouncements,
   getAllInstructors,

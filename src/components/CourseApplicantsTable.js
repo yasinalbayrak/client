@@ -45,7 +45,7 @@ function CourseApplicantsTable(props) {
                   <TableCell sx={{ borderBottom: "none" }} align="center">
                     <Button
                       variant="contained"
-                      onClick={() => navigate("/application-of/" + row.applicationId, { replace: true })}
+                      onClick={() => navigate("/application-of/" + row.applicationId)}
                       endIcon={<ChevronRightIcon />}
                     >
                       Check Applicants
