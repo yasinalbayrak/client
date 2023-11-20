@@ -698,18 +698,81 @@ function CreateAnnouncement() {
                 sx={{ mt:2 }}
                 onChange={handleInput}
               />
-              <TextField
-                id="outlined-required"
-                name="lastApplicationTime"
-                label="Enter deadline"
-                variant="outlined"
-                type="time"
-                value={announcementDetails.lastApplicationTime}
-                InputLabelProps={{ shrink: true }}
-                size="small"
-                sx={{ mt:2, ml: 2 }}
-                onChange={handleInput}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer components={["TimePicker", "TimePicker"]}>
+                    <div style={{ overflow: "hidden", marginLeft: "1rem" }}>
+                      <TimePicker
+                        id="outlined-required"
+                        name="lastApplicationTime"
+                        label="Enter deadline"
+                        variant="outlined"
+                        value={announcementDetails.lastApplicationTime}
+                        InputLabelProps={{ shrink: true }}
+                        onChange={(newValue) => {
+                          setAnnouncementDetails((prevDetails) => ({
+                            ...prevDetails,
+                            lastApplicationTime: newValue,
+                          }));
+                        }}
+                        ampm={false}
+                        sx={{
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "lightgray !important", // Set the border color to gray
+                            borderWidth: "1px ",
+                          },
+                          "&:hover .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "black!important",
+                          },
+                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "black !important",
+                          },
+                          "& .MuiInputBase-input": {
+                            color: "black", // Set the text color to black
+                          },
+                          "& .MuiInputLabel-root": {
+                            color: "gray !important",
+                          },
+
+                          "& .MuiOutlinedInput-root": {
+                            width: "105px !important",
+                            height: "40px !important",
+                          },
+                          "& .MuiInputBase-root": {
+                            height: "100%", // Ensure the input base takes the full height
+                          },
+                          "& .MuiPickersClock-pin": {
+                            backgroundColor: "black", // Set the clock pin color
+                          },
+                          "& .MuiPickersClockPointer-pointer": {
+                            backgroundColor: "black", // Set the clock pointer color
+                          },
+                          "& .MuiIconButton-root": {
+                            padding: "8px", // Adjust the padding to make the clock icon smaller
+                            "& .MuiSvgIcon-root": {
+                              fill: "black", // Set the fill color of the clock icon to black
+                              fontSize: "1rem",
+                            },
+                          },
+                          "& .MuiTypography-body2": {
+                            fontSize: "0.8rem", // Adjust the font size as needed
+                          },
+                          "& .MuiPaper-root": {
+                            overflowY: "hidden ", // Hide the vertical scrollbar
+                          },
+                          marginTop: "9px",
+                        }}
+                      />
+                    </div>
+                  </DemoContainer>
+                </LocalizationProvider>
+                <Tooltip
+                  title="The time you select is adjusted to Istanbul local time."
+                  placement="right"
+                >
+                  <IconButton>
+                    <HelpCenterIcon />
+                  </IconButton>
+                </Tooltip>
               </Box>
             </Grid>
             <Grid
@@ -786,212 +849,7 @@ function CreateAnnouncement() {
               alignItems="flex-start"
             >
               <Box sx={{ minWidth: 150, mt:2 }}>
-              <Typography paddingTop={3}>Job Details:</Typography>
-              <TextField
-                placeholder="Enter Job Details..."
-                name="jobDetails"
-                value={announcementDetails.jobDetails}
-                multiline
-                size="small"
-                rows={5}
-                maxRows={20}
-                sx={{ mt: 2, width: 400 }}
-                onChange={handleInput}
-                required
-              />
-              </Box>
-            </Grid>
-            <Grid
-              container
-              direction="row"
-              justifyContent="start"
-              alignItems="flex-start"
-            >
-              <Box sx={{ minWidth: 150, mt:2 }}>
-              <Typography sx={{ my: 2 }}>Authorized Instructor(s):</Typography>
               <Grid
-                item
-                xs={6}
-                direction="column"
-                justifyContent="center"
-                alignItems="flex-center"
-              >
-                <Autocomplete
-                  id="controllable-states-demo"
-                  options={authUsersList && authUsersList.map((authUser) => {
-                    return authUser.authOptionValue;
-                  })}
-                  filterOptions={filterOptions}
-                  value={authValue}
-                  inputValue={inputAuthValue}
-                  onInputChange={(event, newInputValue) => {
-                    if (newInputValue !== null) {
-                      setAuthInputValue(newInputValue);
-                    }
-                  }}
-                  onChange={(event, newValue) => {
-                    if (newValue !== null) handleAuthAdd(newValue);
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      multiline
-                      size="small"
-                      sx={{mb:1, mt: 1, width: 300 }}
-                    />
-                  )}
-                />
-
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["TimePicker", "TimePicker"]}>
-                    <div style={{ overflow: "hidden", marginLeft: "1rem" }}>
-                      <TimePicker
-                        id="outlined-required"
-                        name="lastApplicationTime"
-                        label="Enter deadline"
-                        variant="outlined"
-                        value={announcementDetails.lastApplicationTime}
-                        InputLabelProps={{ shrink: true }}
-                        onChange={(newValue) => {
-                          setAnnouncementDetails((prevDetails) => ({
-                            ...prevDetails,
-                            lastApplicationTime: newValue,
-                          }));
-                        }}
-                        ampm={false}
-                        sx={{
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "lightgray !important", // Set the border color to gray
-                            borderWidth: "1px ",
-                          },
-                          "&:hover .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "black!important",
-                          },
-                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "black !important",
-                          },
-                          "& .MuiInputBase-input": {
-                            color: "black", // Set the text color to black
-                          },
-                          "& .MuiInputLabel-root": {
-                            color: "gray !important",
-                          },
-
-                          "& .MuiOutlinedInput-root": {
-                            width: "105px !important",
-                            height: "40px !important",
-                          },
-                          "& .MuiInputBase-root": {
-                            height: "100%", // Ensure the input base takes the full height
-                          },
-                          "& .MuiPickersClock-pin": {
-                            backgroundColor: "black", // Set the clock pin color
-                          },
-                          "& .MuiPickersClockPointer-pointer": {
-                            backgroundColor: "black", // Set the clock pointer color
-                          },
-                          "& .MuiIconButton-root": {
-                            padding: "8px", // Adjust the padding to make the clock icon smaller
-                            "& .MuiSvgIcon-root": {
-                              fill: "black", // Set the fill color of the clock icon to black
-                              fontSize: "1rem",
-                            },
-                          },
-                          "& .MuiTypography-body2": {
-                            fontSize: "0.8rem", // Adjust the font size as needed
-                          },
-                          "& .MuiPaper-root": {
-                            overflowY: "hidden ", // Hide the vertical scrollbar
-                          },
-                          marginTop: "9px",
-                        }}
-                      />
-                    </div>
-                  </DemoContainer>
-                </LocalizationProvider>
-                <Tooltip
-                  title="The time you select is adjusted to Istanbul local time."
-                  placement="right"
-                >
-                  <IconButton>
-                    <HelpCenterIcon />
-                  </IconButton>
-                </Tooltip>
-               
-              </Box>
-            </Grid>
-            <Grid
-              container
-              direction="row"
-              justifyContent="start"
-              alignItems="center"
-            >
-              <Box sx={{ minWidth: 150, mt: 2 }}>
-                <Typography>
-                  {" "}
-                  Minimum Desired Letter Grade
-                  <span style={{ color: "red" }}>*</span>:
-                </Typography>
-                <TextField
-                  id="outlined-select-currency"
-                  name="letterGrade"
-                  select
-                  value={announcementDetails.letterGrade}
-                  size="small"
-                  sx={{ mt: 2, width: 225 }}
-                  onChange={handleInput}
-                >
-                  {grades.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-
-                <FormControlLabel
-                  value={announcementDetails.isInprogressAllowed}
-                  onChange={(event) => {
-                    setAnnouncementDetails((prevDetails) => ({
-                      ...prevDetails,
-                      isInprogressAllowed: event.target.checked, // Use event.target.checked for checkbox
-                    }));
-                  }}
-                  control={<Checkbox />}
-                  label="Allow In Progress Applicants"
-                  sx={{ mt: 2, ml: 2 }}
-                />
-              </Box>
-            </Grid>
-            <Grid
-              container
-              direction="row"
-              justifyContent="start"
-              alignItems="center"
-            >
-              <Box sx={{ minWidth: 150, mt: 2 }}>
-                <Typography>
-                  Weekly Work Hours<span style={{ color: "red" }}>*</span>:
-                </Typography>
-                <TextField
-                  id="outlined-select-currency"
-                  name="workHours"
-                  select
-                  value={announcementDetails.workHours}
-                  size="small"
-                  sx={{ mt: 2, width: 225 }}
-                  onChange={handleInput}
-                >
-                  {WorkHour &&
-                    WorkHour.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                </TextField>
-              </Box>
-            </Grid>
-
-            <Grid
               container
               direction="column"
               justifyContent="start"
@@ -1027,6 +885,9 @@ function CreateAnnouncement() {
               </div>
               
             </Grid>
+              </Box>
+            </Grid>
+
             <Grid
               container
               direction="row"
