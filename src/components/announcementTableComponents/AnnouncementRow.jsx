@@ -10,7 +10,7 @@ import { Table } from '@mui/material';
 
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, indxx }) {
  
-  const { modifiedCourseCode, instructor_name,weeklyWorkingTime, term , status : applicationStatus } = data;
+  const { modifiedCourseCode, instructor_name,weeklyWorkingTime, term , status : applicationStatus, isTimedOut } = data;
 
   const {lastApplicationDate ,
    minimumRequiredGrade ,
@@ -51,14 +51,22 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         );
       }
       else {
-      return (
-        <Button
-          variant="contained"
-          onClick={() => navigate("/apply/" + applicationId, { replace: true })}
-        >
-          Apply
-        </Button>
-      );
+        if(isTimedOut) {
+          return (
+            <span style={{ color: 'red' }}>
+              Timed Out
+            </span>
+          );
+        }else {
+          return (
+            <Button
+              variant="contained"
+              onClick={() => navigate("/apply/" + applicationId, { replace: true })}
+            >
+              Apply
+            </Button>
+          );
+        }
       }
     }
 

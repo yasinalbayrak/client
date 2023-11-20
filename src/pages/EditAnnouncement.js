@@ -74,11 +74,11 @@ function EditAnnouncement() {
   //get all instructors
   useEffect(() => {
     getAllInstructors().then((results) => {
-      const filteredResults = results.filter((instructor) => { //for removing current user from options
-        return (instructor.user.name+" "+instructor.user.surname).toLowerCase() !== userName.toLowerCase();
-      });
+      // const filteredResults = results.filter((instructor) => { //for removing current user from options
+      //   return (instructor.user.name+" "+instructor.user.surname).toLowerCase() !== userName.toLowerCase();
+      // });
 
-      const transformedResults = filteredResults.map((instructor) => {
+      const transformedResults = results.map((instructor) => {
         const [lastName, firstName] = [instructor.user.surname,instructor.user.name];
         const displayName = firstName.trim() + " " + lastName.trim();
         const OptionValue = displayName + " (" + instructor.user.email + ")";
@@ -501,12 +501,15 @@ function EditAnnouncement() {
                   options={authUsersList.map((authUser) => {
                     return authUser.authOptionValue;
                   })}
-                  filterOptions={filterOptions}
+                  //filterOptions={filterOptions}
                   value={authValue}
                   inputValue={inputAuthValue}
                   onInputChange={(event, newInputValue) => {
                     if (newInputValue !== null) {
                       setAuthInputValue(newInputValue);
+                    }
+                    else{
+                      setAuthInputValue(filterOptions);
                     }
                   }}
                   onChange={(event, newValue) => {
@@ -605,69 +608,7 @@ function EditAnnouncement() {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                backgroundColor: "#F2F2F2",
-                p: 2,
-                border: 1, 
-                borderRadius: 3,
-                borderColor: "#cccccc",
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Warnings:
-              </Typography>
-              <List>
-                <ListItem>
-                  <ListItemIcon sx={{ minWidth: "unset", marginRight: "8px" }}>
-                    <FiberManualRecordIcon fontSize="inherit" />
-                  </ListItemIcon>
-                  <ListItemText primary="At most (20) questions can add on the application." />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon sx={{ minWidth: "unset", marginRight: "8px" }}>
-                    <FiberManualRecordIcon fontSize="inherit" />
-                  </ListItemIcon>
-                  <ListItemText primary="These information come automatically to you:" />
-                </ListItem>
-                <ListItem>
-                  <ListItemText secondary="1) Name" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px" } }} />
-                </ListItem>
-                <ListItem>
-                  <ListItemText secondary="2) ID" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px" } }} />
-                </ListItem>
-                <ListItem>
-                  <ListItemText secondary="3) Faculty" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px" } }} />
-                </ListItem>
-                <ListItem>
-                  <ListItemText secondary="4) Previous Grade" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px" } }} />
-                </ListItem>
-                <ListItem>
-                  <ListItemText secondary="5) Class" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px" } }} />
-                </ListItem>
-                <ListItem>
-                  <ListItemText secondary="6) GPA" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px" } }} />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon sx={{ minWidth: "unset", marginRight: "8px" }}>
-                    <FiberManualRecordIcon fontSize="inherit" />
-                  </ListItemIcon>
-                  <ListItemText primary="Please do not add these as questions." />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon sx={{ minWidth: "unset", marginRight: "8px" }}>
-                    <FiberManualRecordIcon fontSize="inherit" />
-                  </ListItemIcon>
-                  {/* <ListItemText primary={
-                    <Typography variant="body1">
-                      Currently selected term: <strong>"{term}"</strong>. If you want to change it, please use "Select Term" on the top of the page.
-                    </Typography>
-                  } /> */}
-                </ListItem>
-              </List>
-            </Box>
-          </Grid>
+         
         </Grid>
         <EditQuestion AnnouncementDetails={announcementDetails} getQuestions={GetQuestions} userDetails={UserDetails} postID={id} username = {userName} />
       </Box>

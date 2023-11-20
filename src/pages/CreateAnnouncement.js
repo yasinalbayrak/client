@@ -537,8 +537,9 @@ function CreateAnnouncement() {
               alignItems="center"
               marginY={2}
             >
+              
+              <Box sx={{ minWidth: 150}}>
               <Typography>Term <span style={{ color: 'red' }}>*</span>:</Typography>
-              <Box sx={{ minWidth: 150, marginX: 2 }}>
                 <FormControl fullWidth>
 
                   <Select
@@ -546,6 +547,7 @@ function CreateAnnouncement() {
                     id="demo-simple-select"
                     value={announcementDetails.term}
                     name="term"
+                    sx={{ minWidth: 150, mt: 2 }}
                     MenuProps={{
                       style: { maxHeight: '360px' },
                       autoFocus: false
@@ -558,6 +560,7 @@ function CreateAnnouncement() {
                         <MenuItem
                           key={eachTerm.term_desc}
                           value={eachTerm}
+                          sx={{ maxHeight: '360px' }}
                           className={
                             eachTerm.is_active === '1'
                               ? classes.activeItem
@@ -582,13 +585,14 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
+              <Box sx={{ minWidth: 150 }}>
               <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
               <Autocomplete
                 value={courseCodeValue}
                 onChange={handleChange}
                 filterOptions={filterCourseCodes}
-
+                
                 selectOnFocus
                 clearOnBlur
                 handleHomeEndKeys
@@ -607,7 +611,7 @@ function CreateAnnouncement() {
                   return option.title;
                 }}
                 renderOption={(props, option) => <li {...props}>{option.title}</li>}
-                sx={{ width: 300 }}
+                sx={{ width: 300, ml: -2 }}
                 freeSolo
                 renderInput={(params) => (
                   <TextField
@@ -659,7 +663,7 @@ function CreateAnnouncement() {
                 disableClearable
               />
 
-
+              </Box>
 
 
 
@@ -670,6 +674,7 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
+              <Box sx={{ minWidth: 150 }}>
               <Typography>Last Application Date<span style={{ color: 'red' }}>*</span>:</Typography>
               <TextField
                 id="outlined-required"
@@ -680,7 +685,7 @@ function CreateAnnouncement() {
                 value={announcementDetails.lastApplicationDate}
                 InputLabelProps={{ shrink: true }}
                 size="small"
-                sx={{ m: 2 }}
+                sx={{ mt:2 }}
                 onChange={handleInput}
               />
               <TextField
@@ -692,9 +697,10 @@ function CreateAnnouncement() {
                 value={announcementDetails.lastApplicationTime}
                 InputLabelProps={{ shrink: true }}
                 size="small"
-                sx={{ m: 2 }}
+                sx={{ mt:2, ml: 2 }}
                 onChange={handleInput}
               />
+              </Box>
             </Grid>
             <Grid
               container
@@ -702,6 +708,8 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
+
+              <Box sx={{ minWidth: 150, mt:2 }}>
               <Typography> Minimum Desired Letter Grade<span style={{ color: 'red' }}>*</span>:</Typography>
               <TextField
                 id="outlined-select-currency"
@@ -709,7 +717,7 @@ function CreateAnnouncement() {
                 select
                 value={announcementDetails.letterGrade}
                 size="small"
-                sx={{ m: 2, width: 225 }}
+                sx={{ mt:2, width: 225 }}
                 onChange={handleInput}
               >
                 {grades.map((option) => (
@@ -729,8 +737,10 @@ function CreateAnnouncement() {
                 }}
                 control={<Checkbox />}
                 label="Allow In Progress Applicants"
+                sx={{ mt: 2, ml: 2 }}
               />
 
+              </Box>
 
             </Grid>
             <Grid
@@ -739,6 +749,7 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
+              <Box sx={{ minWidth: 150, mt:2 }}>
               <Typography>Weekly Work Hours<span style={{ color: 'red' }}>*</span>:</Typography>
               <TextField
                 id="outlined-select-currency"
@@ -746,7 +757,7 @@ function CreateAnnouncement() {
                 select
                 value={announcementDetails.workHours}
                 size="small"
-                sx={{ m: 2, width: 225 }}
+                sx={{ mt: 2, width: 225 }}
                 onChange={handleInput}
               >
                 {WorkHour && WorkHour.map((option) => (
@@ -755,13 +766,16 @@ function CreateAnnouncement() {
                   </MenuItem>
                 ))}
               </TextField>
+              </Box>
             </Grid>
+
             <Grid
               container
               direction="row"
               justifyContent="start"
               alignItems="flex-start"
             >
+              <Box sx={{ minWidth: 150, mt:2 }}>
               <Typography paddingTop={3}>Job Details:</Typography>
               <TextField
                 placeholder="Enter Job Details..."
@@ -771,10 +785,11 @@ function CreateAnnouncement() {
                 size="small"
                 rows={5}
                 maxRows={20}
-                sx={{ m: 2, width: 400 }}
+                sx={{ mt: 2, width: 400 }}
                 onChange={handleInput}
                 required
               />
+              </Box>
             </Grid>
             <Grid
               container
@@ -782,13 +797,14 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="flex-start"
             >
+              <Box sx={{ minWidth: 150, mt:2 }}>
               <Typography sx={{ my: 2 }}>Authorized Instructor(s):</Typography>
               <Grid
                 item
                 xs={6}
                 direction="column"
                 justifyContent="center"
-                alignItems="flex-start"
+                alignItems="flex-center"
               >
                 <Autocomplete
                   id="controllable-states-demo"
@@ -811,7 +827,7 @@ function CreateAnnouncement() {
                       {...params}
                       multiline
                       size="small"
-                      sx={{ mx: 2, mt: 1, mb: 2, width: 300 }}
+                      sx={{mb:1, mt: 1, width: 300 }}
                     />
                   )}
                 />
@@ -837,13 +853,14 @@ function CreateAnnouncement() {
                             </Typography>
                           </Avatar>
                         }
-                        sx={{ m: 1 }}
+                        sx={{ mt: 1 }}
                         onDelete={() => handleAuthDelete(authPerson)}
                         disabled={authPerson.username === userName}
                       />
                     );
                   })}
               </Grid>
+              </Box>
             </Grid>
             <Grid
               container

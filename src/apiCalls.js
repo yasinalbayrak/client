@@ -142,7 +142,7 @@ async function addAnnouncement(
   }
 }
 
-function updateAnnouncement(
+async function updateAnnouncement(
   id,
   username,
   course_code,
@@ -173,7 +173,7 @@ function updateAnnouncement(
     (user) => user.id
   );
   try {
-    axios.put(apiEndpoint + "/applications/" + id, {
+    const response = await axios.put(apiEndpoint + "/applications/" + id, {
       //instructor_username: username,
       //faculty: faculty,
       courseCode: course_code,
@@ -189,6 +189,7 @@ function updateAnnouncement(
       questions: transformedQuestions,
       previousCourseGrades: [],
     });
+    return response.data;
   } catch (error) {
     return handleError(error)
   }
