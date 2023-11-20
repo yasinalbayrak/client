@@ -44,8 +44,12 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 
 import AddIcon from "@mui/icons-material/Add";
 import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
-const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
+import CheckIcon from '@mui/icons-material/Check';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import UseNumberInputCompact from '../components/IncDec'
+
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const useStyles = makeStyles((theme) => ({
   activeItem: {
     backgroundColor: "lightgreen",
@@ -152,7 +156,23 @@ function CreateAnnouncement() {
 
   const [error, setError] = React.useState(false);
   const classes = useStyles();
+  
 
+  function updateGrade(courseCode, index) {
+    setSelectedCourses((prev) => {
+      return prev.map((course) => {
+
+        if (course.courseCode === courseCode) {
+
+          return {
+            ...course,
+            grade: grades[index].label,
+          };
+        }
+        return course;
+      });
+    });
+  }
   //get all instructors
   useEffect(() => {
     getAllInstructors().then((results) => {
@@ -664,21 +684,162 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
-              <Box sx={{ minWidth: 150, display: "flex", direction: "row" , justifyContent: "center", alignItems: "center"}}>
-                <Typography>
-                  Last Application Date<span style={{ color: "red" }}>*</span>:
-                </Typography>
-                <TextField
-                  id="outlined-required"
-                  name="lastApplicationDate"
-                  label="Enter last date"
-                  variant="outlined"
-                  type="date"
-                  value={announcementDetails.lastApplicationDate}
-                  InputLabelProps={{ shrink: true }}
-                  size="small"
-                  sx={{ mt: 2, marginLeft: "1rem" }}
-                  onChange={handleInput}
+              <Box sx={{ minWidth: 150 }}>
+              <Typography>Last Application Date<span style={{ color: 'red' }}>*</span>:</Typography>
+              <TextField
+                id="outlined-required"
+                name="lastApplicationDate"
+                label="Enter last date"
+                variant="outlined"
+                type="date"
+                value={announcementDetails.lastApplicationDate}
+                InputLabelProps={{ shrink: true }}
+                size="small"
+                sx={{ mt:2 }}
+                onChange={handleInput}
+              />
+              <TextField
+                id="outlined-required"
+                name="lastApplicationTime"
+                label="Enter deadline"
+                variant="outlined"
+                type="time"
+                value={announcementDetails.lastApplicationTime}
+                InputLabelProps={{ shrink: true }}
+                size="small"
+                sx={{ mt:2, ml: 2 }}
+                onChange={handleInput}
+              />
+              </Box>
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="center"
+            >
+
+              <Box sx={{ minWidth: 150, mt:2 }}>
+              <Typography> Minimum Desired Letter Grade<span style={{ color: 'red' }}>*</span>:</Typography>
+              <TextField
+                id="outlined-select-currency"
+                name="letterGrade"
+                select
+                value={announcementDetails.letterGrade}
+                size="small"
+                sx={{ mt:2, width: 225 }}
+                onChange={handleInput}
+              >
+                {grades.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <FormControlLabel
+                value={announcementDetails.isInprogressAllowed}
+                onChange={(event) => {
+                  setAnnouncementDetails((prevDetails) => ({
+                    ...prevDetails,
+                    isInprogressAllowed: event.target.checked, // Use event.target.checked for checkbox
+                  }));
+                }}
+                control={<Checkbox />}
+                label="Allow In Progress Applicants"
+                sx={{ mt: 2, ml: 2 }}
+              />
+
+              </Box>
+
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="center"
+            >
+              <Box sx={{ minWidth: 150, mt:2 }}>
+              <Typography>Weekly Work Hours<span style={{ color: 'red' }}>*</span>:</Typography>
+              <TextField
+                id="outlined-select-currency"
+                name="workHours"
+                select
+                value={announcementDetails.workHours}
+                size="small"
+                sx={{ mt: 2, width: 225 }}
+                onChange={handleInput}
+              >
+                {WorkHour && WorkHour.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              </Box>
+            </Grid>
+
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="flex-start"
+            >
+              <Box sx={{ minWidth: 150, mt:2 }}>
+              <Typography paddingTop={3}>Job Details:</Typography>
+              <TextField
+                placeholder="Enter Job Details..."
+                name="jobDetails"
+                value={announcementDetails.jobDetails}
+                multiline
+                size="small"
+                rows={5}
+                maxRows={20}
+                sx={{ mt: 2, width: 400 }}
+                onChange={handleInput}
+                required
+              />
+              </Box>
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="flex-start"
+            >
+              <Box sx={{ minWidth: 150, mt:2 }}>
+              <Typography sx={{ my: 2 }}>Authorized Instructor(s):</Typography>
+              <Grid
+                item
+                xs={6}
+                direction="column"
+                justifyContent="center"
+                alignItems="flex-center"
+              >
+                <Autocomplete
+                  id="controllable-states-demo"
+                  options={authUsersList && authUsersList.map((authUser) => {
+                    return authUser.authOptionValue;
+                  })}
+                  filterOptions={filterOptions}
+                  value={authValue}
+                  inputValue={inputAuthValue}
+                  onInputChange={(event, newInputValue) => {
+                    if (newInputValue !== null) {
+                      setAuthInputValue(newInputValue);
+                    }
+                  }}
+                  onChange={(event, newValue) => {
+                    if (newValue !== null) handleAuthAdd(newValue);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      multiline
+                      size="small"
+                      sx={{mb:1, mt: 1, width: 300 }}
+                    />
+                  )}
                 />
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -1146,6 +1307,7 @@ function CreateAnnouncement() {
                               </MenuItem>
                             ))}
                           </TextField>
+
                         </Grid>
                       </FormControl>
                       <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -1179,59 +1341,93 @@ function CreateAnnouncement() {
                     </Button>
                   </DialogActions>
                 </Dialog>
-                {selectedCourses.length > 0 && (
-                  <Table>
-                    <TableBody>
-                      {selectedCourses.map((courseSelected, i) => (
-                        <TableRow key={courseSelected.courseCode}>
-                          <TableCell>
-                            <Chip
-                              label={courseSelected.courseCode}
-                              variant="outlined"
-                              avatar={
-                                <Avatar
-                                  sx={{
-                                    backgroundColor:
-                                      i % 2 === 0 ? "#5FB3F6" : "#2196F3",
-                                  }}
-                                >
-                                  <Typography
-                                    fontSize="small"
-                                    sx={{ color: "white" }}
-                                  >
-                                    {courseSelected.courseCode.slice(
-                                      0,
-                                      extractSubstring(
-                                        courseSelected.courseCode
-                                      )
-                                    )}
-                                  </Typography>
-                                </Avatar>
-                              }
-                            />
-                          </TableCell>
-                          <TableCell>
+                {selectedCourses.length > 0 && <Table>
+
+                  <TableBody>
+
+                    {selectedCourses.map((courseSelected, i) => (
+                      <TableRow key={courseSelected.courseCode}>
+                        <TableCell>
+                          <Chip
+                            label={courseSelected.courseCode}
+                            variant="outlined"
+                            avatar={
+                              <Avatar
+                                sx={{
+                                  backgroundColor: i % 2 === 0 ? "#5FB3F6" : "#2196F3",
+                                }}
+                              >
+                                <Typography fontSize="small" sx={{ color: "white" }}>
+                                  {
+                                    courseSelected.courseCode.slice(0, extractSubstring(courseSelected.courseCode))}
+                                </Typography>
+                              </Avatar>
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
                             <Chip
                               label={courseSelected.grade}
                               color={getColorForGrade(courseSelected.grade)}
+                              sx={{
+                                backgroundColor: 'white',
+                                fontWeight: 'bold',
+                                marginRight: '8px',
+                              }}
                               variant="outlined"
                             />
-                          </TableCell>
-                          <TableCell>
-                            <Chip
-                              label="Delete"
-                              color="error"
-                              sx={{ cursor: "pointer" }}
-                              onClick={() =>
-                                handleCourseDelete(courseSelected.courseCode)
-                              }
+                           { <UseNumberInputCompact index={grades.findIndex((grade) => grade.label === courseSelected.grade)} grade={courseSelected.grade} courseCode={courseSelected.courseCode} callback={updateGrade}/>
+                           }
+                          </div>
+
+
+                        </TableCell>
+                        <TableCell>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <FiberManualRecordIcon
+                              onClick={() => {
+
+
+                                setSelectedCourses((prev) => {
+                                  return prev.map((course) => {
+
+                                    if (course.courseCode === courseSelected.courseCode) {
+
+                                      return {
+                                        ...course,
+                                        isInprogressAllowed: !courseSelected.isInprogressAllowed,
+                                      };
+                                    }
+                                    return course;
+                                  });
+                                });
+
+                              }}
+                              sx={{
+                                cursor: "pointer",
+                                color: courseSelected.isInprogressAllowed ? 'green' : 'red',
+                                marginRight: 1,
+                              }}
                             />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
+                            <Typography variant="body2" color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
+                              {"IP " + (courseSelected.isInprogressAllowed ? 'Allowed' : 'Not Allowed')}
+                            </Typography>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label="Delete"
+                            color="error"
+                            sx={{ cursor: 'pointer' }}
+                            onClick={() => handleCourseDelete(courseSelected.courseCode)}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>}
               </Grid>
             </Grid>
           </Grid>
