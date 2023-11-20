@@ -15,16 +15,13 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
+
+import Alert from '@mui/material/Alert';
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import Alert from "@mui/material/Alert";
+
 import InputLabel from "@mui/material/InputLabel";
-import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@mui/material";
+
+import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { getTerms, getAllInstructors, getAllCourses } from "../apiCalls";
@@ -401,7 +398,7 @@ function CreateAnnouncement() {
   const handleClose = (event, reason) => {
     handleDesiredCourseCodeDelete();
     setDesiredLetterGrade(null);
-    if (reason !== "backdropClick") {
+    if (reason !== 'backdropClick') {
       setOpen(false);
     }
     setIsInprogressAllowed(false);
@@ -458,34 +455,45 @@ function CreateAnnouncement() {
     const result = inputString.match(/^[^\s\d]+/);
     return result ? result[0].length : 2;
   }
+  
+ 
+
+  function extractSubstring(inputString) {
+    const result = inputString.match(/^[^\s\d]+/);
+    return result ? result[0].length : 2;
+  }
   const handleAdd = () => {
+
+
     if (!desiredCourseCode || !desiredLetterGrade) {
-      setError("Fill out the form.");
-    } else if (
-      selectedCourses.some((course) => course.courseCode === desiredCourseCode)
-    ) {
+      setError("Fill out the form.")
+    }
+    else if (selectedCourses.some((course) => course.courseCode === desiredCourseCode)) {
       setError("There is already requirement for this course.");
-    } else {
-      setSelectedCourses((prev) => [
+    }
+
+    else {
+
+      setSelectedCourses((prev) => ([
         ...prev,
         {
           courseCode: desiredCourseCode,
           grade: desiredLetterGrade,
-          isInprogressAllowed: isInprogressAllowed,
-        },
-      ]);
+          isInprogressAllowed: isInprogressAllowed
+        }
+      ]))
       handleClose();
     }
-  };
+
+  }
 
   // useEffect(() => {
   //   console.log(announcementDetails)
   // }
   //   , [announcementDetails])
 
-  useEffect(() => {
-    setError(null);
-  }, [desiredCourseCode, desiredCourseList]);
+  useEffect(() => { setError(null) }, [desiredCourseCode, desiredCourseList])
+
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -539,18 +547,23 @@ function CreateAnnouncement() {
                     }}
                     onChange={handleInput}
                   >
-                    {allTerms.map((eachTerm, index) => (
-                      <MenuItem
-                        key={eachTerm.term_desc}
-                        value={eachTerm}
-                        sx={{ maxHeight: "360px" }}
-                        className={
-                          eachTerm.is_active === "1" ? classes.activeItem : ""
-                        }
-                      >
-                        {eachTerm.term_desc}
-                      </MenuItem>
-                    ))}
+                    {
+                      allTerms.map((eachTerm, index) => (
+                        <MenuItem
+                          key={eachTerm.term_desc}
+                          value={eachTerm}
+                          sx={{ maxHeight: '360px' }}
+                          className={
+                            eachTerm.is_active === '1'
+                              ? classes.activeItem
+                              : ''
+                          }
+                        >
+                          {eachTerm.term_desc}
+                        </MenuItem>
+                      ))
+                    }
+
                   </Select>
                 </FormControl>
               </Box>
@@ -563,87 +576,87 @@ function CreateAnnouncement() {
               alignItems="center"
             >
               <Box sx={{ minWidth: 150 }}>
-                <Typography>
-                  Course Code<span style={{ color: "red" }}>*</span>:
-                </Typography>
+              <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
-                <Autocomplete
-                  value={courseCodeValue}
-                  onChange={handleChange}
-                  filterOptions={filterCourseCodes}
-                  selectOnFocus
-                  clearOnBlur
-                  handleHomeEndKeys
-                  id="free-solo-with-text-demo"
-                  options={courseList}
-                  getOptionLabel={(option) => {
-                    // Value selected with enter, right from the input
-                    if (typeof option === "string") {
-                      return option;
-                    }
-                    // Add "xxx" option created dynamically
-                    if (option.inputValue) {
-                      return option.inputValue;
-                    }
-                    // Regular option
-                    return option.title;
-                  }}
-                  renderOption={(props, option) => (
-                    <li {...props}>{option.title}</li>
-                  )}
-                  sx={{ width: 300, ml: -2 }}
-                  freeSolo
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      multiline
-                      size="small"
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter") {
-                          event.preventDefault();
-                        }
-                      }}
-                      onKeyPress={(event) => {
-                        const key = event.key;
-                        const regex = /^[A-Za-z0-9]+$/;
+              <Autocomplete
+                value={courseCodeValue}
+                onChange={handleChange}
+                filterOptions={filterCourseCodes}
+                
+                selectOnFocus
+                clearOnBlur
+                handleHomeEndKeys
+                id="free-solo-with-text-demo"
+                options={courseList}
+                getOptionLabel={(option) => {
+                  // Value selected with enter, right from the input
+                  if (typeof option === 'string') {
+                    return option;
+                  }
+                  // Add "xxx" option created dynamically
+                  if (option.inputValue) {
+                    return option.inputValue;
+                  }
+                  // Regular option
+                  return option.title;
+                }}
+                renderOption={(props, option) => <li {...props}>{option.title}</li>}
+                sx={{ width: 300, ml: -2 }}
+                freeSolo
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
 
-                        if (!regex.test(key) && key !== "Enter") {
-                          event.preventDefault();
-                        }
-                      }}
-                      sx={{
-                        mx: 2,
-                        mt: 1,
-                        mb: 2,
-                        width: 300,
-                        ...(params.disabled && {
-                          backgroundColor: "transparent",
-                          color: "inherit",
-                          pointerEvents: "none",
-                        }),
-                      }}
-                      InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                          <>
-                            {params.InputProps.endAdornment}
-                            {courseCode && (
-                              <IconButton
-                                onClick={handleCourseCodeDelete}
-                                aria-label="Clear"
-                                size="small"
-                              >
-                                <ClearIcon />
-                              </IconButton>
-                            )}
-                          </>
-                        ),
-                      }}
-                    />
-                  )}
-                  disableClearable
-                />
+                    multiline
+                    size="small"
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        event.preventDefault();
+                      }
+                    }}
+                    onKeyPress={(event) => {
+                      const key = event.key;
+                      const regex = /^[A-Za-z0-9]+$/;
+
+                      if (!regex.test(key) && key !== 'Enter') {
+                        event.preventDefault();
+                      }
+
+                    }}
+                    sx={{
+                      mx: 2, mt: 1, mb: 2, width: 300,
+                      ...(params.disabled && {
+                        backgroundColor: 'transparent',
+                        color: 'inherit',
+                        pointerEvents: 'none',
+                      }),
+                    }}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {params.InputProps.endAdornment}
+                          {courseCode && (
+                            <IconButton
+                              onClick={handleCourseCodeDelete}
+                              aria-label="Clear"
+                              size="small"
+                            >
+                              <ClearIcon />
+                            </IconButton>
+                          )}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+                disableClearable
+              />
+
               </Box>
+
+
+
             </Grid>
             <Grid
               container
@@ -837,10 +850,12 @@ function CreateAnnouncement() {
                   sx={{ m: 2, width: 400 }}
                   value={announcementDetails.jobDetails}
                   onChange={handleInput}
-                  placeholder="Enter Job Details..."
+                  placeholder="Enter the job details..."
                   style={{
-                    width: "210%", // Adjusting width to account for padding and border
+                    width: "150%", // Adjusting width to account for padding and border
                     border: "1px solid #c1c4bc",
+                    minWidth: '200px',
+                    minHeight: "30px",
                     borderRadius: "5px",
                     padding: "8px", // Adjusted padding to give space between text and border
                     outline: "none",
@@ -849,6 +864,7 @@ function CreateAnnouncement() {
                   }}
                 />
               </div>
+              
             </Grid>
             <Grid
               container
@@ -944,14 +960,11 @@ function CreateAnnouncement() {
                 justifyContent="center"
                 alignItems="center"
                 sx={{
-                  backgroundColor:
-                    selectedCourses && selectedCourses.length === 0
-                      ? "#FFF"
-                      : "#F5F5F5",
+                  backgroundColor: (selectedCourses && selectedCourses.length === 0) ? "#FFF" : "#F5F5F5",
                   borderRadius: "5%",
                   marginTop: "0.5rem",
                   marginLeft: "1rem",
-                  minWidth: "fit-content",
+                  minWidth: "fit-content"
                 }}
               >
                 {/*<Autocomplete
@@ -981,29 +994,31 @@ function CreateAnnouncement() {
                   disabled={courseCode && courseCode.length === 0} //if it creates some problems, delete it.
                 />*/}
 
-                <Grid
-                  container
-                  justifyContent={
-                    selectedCourses.length > 0 ? "center" : "flex-start"
-                  }
-                >
+
+
+
+
+
+                <Grid container justifyContent={selectedCourses.length > 0 ? "center" : "flex-start"}>
                   <Button
                     variant="contained"
                     color="success"
                     onClick={handleClickOpen}
                     sx={{
                       backgroundColor: "#9ADE7B",
-                      padding: "4px",
+                      padding: '4px',
                       width: "0.5rem",
-                      "& .MuiButton-startIcon": {
+                      '& .MuiButton-startIcon': {
                         marginLeft: 0,
-                        fontSize: "1rem",
+                        fontSize: '1rem',
                       },
                     }}
                   >
                     <AddIcon />
                   </Button>
                 </Grid>
+
+
 
                 <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
                   <DialogTitle>New Requirement</DialogTitle>
@@ -1035,7 +1050,7 @@ function CreateAnnouncement() {
                             options={desiredCourseList}
                             getOptionLabel={(option) => {
                               // Value selected with enter, right from the input
-                              if (typeof option === "string") {
+                              if (typeof option === 'string') {
                                 return option;
                               }
                               // Add "xxx" option created dynamically
@@ -1045,10 +1060,8 @@ function CreateAnnouncement() {
                               // Regular option
                               return option.title;
                             }}
-                            renderOption={(props, option) => (
-                              <li {...props}>{option.title}</li>
-                            )}
-                            sx={{ width: "fit-content", marginRight: "1rem" }}
+                            renderOption={(props, option) => <li {...props}>{option.title}</li>}
+                            sx={{ width: 'fit-content', marginRight: "1rem" }}
                             freeSolo
                             renderInput={(params) => (
                               <TextField
