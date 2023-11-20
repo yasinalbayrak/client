@@ -12,7 +12,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ControlPointDuplicateIcon from '@mui/icons-material/ControlPointDuplicate';
 import UpdateIcon from '@mui/icons-material/Update';
 import CloseIcon from '@mui/icons-material/Close';
-import { updateAnnouncement } from "../apiCalls"
+import { updateAnnouncement } from "../apiCalls";
+import { toast } from 'react-toastify';
 
 
 const questionType = [
@@ -377,8 +378,14 @@ function EditQuestion(props) {
                             props.AnnouncementDetails.desiredCourses,
                             questions,
                             term
-                            )
-                        navigate('/success', { replace: true, state: { successText: "Your announcement has been successfully edited and updated." } })
+                            ).then((data) => {
+                                navigate("/Home", {
+                                  replace: true
+                                });
+                                toast.success("Your announcement has been successfully updated.")
+                              }).catch((_) => {
+                                /* Error is already printed */
+                              });
                     } else {
                         alert("Please fill out all necessary fields before creating the annoucement.");
                     }

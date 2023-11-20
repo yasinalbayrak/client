@@ -92,7 +92,8 @@ async function addAnnouncement(
   auth_instructors,
   desired_courses,
   questions,
-  term
+  term,
+  isInprogressAllowed
 ) {
   //const mockUserName = "instructor1";
   const faculty = "FENS";
@@ -120,7 +121,7 @@ async function addAnnouncement(
       //instructor_username: username,
       //faculty: faculty,
       courseCode: course_code,
-      //desired_courses: desired_courses,
+      previousCourseGrades: desired_courses,
       lastApplicationDate: deadline,
       term: term.term_desc,
       //title: title,
@@ -130,7 +131,7 @@ async function addAnnouncement(
       minimumRequiredGrade: letterGrade,
       desiredCourseGrade: letterGrade,
       questions: transformedQuestions,
-      previousCourseGrades: []
+      isInprogressAllowed: isInprogressAllowed
     });
 
     return response.data;
@@ -142,7 +143,7 @@ async function addAnnouncement(
   }
 }
 
-function updateAnnouncement(
+async function updateAnnouncement(
   id,
   username,
   course_code,
@@ -173,7 +174,7 @@ function updateAnnouncement(
     (user) => user.id
   );
   try {
-    axios.put(apiEndpoint + "/applications/" + id, {
+    const response = await axios.put(apiEndpoint + "/applications/" + id, {
       //instructor_username: username,
       //faculty: faculty,
       courseCode: course_code,
@@ -189,6 +190,7 @@ function updateAnnouncement(
       questions: transformedQuestions,
       previousCourseGrades: [],
     });
+    return response.data;
   } catch (error) {
     return handleError(error)
   }
