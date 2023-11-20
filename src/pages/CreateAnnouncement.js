@@ -32,7 +32,10 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import { NewspaperTwoTone } from "@mui/icons-material";
 import AddIcon from '@mui/icons-material/Add';
 import Checkbox from '@mui/material/Checkbox';
+import CheckIcon from '@mui/icons-material/Check';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import UseNumberInputCompact from '../components/IncDec'
+
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const useStyles = makeStyles((theme) => ({
   activeItem: {
@@ -139,7 +142,23 @@ function CreateAnnouncement() {
 
   const [error, setError] = React.useState(false);
   const classes = useStyles();
+  
 
+  function updateGrade(courseCode, index) {
+    setSelectedCourses((prev) => {
+      return prev.map((course) => {
+
+        if (course.courseCode === courseCode) {
+
+          return {
+            ...course,
+            grade: grades[index].label,
+          };
+        }
+        return course;
+      });
+    });
+  }
   //get all instructors
   useEffect(() => {
     getAllInstructors().then((results) => {
@@ -708,7 +727,7 @@ function CreateAnnouncement() {
                     isInprogressAllowed: event.target.checked, // Use event.target.checked for checkbox
                   }));
                 }}
-                control={<Checkbox  />}
+                control={<Checkbox />}
                 label="Allow In Progress Applicants"
               />
 
@@ -1018,6 +1037,7 @@ function CreateAnnouncement() {
                               </MenuItem>
                             ))}
                           </TextField>
+
                         </Grid>
 
 
@@ -1033,11 +1053,11 @@ function CreateAnnouncement() {
                         >
                           <FormControlLabel
                             value={isInprogressAllowed}
-                            onChange= {(_)=> {
-                              setIsInprogressAllowed((prev)=> !prev)
+                            onChange={(_) => {
+                              setIsInprogressAllowed((prev) => !prev)
                             }}
-                              
-                      
+
+
                             control={<Checkbox />}
                             label="Allow In Progress Applicants"
                           />
@@ -1078,12 +1098,55 @@ function CreateAnnouncement() {
                           />
                         </TableCell>
                         <TableCell>
-                          <Chip
-                            label={courseSelected.grade}
-                            color={getColorForGrade(courseSelected.grade)}
-                            variant="outlined"
-                          />
 
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Chip
+                              label={courseSelected.grade}
+                              color={getColorForGrade(courseSelected.grade)}
+                              sx={{
+                                backgroundColor: 'white',
+                                fontWeight: 'bold',
+                                marginRight: '8px',
+                              }}
+                              variant="outlined"
+                            />
+                           { <UseNumberInputCompact index={grades.findIndex((grade) => grade.label === courseSelected.grade)} grade={courseSelected.grade} courseCode={courseSelected.courseCode} callback={updateGrade}/>
+                           }
+                          </div>
+
+
+                        </TableCell>
+                        <TableCell>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <FiberManualRecordIcon
+                              onClick={() => {
+
+
+                                setSelectedCourses((prev) => {
+                                  return prev.map((course) => {
+
+                                    if (course.courseCode === courseSelected.courseCode) {
+
+                                      return {
+                                        ...course,
+                                        isInprogressAllowed: !courseSelected.isInprogressAllowed,
+                                      };
+                                    }
+                                    return course;
+                                  });
+                                });
+
+                              }}
+                              sx={{
+                                cursor: "pointer",
+                                color: courseSelected.isInprogressAllowed ? 'green' : 'red',
+                                marginRight: 1,
+                              }}
+                            />
+                            <Typography variant="body2" color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
+                              {"IP " + (courseSelected.isInprogressAllowed ? 'Allowed' : 'Not Allowed')}
+                            </Typography>
+                          </div>
                         </TableCell>
                         <TableCell>
                           <Chip
