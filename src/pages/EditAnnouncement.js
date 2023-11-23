@@ -501,15 +501,12 @@ function EditAnnouncement() {
                   options={authUsersList.map((authUser) => {
                     return authUser.authOptionValue;
                   })}
-                  //filterOptions={filterOptions}
+                  filterOptions={filterOptions}
                   value={authValue}
                   inputValue={inputAuthValue}
                   onInputChange={(event, newInputValue) => {
                     if (newInputValue !== null) {
                       setAuthInputValue(newInputValue);
-                    }
-                    else{
-                      setAuthInputValue(filterOptions);
                     }
                   }}
                   onChange={(event, newValue) => {
