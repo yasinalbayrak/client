@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import AppBarHeader from "../components/AppBarHeader";
 import Sidebar from "../components/Sidebar";
 import AddQuestion from "../components/AddQuestion";
@@ -35,7 +35,7 @@ import Checkbox from '@mui/material/Checkbox';
 import CheckIcon from '@mui/icons-material/Check';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import UseNumberInputCompact from '../components/IncDec'
-
+import { flipShowTerms } from "../redux/userSlice";
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const useStyles = makeStyles((theme) => ({
   activeItem: {
@@ -103,7 +103,7 @@ function CreateAnnouncement() {
   const term = useSelector((state) => state.user.term);
 
   const userId = useSelector((state) => state.user.id);
-
+  
   const [authUsersList, setAuthUserList] = useState([]); //get instructors from database
   const [authPeople, setAuthPeople] = useState([
     {
@@ -143,6 +143,20 @@ function CreateAnnouncement() {
   const [error, setError] = React.useState(false);
   const classes = useStyles();
   
+  useEffect(() => {
+    
+    dispatch(flipShowTerms())
+
+
+
+    
+
+    
+    return () => {
+      dispatch(flipShowTerms())
+    };
+  }, []); 
+
 
   function updateGrade(courseCode, index) {
     setSelectedCourses((prev) => {
@@ -501,6 +515,7 @@ function CreateAnnouncement() {
 
   useEffect(() => { setError(null) }, [desiredCourseCode, desiredCourseList])
 
+  const dispatch = useDispatch();
 
   return (
     <Box sx={{ display: "flex" }}>

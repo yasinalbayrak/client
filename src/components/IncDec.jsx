@@ -101,11 +101,11 @@ const StyledInputRoot = styled('div')(
       "increment"
       "decrement";
     row-gap: 0;
-    height:40px;
-    overflow: auto;
+    height:45px;
+    overflow: none;
     border-radius: 8px;
     border-style: solid;
-    border-width: 1px;
+    border-width: 0.5px;
     color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
     border-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
     box-shadow: 0px 2px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'

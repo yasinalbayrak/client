@@ -94,6 +94,8 @@ function Sidebar({ setTabInitial }) {
   const surname = useSelector((state) => state.user.surname);
   const term = useSelector((state) => state.user.term);
   const token = useSelector((state) => state.user.JwtToken);
+  const showTerms = useSelector((state) => state.user.showTerms);
+ 
   const [termSelect, setTermSelect] = React.useState(term);
 
   const [allTerms, setAllTerms] = React.useState([]);
@@ -150,8 +152,8 @@ function Sidebar({ setTabInitial }) {
 
 
 
-
-    const homePageURL = "http://localhost:3000";
+    //TODO
+    const homePageURL = "http://pro2-dev.sabanciuniv.edu/build/ ";
     const logoutURL = `https://login.sabanciuniv.edu/cas/logout?service=${encodeURIComponent(homePageURL)}`;
 
 
@@ -178,7 +180,7 @@ function Sidebar({ setTabInitial }) {
             <MenuIcon />
           </IconButton>
           <Box width={200}>
-            <FormControl
+            {showTerms && <FormControl
               sx={{
                 m: 1,
                 minWidth: 150,
@@ -240,7 +242,7 @@ function Sidebar({ setTabInitial }) {
                   ))
                 }
               </Select>
-            </FormControl>
+            </FormControl>}
           </Box>
 
           <Button
@@ -282,7 +284,7 @@ function Sidebar({ setTabInitial }) {
                 height: 50,
                 ...(!sidebarOpen && { display: "none" }),
               }}
-              src={"/sula.png"}
+              src={`${process.env.PUBLIC_URL}/build/sula.png`}
             />
             {!sidebarOpen ? <Box sx={{ height: 50 }}></Box> : <div></div>}
           </ListItem>

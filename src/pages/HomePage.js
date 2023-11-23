@@ -90,7 +90,7 @@ function HomePage() {
             <Grid item>
               {isInstructor && (
                 <Button variant="contained" startIcon={<AddIcon />} onClick={() => {
-                  navigate("/create-announcement", { replace: true });
+                  navigate("/create-announcement");
                 }}>
                   Add
                 </Button>

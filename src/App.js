@@ -1,6 +1,6 @@
 import "./App.css";
 import MockCAS from "./pages/MockCAS";
-import { Routes, Route, useSearchParams } from "react-router-dom";
+import { Routes, Route, useSearchParams, useNavigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import CreateAnnouncement from "./pages/CreateAnnouncement";
 import EditAnnouncement from "./pages/EditAnnouncement";
@@ -9,7 +9,7 @@ import ApplicantsPage from "./pages/ApplicantsPage";
 import { useDispatch, useSelector } from "react-redux";
 import LoginCAS from "./pages/LoginCAS";
 import { useEffect } from "react";
-import { startLoginProcess, successLogin } from "./redux/userSlice";
+import { startLoginProcess, successLogin, logout } from "./redux/userSlice";
 import { validateLogin } from "./apiCalls";
 import CourseApplicantsPage from "./pages/CourseApplicantsPage";
 import EditApplyPage from "./pages/EditApplyPage";
@@ -17,13 +17,15 @@ import SuccessPage from "./pages/SuccessPage";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function App() {
-  const [urlParams, setUrlParams] = useSearchParams();
+ 
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
-  const dispatch = useDispatch();
   const url = window.location.href;
+  const urlParams = new URLSearchParams(window.location.search);
+  const dispatch = useDispatch();
+ 
   let path = window.location.href.split("?")[0];
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (!isLoggedIn && !isLoading) {
       if (url.indexOf("?ticket=") !== -1 || url.indexOf("&ticket=") !== -1) {
@@ -54,13 +56,20 @@ function App() {
               //result.user.graduationType === "academic",
             })
           );
-        });
-
         // dispatch(successLogin({username: "aa", name: "bb", surname: "cc"}));
         // check the response
         // if result is positive, dispatch loginSuccess and refresh, otherwise dispatch loginFail or logout
         urlParams.delete("ticket");
-        setUrlParams(urlParams);
+        
+        navigate('/home', { replace: true });
+
+       
+        }).catch(_ => {
+
+        });
+
+
+
 
         // window.location.reload();
       }

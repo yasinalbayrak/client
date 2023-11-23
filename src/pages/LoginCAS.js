@@ -5,6 +5,7 @@ import { startLoginProcess, successLogin } from "./../redux/userSlice";
 
 function LoginCAS() {
     const url = window.location.href;
+    console.log("URL is:" + url);
     const encodedURL = encodeURIComponent(url);
     const casLoginBaseURL = "https://login.sabanciuniv.edu/cas/login?service=";
     const casLoginURL = casLoginBaseURL + encodedURL;

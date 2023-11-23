@@ -11,6 +11,7 @@ const initialState = {
   isLoading: false,
   isFailed: false,
   isLoggedIn: false,
+  showTerms: true
 };
 
 const userSlice = createSlice({
@@ -53,11 +54,14 @@ const userSlice = createSlice({
     setTerm: (state, action) => {
       state.term = action.payload.term;
     },
+    flipShowTerms: (state) => {
+      state.showTerms = !state.showTerms
+    }
   },
 });
 
 console.log(userSlice);
 
-export const { startLoginProcess, successLogin, failLogin, logout, switchIsInstructor, setTerm } = userSlice.actions;
+export const {flipShowTerms, startLoginProcess, successLogin, failLogin, logout, switchIsInstructor, setTerm } = userSlice.actions;
 
 export default userSlice.reducer;

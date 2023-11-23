@@ -14,9 +14,9 @@ root.render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+          <BrowserRouter basename="/build">
+            <App />
+          </BrowserRouter>
       </Provider>
     </ThemeProvider>
 );

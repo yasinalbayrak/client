@@ -3,7 +3,7 @@ import { async } from "q";
 import handleError from "./errors/GlobalErrorHandler.jsx"
 
 const url = window.location.href;
-var apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
+var apiEndpoint = "http://pro2-dev.sabanciuniv.edu:8080/api/v1";
 if (url.indexOf("pro2") === -1) {
   apiEndpoint = "http://localhost:8080/api/v1"; //http://localhost:8080/api/v1/applications
 }
