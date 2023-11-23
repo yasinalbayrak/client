@@ -339,7 +339,7 @@ function Sidebar({ setTabInitial }) {
             </Box>
           </ListItem>
           <ListItem sx={{ padding: "0px" }}>
-            <ListItemButton onClick={setTabInitial} to="/home" style={{ textDecoration: "none", color: "white" }}>
+            <ListItemButton onClick={() => navigate("/home", {replace:true})} /*to="/home"*/ style={{ textDecoration: "none", color: "white" }}>
               <ListItemIcon sx={{ minWidth: "30px" }}>
                 <HomeIcon sx={{ color: "white" }} />
               </ListItemIcon>
