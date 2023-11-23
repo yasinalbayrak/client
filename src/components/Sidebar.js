@@ -359,7 +359,7 @@ function Sidebar({ setTabInitial }) {
           <Collapse in={listOpen} timeout="auto">
             <List>
               <ListItem sx={{ padding: "0px" }}>
-                <ListItemButton as={Link} to="/home" /*onClick={()=>setValue(0)}*/ style={{ textDecoration: "none", color: "white" }}>
+                <ListItemButton /*as={Link} to="/home"*/ onClick={() => navigate("/home", {replace:true})} style={{ textDecoration: "none", color: "white" }}>
                   <ListItemText primary={"- All Announcements"} sx={{ textAlign: "center" }} />
                 </ListItemButton>
               </ListItem>
