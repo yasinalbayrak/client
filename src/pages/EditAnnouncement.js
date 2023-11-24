@@ -176,14 +176,26 @@ function EditAnnouncement() {
 
   // get all courses
   useEffect(() => {
-    getAllCourses().then((results) => {
-      setCourseCodeList(results);
-      //setcourseList(results);
-      results.map((course) => {
-        setcourseList((prev) => [...prev, course.courseCode]);
+    const fetchData = async () => {
+      try {
+        const results = await getAllCourses();
+
+
+        const courseCodes = results.map((course) => {
+          return {
+            title: course.courseCode
+          }
+        })
+
+        setCourseCodeList(courseCodes);
+        setcourseList(courseCodes);
+        setDesiredCourseList(courseCodes)
+      } catch (error) {
+
       }
-      );
-    });
+    };
+
+    fetchData();
   }, []);
 
   const handleClose = (event, reason) => {
@@ -366,6 +378,36 @@ function EditAnnouncement() {
     fetchData();
   }, []);
 
+  const handleChange = (event, newValue) => {
+    if (newValue) {
+
+      var trimmedValue;
+      if (typeof newValue === 'string') {
+
+        trimmedValue = newValue;
+      }
+      // Add "xxx" option created dynamically
+      else if (newValue.inputValue) {
+
+        trimmedValue = newValue.inputValue;
+      }
+      else {
+
+        trimmedValue = newValue.title;
+      }
+
+      trimmedValue.trim()
+
+      setCourseCodeValue(trimmedValue);
+      setCourseCode(trimmedValue);
+
+      if (!courseList.some(course => course.title === trimmedValue)) {
+        setcourseList((prev) => [...prev, { title: trimmedValue }]);
+      }
+    }
+
+  }
+
   function findTermObject(term) {
     const termObj =  allTerms.map((termObject) => {
       if(termObject.term_desc === term){
@@ -377,28 +419,44 @@ function EditAnnouncement() {
     return termObj;
   }
 
+  useEffect(() => {
+    console.log(courseCode)
+    console.log(courseCodeList)
+    
+  }, [courseCode, courseCodeList])
+
+
   
 
   function filterCourseCodes(optionCourseCodes, { inputValue }) {
+
     const filtered = optionCourseCodes.filter((option) => {
-      if (courseCode === option) {
+      if (courseCode === option.title) {
         return false; // filter out if already in selectedCourses
       }
-      return option.toLowerCase().includes(inputValue.toLowerCase());
+      return option.title.toLowerCase().includes(inputValue.trim().toLowerCase());
     });
 
     // sort the filtered options based on their match with the input value
     const inputValueLowerCase = inputValue.toLowerCase();
     filtered.sort((a, b) => {
-      const aIndex = a.toLowerCase().indexOf(inputValueLowerCase);
-      const bIndex = b.toLowerCase().indexOf(inputValueLowerCase);
+      const aIndex = a.title.toLowerCase().indexOf(inputValueLowerCase);
+      const bIndex = b.title.toLowerCase().indexOf(inputValueLowerCase);
       if (aIndex !== bIndex) {
         return aIndex - bIndex;
       }
-      return a.localeCompare(b);
+      return a.title.localeCompare(b.title);
     });
+    const isExisting = optionCourseCodes.some((option) => inputValue.trim() === option.title);
+    if (inputValue && !isExisting) {
+      filtered.push({
+        inputValue,
+        title: `Add "${inputValue.trim()}"`
+      })
+    }
 
     return filtered;
+
   }
 
   //used in autocomplete for keeping value and input value
@@ -413,7 +471,7 @@ function EditAnnouncement() {
 
   function handleCourseDelete(courseToDelete) {
     const updatedSelectedCourses = selectedCourses.filter(
-      (course) => course !== courseToDelete
+      (course) => course.courseCode !== courseToDelete
     );
     // console.log(updatedSelectedCourses)
     setSelectedCourses(updatedSelectedCourses);
@@ -453,6 +511,7 @@ function EditAnnouncement() {
       console.log(results);
       const deadline = results.lastApplicationDate.split("T");
       const authInstructors = results.authorizedInstructors;
+      const desiredCourses = results.previousCourseGrades;
 
       const FindAuthPeople = authInstructors.reduce((people, instructor) => {
         const user = authUsersList.find((authUser) => authUser.username === (instructor.user.name.toLowerCase() + " " +instructor.user.surname.toLowerCase()));
@@ -466,14 +525,18 @@ function EditAnnouncement() {
 
       console.log(results)
 
-      
-
-      const desiredCourses = results.previousCourseGrades;
-
       const FindDesiredCourses = desiredCourses.reduce((courses, desiredCourse) => {
         courses.push({ courseCode: desiredCourse.course.courseCode, grade: desiredCourse.grade, isInprogressAllowed: desiredCourse.isInprogressAllowed});
         return courses;
       }, []);
+
+      const FindTermObject = allTerms.reduce((termObject, term) => {
+        if(term.term_desc === results.term){
+          termObject = term;
+        }
+        return termObject;
+      }, {});
+
 
       console.log(FindDesiredCourses)
       console.log(FindAuthPeople);
@@ -487,7 +550,7 @@ function EditAnnouncement() {
         jobDetails: results.jobDetails,
         authInstructor: FindAuthPeople, //change there JSON.parse(results.auth_instructors) //completely follow different approach
         desiredCourses: FindDesiredCourses,
-        term: allTerms.find(termObject => termObject.term_desc === results.term),
+        term: FindTermObject,
         //prevCourses: results?.previousCourseGrades,
       };
 
@@ -612,47 +675,54 @@ function EditAnnouncement() {
               </Box>
               </Grid>
             <Grid container direction="row" justifyContent="start" alignItems="center">
-              <Box sx={{ minWidth: 150 }}>
+            <Box sx={{ minWidth: 150 }}>
               <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
-              {/* <TextField
-                id="outlined-required"
-                name="course_code"
-                label="Enter course code"
-                variant="outlined"
-                size="small"
-                multiline
-                maxRows={20}
-                InputLabelProps={{ shrink: true }}
-                sx={{ m: 2, width: 350 }}
-                value={announcementDetails.course_code}
-                onChange={handleInput}
-              /> */}
+
               <Autocomplete
-                id="controllable-states-demo"
-                options={courseList.map((course) => {
-                  return course;
-                })}
-                filterOptions={filterCourseCodes}
                 value={courseCodeValue}
-                inputValue={inputCourseCodeValue}
-                onInputChange={(event, newInputCourseCodeValue) => {
-                  if (newInputCourseCodeValue !== null) {
-                    setCourseCodeInputValue(newInputCourseCodeValue);
+                onChange={handleChange}
+                filterOptions={filterCourseCodes}
+                
+                selectOnFocus
+                clearOnBlur
+                handleHomeEndKeys
+                id="free-solo-with-text-demo"
+                options={courseList}
+                getOptionLabel={(option) => {
+                  // Value selected with enter, right from the input
+                  if (typeof option === 'string') {
+                    return option;
                   }
-                }}
-                onChange={(event, newCourseCodeValue) => {
-                  if (newCourseCodeValue !== null) {
-                    setCourseCodeValue(newCourseCodeValue);
-                    //handleCourseCodeAdd(newCourseCodeValue);
-                    updateCourseCode(newCourseCodeValue);
+                  // Add "xxx" option created dynamically
+                  if (option.inputValue) {
+                    return option.inputValue;
                   }
+                  // Regular option
+                  return option.title;
                 }}
-                sx={{width: 300, ml: -2}}
+                renderOption={(props, option) => <li {...props}>{option.title}</li>}
+                sx={{ width: 300, ml: -2 }}
+                freeSolo
                 renderInput={(params) => (
                   <TextField
                     {...params}
+
                     multiline
                     size="small"
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        event.preventDefault();
+                      }
+                    }}
+                    onKeyPress={(event) => {
+                      const key = event.key;
+                      const regex = /^[A-Za-z0-9]+$/;
+
+                      if (!regex.test(key) && key !== 'Enter') {
+                        event.preventDefault();
+                      }
+
+                    }}
                     sx={{
                       mx: 2, mt: 1, mb: 2, width: 300,
                       ...(params.disabled && {
@@ -671,6 +741,7 @@ function EditAnnouncement() {
                               onClick={handleCourseCodeDelete}
                               aria-label="Clear"
                               size="small"
+                              disabled
                             >
                               <ClearIcon />
                             </IconButton>
@@ -683,6 +754,9 @@ function EditAnnouncement() {
                 disableClearable
                 getOptionDisabled={(option) => !!courseCode && option !== courseCode}
               />
+
+
+
               </Box>
             </Grid>
             <Grid container direction="row" justifyContent="start" alignItems="center">

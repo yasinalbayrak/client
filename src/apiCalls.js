@@ -144,8 +144,8 @@ async function addAnnouncement(
 
 async function updateAnnouncement(
   id,
-  username,
   course_code,
+  username,
   lastApplicationDate,
   lastApplicationTime,
   letterGrade,
@@ -155,20 +155,24 @@ async function updateAnnouncement(
   desired_courses,
   questions,
   term,
+  isInprogressAllowed
 ) {
   const faculty = "FENS";
   // const term = "Fall 2022";
   const title = "title update test";
 
   const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
-  const transformedQuestions = questions.map((question) => ({
-    type: question.mValue,
-    ranking: question.questionNumber,
-    question: question.mQuestion,
-    multiple_choices:
-      question.mValue === "Multiple Choice" ? question.mMultiple : [],
-  }));
-  console.log(desired_courses);
+  const transformedQuestions = questions.map((question) => (
+    question.mQuestion
+    //   {
+    //   type: question.mValue,
+    //   ranking: question.questionNumber,
+    //   question: question.mQuestion,
+    //   multiple_choices: question.mValue === "Multiple Choice" ? question.mMultiple : [],
+    // }
+
+  ));
+  console.log(letterGrade);
   const authInstructor_ids = auth_instructors.map(
     (user) => user.id
   );
@@ -177,17 +181,17 @@ async function updateAnnouncement(
       //instructor_username: username,
       //faculty: faculty,
       courseCode: course_code,
-      minimumRequiredGrade: letterGrade,
-      //desired_courses: desired_courses,
+      previousCourseGrades: desired_courses,
       lastApplicationDate: deadline,
       term: term.term_desc,
       //title: title,
-      weeklyWorkHours: "PT10H",
+      weeklyWorkHours: workHours,
       jobDetails: details,
       authorizedInstructors: authInstructor_ids,
+      minimumRequiredGrade: letterGrade,
       desiredCourseGrade: letterGrade,
       questions: transformedQuestions,
-      previousCourseGrades: [],
+      isInprogressAllowed: isInprogressAllowed
     });
     return response.data;
   } catch (error) {
