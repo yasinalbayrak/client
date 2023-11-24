@@ -508,10 +508,10 @@ function CreateAnnouncement() {
 
   }
 
-  // useEffect(() => {
-  //   console.log(announcementDetails)
-  // }
-  //   , [announcementDetails])
+  useEffect(() => {
+    console.log(announcementDetails)
+  }
+    , [announcementDetails])
 
   useEffect(() => { setError(null) }, [desiredCourseCode, desiredCourseList])
 
