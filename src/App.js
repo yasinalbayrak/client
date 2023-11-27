@@ -14,6 +14,7 @@ import { validateLogin } from "./apiCalls";
 import CourseApplicantsPage from "./pages/CourseApplicantsPage";
 import EditApplyPage from "./pages/EditApplyPage";
 import SuccessPage from "./pages/SuccessPage";
+import ProfilePage from "./pages/ProfilePage";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function App() {
@@ -92,6 +93,7 @@ function App() {
             <Route path="/applicants" element={<CourseApplicantsPage></CourseApplicantsPage>}></Route>
             <Route path="/application-of/:appId" element={<ApplicantsPage></ApplicantsPage>}></Route>
             <Route path="/success" element={<SuccessPage></SuccessPage>}></Route>
+            <Route path="/profile/:id" element={<ProfilePage></ProfilePage>}></Route>
           </>
         ) : (
           <>

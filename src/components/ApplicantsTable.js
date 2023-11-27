@@ -18,6 +18,8 @@ import Box from "@mui/material/Box";
 import {getAcceptedApplicationRequestsByStudent,updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements } from "../apiCalls";
 import { useParams } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useNavigate } from "react-router-dom";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -32,6 +34,8 @@ function CustomRow(props) {
   const [LaHistory, setLaHistory] = React.useState([]);
   const [courseHistory, setCourseHistory] = React.useState([]);
   const [announcements, setAnnouncements] = React.useState([]);
+  const [userID, setUserID] = React.useState("");
+  const navigate = useNavigate();
   
   const [studentDetails, setStudentDetails] = React.useState({});
   useEffect(() => {
@@ -49,6 +53,10 @@ function CustomRow(props) {
       setQAndA(temp);
     }
   }, [questions]);
+
+  useEffect(() => {
+    setUserID(row.student.user.id);
+  }, [row.student.user.id]);
 
   const handleSnackClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -287,6 +295,14 @@ function CustomRow(props) {
                 Transcript
               </Button>
 
+                <Button
+                variant="outlined"
+                endIcon={<AccountCircleIcon />}
+                sx={{ m: "10px" }}
+                onClick={() => navigate("/profile/" + userID, { replace: false })}
+              >
+                Student Profile
+              </Button>
             </Box>
           </Collapse>
         </TableCell>
