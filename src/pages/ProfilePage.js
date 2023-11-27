@@ -66,6 +66,26 @@ function ProfilePage(){
     const displayedCourses = showAll ? courses : courses?.slice(courses?.length-6, courses?.length);
 
 
+    if(!user){
+        return (
+            <>
+            <Box sx={{ display: "flex" }}>
+                <Sidebar></Sidebar>
+                <Box component="main" sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Box sx={{ mt:40, textAlign: 'center' }}>
+                        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                         No Transcript Info For Current Student
+                        </Typography>
+                    </Box>
+                </Box>
+            </Box>
+            </>
+
+        )
+        
+    }
+
+
 return(
     <>
      <Box sx={{ display: "flex" }}>
