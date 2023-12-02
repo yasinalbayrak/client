@@ -8,7 +8,7 @@ function AnnouncementsTableHead({ tabValue, isInstructor }) {
     <TableHead>
       <TableRow sx={{ bgcolor: "#eeeeee" }}>
         <TableCell>Course Code</TableCell>
-        <TableCell align="left">Primary Instructor</TableCell>
+        <TableCell align="left">Instructors</TableCell>
         <TableCell align="left">Last Application Date/Time</TableCell>
         <TableCell align="left">Term</TableCell>
         <TableCell align="left">Minimum Desired Letter Grade</TableCell>

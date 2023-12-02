@@ -95,9 +95,8 @@ function Sidebar({ setTabInitial }) {
   const term = useSelector((state) => state.user.term);
   const token = useSelector((state) => state.user.JwtToken);
   const showTerms = useSelector((state) => state.user.showTerms);
- 
-  const [termSelect, setTermSelect] = React.useState(term);
 
+  const [termSelect, setTermSelect] = React.useState(term);
   const [allTerms, setAllTerms] = React.useState([]);
 
 
@@ -126,19 +125,22 @@ function Sidebar({ setTabInitial }) {
   useEffect(() => {
     getTerms().then((res) => {
       setAllTerms(res);
-  
+      console.log('term :>> ', term);
+      console.log('termSelect :>> ', termSelect);
+      const termSet = (termSelect !== "")
+      console.log('termSet :>> ', termSet);
       if (res.length > 0) {
-        const activeTerm = res.find(term => term.is_active === '1');
+        const activeTerm = res.find(term => termSet ? term.term_code === termSelect.term_code :term.is_active === '1');
         if (activeTerm) {
           dispatch(setTerm({ term: activeTerm }));
           setTermSelect(activeTerm);
         }
-      }
+      } 
+
     }).catch(() => {
-      // Handle any errors if needed
     });
   }, []);
-  
+
 
 
   const handleLogout = () => {
@@ -342,7 +344,7 @@ function Sidebar({ setTabInitial }) {
             </Box>
           </ListItem>
           <ListItem sx={{ padding: "0px" }}>
-            <ListItemButton onClick={() => navigate("/home", {replace:true})} /*to="/home"*/ style={{ textDecoration: "none", color: "white" }}>
+            <ListItemButton onClick={() => navigate("/home", { replace: true })} /*to="/home"*/ style={{ textDecoration: "none", color: "white" }}>
               <ListItemIcon sx={{ minWidth: "30px" }}>
                 <HomeIcon sx={{ color: "white" }} />
               </ListItemIcon>
@@ -362,7 +364,7 @@ function Sidebar({ setTabInitial }) {
           <Collapse in={listOpen} timeout="auto">
             <List>
               <ListItem sx={{ padding: "0px" }}>
-                <ListItemButton /*as={Link} to="/home"*/ onClick={() => navigate("/home", {replace:true})} style={{ textDecoration: "none", color: "white" }}>
+                <ListItemButton /*as={Link} to="/home"*/ onClick={() => navigate("/home", { replace: true })} style={{ textDecoration: "none", color: "white" }}>
                   <ListItemText primary={"- All Announcements"} sx={{ textAlign: "center" }} />
                 </ListItemButton>
               </ListItem>

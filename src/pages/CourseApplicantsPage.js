@@ -5,6 +5,7 @@ import { Box } from "@mui/material";
 import Sidebar from "../components/Sidebar";
 import { getAllAnnouncementsOfInstructor } from "../apiCalls";
 import { useSelector } from "react-redux";
+import BackButton from "../components/buttons/BackButton";
 
 function CourseApplicantsPage() {
   const [announcements, setAnnouncements] = useState([]);

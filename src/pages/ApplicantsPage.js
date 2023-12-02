@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import ApplicantsTable from "../components/ApplicantsTable";
 import { useParams } from "react-router";
 import { useSelector } from "react-redux";
+import BackButton from "../components/buttons/BackButton";
 
 function ApplicantsPage() {
   const term = useSelector((state) => state.user.term);
@@ -28,6 +29,7 @@ function ApplicantsPage() {
       <Box sx={{ display: "flex" }}>
         <Sidebar></Sidebar>
         <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
+          <BackButton to={"/applicants"}/>
           <AppBarHeader />
           <Grid container direction="column" justifyContent="center" alignItems="center">
             <Grid item>

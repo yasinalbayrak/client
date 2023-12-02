@@ -39,18 +39,23 @@ export default function AnnouncementTable(props) {
           const workTime = app.weeklyWorkHours?? app.application.weeklyWorkHours;
           const slicedHour = workTime.slice(2);
           const modifiedWorkHour = slicedHour.slice(0, -1);
-          const authInsts = app.authorizedInstructors ?? app.application.authorizedInstructors;
-          const [firstName, lastName] = [(authInsts[0]?.user.name || 'no instructor assigned yet'), authInsts[0]?.user.surname || ''];
-          const formattedFirstName = (firstName || "no instructor assigned yet").charAt(0).toUpperCase() + (firstName || "no instructor assigned yet").slice(1);
-          const formattedLastName = (lastName || "").charAt(0).toUpperCase() + (lastName || "").slice(1);
-          const modifiedInstructorName = formattedFirstName.trim() + " " + formattedLastName.trim();
+          const modifiedInstructorNames = (app.authorizedInstructors ?? app.application.authorizedInstructors).map((instructor)=>{
+            const [firstName, lastName] = [(instructor.user.name), instructor.user.surname];
+      
+            const formattedFirstName = (firstName).charAt(0).toUpperCase() + (firstName).slice(1);
+            const formattedLastName = (lastName).charAt(0).toUpperCase() + (lastName).slice(1);
+            const modifiedInstructorName = formattedFirstName.trim() + " " + formattedLastName.trim();
+            return modifiedInstructorName
+          })
+
+
           const notSpacedCourse = app.course?.courseCode?? app.application?.course?.courseCode;
           const spacedCourse = notSpacedCourse.replace(/([A-Z]+)(\d+)/g, '$1 $2');
           
           return {
             ...userApplication,
             weeklyWorkingTime: modifiedWorkHour,
-            instructor_name: modifiedInstructorName,
+            instructor_names: modifiedInstructorNames,
             modifiedCourseCode: spacedCourse,
             term: app.term,
             ...(isInstructor ? { application: app } : {}) 
@@ -64,7 +69,7 @@ export default function AnnouncementTable(props) {
     }
   
     fetchData();
-  }, [isInstructor, userName, userID]);
+  }, [isInstructor, userName, userID, props.rows]);
   
   useEffect(() => {
     setTabValue(props.tabValue);
@@ -77,11 +82,16 @@ export default function AnnouncementTable(props) {
   useEffect(() => {
     if (props.rows && props.rows.length > 0) {
       const modifiedRows = props.rows.map((row) => {
-        const [firstName, lastName] = [(row.authorizedInstructors[0]?.user.name || 'no instructor assigned yet'), row.authorizedInstructors[0]?.user.surname || ''];
+        const modifiedInstructorNames = row.authorizedInstructors.map((instructor)=>{
+          const [firstName, lastName] = [(instructor.user.name), instructor.user.surname];
     
-        const formattedFirstName = (firstName || "no instructor assigned yet").charAt(0).toUpperCase() + (firstName || "no instructor assigned yet").slice(1);
-        const formattedLastName = (lastName || "").charAt(0).toUpperCase() + (lastName || "").slice(1);
-        const modifiedInstructorName = formattedFirstName.trim() + " " + formattedLastName.trim();
+          const formattedFirstName = (firstName).charAt(0).toUpperCase() + (firstName).slice(1);
+          const formattedLastName = (lastName).charAt(0).toUpperCase() + (lastName).slice(1);
+          const modifiedInstructorName = formattedFirstName.trim() + " " + formattedLastName.trim();
+          return modifiedInstructorName
+        })
+       
+
         const workTime = row.weeklyWorkHours;
         const slicedHour = workTime.slice(2);
         const modifiedWorkHour = slicedHour.slice(0, -1);
@@ -91,7 +101,7 @@ export default function AnnouncementTable(props) {
         return {
           ...row,
           weeklyWorkingTime: modifiedWorkHour,
-          instructor_name: modifiedInstructorName,
+          instructor_names: modifiedInstructorNames,
           modifiedCourseCode: spacedCourse,
         };
       });
@@ -105,6 +115,10 @@ export default function AnnouncementTable(props) {
       return userApplication.application?.applicationId === applicationID;
     });
   }
+  const deleteApplication = (id) => {
+    setUserApplications((prev) => prev.filter((app) => (app?.application?.applicationId || app?.applicationId) !== id));
+    setRows((prev) => prev.filter((app) => app?.applicationId !== id));
+  };
   
   return (
     <TableContainer component={Paper}>
@@ -127,7 +141,7 @@ export default function AnnouncementTable(props) {
               navigate={navigate}
               isInstructor={isInstructor}
               isApplied = {isApplied}
-
+              deleteCallBack= {deleteApplication}
             />
           )})}
         </TableBody>

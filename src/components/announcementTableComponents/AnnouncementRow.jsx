@@ -1,63 +1,113 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TableHead from "@mui/material/TableHead";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 
 import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { red } from '@mui/material/colors';
 import { Table } from '@mui/material';
+import Popup from '../popup/Popup';
+import { deleteApplicationById } from "../../apiCalls"
+import InstructorList from './InstructorList';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 
-export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, indxx }) {
- 
-  const { modifiedCourseCode, instructor_name,weeklyWorkingTime, term , status : applicationStatus, isTimedOut } = data;
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack }) {
 
-  const {lastApplicationDate ,
-   minimumRequiredGrade ,
-   jobDetails ,
-   applicationId} = data.application ??data;
-  
-  console.log("applicationStatus", applicationStatus);
+  const { modifiedCourseCode, instructor_names, weeklyWorkingTime, term, status: applicationStatus, isTimedOut } = data;
 
-  const renderButton = () => {
+  const { lastApplicationDate,
+    minimumRequiredGrade,
+    jobDetails,
+    applicationId } = data.application ?? data;
+
+
+  const [deletePopupOpened, setDeletePopupOpened] = useState(false);
+
+  const flipPopup = () => {
+    setDeletePopupOpened((prev) => !prev);
+  };
+
+  const deleteApplication = () => {
+    deleteApplicationById(applicationId).then((_) => {
+      deleteCallBack(applicationId)
+    }).catch((_) => (null))
+  }
+
+
+  const renderButtons = () => {
     // Condition for instructor
     if (isInstructor) {
-      if (instructor_name !== "no instructor assigned yet" && instructor_name.toLowerCase() === userName.toLowerCase()) {
-        return (
+      if (instructor_names.some((instructor) => (userName.toLowerCase() === instructor.toLowerCase()))) {
+        return (<>
           <Button
             variant="contained"
-            onClick={() => navigate("/edit-announcement/" + applicationId, { replace: true })}
-            startIcon={<EditIcon />}
+            onClick={() => navigate(`/edit-announcement/${applicationId}`, { replace: true })}
+            sx={{
+              justifyContent: 'center',
+              paddingRight: 0,
+              paddingLeft: 0
+            }}
+
           >
-            Edit
+            <EditIcon />
           </Button>
+          <Button
+            variant="contained"
+            onClick={flipPopup}
+            color='error'
+            sx={{
+              justifyContent: 'center',
+              paddingRight: 0,
+              paddingLeft: 0,
+              marginLeft: '0.2rem'
+            }}
+
+          >
+            <DeleteForeverIcon />
+          </Button>
+
+          <Popup
+            opened={deletePopupOpened}
+            flipPopup={flipPopup}
+            title={"Confirm Deletion?"}
+            text={"This action is irreversible, and the selected application will be permanently deleted."}
+            posAction={deleteApplication}
+            negAction={flipPopup}
+            posActionText={"Delete"}
+          />
+
+        </>
+
         );
       }
-      return null;  
+      return null;
     }
-  
+
     // Conditions for non-instructor
     if (tabValue === 0) {
       // console.log(data)
-       console.log("isApplied", isApplied(data.applicationId));
+      console.log("isApplied", isApplied(data.applicationId));
       // console.log("key", key);
       // console.log("indxx", indxx);
       //const applicationId = data.applicationId;
-      if(isApplied(applicationId)) {
-        return(
+      if (isApplied(applicationId)) {
+        return (
           <span style={{ color: 'green' }}>
             Applied
           </span>
         );
       }
       else {
-        if(isTimedOut) {
+        if (isTimedOut) {
           return (
             <span style={{ color: 'red' }}>
               Timed Out
             </span>
           );
-        }else {
+        } else {
           return (
             <Button
               variant="contained"
@@ -70,36 +120,46 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       }
     }
 
-   
+
 
 
     let statusColor;
-  switch (applicationStatus) {
-    case 'ACCEPTED':
-      statusColor = 'green';
-      break;
-    case 'REJECTED':
-      statusColor = 'red';
-      break;
-    default:
-      statusColor = 'black';
-      break;
-  }
+    switch (applicationStatus) {
+      case 'ACCEPTED':
+        statusColor = 'green';
+        break;
+      case 'REJECTED':
+        statusColor = 'red';
+        break;
+      default:
+        statusColor = 'black';
+        break;
+    }
 
-  return (
-    <span style={{ color: statusColor }}>
-      {applicationStatus}
-    </span>
-  );
+    return (
+      <span style={{ color: statusColor }}>
+        {applicationStatus}
+      </span>
+    );
   };
+  const example_ins_list = [
+    "Atil Utku Ay",
+    "Inanc Arin",
+    "Duygu Karaoglan Altop",
+    "Yasin Albayrak",
+    "Sila Ozinan",
+    "Murat Demiraslan",
+    "Erkay Savas"
+  ]
 
   return (modifiedCourseCode &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
         {modifiedCourseCode}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
-        {instructor_name}
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" , maxWidth: "17rem"}} align="left">
+        <InstructorList instructor_names={instructor_names}/>
+
       </TableCell>
       <TableCell sx={{ borderBottom: "none" }} align="left">
         {lastApplicationDate ? (
@@ -122,24 +182,25 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
         {term}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+      <TableCell sx={{ borderBottom: "none" ,width: "10rem"}} align="left">
         {minimumRequiredGrade}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
-        {weeklyWorkingTime}
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "7rem"}} align="left">
+        {weeklyWorkingTime + " Hours"}
       </TableCell>
-      <TableCell sx={{ borderBottom: "none" }} align="left">
+      <TableCell sx={{ borderBottom: "none", maxWidth: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left">
         {jobDetails}
       </TableCell>
+
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
-        {renderButton()}
+        {renderButtons()}
       </TableCell>
-      
-      {!isInstructor && tabValue === 1 &&<TableCell sx={{ bgcolor: "#FAFAFA",borderBottom: "none" }} align="center">
+
+      {!isInstructor && tabValue === 1 && <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
         <Button
-        variant='contained'
-        onClick={() => navigate("/apply/" + applicationId, { replace: true })}
-        startIcon = {<EditIcon />} >
+          variant='contained'
+          onClick={() => navigate("/apply/" + applicationId, { replace: true })}
+          startIcon={<EditIcon />} >
           Edit
         </Button>
       </TableCell>}

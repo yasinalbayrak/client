@@ -100,14 +100,8 @@ async function addAnnouncement(
   // const term = "Fall 2022";
   const title = "title add test";
   const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
-  const transformedQuestions = questions.map((question) => (
+  const transformedQuestions = questions.filter((question)=>(question.mQuestion !== "")).map((question) => (
     question.mQuestion
-    //   {
-    //   type: question.mValue,
-    //   ranking: question.questionNumber,
-    //   question: question.mQuestion,
-    //   multiple_choices: question.mValue === "Multiple Choice" ? question.mMultiple : [],
-    // }
 
   ));
   console.log(letterGrade);
@@ -117,8 +111,7 @@ async function addAnnouncement(
 
   try {
     const response = await axios.post(apiEndpoint + "/applications", {
-      //instructor_username: username,
-      //faculty: faculty,
+
       courseCode: course_code,
       previousCourseGrades: desired_courses,
       lastApplicationDate: deadline,
@@ -271,6 +264,16 @@ async function updateApplicationById(
 
 }
 
+async function deleteApplicationById(applicationId) {
+  try {
+    const results = await axios.delete(
+      apiEndpoint + "/applications/" + applicationId
+    );
+    return
+  } catch (error) { return handleError(error); }
+
+}
+
 async function validateLogin(serviceUrl, ticket) {
   try {
     // Check if serviceUrl is a valid URL
@@ -415,5 +418,6 @@ export {
   getAllAnnouncementsOfInstructor,
   postTranscript,
   getApplicationRequestsByApplicationId,
-  getCurrentTranscript
+  getCurrentTranscript,
+  deleteApplicationById
 };

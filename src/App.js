@@ -63,14 +63,9 @@ function App() {
         urlParams.delete("ticket");
         
         navigate('/home', { replace: true });
-
-       
         }).catch(_ => {
 
         });
-
-
-
 
         // window.location.reload();
       }
@@ -80,7 +75,7 @@ function App() {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={false} />
+      <ToastContainer position="top-right" autoClose={5000} />
       <Routes>
         {isLoggedIn ? (
           <>

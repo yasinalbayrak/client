@@ -55,7 +55,6 @@ export default function UseNumberInputCompact(props) {
         <Layout>
             <CompactNumberInput
                 aria-label="Compact number input"
-                placeholder="Type a number…"
                 readOnly
                 value={value}
                 onChange={(event, val) => {

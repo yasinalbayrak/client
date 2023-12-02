@@ -14,7 +14,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import { addAnnouncement } from "../apiCalls";
 import { useSelector } from "react-redux";
 import { toast } from 'react-toastify';
-
+import {handleInfo} from "../errors/GlobalErrorHandler"
+import { useDispatch } from "react-redux";
+import { setTerm } from "../redux/userSlice";
 const questionType = [
   { value: "Text Answer", label: "Text Answer" },
   { value: "Numeric Answer", label: "Numeric Answer" },
@@ -69,6 +71,7 @@ function AddQuestion(props) {
 
   const term = useSelector((state) => state.user.term);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   function addNewQuestion() {
     const nextNum = questions.length + 1;
@@ -450,7 +453,6 @@ function AddQuestion(props) {
               props.AnnouncementDetails.lastApplicationTime &&
               props.AnnouncementDetails.letterGrade &&
               props.AnnouncementDetails.workHours &&
-              props.AnnouncementDetails.jobDetails &&
               props.AnnouncementDetails.term 
             
             ) {
@@ -461,23 +463,27 @@ function AddQuestion(props) {
                 props.AnnouncementDetails.lastApplicationTime,
                 props.AnnouncementDetails.letterGrade,
                 props.AnnouncementDetails.workHours,
-                props.AnnouncementDetails.jobDetails,
+                props.AnnouncementDetails?.jobDetails ?? "",
                 props.AnnouncementDetails.authInstructor,
                 props.AnnouncementDetails.desiredCourses,
                 questions,
                 props.AnnouncementDetails.term,
                 props.AnnouncementDetails.isInprogressAllowed
               ).then((data) => {
+                console.log('Term :>> ');
+                console.log(props.AnnouncementDetails.term)
+                dispatch(setTerm({ term: props.AnnouncementDetails.term }));
                 navigate("/Home", {
                   replace: true
                 });
                 toast.success("Your announcement has been successfully added.")
+
               }).catch((_) => {
                 /* Error is already printed */
               });
 
             } else {
-              alert("Please fill out all necessary fields before creating the annoucement.");
+              handleInfo("Please fill out the required fields.")
             }
           }}
         >
