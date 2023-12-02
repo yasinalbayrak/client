@@ -470,8 +470,6 @@ function AddQuestion(props) {
                 props.AnnouncementDetails.term,
                 props.AnnouncementDetails.isInprogressAllowed
               ).then((data) => {
-                console.log('Term :>> ');
-                console.log(props.AnnouncementDetails.term)
                 dispatch(setTerm({ term: props.AnnouncementDetails.term }));
                 navigate("/Home", {
                   replace: true

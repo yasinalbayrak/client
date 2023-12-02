@@ -287,7 +287,7 @@ function Sidebar({ setTabInitial }) {
                 ...(!sidebarOpen && { display: "none" }),
               }}
               //src={`${process.env.PUBLIC_URL}/build/sula.png`}
-              src={"/sula.png"}
+              src={"/build/sula.png"}
             />
             {!sidebarOpen ? <Box sx={{ height: 50 }}></Box> : <div></div>}
           </ListItem>

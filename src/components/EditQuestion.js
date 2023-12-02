@@ -15,7 +15,8 @@ import { addAnnouncement, updateAnnouncement } from "../apiCalls";
 import { useSelector } from "react-redux";
 import { toast } from 'react-toastify';
 import UpdateIcon from '@mui/icons-material/Update';
-
+import { useDispatch } from "react-redux";
+import { setTerm } from "../redux/userSlice";
 const questionType = [
   { value: "Text Answer", label: "Text Answer" },
   { value: "Numeric Answer", label: "Numeric Answer" },
@@ -67,7 +68,7 @@ function EditQuestion(props) {
     { questionNumber: 2, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""] },
     { questionNumber: 3, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""] },
   ]);
-
+  const dispatch = useDispatch();
   const term = useSelector((state) => state.user.term);
   const navigate = useNavigate();
 
@@ -449,7 +450,6 @@ function EditQuestion(props) {
               props.AnnouncementDetails.lastApplicationTime &&
               props.AnnouncementDetails.letterGrade &&
               props.AnnouncementDetails.workHours &&
-              props.AnnouncementDetails.jobDetails &&
               props.AnnouncementDetails.term 
             
             ) {
@@ -468,6 +468,7 @@ function EditQuestion(props) {
                 props.AnnouncementDetails.term,
                 props.AnnouncementDetails.isInprogressAllowed
               ).then((data) => {
+                dispatch(setTerm({ term: props.AnnouncementDetails.term }));
                 navigate("/Home", {
                   replace: true
                 });

@@ -157,7 +157,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
         {modifiedCourseCode}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" , maxWidth: "17rem"}} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" ,minWidth: "10rem", maxWidth: "18rem"}} align="left">
         <InstructorList instructor_names={instructor_names}/>
 
       </TableCell>

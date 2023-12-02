@@ -62,6 +62,7 @@ function EditAnnouncement() {
     { value: "C", label: "C" },
     { value: "C-", label: "C-" },
     { value: "D", label: "D" },
+    { value: "S", label: "S" },
   ];
   const WorkHour = [
     { value: "PT1H", label: "1 Hour" },
@@ -521,79 +522,90 @@ function EditAnnouncement() {
 
   const { id } = useParams(); //for taking post id
   useEffect(() => {
-    getAnnouncement(id).then((results) => {
-      console.log(results);
-      const deadline = results.lastApplicationDate.split("T");
-      const authInstructors = results.authorizedInstructors;
-      const desiredCourses = results.previousCourseGrades;
-
-      const FindAuthPeople = authInstructors.reduce((people, instructor) => {
-        const user = authUsersList.find((authUser) => authUser.username.toLowerCase() === (instructor.user.name.toLowerCase() + " " + instructor.user.surname.toLowerCase()));
-
-        if (user) {
-          people.push(user);
+    const fetchData = async () => {
+      try {
+        const results = await getAnnouncement(id);
+  
+        // Handle potential errors in the fetched data
+        if (!results) {
+          console.error("No data received from getAnnouncement");
+          return;
         }
-
-        return people;
-      }, []);
-
-      console.log(results)
-
-      const FindDesiredCourses = desiredCourses.reduce((courses, desiredCourse) => {
-        courses.push({ courseCode: desiredCourse.course.courseCode, grade: desiredCourse.grade, isInprogressAllowed: desiredCourse.isInprogressAllowed });
-        return courses;
-      }, []);
-
-      const findTermObject = allTerms.find(term => term.term_desc === results.term);
-      setTermSelect(findTermObject)
-      console.log(FindDesiredCourses)
-      console.log(FindAuthPeople);
-      //console.log(FindDesiredCourses);
-      const PostResult = {
-        course_code: results.course.courseCode,
-        lastApplicationDate: deadline[0],
-        lastApplicationTime: deadline[1],
-        letterGrade: results.minimumRequiredGrade,
-        workHours: results.weeklyWorkHours,
-        jobDetails: results.jobDetails,
-        authInstructor: FindAuthPeople, //change there JSON.parse(results.auth_instructors) //completely follow different approach
-        desiredCourses: FindDesiredCourses,
-        term: findTermObject,
-        //prevCourses: results?.previousCourseGrades,
-      };
-
-      console.log(PostResult);
-      console.log(PostResult.term);
-
-      // const UserResult = {
-      //   instructor_username: results.instructor_username,
-      //   faculty: results.faculty,
-      //   term: results.term,
-      // }; //temp it will be replaced
-
-      const QuestionsResult = results.questions;
-      // // const transformedResultQuestions = QuestionsResult.map((question) => {
-      // //   return {
-      // //     questionNumber: question.ranking,
-      // //     mQuestion: question.question,
-      // //     mValue: question.type,
-      // //     mMultiple: question.multiple_choices === "[]" ? ["", ""] : JSON.parse(question.multiple_choices),
-      // //   };
-      // });
-
-      setCourseCode(results.course.courseCode);
-      setCourseCodeValue(results.course.courseCode);
-      setCourseCodeInputValue(results.course.courseCode);
-      //setAnnouncementTerm(results.term);
-
-      setAuthPeople(FindAuthPeople);
-      setSelectedCourses(FindDesiredCourses);
-
-      setAnnouncementDetails(PostResult);
-      //setGetQuestions([...transformedResultQuestions]);
-      //setUserDetails(UserResult);
-    });
-  }, [id, authUsersList, courseCodeList, courseList]);
+  
+        const deadline = results.lastApplicationDate.split("T");
+        const authInstructors = results.authorizedInstructors;
+        const desiredCourses = results.previousCourseGrades;
+  
+        const FindAuthPeople = authInstructors.reduce((people, instructor) => {
+          const user = authUsersList.find((authUser) =>
+            authUser.username.toLowerCase() === (instructor.user.name.toLowerCase() + " " + instructor.user.surname.toLowerCase())
+          );
+  
+          if (user) {
+            people.push(user);
+          }
+  
+          return people;
+        }, []);
+  
+        const FindDesiredCourses = desiredCourses.reduce((courses, desiredCourse) => {
+          courses.push({
+            courseCode: desiredCourse.course.courseCode,
+            grade: desiredCourse.grade,
+            isInprogressAllowed: desiredCourse.isInprogressAllowed,
+          });
+          return courses;
+        }, []);
+  
+        const findTermObject = allTerms.find((term) => term.term_desc === results.term);
+  
+        const PostResult = {
+          course_code: results.course.courseCode,
+          lastApplicationDate: deadline[0],
+          lastApplicationTime: deadline[1],
+          letterGrade: results.minimumRequiredGrade,
+          workHours: results.weeklyWorkHours,
+          jobDetails: results.jobDetails,
+          authInstructor: FindAuthPeople,
+          desiredCourses: FindDesiredCourses,
+          term: findTermObject,
+        };
+  
+        setCourseCode(results.course.courseCode);
+        setCourseCodeValue(results.course.courseCode);
+        setCourseCodeInputValue(results.course.courseCode);
+        setTermSelect(findTermObject);
+        setAuthPeople(FindAuthPeople);
+        setSelectedCourses(FindDesiredCourses);
+        setAnnouncementDetails(PostResult);
+  
+        const QuestionsResult = results.questions;
+        const transformedResultQuestions = QuestionsResult.map((question) => {
+          return {
+            questionNumber: question.ranking,
+            mQuestion: question.question,
+            mValue: question.type,
+            mMultiple: question.multiple_choices === "[]" ? ["", ""] : JSON.parse(question.multiple_choices),
+          };
+        });
+  
+        setGetQuestions([...transformedResultQuestions]);
+  
+        // Additional state update checks if needed
+        if (results && results.course && results.course.courseCode) {
+          setCourseCode(results.course.courseCode);
+          setCourseCodeValue(results.course.courseCode);
+          setCourseCodeInputValue(results.course.courseCode);
+        }
+  
+      } catch (error) {
+        console.error("Error fetching or processing announcement:", error);
+      }
+    };
+  
+    fetchData();
+  }, [id, authUsersList, courseCodeList, courseList, allTerms]);
+  
 
   // set changes for autocomplete
   useEffect(() => {
@@ -615,7 +627,10 @@ function EditAnnouncement() {
   }
 
   useEffect(() => { setError(null) }, [desiredCourseCode, desiredCourseList])
-
+  useEffect(() => { setAnnouncementDetails(prev => ({
+    ...prev,
+    term: termSelect
+  })) }, [termSelect])
   const dispatch = useDispatch();
 
   console.log('termSelect :>> ', termSelect);
