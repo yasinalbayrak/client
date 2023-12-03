@@ -150,12 +150,6 @@ function CreateAnnouncement() {
   useEffect(() => {
 
     dispatch(flipShowTerms())
-
-
-
-
-
-
     return () => {
       dispatch(flipShowTerms())
     };
@@ -430,6 +424,8 @@ function CreateAnnouncement() {
   };
 
   const handleChange = (event, newValue) => {
+    
+    setSelectedCourses([]);
     if (newValue) {
 
       var trimmedValue;
@@ -500,6 +496,9 @@ function CreateAnnouncement() {
     }
     else if (selectedCourses.some((course) => course.courseCode === desiredCourseCode)) {
       setError("There is already requirement for this course.");
+    }
+    else if(courseCode == null || courseCode.trim() === ""){
+      setError("To add a requirement, first specify the course code for the application")
     }
 
     else {

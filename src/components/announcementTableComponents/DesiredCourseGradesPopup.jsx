@@ -45,12 +45,12 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
         console.log('previousCourseGrades :>> ', previousCourseGrades);
         setCourseGrades(
             [
-                ...previousCourseGrades,
                 {
                     course: { courseCode: courseCode },
                     grade: grade,
                     isInprogressAllowed: isInprogressAllowed
-                }
+                },
+                ...previousCourseGrades
             ]
         )
     }, [previousCourseGrades]);
