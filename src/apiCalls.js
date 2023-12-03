@@ -358,6 +358,13 @@ async function getCurrentTranscript(studentId) {
   } catch (error) {  }
 }
 
+async function getStudentCourseGrades(studentId) {
+  try {
+    const result = await axios.get(apiEndpoint + "/users/previous-grades/" + studentId);
+    return result.data;
+  } catch (error) {  }
+}
+
 async function getCourseGrades(studentId, courseIds) {
   try {
     const result = await axios.post(
@@ -419,5 +426,6 @@ export {
   postTranscript,
   getApplicationRequestsByApplicationId,
   getCurrentTranscript,
-  deleteApplicationById
+  deleteApplicationById,
+  getStudentCourseGrades
 };

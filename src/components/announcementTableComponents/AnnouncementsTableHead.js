@@ -13,6 +13,7 @@ function AnnouncementsTableHead({ tabValue, isInstructor }) {
         <TableCell align="left">Term</TableCell>
         <TableCell align="left">Minimum Desired Letter Grade</TableCell>
         <TableCell align="left">Weekly Work Hours</TableCell>
+        <TableCell align="left">Grade Requirements</TableCell>
         <TableCell align="left">Details</TableCell>
         <TableCell align="center">
           {tabValue === 1 && !isInstructor && "Application Status"}

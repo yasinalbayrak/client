@@ -6,13 +6,10 @@ import TableRow from "@mui/material/TableRow";
 import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { red } from '@mui/material/colors';
-import { Table } from '@mui/material';
 import Popup from '../popup/Popup';
 import { deleteApplicationById } from "../../apiCalls"
 import InstructorList from './InstructorList';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
+import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
 
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack }) {
 
@@ -21,7 +18,11 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   const { lastApplicationDate,
     minimumRequiredGrade,
     jobDetails,
-    applicationId } = data.application ?? data;
+    applicationId,
+    previousCourseGrades,
+    isInprogressAllowed,
+    course
+  } = data.application ?? data;
 
 
   const [deletePopupOpened, setDeletePopupOpened] = useState(false);
@@ -48,7 +49,8 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
             sx={{
               justifyContent: 'center',
               paddingRight: 0,
-              paddingLeft: 0
+              paddingLeft: 0,
+
             }}
 
           >
@@ -62,7 +64,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
               justifyContent: 'center',
               paddingRight: 0,
               paddingLeft: 0,
-              marginLeft: '0.2rem'
+              marginLeft: '0rem'
             }}
 
           >
@@ -151,14 +153,14 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     "Murat Demiraslan",
     "Erkay Savas"
   ]
-
+  console.log('previousCourseGrades :>> ', previousCourseGrades);
   return (modifiedCourseCode &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
         {modifiedCourseCode}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" ,minWidth: "10rem", maxWidth: "18rem"}} align="left">
-        <InstructorList instructor_names={instructor_names}/>
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: "10rem", maxWidth: "18rem" }} align="left">
+        <InstructorList instructor_names={instructor_names} />
 
       </TableCell>
       <TableCell sx={{ borderBottom: "none" }} align="left">
@@ -182,17 +184,20 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
         {term}
       </TableCell>
-      <TableCell sx={{ borderBottom: "none" ,width: "10rem"}} align="left">
+      <TableCell sx={{ borderBottom: "none", width: "10rem" }} align="left">
         {minimumRequiredGrade}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "7rem"}} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "7rem" }} align="left">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
-      <TableCell sx={{ borderBottom: "none", maxWidth: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left">
+      <TableCell sx={{ borderBottom: "none", width: "8rem" }} align="left">
+        <DesiredCourseGradesPopup isInprogressAllowed={isInprogressAllowed} courseCode={course.courseCode} grade ={minimumRequiredGrade} previousCourseGrades={previousCourseGrades}/>
+      </TableCell>
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left">
         {jobDetails}
       </TableCell>
 
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "4rem" }} align="center">
         {renderButtons()}
       </TableCell>
 
