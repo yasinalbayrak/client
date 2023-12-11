@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import AppBarHeader from "../components/AppBarHeader";
 import Sidebar from "../components/Sidebar";
 import AddQuestion from "../components/AddQuestion";
-import { Typography, Box, Grid } from "@mui/material";
+import { Typography, Box, Grid, InputAdornment, FormHelperText } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
@@ -99,6 +99,8 @@ function CreateAnnouncement() {
         return 'default';
     }
   };
+
+  const MAX_WORD_COUNT = 255;
 
   const userName = useSelector((state) => state.user.username);
   const name = useSelector((state) => state.user.name);
@@ -400,7 +402,7 @@ function CreateAnnouncement() {
   function handleInput(event) {
     const { name, value } = event.target;
 
-    if (name === "jobDetails" && value.length > 254) {
+    if (name === "jobDetails" && value.length > 255) {
       return;
     }
 
@@ -424,7 +426,7 @@ function CreateAnnouncement() {
   };
 
   const handleChange = (event, newValue) => {
-    
+
     setSelectedCourses([]);
     if (newValue) {
 
@@ -484,6 +486,8 @@ function CreateAnnouncement() {
 
   }
 
+
+
   function extractSubstring(inputString) {
     const result = inputString.match(/^[^\s\d]+/);
     return result ? result[0].length : 2;
@@ -497,7 +501,7 @@ function CreateAnnouncement() {
     else if (selectedCourses.some((course) => course.courseCode === desiredCourseCode)) {
       setError("There is already requirement for this course.");
     }
-    else if(courseCode == null || courseCode.trim() === ""){
+    else if (courseCode == null || courseCode.trim() === "") {
       setError("To add a requirement, first specify the course code for the application")
     }
 
@@ -799,8 +803,9 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="flex-start"
             >
+
               <Box sx={{ minWidth: 150, mt: 2 }}>
-                <Typography paddingTop={3}>Job Details:</Typography>
+                <Typography>Job Details:</Typography>
                 <TextField
                   placeholder="Enter Job Details..."
                   name="jobDetails"
@@ -809,11 +814,45 @@ function CreateAnnouncement() {
                   size="small"
                   rows={5}
                   maxRows={20}
-                  sx={{ mt: 2, width: 400 }}
+                  sx={{ mt: 2, width: 500 }}
                   onChange={handleInput}
                   required
+                  InputProps={{
+                    style: { display: 'flex', flexDirection: 'column' },
+                    endAdornment: (
+                      <>
+                        <hr style={{ width: '100%', margin: '0.5rem 0' }} />
+                        <InputAdornment position="end" style={{ margin: "0.5rem 0rem 0.5rem 0", alignSelf: "flex-end" }}>
+
+                          <hr style={{ width: '100%', margin: '5px 0' }} />
+                          <Typography variant="body2">
+                            Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
+                            <br />
+                          </Typography>
+                        </InputAdornment>
+                      </>),
+                  }}
                 />
               </Box>
+
+
+
+              {/* <Typography
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    fontSize: "smaller",
+                    color: "gray",
+                    borderTop: "0.5px solid gray",
+                    position: "relative",
+                    bottom: "1.5rem",
+                    paddingRight: "3px",
+                    userSelect: "none"
+                  }}>
+                  Remaining characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
+                </Typography> */}
+
+
             </Grid>
             <Grid
               container
@@ -929,6 +968,7 @@ function CreateAnnouncement() {
                         fontSize: '1rem',
                       },
                     }}
+                    disabled={(courseCode ?? "").trim() === ""}
                   >
                     <AddIcon />
                   </Button>
@@ -1186,7 +1226,7 @@ function CreateAnnouncement() {
         </Grid>
         <AddQuestion AnnouncementDetails={announcementDetails} username={userName} />
       </Box>
-    </Box>
+    </Box >
   );
 }
 
