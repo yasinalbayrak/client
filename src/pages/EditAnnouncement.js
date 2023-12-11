@@ -707,7 +707,7 @@ function EditAnnouncement() {
                   value={courseCodeValue}
                   onChange={handleChange}
                   filterOptions={filterCourseCodes}
-
+                  disabled
                   selectOnFocus
                   clearOnBlur
                   handleHomeEndKeys
