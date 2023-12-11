@@ -66,7 +66,7 @@ function App() {
         console.log("path: ", path);
 
         const newPath = location.pathname + (urlParams.toString() ? `?${urlParams.toString()}` : '');
-        //console.log("Navigating to: ", newPath);
+        console.log("Navigating to: ", newPath);
         navigate(newPath, { replace: true });
         //navigate(urlParams.toString(), { replace: true });
         //window.location.href = path;
