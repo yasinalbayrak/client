@@ -1,6 +1,6 @@
 import "./App.css";
 import MockCAS from "./pages/MockCAS";
-import { Routes, Route, useSearchParams, useNavigate } from "react-router-dom";
+import { Routes, Route, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import CreateAnnouncement from "./pages/CreateAnnouncement";
 import EditAnnouncement from "./pages/EditAnnouncement";
@@ -22,7 +22,8 @@ function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
   const url = window.location.href;
-  const urlParams = new URLSearchParams(window.location.search);
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
   const dispatch = useDispatch();
  
   let path = window.location.href.split("?")[0];
@@ -61,8 +62,14 @@ function App() {
         // check the response
         // if result is positive, dispatch loginSuccess and refresh, otherwise dispatch loginFail or logout
         urlParams.delete("ticket");
-        
-        navigate('/home', { replace: true });
+        console.log("urlParams: ", urlParams.toString());
+        console.log("path: ", path);
+
+        const newPath = location.pathname + (urlParams.toString() ? `?${urlParams.toString()}` : '');
+        console.log("Navigating to: ", newPath);
+        navigate(newPath, { replace: true });
+        //navigate(urlParams.toString(), { replace: true });
+        //window.location.href = path;
         }).catch(_ => {
 
         });
@@ -70,7 +77,7 @@ function App() {
         // window.location.reload();
       }
     }
-  }, []);
+  }, [isLoggedIn, isLoading, dispatch, navigate, location.pathname, urlParams]);
 
 
   return (
