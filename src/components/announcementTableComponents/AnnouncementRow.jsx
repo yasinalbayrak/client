@@ -184,16 +184,19 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
         {term}
       </TableCell>
-      <TableCell sx={{ borderBottom: "none", width: "10rem" }} align="left">
+      <TableCell sx={{ borderBottom: "none", width: "8rem" }} align="center">
         {minimumRequiredGrade}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "7rem" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "7rem", color:isInprogressAllowed ? "green":"red" }} align="left">
+        {isInprogressAllowed ? "Allowed" : "Not Allowed"}
+      </TableCell>
+      <TableCell sx={{ borderBottom: "none", width: "7rem" }} align="left">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
-      <TableCell sx={{ borderBottom: "none", width: "8rem" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA",borderBottom: "none", width: "8rem" }} align="left">
         <DesiredCourseGradesPopup isInprogressAllowed={isInprogressAllowed} courseCode={course.courseCode} grade ={minimumRequiredGrade} previousCourseGrades={previousCourseGrades}/>
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left">
+      <TableCell sx={{ borderBottom: "none", maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left">
         {jobDetails}
       </TableCell>
 
