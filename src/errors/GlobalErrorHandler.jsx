@@ -15,3 +15,7 @@ export default function handleError(error) {
 export function handleInfo(info) {
   toast.info(info);
 };
+
+export function handleServerDownError(){
+  toast.error("Server is not responding right now :(")
+}

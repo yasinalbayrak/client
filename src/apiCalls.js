@@ -1,26 +1,14 @@
 import axios from "axios";
-import { async } from "q";
 import handleError from "./errors/GlobalErrorHandler.jsx"
 
 const url = window.location.href;
 var apiEndpoint = "http://pro2-dev.sabanciuniv.edu:8080/api/v1";
 if (url.indexOf("pro2") === -1) {
-  apiEndpoint = "http://localhost:8080/api/v1"; //http://localhost:8080/api/v1/applications
+  apiEndpoint = "http://localhost:8080/api/v1"; 
 }
-// const apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
-// const apiEndpoint = "http://localhost:8000/api";
 
 async function applyToPost(postId, userID, answers) {
   try {
-    var bodyFormData = new FormData();
-    /*bodyFormData.append("student_username", username);
-    bodyFormData.append("working_hours", 10);
-    bodyFormData.append("post_id", postId);
-    bodyFormData.append("answers", JSON.stringify(answers));
-    bodyFormData.append("status", "applied");
-    bodyFormData.append("grade", 0);
-    bodyFormData.append("faculty", "-");
-    bodyFormData.append("transcript", transcript);*/
     const results = await axios.post(
       apiEndpoint + "/applicationRequest",
       { applicationId: postId, studentId: userID, answers: answers },
