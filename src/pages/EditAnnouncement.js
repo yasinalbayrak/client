@@ -525,29 +525,29 @@ function EditAnnouncement() {
     const fetchData = async () => {
       try {
         const results = await getAnnouncement(id);
-  
+
         // Handle potential errors in the fetched data
         if (!results) {
           console.error("No data received from getAnnouncement");
           return;
         }
-  
+
         const deadline = results.lastApplicationDate.split("T");
         const authInstructors = results.authorizedInstructors;
         const desiredCourses = results.previousCourseGrades;
-  
+
         const FindAuthPeople = authInstructors.reduce((people, instructor) => {
           const user = authUsersList.find((authUser) =>
             authUser.username.toLowerCase() === (instructor.user.name.toLowerCase() + " " + instructor.user.surname.toLowerCase())
           );
-  
+
           if (user) {
             people.push(user);
           }
-  
+
           return people;
         }, []);
-  
+
         const FindDesiredCourses = desiredCourses.reduce((courses, desiredCourse) => {
           courses.push({
             courseCode: desiredCourse.course.courseCode,
@@ -556,9 +556,9 @@ function EditAnnouncement() {
           });
           return courses;
         }, []);
-  
+
         const findTermObject = allTerms.find((term) => term.term_desc === results.term);
-  
+
         const PostResult = {
           course_code: results.course.courseCode,
           lastApplicationDate: deadline[0],
@@ -570,7 +570,7 @@ function EditAnnouncement() {
           desiredCourses: FindDesiredCourses,
           term: findTermObject,
         };
-  
+
         setCourseCode(results.course.courseCode);
         setCourseCodeValue(results.course.courseCode);
         setCourseCodeInputValue(results.course.courseCode);
@@ -578,7 +578,7 @@ function EditAnnouncement() {
         setAuthPeople(FindAuthPeople);
         setSelectedCourses(FindDesiredCourses);
         setAnnouncementDetails(PostResult);
-  
+
         const QuestionsResult = results.questions;
         const transformedResultQuestions = QuestionsResult.map((question) => {
           return {
@@ -588,24 +588,24 @@ function EditAnnouncement() {
             mMultiple: question.multiple_choices === "[]" ? ["", ""] : JSON.parse(question.multiple_choices),
           };
         });
-  
+
         setGetQuestions([...transformedResultQuestions]);
-  
+
         // Additional state update checks if needed
         if (results && results.course && results.course.courseCode) {
           setCourseCode(results.course.courseCode);
           setCourseCodeValue(results.course.courseCode);
           setCourseCodeInputValue(results.course.courseCode);
         }
-  
+
       } catch (error) {
         console.error("Error fetching or processing announcement:", error);
       }
     };
-  
+
     fetchData();
   }, [id, authUsersList, courseCodeList, courseList, allTerms]);
-  
+
 
   // set changes for autocomplete
   useEffect(() => {
@@ -627,10 +627,18 @@ function EditAnnouncement() {
   }
 
   useEffect(() => { setError(null) }, [desiredCourseCode, desiredCourseList])
-  useEffect(() => { setAnnouncementDetails(prev => ({
-    ...prev,
-    term: termSelect
-  })) }, [termSelect])
+  useEffect(() => {
+    setAnnouncementDetails(prev => ({
+      ...prev,
+      term: termSelect
+    }))
+  }, [termSelect])
+
+  const handleDesiredInputChange = (event, newInputValue) => {
+    const uppercaseValue = newInputValue.toUpperCase();
+    const filteredValue = uppercaseValue.replace(/[^A-Z0-9\ ]/g, '');
+    setDesiredCourseCodeValue(filteredValue);
+  };
   const dispatch = useDispatch();
 
   console.log('termSelect :>> ', termSelect);
@@ -669,7 +677,7 @@ function EditAnnouncement() {
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={termSelect} 
+                    value={termSelect}
                     name="term"
                     sx={{ minWidth: 150, mt: 2 }}
                     MenuProps={{
@@ -682,7 +690,7 @@ function EditAnnouncement() {
                     {allTerms.map((eachTerm) => (
                       <MenuItem
                         key={eachTerm.term_code}
-                        value={eachTerm} 
+                        value={eachTerm}
                         sx={{ maxHeight: '360px' }}
                         className={
                           eachTerm.is_active === '1'
@@ -692,7 +700,7 @@ function EditAnnouncement() {
                       >
                         {eachTerm.term_desc}
                       </MenuItem>
-                      
+
                     ))}
                   </Select>
 
@@ -968,35 +976,6 @@ function EditAnnouncement() {
                   minWidth: "fit-content"
                 }}
               >
-                {/*<Autocomplete
-                  id="controllable-states-demo"
-                  options={courseList && courseList.map((course) => {
-                    return course;
-                  })}
-                  filterOptions={filterCourses}
-                  value={courseValue}
-                  inputValue={inputCourseValue}
-                  onInputChange={(event, newInputCourseValue) => {
-                    if (newInputCourseValue !== null) {
-                      setCourseInputValue(newInputCourseValue);
-                    }
-                  }}
-                  onChange={(event, newCourseValue) => {
-                    if (newCourseValue !== null) handleCourseAdd(newCourseValue);
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      multiline
-                      size="small"
-                      sx={{ mx: 2, mt: 1, mb: 2, width: 300 }}
-                    />
-                  )}
-                  disabled={courseCode && courseCode.length === 0} //if it creates some problems, delete it.
-                />*/}
-
-
-
 
                 <Grid container justifyContent={selectedCourses.length > 0 ? "center" : "flex-start"}>
                   <Button
@@ -1033,9 +1012,16 @@ function EditAnnouncement() {
                           <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
                           <Autocomplete
+                            onBlur={() => {
+                              if (!desiredCourseCode) {
+                                setDesiredCourseCodeValue("")
+                              }
+
+                            }}
                             value={desiredCourseCodeValue}
                             onChange={handleChangeDesired}
                             filterOptions={filterCourseCodes}
+                            onInputChange={handleDesiredInputChange}
                             label="course"
                             selectOnFocus
                             clearOnBlur
@@ -1070,10 +1056,12 @@ function EditAnnouncement() {
                                 }}
                                 onKeyPress={(event) => {
                                   const key = event.key;
-                                  const regex = /^[A-Za-z0-9]+$/;
+                                  const regex = /^[A-Za-z0-9\ ]+$/;
 
                                   if (!regex.test(key) && key !== 'Enter') {
                                     event.preventDefault();
+                                  } else {
+                                    setDesiredCourseCode("")
                                   }
 
                                 }}

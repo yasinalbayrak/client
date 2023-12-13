@@ -13,7 +13,7 @@ import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
 
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack }) {
 
-  const { modifiedCourseCode, instructor_names, weeklyWorkingTime, term, status: applicationStatus, isTimedOut } = data;
+  const { instructor_names, weeklyWorkingTime, term, status: applicationStatus, isTimedOut } = data;
 
   const { lastApplicationDate,
     minimumRequiredGrade,
@@ -154,10 +154,10 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     "Erkay Savas"
   ]
   console.log('previousCourseGrades :>> ', previousCourseGrades);
-  return (modifiedCourseCode &&
+  return (course.courseCode &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
-        {modifiedCourseCode}
+        {course.courseCode}
       </TableCell>
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: "10rem", maxWidth: "18rem" }} align="left">
         <InstructorList instructor_names={instructor_names} />

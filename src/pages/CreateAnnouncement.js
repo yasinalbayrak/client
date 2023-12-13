@@ -325,23 +325,23 @@ function CreateAnnouncement() {
   function filterCourseCodes(optionCourseCodes, { inputValue }) {
 
     const filtered = optionCourseCodes.filter((option) => {
-      if (courseCode === option.title) {
+      if (courseCode.toLowerCase() === option.title.toLowerCase()) {
         return false; // filter out if already in selectedCourses
       }
-      return option.title.toLowerCase().includes(inputValue.trim().toLowerCase());
+      return option.title.toLowerCase().removeSpaces().includes(inputValue.trim().toLowerCase().removeSpaces());
     });
 
     // sort the filtered options based on their match with the input value
     const inputValueLowerCase = inputValue.toLowerCase();
     filtered.sort((a, b) => {
-      const aIndex = a.title.toLowerCase().indexOf(inputValueLowerCase);
-      const bIndex = b.title.toLowerCase().indexOf(inputValueLowerCase);
+      const aIndex = a.title.toLowerCase().removeSpaces().indexOf(inputValueLowerCase);
+      const bIndex = b.title.toLowerCase().removeSpaces().indexOf(inputValueLowerCase);
       if (aIndex !== bIndex) {
         return aIndex - bIndex;
       }
       return a.title.localeCompare(b.title);
     });
-    const isExisting = optionCourseCodes.some((option) => inputValue.trim() === option.title);
+    const isExisting = optionCourseCodes.some((option) => inputValue.toLowerCase().removeSpaces().trim() === option.title.toLowerCase().removeSpaces().trim());
     if (inputValue && !isExisting) {
       filtered.push({
         inputValue,
@@ -425,6 +425,9 @@ function CreateAnnouncement() {
     setIsInprogressAllowed(false);
   };
 
+  String.prototype.removeSpaces = function () {
+    return this.replace(/\s/g, '');
+  };
   const handleChange = (event, newValue) => {
 
     setSelectedCourses([]);
@@ -486,12 +489,6 @@ function CreateAnnouncement() {
 
   }
 
-
-
-  function extractSubstring(inputString) {
-    const result = inputString.match(/^[^\s\d]+/);
-    return result ? result[0].length : 2;
-  }
   const handleAdd = () => {
 
 
@@ -522,11 +519,24 @@ function CreateAnnouncement() {
 
   useEffect(() => {
     console.log(announcementDetails)
-  }
-    , [announcementDetails])
+  }, [announcementDetails])
 
   useEffect(() => { setError(null) }, [desiredCourseCode, desiredCourseList])
 
+  const handleCopyPaste = (event) => {
+    event.preventDefault();
+  };
+
+  const handleInputChange = (event, newInputValue) => {
+    const uppercaseValue = newInputValue.toUpperCase();
+    const filteredValue = uppercaseValue.replace(/[^A-Z0-9\ ]/g, '');
+    setCourseCodeValue(filteredValue);
+  };
+  const handleDesiredInputChange = (event, newInputValue) => {
+    const uppercaseValue = newInputValue.toUpperCase();
+    const filteredValue = uppercaseValue.replace(/[^A-Z0-9\ ]/g, '');
+    setDesiredCourseCodeValue(filteredValue);
+  };
   const dispatch = useDispatch();
 
   return (
@@ -617,10 +627,18 @@ function CreateAnnouncement() {
                 <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
                 <Autocomplete
+                  onBlur={() => {
+                    if (!courseCode) {
+                      setCourseCodeValue("")
+                    }
+
+                  }}
                   value={courseCodeValue}
                   onChange={handleChange}
                   filterOptions={filterCourseCodes}
-
+                  onCopy={handleCopyPaste}
+                  onPaste={handleCopyPaste}
+                  onInputChange={handleInputChange}
                   selectOnFocus
                   clearOnBlur
                   handleHomeEndKeys
@@ -644,7 +662,6 @@ function CreateAnnouncement() {
                   renderInput={(params) => (
                     <TextField
                       {...params}
-
                       multiline
                       size="small"
                       onKeyDown={(event) => {
@@ -654,13 +671,15 @@ function CreateAnnouncement() {
                       }}
                       onKeyPress={(event) => {
                         const key = event.key;
-                        const regex = /^[A-Za-z0-9]+$/;
+                        const regex = /^[A-Za-z0-9\ ]+$/;
 
                         if (!regex.test(key) && key !== 'Enter') {
                           event.preventDefault();
+                        } else {
+                          setCourseCode("")
                         }
-
                       }}
+
                       sx={{
                         mx: 2, mt: 1, mb: 2, width: 300,
                         ...(params.disabled && {
@@ -990,9 +1009,16 @@ function CreateAnnouncement() {
                           <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
                           <Autocomplete
+                            onBlur={() => {
+                              if (!desiredCourseCode) {
+                                setDesiredCourseCodeValue("")
+                              }
+
+                            }}
                             value={desiredCourseCodeValue}
                             onChange={handleChangeDesired}
                             filterOptions={filterCourseCodes}
+                            onInputChange={handleDesiredInputChange}
                             label="course"
                             selectOnFocus
                             clearOnBlur
@@ -1027,10 +1053,12 @@ function CreateAnnouncement() {
                                 }}
                                 onKeyPress={(event) => {
                                   const key = event.key;
-                                  const regex = /^[A-Za-z0-9]+$/;
+                                  const regex = /^[A-Za-z0-9\ ]+$/;
 
                                   if (!regex.test(key) && key !== 'Enter') {
                                     event.preventDefault();
+                                  } else {
+                                    setDesiredCourseCode("")
                                   }
 
                                 }}

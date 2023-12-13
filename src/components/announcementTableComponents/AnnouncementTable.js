@@ -95,14 +95,11 @@ export default function AnnouncementTable(props) {
         const workTime = row.weeklyWorkHours;
         const slicedHour = workTime.slice(2);
         const modifiedWorkHour = slicedHour.slice(0, -1);
-        const notSpacedCourse = row.course.courseCode;
-        const spacedCourse = notSpacedCourse.replace(/([A-Z]+)(\d+)/g, '$1 $2');
   
         return {
           ...row,
           weeklyWorkingTime: modifiedWorkHour,
           instructor_names: modifiedInstructorNames,
-          modifiedCourseCode: spacedCourse,
         };
       });
   
