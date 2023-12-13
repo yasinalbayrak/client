@@ -113,8 +113,7 @@ function CustomRow(props) {
   useEffect(() => {
     getApplicationRequestsByStudentId(row.student.user.id)
       .then((res) => {
-        
-        setLaHistory(res.filter((history)=> (history.status in VALID_STATUS_LIST)));
+        setLaHistory(res);
       })
       .catch((_) => {
       });
