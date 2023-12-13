@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { getAnnouncement, getApplicationRequestsByApplicationId } from "../apiCalls";
 import AppBarHeader from "../components/AppBarHeader";
 import Sidebar from "../components/Sidebar";
-import ApplicantsTable from "../components/ApplicantsTable";
+import ApplicantsTable from "../components/applicantsTableComponents/ApplicantsTable";
 import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import BackButton from "../components/buttons/BackButton";

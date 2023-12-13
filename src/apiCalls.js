@@ -391,20 +391,11 @@ async function updateApplicationRequestStatus(applicationRequestId,status) {
 
 }
 
-async function getAcceptedApplicationRequestsByStudent(studentId) {
-  try {
-    const result = await axios.get(
-      apiEndpoint + "/applicationRequest/accepted-application-requests/" + studentId
-    );
 
-    return result.data;
-  }catch (error) {  }
 
-}
 
 
 export {
-  getAcceptedApplicationRequestsByStudent,
   updateApplicationRequestStatus,
   getCourseGrades,
   getAllAnnouncements,
