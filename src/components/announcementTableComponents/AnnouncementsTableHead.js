@@ -8,17 +8,23 @@ function AnnouncementsTableHead({ tabValue, isInstructor }) {
     <TableHead>
       <TableRow sx={{ bgcolor: "#eeeeee" }}>
         <TableCell>Course Code</TableCell>
-        <TableCell align="left">Primary Instructor</TableCell>
+        <TableCell align="left">Instructors</TableCell>
         <TableCell align="left">Last Application Date/Time</TableCell>
         <TableCell align="left">Term</TableCell>
         <TableCell align="left">Minimum Desired Letter Grade</TableCell>
+
+        <TableCell align='left'>Enrolled Allowed</TableCell>
+
         <TableCell align="left">Weekly Work Hours</TableCell>
+        <TableCell align="left">Grade Requirements</TableCell>
         <TableCell align="left">Details</TableCell>
-        <TableCell align="center">
-          {tabValue === 1 && !isInstructor && "Application Status"}
-        </TableCell>
-        {tabValue === 1 && !isInstructor && 
-        <TableCell align="center">Actions</TableCell>}
+        
+        {tabValue === 1 && !isInstructor && <TableCell align="left">Application Status</TableCell>}
+        <TableCell align="left">Actions</TableCell>
+        
+          
+        
+        
       </TableRow>
     </TableHead>
   );

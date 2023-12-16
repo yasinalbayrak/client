@@ -12,6 +12,7 @@ const initialState = {
   isFailed: false,
   isLoggedIn: false,
   isTranscriptUploded:false,
+  showTerms: true
 };
 
 const userSlice = createSlice({
@@ -38,7 +39,7 @@ const userSlice = createSlice({
       state.isLoading = false;
       state.isLoggedIn = false;
     },
-    
+
     uploadedTranscript:(state)=>{
       state.isTranscriptUploded=false;
     },
@@ -59,11 +60,14 @@ const userSlice = createSlice({
     setTerm: (state, action) => {
       state.term = action.payload.term;
     },
+    flipShowTerms: (state) => {
+      state.showTerms = !state.showTerms
+    }
   },
 });
 
 console.log(userSlice);
 
-export const { startLoginProcess, successLogin, failLogin, logout, switchIsInstructor, setTerm } = userSlice.actions;
+export const {flipShowTerms, startLoginProcess, successLogin, failLogin, logout, switchIsInstructor, setTerm } = userSlice.actions;
 
 export default userSlice.reducer;

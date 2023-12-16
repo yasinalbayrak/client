@@ -94,8 +94,9 @@ function Sidebar({ setTabInitial }) {
   const surname = useSelector((state) => state.user.surname);
   const term = useSelector((state) => state.user.term);
   const token = useSelector((state) => state.user.JwtToken);
-  const [termSelect, setTermSelect] = React.useState(term);
+  const showTerms = useSelector((state) => state.user.showTerms);
 
+  const [termSelect, setTermSelect] = React.useState(term);
   const [allTerms, setAllTerms] = React.useState([]);
 
 
@@ -124,19 +125,22 @@ function Sidebar({ setTabInitial }) {
   useEffect(() => {
     getTerms().then((res) => {
       setAllTerms(res);
-  
+      console.log('term :>> ', term);
+      console.log('termSelect :>> ', termSelect);
+      const termSet = (termSelect !== "")
+      console.log('termSet :>> ', termSet);
       if (res.length > 0) {
-        const activeTerm = res.find(term => term.is_active === '1');
+        const activeTerm = res.find(term => termSet ? term.term_code === termSelect.term_code :term.is_active === '1');
         if (activeTerm) {
           dispatch(setTerm({ term: activeTerm }));
           setTermSelect(activeTerm);
         }
-      }
+      } 
+
     }).catch(() => {
-      // Handle any errors if needed
     });
   }, []);
-  
+
 
 
   const handleLogout = () => {
@@ -150,8 +154,8 @@ function Sidebar({ setTabInitial }) {
 
 
 
-
-    const homePageURL = "http://localhost:3000";
+    //TODO
+    const homePageURL = "http://pro2-dev.sabanciuniv.edu/build/ ";
     const logoutURL = `https://login.sabanciuniv.edu/cas/logout?service=${encodeURIComponent(homePageURL)}`;
 
 
@@ -178,7 +182,7 @@ function Sidebar({ setTabInitial }) {
             <MenuIcon />
           </IconButton>
           <Box width={200}>
-            <FormControl
+            {showTerms && <FormControl
               sx={{
                 m: 1,
                 minWidth: 150,
@@ -240,7 +244,7 @@ function Sidebar({ setTabInitial }) {
                   ))
                 }
               </Select>
-            </FormControl>
+            </FormControl>}
           </Box>
 
           <Button
@@ -282,7 +286,8 @@ function Sidebar({ setTabInitial }) {
                 height: 50,
                 ...(!sidebarOpen && { display: "none" }),
               }}
-              src={"/sula.png"}
+              //src={`${process.env.PUBLIC_URL}/build/sula.png`}
+              src={"/build/sula.png"}
             />
             {!sidebarOpen ? <Box sx={{ height: 50 }}></Box> : <div></div>}
           </ListItem>
@@ -339,7 +344,7 @@ function Sidebar({ setTabInitial }) {
             </Box>
           </ListItem>
           <ListItem sx={{ padding: "0px" }}>
-            <ListItemButton onClick={setTabInitial} to="/home" style={{ textDecoration: "none", color: "white" }}>
+            <ListItemButton onClick={() => navigate("/home", { replace: true })} /*to="/home"*/ style={{ textDecoration: "none", color: "white" }}>
               <ListItemIcon sx={{ minWidth: "30px" }}>
                 <HomeIcon sx={{ color: "white" }} />
               </ListItemIcon>
@@ -359,7 +364,7 @@ function Sidebar({ setTabInitial }) {
           <Collapse in={listOpen} timeout="auto">
             <List>
               <ListItem sx={{ padding: "0px" }}>
-                <ListItemButton as={Link} to="/home" /*onClick={()=>setValue(0)}*/ style={{ textDecoration: "none", color: "white" }}>
+                <ListItemButton /*as={Link} to="/home"*/ onClick={() => navigate("/home", { replace: true })} style={{ textDecoration: "none", color: "white" }}>
                   <ListItemText primary={"- All Announcements"} sx={{ textAlign: "center" }} />
                 </ListItemButton>
               </ListItem>

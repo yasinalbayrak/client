@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import AppBarHeader from "../components/AppBarHeader";
 import Sidebar from "../components/Sidebar";
 import AddQuestion from "../components/AddQuestion";
-import { Typography, Box, Grid } from "@mui/material";
+import { Typography, Box, Grid, InputAdornment, FormHelperText } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
@@ -48,15 +48,19 @@ import Checkbox from "@mui/material/Checkbox";
 import CheckIcon from '@mui/icons-material/Check';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import UseNumberInputCompact from '../components/IncDec'
+import { flipShowTerms } from "../redux/userSlice";
+import BackButton from "../components/buttons/BackButton";
+import { toast } from "react-toastify";
+import { handleInfo } from "../errors/GlobalErrorHandler";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const useStyles = makeStyles((theme) => ({
   activeItem: {
-    backgroundColor: "lightgreen",
+    backgroundColor: 'lightgreen',
 
-    "&:hover": {
-      color: "black",
-      fontWeight: "normal",
+    '&:hover': {
+      color: 'black',
+      fontWeight: 'normal'
     },
   },
 }));
@@ -89,25 +93,27 @@ function CreateAnnouncement() {
 
   const getColorForGrade = (grade) => {
     switch (grade) {
-      case "A":
-      case "A-":
-        return "success";
-      case "B+":
-      case "B":
-      case "B-":
-        return "info";
-      case "C+":
-      case "C":
-      case "C-":
-        return "primary";
-      case "D":
-        return "warning";
-      case "S":
-        return "default";
+      case 'A':
+      case 'A-':
+        return 'success';
+      case 'B+':
+      case 'B':
+      case 'B-':
+        return 'info';
+      case 'C+':
+      case 'C':
+      case 'C-':
+        return 'primary';
+      case 'D':
+        return 'warning';
+      case 'S':
+        return 'default';
       default:
-        return "default";
+        return 'default';
     }
   };
+
+  const MAX_WORD_COUNT = 255;
 
   const userName = useSelector((state) => state.user.username);
   const name = useSelector((state) => state.user.name);
@@ -123,9 +129,8 @@ function CreateAnnouncement() {
       display_name: name + " " + surname,
       username: userName,
       authOptionValue: name + " " + surname + " (" + userName + ")",
-      id: userId,
-    },
-  ]); //used for send request as selected from list
+      id: userId
+    }]); //used for send request as selected from list
   const [authValue, setAuthValue] = useState(""); // for autocomplete
   const [inputAuthValue, setAuthInputValue] = useState(""); // for autocomplete
 
@@ -134,8 +139,7 @@ function CreateAnnouncement() {
   const [desiredCourseCode, setDesiredCourseCode] = useState("");
   const [desiredCourseList, setDesiredCourseList] = useState([]); //get courses from database
   const [desiredCourseCodeValue, setDesiredCourseCodeValue] = useState(""); // for autocomplete
-  const [desiredCourseCodeInputValue, setDesiredCourseCodeInputValue] =
-    useState(""); // for autocomplete
+  const [desiredCourseCodeInputValue, setDesiredCourseCodeInputValue] = useState(""); // for autocomplete
   const [isInprogressAllowed, setIsInprogressAllowed] = useState(false);
 
   const [courseList, setcourseList] = useState([]); //get courses from database
@@ -147,7 +151,8 @@ function CreateAnnouncement() {
   const [courseValue, setCourseValue] = useState(""); // for autocomplete
   const [inputCourseValue, setCourseInputValue] = useState(""); // for autocomplete
 
-  const [allTerms, setAllTerms] = useState([]);
+  const [allTerms, setAllTerms] = useState([])
+
 
   const [open, setOpen] = React.useState(false);
   const [showAddButton, setShowAddButton] = useState(false);
@@ -156,7 +161,15 @@ function CreateAnnouncement() {
 
   const [error, setError] = React.useState(false);
   const classes = useStyles();
-  
+
+  useEffect(() => {
+
+    dispatch(flipShowTerms())
+    return () => {
+      dispatch(flipShowTerms())
+    };
+  }, []);
+
 
   function updateGrade(courseCode, index) {
     setSelectedCourses((prev) => {
@@ -176,14 +189,13 @@ function CreateAnnouncement() {
   //get all instructors
   useEffect(() => {
     getAllInstructors().then((results) => {
-      const filteredResults = results.filter((instructor) => {
-        //for removing current user from options
+      const filteredResults = results.filter((instructor) => { //for removing current user from options
         return instructor.instructor_username !== userName;
       });
 
       const transformedResults = filteredResults.map((instructor) => {
-        const lastName = instructor.user.surname;
-        const firstName = instructor.user.name;
+        const lastName = instructor.user.surname[0].toUpperCase() + instructor.user.surname.slice(1)
+        const firstName = instructor.user.name[0].toUpperCase() + instructor.user.name.slice(1)
         const displayName = firstName.trim() + " " + lastName.trim();
         const OptionValue = displayName + " (" + instructor.user.email + ")";
 
@@ -191,12 +203,13 @@ function CreateAnnouncement() {
           display_name: displayName,
           username: instructor.user.email,
           authOptionValue: OptionValue,
-          id: instructor.user.id,
+          id: instructor.user.id
         };
       });
       setAuthUserList(transformedResults);
     });
   }, []);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -211,26 +224,34 @@ function CreateAnnouncement() {
     fetchData();
   }, []);
 
+
+
+
+
   // get all courses
   useEffect(() => {
     const fetchData = async () => {
       try {
         const results = await getAllCourses();
 
+
         const courseCodes = results.map((course) => {
           return {
-            title: course.courseCode,
-          };
-        });
+            title: course.courseCode
+          }
+        })
 
         setCourseCodeList(courseCodes);
         setcourseList(courseCodes);
-        setDesiredCourseList(courseCodes);
-      } catch (error) {}
+        setDesiredCourseList(courseCodes)
+      } catch (error) {
+
+      }
     };
 
     fetchData();
   }, []);
+
 
   //used in autocomplete for keeping value and input value
   function handleAuthAdd(newValue) {
@@ -275,16 +296,13 @@ function CreateAnnouncement() {
     return filtered;
   }
 
-  console.log(authPeople); //for debugging authPeople
+  console.log(authPeople) //for debugging authPeople
 
   //used in autocomplete for keeping value and input value
-  function handleCourseCodeAdd(newValue) {
-    //change here
+  function handleCourseCodeAdd(newValue) { //change here
     if (newValue !== null) {
-      const selectedCourseCode = courseCodeList.find(
-        (course) => course === newValue
-      );
-      updateCourseCode(selectedCourseCode);
+      const selectedCourseCode = courseCodeList.find((course) => course === newValue);
+      updateCourseCode(selectedCourseCode)
       setSelectedCourses([...selectedCourses, selectedCourseCode]);
     }
     // setCourseCodeValue("");
@@ -295,8 +313,7 @@ function CreateAnnouncement() {
     setCourseCode(courseCode);
   }
 
-  function handleCourseCodeDelete() {
-    //change here
+  function handleCourseCodeDelete() { //change here
     //console.log("Deleting course code");
     // const updatedSelectedCourses = selectedCourses.filter(
     //   (course) => course !== courseCode
@@ -307,8 +324,7 @@ function CreateAnnouncement() {
     setCourseCodeInputValue("");
     setCourseCode("");
   }
-  function handleDesiredCourseCodeDelete() {
-    //change here
+  function handleDesiredCourseCodeDelete() { //change here
     //console.log("Deleting course code");
     // const updatedSelectedCourses = selectedCourses.filter(
     //   (course) => course !== courseCode
@@ -320,36 +336,34 @@ function CreateAnnouncement() {
     setDesiredCourseCode("");
   }
   function filterCourseCodes(optionCourseCodes, { inputValue }) {
+
     const filtered = optionCourseCodes.filter((option) => {
-      if (courseCode === option.title) {
+      if (courseCode.toLowerCase() === option.title.toLowerCase()) {
         return false; // filter out if already in selectedCourses
       }
-      return option.title
-        .toLowerCase()
-        .includes(inputValue.trim().toLowerCase());
+      return option.title.toLowerCase().removeSpaces().includes(inputValue.trim().toLowerCase().removeSpaces());
     });
 
     // sort the filtered options based on their match with the input value
     const inputValueLowerCase = inputValue.toLowerCase();
     filtered.sort((a, b) => {
-      const aIndex = a.title.toLowerCase().indexOf(inputValueLowerCase);
-      const bIndex = b.title.toLowerCase().indexOf(inputValueLowerCase);
+      const aIndex = a.title.toLowerCase().removeSpaces().indexOf(inputValueLowerCase);
+      const bIndex = b.title.toLowerCase().removeSpaces().indexOf(inputValueLowerCase);
       if (aIndex !== bIndex) {
         return aIndex - bIndex;
       }
       return a.title.localeCompare(b.title);
     });
-    const isExisting = optionCourseCodes.some(
-      (option) => inputValue.trim() === option.title
-    );
+    const isExisting = optionCourseCodes.some((option) => inputValue.toLowerCase().removeSpaces().trim() === option.title.toLowerCase().removeSpaces().trim());
     if (inputValue && !isExisting) {
       filtered.push({
         inputValue,
-        title: `Add "${inputValue.trim()}"`,
-      });
+        title: `Add "${inputValue.trim()}"`
+      })
     }
 
     return filtered;
+
   }
 
   //used in autocomplete for keeping value and input value
@@ -385,11 +399,11 @@ function CreateAnnouncement() {
     lastApplicationDate: istanbulDate,
     lastApplicationTime: istanbulTime.replace(/(.*)\D\d+/, "$1"),
     letterGrade: "A",
-    workHours: "5 Hours",
+    workHours: "",
     jobDetails: "",
     authInstructor: authPeople,
     desiredCourses: selectedCourses,
-    isInprogressAllowed: false,
+    isInprogressAllowed: false
   });
 
   // set changes for autocomplete
@@ -405,6 +419,11 @@ function CreateAnnouncement() {
 
   function handleInput(event) {
     const { name, value } = event.target;
+
+    if (name === "jobDetails" && value.length > 255) {
+      return;
+    }
+
     setAnnouncementDetails((prevDetails) => ({
       ...prevDetails,
       [name]: value,
@@ -424,64 +443,75 @@ function CreateAnnouncement() {
     setIsInprogressAllowed(false);
   };
 
+  String.prototype.removeSpaces = function () {
+    return this.replace(/\s/g, '');
+  };
   const handleChange = (event, newValue) => {
+
+    setSelectedCourses([]);
     if (newValue) {
+
       var trimmedValue;
-      if (typeof newValue === "string") {
+      if (typeof newValue === 'string') {
+
         trimmedValue = newValue;
       }
       // Add "xxx" option created dynamically
       else if (newValue.inputValue) {
+
         trimmedValue = newValue.inputValue;
-      } else {
+      }
+      else {
+
         trimmedValue = newValue.title;
       }
 
-      trimmedValue.trim();
+      trimmedValue.trim()
 
       setCourseCodeValue(trimmedValue);
       setCourseCode(trimmedValue);
 
-      if (!courseList.some((course) => course.title === trimmedValue)) {
+      if (!courseList.some(course => course.title === trimmedValue)) {
         setcourseList((prev) => [...prev, { title: trimmedValue }]);
       }
     }
-  };
+
+  }
   const handleChangeDesired = (event, newValue) => {
     if (newValue) {
+
       var trimmedValue;
-      if (typeof newValue === "string") {
+      if (typeof newValue === 'string') {
+
         trimmedValue = newValue;
       }
       // Add "xxx" option created dynamically
       else if (newValue.inputValue) {
+
         trimmedValue = newValue.inputValue;
-      } else {
+      }
+      else {
+
         trimmedValue = newValue.title;
       }
 
-      trimmedValue.trim();
+      trimmedValue.trim()
 
       setDesiredCourseCodeValue(trimmedValue);
       setDesiredCourseCode(trimmedValue);
 
-      if (!desiredCourseList.some((course) => course.title === trimmedValue)) {
+      if (!desiredCourseList.some(course => course.title === trimmedValue)) {
         setDesiredCourseList((prev) => [...prev, { title: trimmedValue }]);
       }
     }
-  };
 
   function extractSubstring(inputString) {
     const result = inputString.match(/^[^\s\d]+/);
     return result ? result[0].length : 2;
   }
-  
- 
 
-  function extractSubstring(inputString) {
-    const result = inputString.match(/^[^\s\d]+/);
-    return result ? result[0].length : 2;
-  }
+
+
   const handleAdd = () => {
 
 
@@ -490,6 +520,9 @@ function CreateAnnouncement() {
     }
     else if (selectedCourses.some((course) => course.courseCode === desiredCourseCode)) {
       setError("There is already requirement for this course.");
+    }
+    else if (courseCode == null || courseCode.trim() === "") {
+      setError("To add a requirement, first specify the course code for the application")
     }
 
     else {
@@ -507,18 +540,33 @@ function CreateAnnouncement() {
 
   }
 
-  // useEffect(() => {
-  //   console.log(announcementDetails)
-  // }
-  //   , [announcementDetails])
+  useEffect(() => {
+    console.log(announcementDetails)
+  }, [announcementDetails])
 
   useEffect(() => { setError(null) }, [desiredCourseCode, desiredCourseList])
 
+  const handleCopyPaste = (event) => {
+    event.preventDefault();
+  };
+
+  const handleInputChange = (event, newInputValue) => {
+    const uppercaseValue = newInputValue.toUpperCase();
+    const filteredValue = uppercaseValue.replace(/[^A-Z0-9\ ]/g, '');
+    setCourseCodeValue(filteredValue);
+  };
+  const handleDesiredInputChange = (event, newInputValue) => {
+    const uppercaseValue = newInputValue.toUpperCase();
+    const filteredValue = uppercaseValue.replace(/[^A-Z0-9\ ]/g, '');
+    setDesiredCourseCodeValue(filteredValue);
+  };
+  const dispatch = useDispatch();
 
   return (
     <Box sx={{ display: "flex" }}>
       <Sidebar></Sidebar>
       <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
+        <BackButton to={"/home"} />
         <AppBarHeader />
         <Grid
           container
@@ -550,10 +598,9 @@ function CreateAnnouncement() {
               alignItems="center"
               marginY={2}
             >
+
               <Box sx={{ minWidth: 150 }}>
-                <Typography>
-                  Term <span style={{ color: "red" }}>*</span>:
-                </Typography>
+                <Typography>Term <span style={{ color: 'red' }}>*</span>:</Typography>
                 <FormControl fullWidth>
                   <Select
                     labelId="demo-simple-select-label"
@@ -587,7 +634,9 @@ function CreateAnnouncement() {
                   </Select>
                 </FormControl>
               </Box>
-              {}
+              {
+
+              }
             </Grid>
             <Grid
               container
@@ -596,82 +645,91 @@ function CreateAnnouncement() {
               alignItems="center"
             >
               <Box sx={{ minWidth: 150 }}>
-              <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
+                <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
-              <Autocomplete
-                value={courseCodeValue}
-                onChange={handleChange}
-                filterOptions={filterCourseCodes}
-                
-                selectOnFocus
-                clearOnBlur
-                handleHomeEndKeys
-                id="free-solo-with-text-demo"
-                options={courseList}
-                getOptionLabel={(option) => {
-                  // Value selected with enter, right from the input
-                  if (typeof option === 'string') {
-                    return option;
-                  }
-                  // Add "xxx" option created dynamically
-                  if (option.inputValue) {
-                    return option.inputValue;
-                  }
-                  // Regular option
-                  return option.title;
-                }}
-                renderOption={(props, option) => <li {...props}>{option.title}</li>}
-                sx={{ width: 300, ml: -2 }}
-                freeSolo
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
+                <Autocomplete
+                  onBlur={() => {
+                    if (!courseCode) {
+                      setCourseCodeValue("")
+                    }
 
-                    multiline
-                    size="small"
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        event.preventDefault();
-                      }
-                    }}
-                    onKeyPress={(event) => {
-                      const key = event.key;
-                      const regex = /^[A-Za-z0-9]+$/;
+                  }}
+                  value={courseCodeValue}
+                  onChange={handleChange}
+                  filterOptions={filterCourseCodes}
+                  onCopy={handleCopyPaste}
+                  onPaste={handleCopyPaste}
+                  onInputChange={handleInputChange}
+                  selectOnFocus
+                  clearOnBlur
+                  handleHomeEndKeys
+                  id="free-solo-with-text-demo"
+                  options={courseList}
+                  getOptionLabel={(option) => {
+                    // Value selected with enter, right from the input
+                    if (typeof option === 'string') {
+                      return option;
+                    }
+                    // Add "xxx" option created dynamically
+                    if (option.inputValue) {
+                      return option.inputValue;
+                    }
+                    // Regular option
+                    return option.title;
+                  }}
+                  renderOption={(props, option) => <li {...props}>{option.title}</li>}
+                  sx={{ width: 300, ml: -2 }}
+                  freeSolo
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      multiline
+                      size="small"
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                          event.preventDefault();
+                        }
+                      }}
+                      onKeyPress={(event) => {
+                        const key = event.key;
+                        const regex = /^[A-Za-z0-9\ ]+$/;
 
-                      if (!regex.test(key) && key !== 'Enter') {
-                        event.preventDefault();
-                      }
+                        if (!regex.test(key) && key !== 'Enter') {
+                          event.preventDefault();
+                        } else {
+                          setCourseCode("")
+                        }
+                      }}
 
-                    }}
-                    sx={{
-                      mx: 2, mt: 1, mb: 2, width: 300,
-                      ...(params.disabled && {
-                        backgroundColor: 'transparent',
-                        color: 'inherit',
-                        pointerEvents: 'none',
-                      }),
-                    }}
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                        <>
-                          {params.InputProps.endAdornment}
-                          {courseCode && (
-                            <IconButton
-                              onClick={handleCourseCodeDelete}
-                              aria-label="Clear"
-                              size="small"
-                            >
-                              <ClearIcon />
-                            </IconButton>
-                          )}
-                        </>
-                      ),
-                    }}
-                  />
-                )}
-                disableClearable
-              />
+                      sx={{
+                        mx: 2, mt: 1, mb: 2, width: 300,
+                        ...(params.disabled && {
+                          backgroundColor: 'transparent',
+                          color: 'inherit',
+                          pointerEvents: 'none',
+                        }),
+                      }}
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <>
+                            {params.InputProps.endAdornment}
+                            {courseCode && (
+                              <IconButton
+                                onClick={handleCourseCodeDelete}
+                                aria-label="Clear"
+                                size="small"
+                              >
+                                <ClearIcon />
+                              </IconButton>
+                            )}
+                          </>
+                        ),
+                      }}
+                    />
+                  )}
+                  disableClearable
+                />
 
               </Box>
 
@@ -782,36 +840,36 @@ function CreateAnnouncement() {
               alignItems="center"
             >
 
-              <Box sx={{ minWidth: 150, mt:2 }}>
-              <Typography> Minimum Desired Letter Grade<span style={{ color: 'red' }}>*</span>:</Typography>
-              <TextField
-                id="outlined-select-currency"
-                name="letterGrade"
-                select
-                value={announcementDetails.letterGrade}
-                size="small"
-                sx={{ mt:2, width: 225 }}
-                onChange={handleInput}
-              >
-                {grades.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <Box sx={{ minWidth: 150, mt: 2 }}>
+                <Typography> Minimum Desired Letter Grade<span style={{ color: 'red' }}>*</span>:</Typography>
+                <TextField
+                  id="outlined-select-currency"
+                  name="letterGrade"
+                  select
+                  value={announcementDetails.letterGrade}
+                  size="small"
+                  sx={{ mt: 2, width: 225 }}
+                  onChange={handleInput}
+                >
+                  {grades.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
 
-              <FormControlLabel
-                value={announcementDetails.isInprogressAllowed}
-                onChange={(event) => {
-                  setAnnouncementDetails((prevDetails) => ({
-                    ...prevDetails,
-                    isInprogressAllowed: event.target.checked, // Use event.target.checked for checkbox
-                  }));
-                }}
-                control={<Checkbox />}
-                label="Allow In Progress Applicants"
-                sx={{ mt: 2, ml: 2 }}
-              />
+                <FormControlLabel
+                  value={announcementDetails.isInprogressAllowed}
+                  onChange={(event) => {
+                    setAnnouncementDetails((prevDetails) => ({
+                      ...prevDetails,
+                      isInprogressAllowed: event.target.checked, // Use event.target.checked for checkbox
+                    }));
+                  }}
+                  control={<Checkbox />}
+                  label="Allow In Progress Applicants"
+                  sx={{ mt: 2, ml: 2 }}
+                />
 
               </Box>
 
@@ -822,23 +880,23 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="center"
             >
-              <Box sx={{ minWidth: 150, mt:2 }}>
-              <Typography>Weekly Work Hours<span style={{ color: 'red' }}>*</span>:</Typography>
-              <TextField
-                id="outlined-select-currency"
-                name="workHours"
-                select
-                value={announcementDetails.workHours}
-                size="small"
-                sx={{ mt: 2, width: 225 }}
-                onChange={handleInput}
-              >
-                {WorkHour && WorkHour.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <Box sx={{ minWidth: 150, mt: 2 }}>
+                <Typography>Weekly Work Hours<span style={{ color: 'red' }}>*</span>:</Typography>
+                <TextField
+                  id="outlined-select-currency"
+                  name="workHours"
+                  select
+                  value={announcementDetails.workHours}
+                  size="small"
+                  sx={{ mt: 2, width: 225 }}
+                  onChange={handleInput}
+                >
+                  {WorkHour && WorkHour.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Box>
             </Grid>
 
@@ -864,6 +922,21 @@ function CreateAnnouncement() {
                   maxRows={20} // Maximum number of rows
                   rows={1}
                   size="small"
+                  InputProps={{
+                      style: { display: 'flex', flexDirection: 'column' },
+                      endAdornment: (
+                          <>
+                              <hr style={{ width: '100%', margin: '0.5rem 0' }} />
+                              <InputAdornment position="end" style={{ margin: "0.5rem 0rem 0.5rem 0", alignSelf: "flex-end" }}>
+
+                                  <hr style={{ width: '100%', margin: '5px 0' }} />
+                                  <Typography variant="body2">
+                                      Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
+                                      <br />
+                                  </Typography>
+                              </InputAdornment>
+                          </>),
+                  }}
                   name="jobDetails"
                   multiline
                   sx={{ m: 2, width: 400 }}
@@ -883,11 +956,10 @@ function CreateAnnouncement() {
                   }}
                 />
               </div>
-              
+
             </Grid>
               </Box>
             </Grid>
-
             <Grid
               container
               direction="row"
@@ -895,9 +967,7 @@ function CreateAnnouncement() {
               alignItems="flex-start"
             >
               <Box sx={{ minWidth: 150, mt: 2 }}>
-                <Typography sx={{ my: 2 }}>
-                  Authorized Instructor(s):
-                </Typography>
+                <Typography sx={{ my: 2 }}>Authorized Instructor(s):</Typography>
                 <Grid
                   item
                   xs={6}
@@ -907,12 +977,9 @@ function CreateAnnouncement() {
                 >
                   <Autocomplete
                     id="controllable-states-demo"
-                    options={
-                      authUsersList &&
-                      authUsersList.map((authUser) => {
-                        return authUser.authOptionValue;
-                      })
-                    }
+                    options={authUsersList && authUsersList.map((authUser) => {
+                      return authUser.authOptionValue;
+                    })}
                     filterOptions={filterOptions}
                     value={authValue}
                     inputValue={inputAuthValue}
@@ -933,37 +1000,41 @@ function CreateAnnouncement() {
                       />
                     )}
                   />
-                  {authPeople &&
-                    authPeople.map((authPerson, index) => {
-                      return (
-                        <Chip
-                          key={authPerson.username}
-                          label={
-                            authPerson.display_name +
-                            (authPerson.username === userName ? " (You)" : "")
-                          }
-                          variant="outlined"
-                          avatar={
-                            <Avatar
-                              sx={{
-                                backgroundColor:
-                                  index % 2 === 0 ? "#6A759C" : "#4D5571",
-                              }}
-                            >
-                              <Typography
-                                fontSize="small"
-                                sx={{ color: "white" }}
-                              >
-                                {authPerson.display_name.split(" ")[0][0]}
-                              </Typography>
-                            </Avatar>
-                          }
-                          sx={{ mt: 1 }}
-                          onDelete={() => handleAuthDelete(authPerson)}
-                          disabled={authPerson.username === userName}
-                        />
-                      );
-                    })}
+                  <Grid container spacing={1} sx={{ width: '25rem' }}>
+
+                    {authPeople &&
+                      authPeople.map((authPerson, index) => {
+
+
+                        return (
+                          <Grid item xs={6} key={index}>
+                            <Chip
+                              key={authPerson.username}
+                              label={authPerson.display_name + (authPerson.username.toLowerCase() === userName.toLowerCase() ? " (You)" : "")}
+                              variant="outlined"
+                              avatar={
+                                <Avatar
+                                  sx={{
+                                    backgroundColor: index % 2 === 0 ? "#6A759C" : "#4D5571",
+
+                                  }}
+                                >
+                                  <Typography
+                                    fontSize="small"
+                                    sx={{ color: "white" }}
+                                  >
+                                    {authPerson.display_name.split(" ")[0][0].toUpperCase()}
+                                  </Typography>
+                                </Avatar>
+                              }
+                              sx={{ mt: 2 }}
+                              onDelete={() => handleAuthDelete(authPerson)}
+                              disabled={authPerson.username === userName}
+                            />
+                          </Grid>
+                        );
+                      })}
+                  </Grid>
                 </Grid>
               </Box>
             </Grid>
@@ -989,33 +1060,6 @@ function CreateAnnouncement() {
                   minWidth: "fit-content"
                 }}
               >
-                {/*<Autocomplete
-                  id="controllable-states-demo"
-                  options={courseList && courseList.map((course) => {
-                    return course;
-                  })}
-                  filterOptions={filterCourses}
-                  value={courseValue}
-                  inputValue={inputCourseValue}
-                  onInputChange={(event, newInputCourseValue) => {
-                    if (newInputCourseValue !== null) {
-                      setCourseInputValue(newInputCourseValue);
-                    }
-                  }}
-                  onChange={(event, newCourseValue) => {
-                    if (newCourseValue !== null) handleCourseAdd(newCourseValue);
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      multiline
-                      size="small"
-                      sx={{ mx: 2, mt: 1, mb: 2, width: 300 }}
-                    />
-                  )}
-                  disabled={courseCode && courseCode.length === 0} //if it creates some problems, delete it.
-                />*/}
-
 
 
 
@@ -1035,6 +1079,7 @@ function CreateAnnouncement() {
                         fontSize: '1rem',
                       },
                     }}
+                    disabled={(courseCode ?? "").trim() === ""}
                   >
                     <AddIcon />
                   </Button>
@@ -1045,10 +1090,7 @@ function CreateAnnouncement() {
                 <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
                   <DialogTitle>New Requirement</DialogTitle>
                   <DialogContent>
-                    <Box
-                      component="form"
-                      sx={{ display: "flex", flexWrap: "wrap" }}
-                    >
+                    <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
                       <FormControl sx={{ m: 1, minWidth: 120 }}>
                         <Grid
                           container
@@ -1056,14 +1098,19 @@ function CreateAnnouncement() {
                           justifyContent="start"
                           alignItems="center"
                         >
-                          <Typography>
-                            Course Code<span style={{ color: "red" }}>*</span>:
-                          </Typography>
+                          <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
                           <Autocomplete
+                            onBlur={() => {
+                              if (!desiredCourseCode) {
+                                setDesiredCourseCodeValue("")
+                              }
+
+                            }}
                             value={desiredCourseCodeValue}
                             onChange={handleChangeDesired}
                             filterOptions={filterCourseCodes}
+                            onInputChange={handleDesiredInputChange}
                             label="course"
                             selectOnFocus
                             clearOnBlur
@@ -1088,30 +1135,31 @@ function CreateAnnouncement() {
                             renderInput={(params) => (
                               <TextField
                                 {...params}
+
                                 multiline
                                 size="small"
                                 onKeyDown={(event) => {
-                                  if (event.key === "Enter") {
+                                  if (event.key === 'Enter') {
                                     event.preventDefault();
                                   }
                                 }}
                                 onKeyPress={(event) => {
                                   const key = event.key;
-                                  const regex = /^[A-Za-z0-9]+$/;
+                                  const regex = /^[A-Za-z0-9\ ]+$/;
 
-                                  if (!regex.test(key) && key !== "Enter") {
+                                  if (!regex.test(key) && key !== 'Enter') {
                                     event.preventDefault();
+                                  } else {
+                                    setDesiredCourseCode("")
                                   }
+
                                 }}
                                 sx={{
-                                  mx: 2,
-                                  mt: 1,
-                                  mb: 2,
-                                  width: 150,
+                                  mx: 2, mt: 1, mb: 2, width: 150,
                                   ...(params.disabled && {
-                                    backgroundColor: "transparent",
-                                    color: "inherit",
-                                    pointerEvents: "none",
+                                    backgroundColor: 'transparent',
+                                    color: 'inherit',
+                                    pointerEvents: 'none',
                                   }),
                                 }}
                                 InputProps={{
@@ -1121,9 +1169,7 @@ function CreateAnnouncement() {
                                       {params.InputProps.endAdornment}
                                       {desiredCourseCode && (
                                         <IconButton
-                                          onClick={
-                                            handleDesiredCourseCodeDelete
-                                          }
+                                          onClick={handleDesiredCourseCodeDelete}
                                           aria-label="Clear"
                                           size="small"
                                         >
@@ -1137,20 +1183,21 @@ function CreateAnnouncement() {
                             )}
                             disableClearable
                           />
+
+
+
+
                         </Grid>
                       </FormControl>
                       <FormControl sx={{ m: 1, minWidth: 120 }}>
+
                         <Grid
                           container
                           direction="row"
                           justifyContent="start"
                           alignItems="center"
                         >
-                          <Typography>
-                            {" "}
-                            Minimum Desired Letter Grade
-                            <span style={{ color: "red" }}>*</span>:
-                          </Typography>
+                          <Typography> Minimum Desired Letter Grade<span style={{ color: 'red' }}>*</span>:</Typography>
                           <TextField
                             id="outlined-select-currency"
                             name="letterGrade"
@@ -1159,7 +1206,7 @@ function CreateAnnouncement() {
                             size="small"
                             sx={{ m: 2, width: 225 }}
                             onChange={(event) => {
-                              setDesiredLetterGrade(event.target.value);
+                              setDesiredLetterGrade(event.target.value)
                             }}
                           >
                             {grades.map((option) => (
@@ -1170,6 +1217,10 @@ function CreateAnnouncement() {
                           </TextField>
 
                         </Grid>
+
+
+
+
                       </FormControl>
                       <FormControl sx={{ m: 1, minWidth: 120 }}>
                         <Grid
@@ -1181,8 +1232,10 @@ function CreateAnnouncement() {
                           <FormControlLabel
                             value={isInprogressAllowed}
                             onChange={(_) => {
-                              setIsInprogressAllowed((prev) => !prev);
+                              setIsInprogressAllowed((prev) => !prev)
                             }}
+
+
                             control={<Checkbox />}
                             label="Allow In Progress Applicants"
                           />
@@ -1193,13 +1246,9 @@ function CreateAnnouncement() {
                   </DialogContent>
                   <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button
-                      onClick={() => {
-                        handleAdd();
-                      }}
-                    >
-                      Add
-                    </Button>
+                    <Button onClick={() => {
+                      handleAdd();
+                    }}>Add</Button>
                   </DialogActions>
                 </Dialog>
                 {selectedCourses.length > 0 && <Table>
@@ -1220,7 +1269,7 @@ function CreateAnnouncement() {
                               >
                                 <Typography fontSize="small" sx={{ color: "white" }}>
                                   {
-                                    courseSelected.courseCode.slice(0, extractSubstring(courseSelected.courseCode))}
+                                    courseSelected.courseCode.slice(0, 2)}
                                 </Typography>
                               </Avatar>
                             }
@@ -1236,11 +1285,12 @@ function CreateAnnouncement() {
                                 backgroundColor: 'white',
                                 fontWeight: 'bold',
                                 marginRight: '8px',
+                                width: '3rem'
                               }}
                               variant="outlined"
                             />
-                           { <UseNumberInputCompact index={grades.findIndex((grade) => grade.label === courseSelected.grade)} grade={courseSelected.grade} courseCode={courseSelected.courseCode} callback={updateGrade}/>
-                           }
+                            {<UseNumberInputCompact index={grades.findIndex((grade) => grade.label === courseSelected.grade)} grade={courseSelected.grade} courseCode={courseSelected.courseCode} callback={updateGrade} />
+                            }
                           </div>
 
 
@@ -1272,7 +1322,8 @@ function CreateAnnouncement() {
                                 marginRight: 1,
                               }}
                             />
-                            <Typography variant="body2" color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
+                            {/* TODO do not enter static values */}
+                            <Typography width={`${"IP Not Allowed".length * 8}px`} variant="body2" color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
                               {"IP " + (courseSelected.isInprogressAllowed ? 'Allowed' : 'Not Allowed')}
                             </Typography>
                           </div>
@@ -1293,13 +1344,11 @@ function CreateAnnouncement() {
             </Grid>
           </Grid>
         </Grid>
-        <AddQuestion
-          AnnouncementDetails={announcementDetails}
-          username={userName}
-        />
+        <AddQuestion AnnouncementDetails={announcementDetails} username={userName} />
       </Box>
-    </Box>
+    </Box >
   );
 }
+
 
 export default CreateAnnouncement;

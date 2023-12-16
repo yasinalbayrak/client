@@ -1,26 +1,14 @@
 import axios from "axios";
-import { async } from "q";
 import handleError from "./errors/GlobalErrorHandler.jsx"
 
 const url = window.location.href;
-var apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
+var apiEndpoint = "http://pro2-dev.sabanciuniv.edu:8080/api/v1";
 if (url.indexOf("pro2") === -1) {
-  apiEndpoint = "http://localhost:8080/api/v1"; //http://localhost:8080/api/v1/applications
+  apiEndpoint = "http://localhost:8080/api/v1";
 }
-// const apiEndpoint = "http://pro2-dev.sabanciuniv.edu/api";
-// const apiEndpoint = "http://localhost:8000/api";
 
 async function applyToPost(postId, userID, answers) {
   try {
-    var bodyFormData = new FormData();
-    /*bodyFormData.append("student_username", username);
-    bodyFormData.append("working_hours", 10);
-    bodyFormData.append("post_id", postId);
-    bodyFormData.append("answers", JSON.stringify(answers));
-    bodyFormData.append("status", "applied");
-    bodyFormData.append("grade", 0);
-    bodyFormData.append("faculty", "-");
-    bodyFormData.append("transcript", transcript);*/
     const results = await axios.post(
       apiEndpoint + "/applicationRequest",
       { applicationId: postId, studentId: userID, answers: answers },
@@ -99,16 +87,9 @@ async function addAnnouncement(
   const faculty = "FENS";
   // const term = "Fall 2022";
   const title = "title add test";
-
-  const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime.$H.toString().padStart(2, '0')+":"+lastApplicationTime.$m.toString().padStart(2, '0');
-  const transformedQuestions = questions.map((question) => (
+  const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
+  const transformedQuestions = questions.filter((question)=>(question.mQuestion !== "")).map((question) => (
     question.mQuestion
-    //   {
-    //   type: question.mValue,
-    //   ranking: question.questionNumber,
-    //   question: question.mQuestion,
-    //   multiple_choices: question.mValue === "Multiple Choice" ? question.mMultiple : [],
-    // }
 
   ));
   console.log(letterGrade);
@@ -118,8 +99,7 @@ async function addAnnouncement(
 
   try {
     const response = await axios.post(apiEndpoint + "/applications", {
-      //instructor_username: username,
-      //faculty: faculty,
+
       courseCode: course_code,
       previousCourseGrades: desired_courses,
       lastApplicationDate: deadline,
@@ -145,8 +125,8 @@ async function addAnnouncement(
 
 async function updateAnnouncement(
   id,
-  username,
   course_code,
+  username,
   lastApplicationDate,
   lastApplicationTime,
   letterGrade,
@@ -156,20 +136,24 @@ async function updateAnnouncement(
   desired_courses,
   questions,
   term,
+  isInprogressAllowed
 ) {
   const faculty = "FENS";
   // const term = "Fall 2022";
   const title = "title update test";
 
   const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
-  const transformedQuestions = questions.map((question) => ({
-    type: question.mValue,
-    ranking: question.questionNumber,
-    question: question.mQuestion,
-    multiple_choices:
-      question.mValue === "Multiple Choice" ? question.mMultiple : [],
-  }));
-  console.log(desired_courses);
+  const transformedQuestions = questions.map((question) => (
+    question.mQuestion
+    //   {
+    //   type: question.mValue,
+    //   ranking: question.questionNumber,
+    //   question: question.mQuestion,
+    //   multiple_choices: question.mValue === "Multiple Choice" ? question.mMultiple : [],
+    // }
+
+  ));
+  console.log(letterGrade);
   const authInstructor_ids = auth_instructors.map(
     (user) => user.id
   );
@@ -178,17 +162,17 @@ async function updateAnnouncement(
       //instructor_username: username,
       //faculty: faculty,
       courseCode: course_code,
-      minimumRequiredGrade: letterGrade,
-      //desired_courses: desired_courses,
+      previousCourseGrades: desired_courses,
       lastApplicationDate: deadline,
       term: term.term_desc,
       //title: title,
-      weeklyWorkHours: "PT10H",
+      weeklyWorkHours: workHours,
       jobDetails: details,
       authorizedInstructors: authInstructor_ids,
+      minimumRequiredGrade: letterGrade,
       desiredCourseGrade: letterGrade,
       questions: transformedQuestions,
-      previousCourseGrades: [],
+      isInprogressAllowed: isInprogressAllowed
     });
     return response.data;
   } catch (error) {
@@ -264,6 +248,16 @@ async function updateApplicationById(
       bodyFormData, { headers: { "Content-Type": "multipart/form-data" } }
     );
     return results.data;
+  } catch (error) { return handleError(error); }
+
+}
+
+async function deleteApplicationById(applicationId) {
+  try {
+    const results = await axios.delete(
+      apiEndpoint + "/applications/" + applicationId
+    );
+    return
   } catch (error) { return handleError(error); }
 
 }
@@ -352,6 +346,13 @@ async function getCurrentTranscript(studentId) {
   } catch (error) {  }
 }
 
+async function getStudentCourseGrades(studentId) {
+  try {
+    const result = await axios.get(apiEndpoint + "/users/previous-grades/" + studentId);
+    return result.data;
+  } catch (error) {  }
+}
+
 async function getCourseGrades(studentId, courseIds) {
   try {
     const result = await axios.post(
@@ -378,20 +379,11 @@ async function updateApplicationRequestStatus(applicationRequestId,status) {
 
 }
 
-async function getAcceptedApplicationRequestsByStudent(studentId) {
-  try {
-    const result = await axios.get(
-      apiEndpoint + "/applicationRequest/accepted-application-requests/" + studentId
-    );
 
-    return result.data;
-  }catch (error) {  }
 
-}
 
 
 export {
-  getAcceptedApplicationRequestsByStudent,
   updateApplicationRequestStatus,
   getCourseGrades,
   getAllAnnouncements,
@@ -412,5 +404,7 @@ export {
   getAllAnnouncementsOfInstructor,
   postTranscript,
   getApplicationRequestsByApplicationId,
-  getCurrentTranscript
+  getCurrentTranscript,
+  deleteApplicationById,
+  getStudentCourseGrades
 };
