@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 const InstructorList = ({ instructor_names }) => {
  
   return (
-    <Grid container rowSpacing={1} columnSpacing={{ xs: 0, sm: 0, md: 0.5 }}>
+    <Grid container rowSpacing={1} columnSpacing={{ xs: 0, sm: 0, md: 1 }}>
       {instructor_names.map((instructor) => (
         <Grid item xs={instructor_names.length==1? 12: 6} sm={6} key={instructor}>
             <Chip
@@ -19,7 +19,8 @@ const InstructorList = ({ instructor_names }) => {
              }}
                 sx={{
                     minHeight: '3rem',
-                    width:'8rem',
+                    width:'6rem',
+                    minWidth: '6rem',
                     height: 'auto',
                     '& .MuiChip-label': {
                       display: 'block',

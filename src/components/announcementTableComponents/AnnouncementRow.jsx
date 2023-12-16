@@ -156,14 +156,14 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   console.log('previousCourseGrades :>> ', previousCourseGrades);
   return (course.courseCode &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-      <TableCell sx={{ borderBottom: "none", minWidth:"4rem" }} component="th" scope="row">
+      <TableCell sx={{ borderBottom: "none", width:"6rem", minWidth:"6rem", maxWidth:"6rem"  }} component="th" scope="row">
         {course.courseCode}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: "18rem", maxWidth: "18rem" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: "14rem", maxWidth: "14rem", width:"14rem" }} align="left">
         <InstructorList instructor_names={instructor_names} />
 
       </TableCell>
-      <TableCell sx={{ borderBottom: "none" }} align="left">
+      <TableCell sx={{ borderBottom: "none",width:"4rem", minWidth:"4rem", maxWidth:"4rem"  }} align="left">
         {lastApplicationDate ? (
           <>
             {new Date(lastApplicationDate).toLocaleDateString("en-GB", {
@@ -181,16 +181,16 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           "N/A"
         )}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth:"10rem" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left">
         {term}
       </TableCell>
       <TableCell sx={{ borderBottom: "none", width: "4rem" }} align="center">
         {minimumRequiredGrade}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "7rem", color:isInprogressAllowed ? "green":"red" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" , color:isInprogressAllowed ? "green":"red" }} align="left">
         {isInprogressAllowed ? "Allowed" : "Not Allowed"}
       </TableCell>
-      <TableCell sx={{ borderBottom: "none", width: "7rem" }} align="left">
+      <TableCell sx={{ borderBottom: "none", width: "7rem", maxWidth:"7rem", minWidth:"7rem" }} align="left">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
       <TableCell sx={{ bgcolor: "#FAFAFA",borderBottom: "none", width: "8rem" }} align="left">
@@ -200,11 +200,11 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         {jobDetails}
       </TableCell>
 
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "4rem" }} align="center">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "6rem", minWidth:"6rem" }} align="center">
         {renderButtons()}
       </TableCell>
 
-      {!isInstructor && tabValue === 1 && <TableCell sx={{ borderBottom: "none" }} align="right">
+      {!isInstructor && tabValue === 1 && <TableCell sx={{ borderBottom: "none", width:"4rem" }} align="right">
         <Button
           variant='contained'
           onClick={() => navigate("/apply/" + applicationId, { replace: true })}
