@@ -556,6 +556,8 @@ function CreateAnnouncement() {
     };
     const dispatch = useDispatch();
 
+    console.log(announcementDetails)
+
     return (
         <Box sx={{display: "flex"}}>
           <Sidebar></Sidebar>
@@ -762,7 +764,7 @@ function CreateAnnouncement() {
                               onChange={(newValue) => {
                                 setAnnouncementDetails((prevDetails) => ({
                                   ...prevDetails,
-                                  lastApplicationTime: newValue,
+                                  lastApplicationTime: (newValue.toString().split(" ")[4]).slice(0, 5),
                                 }));
                               }}
                               ampm={false}

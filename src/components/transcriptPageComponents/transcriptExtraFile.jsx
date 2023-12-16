@@ -188,7 +188,7 @@ const QuestionPage = (props) => {
                 questions.map((question, index) => (
                   <Grid item container direction="column" sx={{ border: 1, borderRadius: 3, borderColor: "#cccccc", backgroundColor: "#f5f5f5", marginY: 2, p: 2 }}>
                     <Grid item sx={{ m: 1 }}>
-                      <Typography>Question {index + 1} - {question}</Typography>
+                      <Typography>Question {index + 1} - {question.question}</Typography>
                     </Grid>
                     <Grid item sx={{ m: 1 }}>
                       {/*question.type === "Multiple Choice" && (
