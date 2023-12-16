@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 const InstructorList = ({ instructor_names }) => {
  
   return (
-    <Grid container spacing={1} justifyContent="center" alignItems="center">
+    <Grid container spacing={1}>
       {instructor_names.map((instructor) => (
         <Grid item xs={instructor_names.length==1? 12: 6}  key={instructor}>
             <Chip
