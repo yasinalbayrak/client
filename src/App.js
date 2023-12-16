@@ -22,6 +22,7 @@ import handleError, { handleServerDownError } from "./errors/GlobalErrorHandler"
 import TranscriptPage from "./components/transcriptPageComponents/transcriptUploadPage";
 import TranscriptInfo from "./components/transcriptPageComponents/transcriptInfoPage";
 import QuestionPage from "./components/transcriptPageComponents/transcriptExtraFile";
+import EditQuestionPage from "./components/transcriptPageComponents/EditQuestionPage";
 function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
@@ -81,10 +82,12 @@ function App() {
             <Route path="/application-of/:appId" element={<ApplicantsPage />} />
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/profile/:id" element={<ProfilePage />} />
+            <Route path="/edit-questionPage/:id" element={<EditQuestionPage/>}/>
             <Route path="*" element={<MockCAS />} />
               <Route path="/transcriptUploadPage/:id" element={<TranscriptPage></TranscriptPage>}></Route>
               <Route path="transcriptInfoPage/:id" element={<TranscriptInfo></TranscriptInfo>}></Route>
               <Route path="/questionPage/:id" element={<QuestionPage></QuestionPage>}></Route>
+            
 
 
           </>

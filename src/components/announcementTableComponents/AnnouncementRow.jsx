@@ -24,6 +24,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     course
   } = data.application ?? data;
 
+  const applicationRequestId = data.applicationRequestId ?? "";
 
   const [deletePopupOpened, setDeletePopupOpened] = useState(false);
 
@@ -37,6 +38,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     }).catch((_) => (null))
   }
 
+  console.log('appReqId :>> ', applicationRequestId);
 
   const renderButtons = () => {
     // Condition for instructor
@@ -207,7 +209,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       {!isInstructor && tabValue === 1 && <TableCell sx={{ borderBottom: "none", width:"4rem" }} align="right">
         <Button
           variant='contained'
-          onClick={() => navigate("/apply/" + applicationId, { replace: true })}
+          onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}
           startIcon={<EditIcon />} >
         </Button>
       </TableCell>}
