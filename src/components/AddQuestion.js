@@ -64,9 +64,7 @@ const suggestedQuestions = [
 
 function AddQuestion(props) {
   const [questions, setQuestions] = useState([
-    { questionNumber: 1, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""] },
-    { questionNumber: 2, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""] },
-    { questionNumber: 3, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""] },
+    { questionNumber: 1, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""] }
   ]);
 
   const term = useSelector((state) => state.user.term);

@@ -854,24 +854,6 @@ function CreateAnnouncement() {
                 />
               </Box>
 
-
-
-              {/* <Typography
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    fontSize: "smaller",
-                    color: "gray",
-                    borderTop: "0.5px solid gray",
-                    position: "relative",
-                    bottom: "1.5rem",
-                    paddingRight: "3px",
-                    userSelect: "none"
-                  }}>
-                  Remaining characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
-                </Typography> */}
-
-
             </Grid>
             <Grid
               container

@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import AppBarHeader from "../components/AppBarHeader";
 import Sidebar from "../components/Sidebar";
 import EditQuestion from "../components/EditQuestion";
-import { Typography, Box, Grid } from "@mui/material";
+import { Typography, Box, Grid, InputAdornment } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
@@ -105,6 +105,8 @@ function EditAnnouncement() {
         return 'default';
     }
   };
+
+  const MAX_WORD_COUNT = 255;
 
   const [authUsersList, setAuthUserList] = useState([]); //get instructors from database
   const [authPeople, setAuthPeople] = useState([
@@ -380,8 +382,8 @@ function EditAnnouncement() {
       try {
         const res = await getTerms();
         setAllTerms(res);
-      } catch (error) {
-        // Handle any errors if needed
+      } catch (_) {
+        /* Handled */
       }
     };
 
@@ -518,7 +520,7 @@ function EditAnnouncement() {
 
   const [announcementDetails, setAnnouncementDetails] = useState(null);
   const [UserDetails, setUserDetails] = useState({});
-  const [GetQuestions, setGetQuestions] = useState([]);
+ 
 
   const { id } = useParams(); //for taking post id
   useEffect(() => {
@@ -569,6 +571,7 @@ function EditAnnouncement() {
           authInstructor: FindAuthPeople,
           desiredCourses: FindDesiredCourses,
           term: findTermObject,
+          questions: results.questions
         };
 
         setCourseCode(results.course.courseCode);
@@ -589,7 +592,7 @@ function EditAnnouncement() {
           };
         });
 
-        setGetQuestions([...transformedResultQuestions]);
+        
 
         // Additional state update checks if needed
         if (results && results.course && results.course.courseCode) {
@@ -861,9 +864,9 @@ function EditAnnouncement() {
                 </TextField>
               </Box>
             </Grid>
-            <Grid container direction="row" justifyContent="start" alignItems="flex-start">
+            {announcementDetails.jobDetails && <Grid container direction="row" justifyContent="start" alignItems="flex-start">
               <Box sx={{ minWidth: 150, mt: 2 }}>
-                <Typography paddingTop={3}>Job Details<span style={{ color: 'red' }}>*</span>:</Typography>
+                <Typography>Job Details:</Typography>
                 <TextField
                   placeholder="Enter Job Details..."
                   name="jobDetails"
@@ -872,11 +875,28 @@ function EditAnnouncement() {
                   size="small"
                   rows={5}
                   maxRows={20}
-                  sx={{ mt: 2, width: 400 }}
+                  sx={{ mt: 2, width: 500 }}
                   onChange={handleInput}
+                  required
+                  InputProps={{
+                    style: { display: 'flex', flexDirection: 'column' },
+                    endAdornment: (
+                      <>
+                        <hr style={{ width: '100%', margin: '0.5rem 0' }} />
+                        <InputAdornment position="end" style={{ margin: "0.5rem 0rem 0.5rem 0", alignSelf: "flex-end" }}>
+
+                          <hr style={{ width: '100%', margin: '5px 0' }} />
+                          <Typography variant="body2">
+                            Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
+                            <br />
+                          </Typography>
+                        </InputAdornment>
+                      </>),
+                  }}
                 />
               </Box>
-            </Grid>
+
+            </Grid>}
 
             <Grid container direction="row" justifyContent="start" alignItems="flex-start">
               <Box sx={{ minWidth: 150, mt: 2 }}>
@@ -1256,7 +1276,7 @@ function EditAnnouncement() {
           </Grid>
 
         </Grid>
-        <EditQuestion AnnouncementDetails={announcementDetails} getQuestions={GetQuestions} userDetails={UserDetails} postID={id} username={userName} />
+        <EditQuestion AnnouncementDetails={announcementDetails} userDetails={UserDetails} postID={id} username={userName} />
       </Box>
     </Box>
   );

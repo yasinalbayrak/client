@@ -4,7 +4,7 @@ import handleError from "./errors/GlobalErrorHandler.jsx"
 const url = window.location.href;
 var apiEndpoint = "http://pro2-dev.sabanciuniv.edu:8080/api/v1";
 if (url.indexOf("pro2") === -1) {
-  apiEndpoint = "http://localhost:8080/api/v1"; 
+  apiEndpoint = "http://localhost:8080/api/v1";
 }
 
 async function applyToPost(postId, userID, answers) {
@@ -88,10 +88,33 @@ async function addAnnouncement(
   // const term = "Fall 2022";
   const title = "title add test";
   const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
-  const transformedQuestions = questions.filter((question)=>(question.mQuestion !== "")).map((question) => (
-    question.mQuestion
 
-  ));
+  const transformedQuestions = questions
+  .filter((question) => question.mQuestion.trim() !== "")
+  .map((question) => {
+    let type;
+
+    switch (question.mValue) {
+      case "Text Answer":
+        type = "TEXT";
+        break;
+      case "Numeric Answer":
+        type = "NUMERIC";
+        break;
+      case "Multiple Choice":
+        type = "MULTIPLE_CHOICE";
+        break;
+      default:
+        type = "TEXT";
+    }
+
+    return {
+      question: question.mQuestion,
+      type: type,
+      choices: question.mMultiple,
+    };
+  });
+
   console.log(letterGrade);
   const authInstructor_ids = auth_instructors.map(
     (user) => user.id
@@ -119,7 +142,7 @@ async function addAnnouncement(
   } catch (error) {
 
     return handleError(error);
-    
+
   }
 }
 
@@ -143,16 +166,6 @@ async function updateAnnouncement(
   const title = "title update test";
 
   const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
-  const transformedQuestions = questions.map((question) => (
-    question.mQuestion
-    //   {
-    //   type: question.mValue,
-    //   ranking: question.questionNumber,
-    //   question: question.mQuestion,
-    //   multiple_choices: question.mValue === "Multiple Choice" ? question.mMultiple : [],
-    // }
-
-  ));
   console.log(letterGrade);
   const authInstructor_ids = auth_instructors.map(
     (user) => user.id
@@ -171,7 +184,7 @@ async function updateAnnouncement(
       authorizedInstructors: authInstructor_ids,
       minimumRequiredGrade: letterGrade,
       desiredCourseGrade: letterGrade,
-      questions: transformedQuestions,
+      questions: questions,
       isInprogressAllowed: isInprogressAllowed
     });
     return response.data;
@@ -214,7 +227,7 @@ async function getApplicationRequestsByStudentId(studentId) {
 async function getApplicationRequestsByApplicationId(applicationId) {
   try {
     const results = await axios.get(
-      apiEndpoint + "/applications/" + applicationId +"/applicationRequests"
+      apiEndpoint + "/applications/" + applicationId + "/applicationRequests"
     );
     return results.data;
   } catch (error) { return handleError(error); }
@@ -343,39 +356,39 @@ async function getCurrentTranscript(studentId) {
   try {
     const result = await axios.get(apiEndpoint + "/transcript/get-current-transcript/" + studentId);
     return result.data;
-  } catch (error) {  }
+  } catch (error) { }
 }
 
 async function getStudentCourseGrades(studentId) {
   try {
     const result = await axios.get(apiEndpoint + "/users/previous-grades/" + studentId);
     return result.data;
-  } catch (error) {  }
+  } catch (error) { }
 }
 
 async function getCourseGrades(studentId, courseIds) {
   try {
     const result = await axios.post(
       apiEndpoint + "/transcript/course-grades/" + studentId,
-      {courses: courseIds},
+      { courses: courseIds },
       { headers: { "Content-Type": "application/json" } }
     );
 
     return result.data;
-  }catch (error) {  }
+  } catch (error) { }
 
 }
 
-async function updateApplicationRequestStatus(applicationRequestId,status) {
+async function updateApplicationRequestStatus(applicationRequestId, status) {
   try {
     const result = await axios.put(
-      apiEndpoint + "/applicationRequest/"+ applicationRequestId +"/status",
-      {status: status},
+      apiEndpoint + "/applicationRequest/" + applicationRequestId + "/status",
+      { status: status },
       { headers: { "Content-Type": "application/json" } }
     );
 
     return result.data;
-  }catch (error) { handleError(error)  }
+  } catch (error) { handleError(error) }
 
 }
 
