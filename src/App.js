@@ -82,8 +82,8 @@ function App() {
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/profile/:id" element={<ProfilePage />} />
             <Route path="*" element={<MockCAS />} />
-              <Route path="/transcriptUploadPage" element={<TranscriptPage></TranscriptPage>}></Route>
-              <Route path="transcriptInfoPage" element={<TranscriptInfo></TranscriptInfo>}></Route>
+              <Route path="/transcriptUploadPage/:id" element={<TranscriptPage></TranscriptPage>}></Route>
+              <Route path="transcriptInfoPage/:id" element={<TranscriptInfo></TranscriptInfo>}></Route>
               <Route path="/questionPage/:id" element={<QuestionPage></QuestionPage>}></Route>
 
 

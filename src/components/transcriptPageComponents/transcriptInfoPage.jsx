@@ -3,7 +3,7 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AppBarHeader from "../AppBarHeader";
 import Sidebar from "../Sidebar";
 import {
@@ -25,6 +25,7 @@ import { getCurrentTranscript } from "../../apiCalls";
 const TranscriptInfo=(props)=> {
   const navigate = useNavigate();
   const userID = useSelector((state) => state.user.id);
+  const { id } = useParams();
   const [studentInfo, setstudentInfo] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
@@ -106,7 +107,7 @@ const TranscriptInfo=(props)=> {
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="contained" startIcon={<ArrowForwardIcon />} onClick={() => navigate("/home")} color="success" >
+                  <Button variant="contained" startIcon={<ArrowForwardIcon />} onClick={() => navigate("/apply/"+id, {replace: true})} color="success" >
                   Continue with this information
                   </Button>
                 </Grid>

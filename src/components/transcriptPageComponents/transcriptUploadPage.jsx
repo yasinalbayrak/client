@@ -48,7 +48,7 @@ const TranscriptPage = (props) => {
       return;
     }
     else 
-      navigate("/transcriptInfoPage")
+      navigate("/transcriptInfoPage/"+id, { replace: true });
   };
 
 
