@@ -31,7 +31,6 @@ function App() {
   const url = window.location.href;
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
     if (!isLoggedIn && !isLoading) {
