@@ -156,10 +156,10 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   console.log('previousCourseGrades :>> ', previousCourseGrades);
   return (course.courseCode &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-      <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
+      <TableCell sx={{ borderBottom: "none", minWidth:"4rem" }} component="th" scope="row">
         {course.courseCode}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: "10rem", maxWidth: "18rem" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: "18rem", maxWidth: "18rem" }} align="left">
         <InstructorList instructor_names={instructor_names} />
 
       </TableCell>
@@ -181,10 +181,10 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           "N/A"
         )}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth:"10rem" }} align="left">
         {term}
       </TableCell>
-      <TableCell sx={{ borderBottom: "none", width: "8rem" }} align="center">
+      <TableCell sx={{ borderBottom: "none", width: "4rem" }} align="center">
         {minimumRequiredGrade}
       </TableCell>
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "7rem", color:isInprogressAllowed ? "green":"red" }} align="left">
@@ -204,12 +204,11 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         {renderButtons()}
       </TableCell>
 
-      {!isInstructor && tabValue === 1 && <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
+      {!isInstructor && tabValue === 1 && <TableCell sx={{ borderBottom: "none" }} align="right">
         <Button
           variant='contained'
           onClick={() => navigate("/apply/" + applicationId, { replace: true })}
           startIcon={<EditIcon />} >
-          Edit
         </Button>
       </TableCell>}
     </TableRow>
