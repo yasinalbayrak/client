@@ -396,7 +396,7 @@ async function updateApplicationRequest(applicationRequestId, applicationId, stu
     const result = await axios.put(
       apiEndpoint + "/applicationRequest/update/"+ applicationRequestId,
       {applicationId: applicationId, studentId: studentId, answers: answers},
-      { headers: { "Content-Type": "application/json" } }
+      
     );
 
     return result.data;
