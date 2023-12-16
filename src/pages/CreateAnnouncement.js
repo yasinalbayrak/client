@@ -900,12 +900,7 @@ function CreateAnnouncement() {
                     alignItems="flex-start"
                 >
                   <Box sx={{minWidth: 150, mt: 2}}>
-                    <Grid
-                        container
-                        direction="column"
-                        justifyContent="start"
-                        alignItems="flex-start"
-                    >
+
                       <div style={{display: "block"}}>
                         <Typography paddingTop={3}>Job Details:</Typography>
                       </div>
@@ -950,6 +945,7 @@ function CreateAnnouncement() {
                             }}
                         />
                       </div>
+                  </Box>
 
 
             </Grid>
@@ -993,6 +989,7 @@ function CreateAnnouncement() {
                       />
                     )}
                   />
+
                   <Grid container spacing={1} sx={{ width: '25rem' }}>
 
                         {authPeople &&
