@@ -916,38 +916,38 @@ function EditAnnouncement() {
                   />
                   <Grid container spacing={1} sx={{ width: '25rem' }}>
 
-                    {authPeople &&
-                      authPeople.map((authPerson, index) => {
+                  {authPeople &&
+                    authPeople.map((authPerson, index) => {
 
 
-                        return (
-                          <Grid item xs={6} key={index}>
-                            <Chip
-                              key={authPerson.username}
-                              label={authPerson.username + (authPerson.username.toLowerCase() === userName.toLowerCase() ? " (You)" : "")}
-                              variant="outlined"
-                              avatar={
-                                <Avatar
-                                  sx={{
-                                    backgroundColor: index % 2 === 0 ? "#6A759C" : "#4D5571",
-
-                                  }}
+                      return (
+                        <Grid item xs={5} key={index}>
+                          <Chip
+                            key={authPerson.username}
+                            label={authPerson.display_name + (authPerson.username.toLowerCase() === userName.toLowerCase() ? " (You)" : "")}
+                            variant="outlined"
+                            avatar={
+                              <Avatar
+                                sx={{
+                                  backgroundColor: index % 2 === 0 ? "#6A759C" : "#4D5571"
+                                  
+                                }}
+                              >
+                                <Typography
+                                  fontSize="small"
+                                  sx={{ color: "white" }}
                                 >
-                                  <Typography
-                                    fontSize="small"
-                                    sx={{ color: "white" }}
-                                  >
-                                    {authPerson.display_name.split(" ")[0][0].toUpperCase()}
-                                  </Typography>
-                                </Avatar>
-                              }
-                              sx={{ mt: 2 }}
-                              onDelete={() => handleAuthDelete(authPerson)}
-                              disabled={authPerson.username === userName}
-                            />
-                          </Grid>
-                        );
-                      })}
+                                  {authPerson.display_name.split(" ")[0][0].toUpperCase()}
+                                </Typography>
+                              </Avatar>
+                            }
+                            sx={{ width: '100%', justifyContent: 'space-between' }}
+                            onDelete={() => handleAuthDelete(authPerson)}
+                            disabled={authPerson.username === userName}
+                          />
+                        </Grid>
+                      );
+                    })}
                   </Grid>
                 </Grid>
               </Box>

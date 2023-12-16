@@ -909,7 +909,7 @@ function CreateAnnouncement() {
                         {...params}
                         multiline
                         size="small"
-                        sx={{ mb: 1, mt: 1, width: 300 }}
+                        sx={{ mb: 2, mt: 1, width: 300 }}
                       />
                     )}
                   />
@@ -920,7 +920,7 @@ function CreateAnnouncement() {
 
 
                         return (
-                          <Grid item xs={6} key={index}>
+                          <Grid item xs={5} key={index}>
                             <Chip
                               key={authPerson.username}
                               label={authPerson.display_name + (authPerson.username.toLowerCase() === userName.toLowerCase() ? " (You)" : "")}
@@ -928,8 +928,8 @@ function CreateAnnouncement() {
                               avatar={
                                 <Avatar
                                   sx={{
-                                    backgroundColor: index % 2 === 0 ? "#6A759C" : "#4D5571",
-
+                                    backgroundColor: index % 2 === 0 ? "#6A759C" : "#4D5571"
+                                    
                                   }}
                                 >
                                   <Typography
@@ -940,7 +940,7 @@ function CreateAnnouncement() {
                                   </Typography>
                                 </Avatar>
                               }
-                              sx={{ mt: 2 }}
+                              sx={{ width: '100%', justifyContent: 'space-between' }}
                               onDelete={() => handleAuthDelete(authPerson)}
                               disabled={authPerson.username === userName}
                             />
