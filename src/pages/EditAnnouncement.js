@@ -676,6 +676,7 @@ function EditAnnouncement() {
 
                   <Select
                     labelId="demo-simple-select-label"
+                    disabled
                     id="demo-simple-select"
                     value={termSelect}
                     name="term"
