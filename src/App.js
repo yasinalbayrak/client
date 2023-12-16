@@ -19,13 +19,18 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import handleError, { handleServerDownError } from "./errors/GlobalErrorHandler";
 
+import TranscriptPage from "./components/transcriptPageComponents/transcriptUploadPage";
+import TranscriptInfo from "./components/transcriptPageComponents/transcriptInfoPage";
+import QuestionPage from "./components/transcriptPageComponents/transcriptExtraFile";
 function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
+  const isTranscriptUploded = useSelector((state) => state.user.isTranscriptUploded);
+  const isInstructor = useSelector((state) => state.user.isInstructor);
+  const dispatch = useDispatch();
   const url = window.location.href;
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
     if (!isLoggedIn && !isLoading) {
@@ -60,7 +65,7 @@ function App() {
       }
     }
   }, [isLoggedIn, isLoading, dispatch, navigate, location.pathname, urlParams]);
-  
+
   return (
     <>
       <ToastContainer position="top-right" autoClose={5000} />
@@ -77,6 +82,11 @@ function App() {
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/profile/:id" element={<ProfilePage />} />
             <Route path="*" element={<MockCAS />} />
+              <Route path="/transcriptUploadPage" element={<TranscriptPage></TranscriptPage>}></Route>
+              <Route path="transcriptInfoPage" element={<TranscriptInfo></TranscriptInfo>}></Route>
+              <Route path="/questionPage/:id" element={<QuestionPage></QuestionPage>}></Route>
+
+
           </>
         ) : (
           <>
