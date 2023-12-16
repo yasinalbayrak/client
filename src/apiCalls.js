@@ -392,6 +392,31 @@ async function updateApplicationRequestStatus(applicationRequestId, status) {
 
 }
 
+async function getApplicationRequestById(applicationRequestId) {
+  try {
+    const result = await axios.get(
+      apiEndpoint + "/applicationRequest/"+ applicationRequestId
+    );
+    console.log(result.data);
+    return result.data;
+  }catch (error) { handleError(error)  }
+
+}
+
+
+async function updateApplicationRequest(applicationRequestId, applicationId, studentId, answers) {
+  try {
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/update/"+ applicationRequestId,
+      {applicationId: applicationId, studentId: studentId, answers: answers},
+      
+    );
+
+    return result.data;
+  }catch (error) { handleError(error)  }
+
+}
+
 
 
 
@@ -419,5 +444,7 @@ export {
   getApplicationRequestsByApplicationId,
   getCurrentTranscript,
   deleteApplicationById,
-  getStudentCourseGrades
+  getStudentCourseGrades,
+  getApplicationRequestById,
+  updateApplicationRequest
 };

@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { getAllAnnouncementsOfInstructor, getApplicationRequestsByStudentId } from "../../apiCalls";
 import AnnouncementsTableHead from "./AnnouncementsTableHead"
 import AnnouncementRow from "./AnnouncementRow"
+import { WidthFull } from "@mui/icons-material";
+import { Box } from "@mui/material";
 
 export default function AnnouncementTable(props) {
   const [rows, setRows] = useState([]);

@@ -25,6 +25,11 @@ import Paper from "@mui/material/Paper";
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
 import { useSelector } from "react-redux";
+import { getCurrentTranscript } from "../apiCalls";
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Stack from '@mui/material/Stack';
 
 const ApplyPage = (props) => {
   const navigate = useNavigate();
@@ -32,13 +37,33 @@ const ApplyPage = (props) => {
   const state = useSelector((state) => state);
   const name = useSelector((state) => state.user.name);
   const surname = useSelector((state) => state.user.surname);
-  const userId = useSelector((state) => state.user.id)
+  const userID = useSelector((state) => state.user.id);
+  const [studentInfo, setstudentInfo] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const currentTranscript = await getCurrentTranscript(userID);
+        setstudentInfo(currentTranscript);
+
+      } catch (error) {
+        // Centralized error handling or log the error
+        console.error("Error fetching data:", error);
+        setstudentInfo(null);
+      }
+    };
+
+    fetchData();
+  }, [userID]);
   const rows = [
-    { name: "Student ID:", val: "00000000" },
-    { name: "Name - Surname:", val: name + " " + surname },
-    { name: "Admit term:", val: "-" },
-    { name: "Faculty:", val: "-" },
-    { name: "Program:", val: "-" },
+    { name: "Student ID:", val: studentInfo?.studentSuId },
+    { name: "Name Surname:", val: studentInfo?.studentName },
+    { name: "GPA:", val: studentInfo?.cumulativeGPA },
+    { name: "Current term:", val: studentInfo?.term },
+    { name: "Faculty:", val: "istendi" },
+    { name: "Major:", val: studentInfo?.program?.majors},
+    { name: "Minor:", val: studentInfo?.program?.minors },
+    { name: "Year:", val: studentInfo?.year },
+
   ];
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState({});
   const [questions, setQuestions] = useState([]);
@@ -56,24 +81,6 @@ const ApplyPage = (props) => {
   const onSubmit = () => {
     console.log(questionsAndAnswers);
     var temp = [];
-    /*for (var q in questionsAndAnswers) {
-      if (!questionsAndAnswers.hasOwnProperty(q)) continue;
-
-      /*var temp2 = {};
-      temp2.question_id = parseInt(q);
-      if (!questionsAndAnswers[q]) {
-        for (let index = 0; index < questions.length; index++) {
-          const element = questions[index];
-          //const tempList = JSON.parse(element.multiple_choices);
-          /*if (element.id == q && element.type === "Multiple Choice") {
-            temp2.answer = tempList[0];
-          }
-        }
-      } else {
-        temp2.answer = questionsAndAnswers[q];
-      }
-      temp.push(temp2);
-    }*/
     console.log(temp);
     applyToPost(id, state.user.id, []).then((res) => {
       console.log(res);
@@ -132,7 +139,7 @@ const ApplyPage = (props) => {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("studentId", userId)
+    formData.append("studentId", userID)
     console.log(formData);
 
     postTranscript(formData).then((res) => {
@@ -174,22 +181,6 @@ const ApplyPage = (props) => {
       console.warn('Warning: missing ID.');
     }
   }, [id]); // Dependency array is correct, assuming 'id' changes when expected
-
-  console.log(announcementInfo);
-  console.log(id);
-
-  // useEffect(() => {
-  //   setQuestions(announcementInfo.questions);
-  //   if (announcementInfo.questions !== undefined) {
-  //     let temp = questionsAndAnswers;
-  //     announcementInfo.questions.map((q) => {
-  //       temp[q.id] = "";
-  //     });
-  //     setQuestionsAndAnswers(temp);
-  //   }
-  // }, [announcementInfo]);
-
-
   return (
     <>
       {(!announcementInfo) ? (<div>Loading...</div>) : (
@@ -220,74 +211,23 @@ const ApplyPage = (props) => {
                   </Table>
                 </TableContainer>
               </Grid>
-              <Grid item>
-                <Typography variant="h5">Questions</Typography>
+              <Grid>
+                <Stack sx={{ width: '100%' }} spacing={2}>
+                  <Alert severity="info">
+                  You are applying with the information above. If there is a mistake, you can upload another transcript.  — <strong>Please upload your most current transcript!</strong>
+                  </Alert>
+                </Stack>
               </Grid>
-              {questions &&
-                questions.map((question, index) => (
-                  <Grid item container direction="column" sx={{ border: 1, borderRadius: 3, borderColor: "#cccccc", backgroundColor: "#f5f5f5", marginY: 2, p: 2 }}>
-                    <Grid item sx={{ m: 1 }}>
-                      <Typography>Question {index + 1} - {question.question}</Typography>
-                    </Grid>
-                    <Grid item sx={{ m: 1 }}>
-                      {question.type === "Multiple Choice" && (
-                        <FormControl>
-                          <RadioGroup
-                            aria-labelledby="demo-radio-buttons-group-label"
-                            defaultValue={JSON.parse(question.multiple_choices)[0]}
-                            name="radio-buttons-group"
-                            onChange={(e) => {
-                              onMultipleChoiceAnswerChange(e, question);
-                            }}
-                          >
-                            {JSON.parse(question.multiple_choices).map((ans, index) => (
-                              <FormControlLabel value={ans} control={<Radio />} label={ans}></FormControlLabel>
-                            ))}
-                          </RadioGroup>
-                        </FormControl>
-                      )}
-                      {question.type !== "Multiple Choice" && (
-                        <TextField
-                          name={question}
-                          value={questionsAndAnswers.question}
-                          onChange={(e) => {
-                            onAnswerChange(e, question);
-                          }}
-                          multiline
-                          fullWidth
-                          sx={{ backgroundColor: "white", display: "flex" }}
-                        ></TextField>
-                      )}
-                    </Grid>
-                  </Grid>
-                ))}
-              <Grid item container direction="rows" alignItems="center" justifyContent="center" sx={{ m: 1, marginBottom: 3 }}>
-                <Grid item xs={2}></Grid>
-                <Grid item xs={2}>
-                  <Typography textAlign="center">Upload your transcript:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Grid item container direction="rows">
-                    <Button variant="contained" component="label" onClick={onFileSubmit}>
-                      Upload File
-                      <input type="file" hidden onChange={onFileChange} />
-                    </Button>
-                    <Typography alignItems="center" justifyContent="center" textAlign="center" m={2}>
-                      {filename}
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid item xs={2}></Grid>
-              </Grid>
+              <br></br>
               <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                 <Grid item>
-                  <Button variant="contained" startIcon={<CloseIcon />} onClick={() => navigate("/home", { replace: true })} color="error">
-                    Cancel
+                  <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage/"+id, { replace: true })} color="primary">
+                    Upload new transcript
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="contained" startIcon={<SendIcon />} color="success" onClick={onSubmit}>
-                    Submit
+                  <Button variant="contained" startIcon={<SendIcon />} color="success" onClick={() => navigate("/questionPage/"+ id, { replace: true })}>
+                  Continue with questions
                   </Button>
                 </Grid>
               </Grid>

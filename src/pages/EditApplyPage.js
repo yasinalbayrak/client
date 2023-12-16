@@ -18,31 +18,59 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import UpdateIcon from '@mui/icons-material/Update';
 import CloseIcon from "@mui/icons-material/Close";
 import Sidebar from "../components/Sidebar";
 import AppBarHeader from "../components/AppBarHeader";
 import { useNavigate, useParams } from "react-router";
 import { useSelector } from "react-redux";
-import { getAnnouncement, getApplicationByUsername, updateApplicationById } from "../apiCalls";
+import { getAnnouncement, getApplicationByUsername, updateApplicationById, getCurrentTranscript, getApplicationRequestById} from "../apiCalls";
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import AlertTitle from '@mui/material/AlertTitle';
+import Stack from '@mui/material/Stack';
+import SendIcon from "@mui/icons-material/Send";
 
 function EditApplyPage() {
   const navigate = useNavigate();
   const username = useSelector((state) => state.user.username);
+  const state = useSelector((state) => state);
   const name = useSelector((state) => state.user.name);
   const surname = useSelector((state) => state.user.surname);
+  const userID = useSelector((state) => state.user.id);
+  const [studentInfo, setstudentInfo] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const currentTranscript = await getCurrentTranscript(userID);
+        setstudentInfo(currentTranscript);
+
+      } catch (error) {
+        // Centralized error handling or log the error
+        console.error("Error fetching data:", error);
+        setstudentInfo(null);
+      }
+    };
+
+    fetchData();
+  }, [userID]);
+
   const rows = [
-    { name: "Student ID:", val: "00000000" },
-    { name: "Name - Surname:", val: name + " " + surname },
-    { name: "Admit term:", val: "-" },
-    { name: "Faculty:", val: "-" },
-    { name: "Program:", val: "-" },
+    { name: "Student ID:", val: studentInfo?.studentSuId },
+    { name: "Name Surname:", val: studentInfo?.studentName },
+    { name: "GPA:", val: studentInfo?.cumulativeGPA },
+    { name: "Current term:", val: studentInfo?.term },
+    { name: "Faculty:", val: "istendi" },
+    { name: "Major:", val: studentInfo?.program?.majors},
+    { name: "Minor:", val: studentInfo?.program?.minors },
+    { name: "Year:", val: studentInfo?.year },
+
   ];
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState({});
   const [questions, setQuestions] = useState([]);
-  const [announcementInfo, setAnnouncementInfo] = useState({});
+  const [appReqInfo, setAppReqInfo] = useState(null);
   const [applicationInfo, setApplicationInfo] = useState({});
+  const [applicationId, setApplicationId] = useState();
   const [defaultAnswers, setDefaultAnswers] = useState([]);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [answerIds, setAnswerIds] = useState([]);
@@ -53,6 +81,9 @@ function EditApplyPage() {
     return initialFileName;
   });
 
+  const data = useRef();
+  const isLoading = useRef();
+
   const handleSnackClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -60,6 +91,25 @@ function EditApplyPage() {
 
     setSnackOpen(false);
   };
+
+  useEffect(() => {
+    var temp = {};
+    if (questions !== undefined) {
+      for (let index = 0; index < questions.length; index++) {
+        const element = questions[index].id;
+        temp[element] = "";
+      }
+      setQuestionsAndAnswers(temp);
+    }
+  }, [questions]);
+
+  useEffect(() => {
+    if (transcript) {
+      console.log("Transcript is added correctly:" + transcript);
+    } else {
+      console.log("Transcript is not added correctly.");
+    }
+  }, [transcript]);
 
   const onSubmit = () => {
     console.log(questionsAndAnswers);
@@ -176,156 +226,124 @@ function EditApplyPage() {
     setFile(name);
   };
   
-  useEffect(() => {
-    getAnnouncement(id).then((results) => {
-      setAnnouncementInfo(results);
-    });
-    // ----------
-  }, [id]);
+  // useEffect(() => {
+  //   getAnnouncement(id).then((results) => {
+  //     setAnnouncementInfo(results);
+  //   });
+  //   // ----------
+  // }, [id]);
+
+  // useEffect(() => {
+  //   setQuestions(announcementInfo.questions);
+  //   if (announcementInfo.questions !== undefined) {
+  //     let temp = questionsAndAnswers;
+  //     announcementInfo.questions.map((q) => {
+  //       temp[q.id] = "";
+  //     });
+  //     setQuestionsAndAnswers(temp);
+  //   }
+  //   getApplicationByUsername(username).then((results) => {
+  //     for (let index = 0; index < results.length; index++) {
+  //       const element = results[index];
+  //       console.log(element, announcementInfo.id);
+  //       if (element.post_id === announcementInfo.id) {
+  //         setApplicationInfo(element);
+  //         var tmpAnswers = [];
+  //         var tmpIds = [];
+  //         for (let i = 0; i < element.answers.length; i++) {
+  //           const ans = element.answers[i];
+  //           tmpAnswers.push(ans.answer);
+  //           tmpIds.push(ans.id);
+  //         }
+  //         setAnswerIds(tmpIds);
+  //         setDefaultAnswers(tmpAnswers);
+  //         console.log(tmpAnswers);
+  //       }
+  //     }
+  //   });
+  // }, [announcementInfo]);
 
   useEffect(() => {
-    setQuestions(announcementInfo.questions);
-    if (announcementInfo.questions !== undefined) {
-      let temp = questionsAndAnswers;
-      announcementInfo.questions.map((q) => {
-        temp[q.id] = "";
-      });
-      setQuestionsAndAnswers(temp);
-    }
-    getApplicationByUsername(username).then((results) => {
-      for (let index = 0; index < results.length; index++) {
-        const element = results[index];
-        console.log(element, announcementInfo.id);
-        if (element.post_id === announcementInfo.id) {
-          setApplicationInfo(element);
-          var tmpAnswers = [];
-          var tmpIds = [];
-          for (let i = 0; i < element.answers.length; i++) {
-            const ans = element.answers[i];
-            tmpAnswers.push(ans.answer);
-            tmpIds.push(ans.id);
-          }
-          setAnswerIds(tmpIds);
-          setDefaultAnswers(tmpAnswers);
-          console.log(tmpAnswers);
+    // Ensure 'id' is available and not undefined or null
+    if (id) {
+      const fetchApplicationRequest = async () => {
+        try {
+          // Now we're sure 'id' is passed to 'getAnnouncement'
+          const results = await getApplicationRequestById(id);
+          setAppReqInfo(results);
+          setApplicationId(results.application.applicationId);
+          data.current = results;
+          isLoading.current = false;
+          console.log(results);
+        } catch (error) {
+          console.error('Failed to fetch app request:', error);
         }
-      }
-    });
-  }, [announcementInfo]);
+      };
+
+      fetchApplicationRequest(); // Execute the function
+    } else {
+      console.warn('Warning: missing ID.');
+    }
+  }, [id]); // Dependency array is correct, assuming 'id' changes when expected
+  
+  console.log(appReqInfo)
+  console.log(data.current)
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <Sidebar></Sidebar>
-      <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
-        <AppBarHeader />
-        <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
-          <Grid item>
-            <Typography variant="h4">{announcementInfo.course_code} LA Application</Typography>
-            <Divider></Divider>
-          </Grid>
-          <Grid item sx={{ m: 2 }}>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 500, border: 1.5, borderColor: "#cccccc" }} aria-label="simple table">
-                <TableBody>
-                  {rows.map((row, index) => (
-                    <TableRow key={row.name}>
-                      <TableCell component="th" scope="row" align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
-                        {row.val}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
-          <Grid item>
-            <Typography variant="h5">Questions</Typography>
-          </Grid>
-          {questions &&
-            questions.map((question, index) => (
-              <Grid item container direction="column" sx={{ border: 1, borderRadius: 3, borderColor: "#cccccc", backgroundColor: "#f5f5f5", marginY: 2, p: 2 }}>
-                <Grid item sx={{ m: 1 }}>
-                  <Typography>Question {index + 1} - {question.question}</Typography>
+    <>
+      {(!appReqInfo) ? (<div>Loading...</div>) : (
+        <Box sx={{ display: "flex" }}>
+          <Sidebar></Sidebar>
+          <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
+            <AppBarHeader />
+            <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
+              <Grid item>
+                <Typography variant="h4">{appReqInfo.application.course?.courseCode} LA Application Edit Page</Typography>
+                <Divider></Divider>
+              </Grid>
+              <Grid item sx={{ m: 2 }}>
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 500, border: 1.5, borderColor: "#cccccc" }} aria-label="simple table">
+                    <TableBody>
+                      {rows.map((row, index) => (
+                        <TableRow key={row.name}>
+                          <TableCell component="th" scope="row" align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
+                            {row.name}
+                          </TableCell>
+                          <TableCell align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
+                            {row.val}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Grid>
+              <Grid>
+                <Stack sx={{ width: '100%' }} spacing={2}>
+                  <Alert severity="info">
+                  You are editing your application with the information above. If there is a mistake, you can upload another transcript.  — <strong>Please upload your most current transcript!</strong>
+                  </Alert>
+                </Stack>
+              </Grid>
+              <br></br>
+              <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
+                <Grid item>
+                  <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage/"+id, { replace: true })} color="primary">
+                    Upload new transcript
+                  </Button>
                 </Grid>
-                <Grid item sx={{ m: 1 }}>
-                  {question.type === "Multiple Choice" && (
-                    <FormControl>
-                      <RadioGroup
-                        aria-labelledby="demo-radio-buttons-group-label"
-                        value={defaultAnswers[index] ? defaultAnswers[index] : "a"}
-                        name="radio-buttons-group"
-                        onChange={(e) => {
-                          onMultipleChoiceAnswerChange(e, question);
-                        }}
-                      >
-                        {JSON.parse(question.multiple_choices).map((ans) => (
-                            <FormControlLabel value={ans} control={<Radio />} label={ans}></FormControlLabel>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                  )}
-                  {question.type !== "Multiple Choice" && (
-                    <TextField
-                      defaultValue={defaultAnswers[index]}
-                      name={question}
-                      value={questionsAndAnswers.question}
-                      onChange={(e) => {
-                        onAnswerChange(e, question);
-                      }}
-                      multiline
-                      fullWidth
-                      sx={{ backgroundColor: "white", display: "flex" }}
-                    ></TextField>
-                  )}
+                <Grid item>
+                  <Button variant="contained" startIcon={<SendIcon />} color="success" onClick={() => navigate("/edit-questionPage/"+ id, { replace: true })}>
+                  Continue with questions
+                  </Button>
                 </Grid>
               </Grid>
-            ))}
-          <Grid item container direction="rows" alignItems="center" justifyContent="center" sx={{ m: 1, marginBottom: 3 }}>
-            <Grid item xs={2}>
-              <Snackbar
-                open={snackOpen}
-                autoHideDuration={10000}
-                onClose={handleSnackClose}
-                anchorOrigin={{ vertical: "top", horizontal: "center" }}
-              >
-                <Alert onClose={handleSnackClose} severity="error">
-                  File upload error. File needs to be a PDF of transcript and less than 1MB.
-                </Alert>
-              </Snackbar></Grid>
-            <Grid item xs={2}>
-              <Typography textAlign="center">Upload your transcript:</Typography>
             </Grid>
-            <Grid item xs={6}>
-              <Grid item container direction="rows">
-                <Button variant="contained" component="label">
-                  Upload File
-                  <input type="file" hidden onChange={onFileChange} />
-                </Button>
-                <Typography alignItems="center" justifyContent="center" textAlign="center" m={2}>
-                  {filename}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid item xs={2}></Grid>
-          </Grid>
-          <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
-            <Grid item>
-              <Button variant="contained" startIcon={<CloseIcon />} onClick={() => navigate("/home", { replace: true })} color="error">
-                Cancel
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button variant="contained" startIcon={<UpdateIcon />} color="success" onClick={onSubmit}>
-                Update
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Box>
-    </Box>
+          </Box>
+        </Box>
+      )}
+    </>
   );
 }
 
