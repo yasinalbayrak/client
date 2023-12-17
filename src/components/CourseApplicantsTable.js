@@ -40,7 +40,22 @@ function CourseApplicantsTable(props) {
                     {row.term}
                   </TableCell>
                   <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
-                    {row.lastApplicationDate.slice(0,10)}
+                    {row.lastApplicationDate ? (
+                        <>
+                          {new Date(row.lastApplicationDate).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}{" "}
+                          /{" "}
+                          {new Date(row.lastApplicationDate).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </>
+                    ) : (
+                        "N/A"
+                    )}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="center">
                     <Button
