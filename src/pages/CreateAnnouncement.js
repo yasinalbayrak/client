@@ -739,93 +739,101 @@ function CreateAnnouncement() {
                 >
                   <Box sx={{minWidth: 150}}>
                     <Typography>Last Application Date<span style={{color: 'red'}}>*</span>:</Typography>
-                    <TextField
-                        id="outlined-required"
-                        name="lastApplicationDate"
-                        label="Enter last date"
-                        variant="outlined"
-                        type="date"
-                        value={announcementDetails.lastApplicationDate}
-                        InputLabelProps={{shrink: true}}
-                        size="small"
-                        sx={{mt: 2}}
-                        onChange={handleInput}
-                    />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DemoContainer components={["TimePicker", "TimePicker"]}>
-                        <div style={{overflow: "hidden", marginLeft: "1rem"}}>
-                          <TimePicker
-                              id="outlined-required"
-                              name="lastApplicationTime"
-                              label="Enter deadline"
-                              variant="outlined"
-                              value={announcementDetails.lastApplicationTime}
-                              InputLabelProps={{shrink: true}}
-                              onChange={(newValue) => {
-                                setAnnouncementDetails((prevDetails) => ({
-                                  ...prevDetails,
-                                  lastApplicationTime: (newValue.toString().split(" ")[4]).slice(0, 5),
-                                }));
-                              }}
-                              ampm={false}
-                              sx={{
-                                "& .MuiOutlinedInput-notchedOutline": {
-                                  borderColor: "lightgray !important", // Set the border color to gray
-                                  borderWidth: "1px ",
-                                },
-                                "&:hover .MuiOutlinedInput-notchedOutline": {
-                                  borderColor: "black!important",
-                                },
-                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                  borderColor: "black !important",
-                                },
-                                "& .MuiInputBase-input": {
-                                  color: "black", // Set the text color to black
-                                },
-                                "& .MuiInputLabel-root": {
-                                  color: "gray !important",
-                                },
-
-                                "& .MuiOutlinedInput-root": {
-                                  width: "105px !important",
-                                  height: "40px !important",
-                                },
-                                "& .MuiInputBase-root": {
-                                  height: "100%", // Ensure the input base takes the full height
-                                },
-                                "& .MuiPickersClock-pin": {
-                                  backgroundColor: "black", // Set the clock pin color
-                                },
-                                "& .MuiPickersClockPointer-pointer": {
-                                  backgroundColor: "black", // Set the clock pointer color
-                                },
-                                "& .MuiIconButton-root": {
-                                  padding: "8px", // Adjust the padding to make the clock icon smaller
-                                  "& .MuiSvgIcon-root": {
-                                    fill: "black", // Set the fill color of the clock icon to black
-                                    fontSize: "1rem",
-                                  },
-                                },
-                                "& .MuiTypography-body2": {
-                                  fontSize: "0.8rem", // Adjust the font size as needed
-                                },
-                                "& .MuiPaper-root": {
-                                  overflowY: "hidden ", // Hide the vertical scrollbar
-                                },
-                                marginTop: "9px",
-                              }}
-                          />
-                        </div>
-                      </DemoContainer>
-                    </LocalizationProvider>
-                    <Tooltip
-                        title="The time you select is adjusted to Istanbul local time."
-                        placement="right"
-                    >
-                      <IconButton>
-                        <HelpCenterIcon/>
-                      </IconButton>
-                    </Tooltip>
+                    <Grid container direction="row" spacing={2}>
+                      <Grid item>
+                        <TextField
+                            id="outlined-required"
+                            name="lastApplicationDate"
+                            label="Enter last date"
+                            variant="outlined"
+                            type="date"
+                            value={announcementDetails.lastApplicationDate}
+                            InputLabelProps={{shrink: true}}
+                            size="small"
+                            sx={{mt: 2}}
+                            onChange={handleInput}
+                        />
+                      </Grid>
+                      <Grid item>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DemoContainer components={["TimePicker", "TimePicker"]}>
+                            <div style={{overflow: "hidden", marginLeft: "1rem"}}>
+                              <TimePicker
+                                  id="outlined-required"
+                                  name="lastApplicationTime"
+                                  label="Enter deadline"
+                                  variant="outlined"
+                                  value={announcementDetails.lastApplicationTime}
+                                  InputLabelProps={{shrink: true}}
+                                  onChange={(newValue) => {
+                                    setAnnouncementDetails((prevDetails) => ({
+                                      ...prevDetails,
+                                      lastApplicationTime: (newValue.toString().split(" ")[4]).slice(0, 5),
+                                    }));
+                                  }}
+                                  ampm={false}
+                                  sx={{
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                      borderColor: "lightgray !important",
+                                      borderWidth: "1px ",
+                                    },
+                                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                                      borderColor: "black!important",
+                                    },
+                                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                      borderColor: "black !important",
+                                    },
+                                    "& .MuiInputBase-input": {
+                                      color: "black",
+                                    },
+                                    "& .MuiInputLabel-root": {
+                                      color: "gray !important",
+                                    },
+                                    "& .MuiOutlinedInput-root": {
+                                      width: "105px !important",
+                                      height: "40px !important",
+                                    },
+                                    "& .MuiInputBase-root": {
+                                      height: "100%",
+                                    },
+                                    "& .MuiPickersClock-pin": {
+                                      backgroundColor: "black",
+                                    },
+                                    "& .MuiPickersClockPointer-pointer": {
+                                      backgroundColor: "black",
+                                    },
+                                    "& .MuiIconButton-root": {
+                                      padding: "8px",
+                                      "& .MuiSvgIcon-root": {
+                                        fill: "black",
+                                        fontSize: "1rem",
+                                      },
+                                    },
+                                    "& .MuiTypography-body2": {
+                                      fontSize: "0.8rem",
+                                    },
+                                    "& .MuiPaper-root": {
+                                      overflowY: "hidden ",
+                                    },
+                                    marginTop: "9px",
+                                  }}
+                              />
+                            </div>
+                          </DemoContainer>
+                        </LocalizationProvider>
+                      </Grid>
+                      <Grid item>
+                        <Tooltip
+                            title="The time you select is adjusted to Istanbul local time."
+                            placement="right"
+                            sx={{ marginTop: "15px" }}
+                        >
+                          <IconButton>
+                            <HelpCenterIcon/>
+                          </IconButton>
+                        </Tooltip>
+                      </Grid>
+                    </Grid>
                   </Box>
                 </Grid>
                 <Grid
