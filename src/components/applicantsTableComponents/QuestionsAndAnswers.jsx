@@ -9,9 +9,9 @@ const Container = styled('div')`
   padding: 10px;
   width: 100%;
   border: 1px solid #ccc;
-  border-radius: 10px; /* Add border-radius for rounded corners */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for a 3D effect */
-  background-color: #fff; /* Set a background color for a professional look */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 `;
 
 const Question = styled('div')`
@@ -24,11 +24,34 @@ const Answer = styled('div')`
   color: #333;
 `;
 
+const ChoicesList = styled('ul')`
+  list-style-type: none;
+  padding: 0;
+`;
+
+const ChoiceItem = styled('li')`
+  margin-bottom: 5px;
+`;
+
+
+const charCodeStart = 'A'.charCodeAt(0);
+
+
 const QuestionAnswer = ({ question, answer, qNo }) => {
   return (
     <Container>
-      <Question>Q{qNo}: {question}</Question>
-      <Answer> <span style={{fontWeight: "bold"}}>Answer:</span> {answer}</Answer>
+      <Question>Q{qNo}: {question.question}</Question>
+      {question.type === 'MULTIPLE_CHOICE' ? (
+        <ChoicesList>
+          {question.choices.map((choice, index) => (
+             <ChoiceItem key={index}>{String.fromCharCode(charCodeStart + index)}) {choice}</ChoiceItem>
+          ))}
+        </ChoicesList>
+      ) : (
+        <Answer>
+          <span style={{ fontWeight: 'bold' }}>Answer:</span> {answer}
+        </Answer>
+      )}
     </Container>
   );
 };
