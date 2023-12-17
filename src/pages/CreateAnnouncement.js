@@ -957,7 +957,7 @@ function CreateAnnouncement() {
               justifyContent="start"
               alignItems="flex-start"
             >
-              <Box sx={{ minWidth: 150, mt: 2 }}>
+              <Box sx={{ minWidth: 200, mt: 2 }}>
                 <Typography sx={{ my: 2 }}>Authorized Instructor(s):</Typography>
                 <Grid
                   item
@@ -987,12 +987,12 @@ function CreateAnnouncement() {
                         {...params}
                         multiline
                         size="small"
-                        sx={{ mb: 2, mt: 1, width: 300 }}
+                        sx={{ mb: 2, mt: 1, width: 400 }}
                       />
                     )}
                   />
 
-                  <Grid container spacing={1} sx={{ width: '25rem' }}>
+                  <Grid container spacing={1} sx={{ width: '31rem' }}>
 
                         {authPeople &&
                             authPeople.map((authPerson, index) => {
@@ -1019,7 +1019,12 @@ function CreateAnnouncement() {
                                   </Typography>
                                 </Avatar>
                               }
-                              sx={{ width: '100%', justifyContent: 'space-between' }}
+                              sx={{ width: '100%', justifyContent: 'space-between', minHeight: '2rem',
+                              height: 'fit-content',
+                              '& .MuiChip-label': {
+                                display: 'block',
+                                whiteSpace: 'normal',
+                              }, }}
                               onDelete={() => handleAuthDelete(authPerson)}
                               disabled={authPerson.username === userName}
                             />
