@@ -1314,9 +1314,9 @@ function CreateAnnouncement() {
                                       }}
                                   />
                                   {/* TODO do not enter static values */}
-                                  <Typography width={`${"IP Not Allowed".length * 8}px`} variant="body2"
+                                  <Typography width={`${"In Progress Not Allowed".length * 8}px`} variant="body2"
                                               color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
-                                    {"IP " + (courseSelected.isInprogressAllowed ? 'Allowed' : 'Not Allowed')}
+                                    {"In Progress " + (courseSelected.isInprogressAllowed ? 'Allowed' : 'Not Allowed')}
                                   </Typography>
                                 </div>
                               </TableCell>
