@@ -7,6 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import CancelIcon from '@mui/icons-material/Cancel';
+import ErrorIcon from '@mui/icons-material/Error';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 
@@ -39,7 +40,7 @@ export default function Popup({ opened, flipPopup, title, text, negAction, posAc
                 }}
             >
                 <ListItemIcon>
-                    <CancelIcon fontSize="large" sx={{
+                    <ErrorIcon fontSize="large" sx={{
                         width: "6rem",
                         height: "6rem",
                         color: "red"
