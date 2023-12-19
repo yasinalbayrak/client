@@ -23,6 +23,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import { useSelector } from "react-redux";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import {toast} from "react-toastify";
 
 const QuestionPage = (props) => {
   const navigate = useNavigate();
@@ -87,7 +88,8 @@ const QuestionPage = (props) => {
       await applyToPost(id, state.user.id, temp);
   
       // Navigate to the success page only if the application submission is successful
-      navigate("/success", { replace: true, state: { successText: "You have applied successfully." } });
+      navigate("/Home", { replace: true });
+      toast.success("Your application has been received successfully.")
     } catch (error) {
       // Handle any errors during the applyToPost
       console.error('Error during application submission:', error);

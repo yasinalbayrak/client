@@ -24,6 +24,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import { useSelector } from "react-redux";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import {toast} from "react-toastify";
 
 const EditQuestionPage = (props) => {
 
@@ -48,7 +49,8 @@ const EditQuestionPage = (props) => {
           await updateApplicationRequest(id, appReqInfo.application.applicationId , state.user.id, answers);
       
           // Navigate to the success page only if the application submission is successful
-          navigate("/success", { replace: true, state: { successText: "You have edited application successfully." } });
+          navigate("/Home", { replace: true });
+          toast.success("Your application has been edited successfully.")
         } catch (error) {
           // Handle any errors during the applyToPost
           console.error('Error during application submission:', error);
