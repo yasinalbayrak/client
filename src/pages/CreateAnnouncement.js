@@ -76,8 +76,10 @@ function CreateAnnouncement() {
     {value: "C+", label: "C+"},
     {value: "C", label: "C"},
     {value: "C-", label: "C-"},
+    {value: "D+", label: "D+"},
     {value: "D", label: "D"},
     {value: "S", label: "S"},
+    {value: "W", label: "W"},
   ];
   const WorkHour = [
     {value: "PT1H", label: "1 Hour"},
