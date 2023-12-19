@@ -30,6 +30,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Stack from '@mui/material/Stack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const ApplyPage = (props) => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const ApplyPage = (props) => {
     { name: "Name Surname:", val: studentInfo?.studentName },
     { name: "GPA:", val: studentInfo?.cumulativeGPA },
     { name: "Current term:", val: studentInfo?.term },
-    { name: "Faculty:", val: "istendi" },
+    { name: "Faculty:", val: studentInfo?.faculty },
     { name: "Major:", val: studentInfo?.program?.majors},
     { name: "Minor:", val: studentInfo?.program?.minors },
     { name: "Year:", val: studentInfo?.year },
@@ -226,9 +227,15 @@ const ApplyPage = (props) => {
                   </Button>
                 </Grid>
                 <Grid item>
+                  {announcementInfo.questions.length > 0 ? (
                   <Button variant="contained" startIcon={<SendIcon />} color="success" onClick={() => navigate("/questionPage/"+ id, { replace: true })}>
                   Continue with questions
                   </Button>
+                  ) : (
+                    <Button variant="contained" startIcon={<ArrowForwardIcon />} color="success" onClick={onSubmit}>
+                      Complete the application
+                    </Button>
+                  )}
                 </Grid>
               </Grid>
             </Grid>

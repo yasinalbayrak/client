@@ -49,7 +49,7 @@ const TranscriptInfo=(props)=> {
     { name: "Name Surname:", val: studentInfo?.studentName },
     { name: "GPA:", val: studentInfo?.cumulativeGPA },
     { name: "Current term:", val: studentInfo?.term },
-    { name: "Faculty:", val: "istendi" },
+    { name: "Faculty:", val: studentInfo?.faculty },
     { name: "Major:", val: studentInfo?.program?.majors},
     { name: "Minor:", val: studentInfo?.program?.minors },
     { name: "Year:", val: studentInfo?.year },
