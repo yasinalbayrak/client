@@ -53,16 +53,18 @@ function EditAnnouncement() {
   const userName = name + " " + surname;
   const term = useSelector((state) => state.user.term);
   const grades = [
-    { value: "A", label: "A" },
-    { value: "A-", label: "A-" },
-    { value: "B+", label: "B+" },
-    { value: "B", label: "B" },
-    { value: "B-", label: "B-" },
-    { value: "C+", label: "C+" },
-    { value: "C", label: "C" },
-    { value: "C-", label: "C-" },
-    { value: "D", label: "D" },
-    { value: "S", label: "S" },
+    {value: "A", label: "A"},
+    {value: "A-", label: "A-"},
+    {value: "B+", label: "B+"},
+    {value: "B", label: "B"},
+    {value: "B-", label: "B-"},
+    {value: "C+", label: "C+"},
+    {value: "C", label: "C"},
+    {value: "C-", label: "C-"},
+    {value: "D+", label: "D+"},
+    {value: "D", label: "D"},
+    {value: "S", label: "S"},
+    {value: "W", label: "W"},
   ];
   const WorkHour = [
     { value: "PT1H", label: "1 Hour" },
@@ -98,6 +100,7 @@ function EditAnnouncement() {
       case 'C-':
         return 'primary';
       case 'D':
+      case 'D+':
         return 'warning';
       case 'S':
         return 'default';
