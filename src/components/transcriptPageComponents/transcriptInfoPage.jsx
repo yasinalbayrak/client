@@ -102,7 +102,7 @@ const TranscriptInfo=(props)=> {
               <br></br>
               <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                 <Grid item>
-                  <Button variant="contained" startIcon={<ArrowBackIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="error">
+                  <Button variant="contained" startIcon={<ArrowBackIcon />} onClick={() => navigate("/transcriptUploadPage/"+id, { replace: true })} color="error">
                     Upload new transcript
                   </Button>
                 </Grid>
