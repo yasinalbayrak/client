@@ -108,6 +108,7 @@ function CreateAnnouncement() {
       case 'C-':
         return 'primary';
       case 'D':
+      case 'D+':
         return 'warning';
       case 'S':
         return 'default';
