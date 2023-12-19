@@ -30,6 +30,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Stack from '@mui/material/Stack';
+import BackButton from "../components/buttons/BackButton";
 
 const ApplyPage = (props) => {
   const navigate = useNavigate();
@@ -187,6 +188,7 @@ const ApplyPage = (props) => {
         <Box sx={{ display: "flex" }}>
           <Sidebar></Sidebar>
           <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
+            <BackButton to={"/home"}/>
             <AppBarHeader />
             <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
               <Grid item>

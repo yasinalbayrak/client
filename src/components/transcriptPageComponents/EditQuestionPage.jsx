@@ -25,6 +25,7 @@ import TableRow from "@mui/material/TableRow";
 import { useSelector } from "react-redux";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {toast} from "react-toastify";
+import BackButton from "../buttons/BackButton";
 
 const EditQuestionPage = (props) => {
 
@@ -146,7 +147,8 @@ const EditQuestionPage = (props) => {
         <Box sx={{ display: "flex" }}>
           <Sidebar></Sidebar>
           <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
-            <AppBarHeader />
+              <BackButton to={`/edit-apply/${id}`} />
+              <AppBarHeader />
             <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
               <Grid item>
                 <Typography variant="h4">{appReqInfo.application.course?.courseCode} LA Application Edit</Typography>

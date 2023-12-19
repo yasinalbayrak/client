@@ -24,6 +24,7 @@ import TableRow from "@mui/material/TableRow";
 import { useSelector } from "react-redux";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {toast} from "react-toastify";
+import BackButton from "../buttons/BackButton";
 
 const QuestionPage = (props) => {
   const navigate = useNavigate();
@@ -176,6 +177,7 @@ const QuestionPage = (props) => {
         <Box sx={{ display: "flex" }}>
           <Sidebar></Sidebar>
           <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
+            <BackButton to={`/apply/${id}`} />
             <AppBarHeader />
             <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
               <Grid item>
