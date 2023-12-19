@@ -66,10 +66,11 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
         "C+": 5,
         "C": 6,
         "C-": 7,
-        "D": 8,
-        "S": 9,
-        "W": 10,
-        "F": 11
+        "D+":8,
+        "D": 9,
+        "S": 10,
+        "W": 11,
+        "F": 12
     };;
     // const previousCourseGrades = [
     //     { courseCode: 'CS 101', minLetterGrade: 'A', inProgress: true },
@@ -130,7 +131,7 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
 
     return (
         <React.Fragment>
-            <Button variant="outlined" sx={{ fontSize: "0.7rem", padding: "4px 8px" }} onClick={handleClickOpen}>
+            <Button variant="outlined" sx={{ fontSize: "0.5rem", padding: "4px 8px" }} onClick={handleClickOpen}>
                 See Requirements
             </Button>
             <BootstrapDialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
