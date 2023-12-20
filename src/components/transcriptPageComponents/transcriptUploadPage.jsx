@@ -18,6 +18,10 @@ import { useSelector } from "react-redux";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import {handleInfo} from "../../errors/GlobalErrorHandler"
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import ReactDOM from 'react-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 
 const TranscriptPage = (props) => {
   const navigate = useNavigate();
@@ -74,7 +78,6 @@ const TranscriptPage = (props) => {
       ); 
 
     };
-  
     const onFileSubmit = () => {
       
     }
@@ -122,7 +125,14 @@ const TranscriptPage = (props) => {
                         <input type="file" hidden onChange={onFileChange} />
                       </Button>
                       <Typography alignItems="center" justifyContent="center" textAlign="center" m={2}>
-                        {filename}
+                        {filename !== "No File Uploaded" ? (
+                            <>
+                              <FontAwesomeIcon icon={faFilePdf} style={{ color: 'red' }}/>
+                              <span style={{ fontSize: 'smaller', marginLeft: '0.3em' }}>{filename}</span>
+                            </>
+                        ) : (
+                            <span style={{ fontSize: 'smaller' }}>{filename}</span>
+                        )}
                       </Typography>
                     </Grid>
                   </Grid>
