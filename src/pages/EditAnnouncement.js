@@ -34,6 +34,9 @@ import { flipShowTerms } from "../redux/userSlice";
 import Alert from '@mui/material/Alert';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import BackButton from "../components/buttons/BackButton";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
+import HelpCenterIcon from "@mui/icons-material/HelpCenter";
+import Tooltip from "@mui/material/Tooltip";
 
 const useStyles = makeStyles((theme) => ({
   activeItem: {
@@ -106,7 +109,7 @@ function EditAnnouncement() {
     }
   };
 
-  const MAX_WORD_COUNT = 255;
+  const MAX_WORD_COUNT = 2048;
 
   const [authUsersList, setAuthUserList] = useState([]); //get instructors from database
   const [authPeople, setAuthPeople] = useState([
@@ -135,7 +138,6 @@ function EditAnnouncement() {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
-
   const [desiredLetterGrade, setDesiredLetterGrade] = useState({});
   const [isInprogressAllowed, setIsInprogressAllowed] = useState(false);
   const [desiredCourseCode, setDesiredCourseCode] = useState("");
@@ -623,6 +625,10 @@ function EditAnnouncement() {
   function handleInput(event) {
     const { name, value } = event.target;
 
+    if (name === "jobDetails" && value.length > 2048) {
+      return;
+    }
+
     setAnnouncementDetails((prevDetails) => ({
       ...prevDetails,
       [name]: value,
@@ -843,6 +849,28 @@ function EditAnnouncement() {
                     </MenuItem>
                   ))}
                 </TextField>
+                <FormControlLabel
+                    value={announcementDetails.isInprogressAllowed}
+                    onChange={(event) => {
+                      setAnnouncementDetails((prevDetails) => ({
+                        ...prevDetails,
+                        isInprogressAllowed: event.target.checked, // Use event.target.checked for checkbox
+                      }));
+                    }}
+                    control={<Checkbox/>}
+                    label="Allow In Progress Applicants"
+                    sx={{mt: 2, ml: 2}}
+                />
+
+                <Tooltip
+                    title="By checking this box, you allow students who currently taking this course to apply to be a LA."
+                    placement="right"
+                    sx={{marginLeft: -1, marginTop:2}}
+                >
+                  <IconButton>
+                    <HelpCenterIcon/>
+                  </IconButton>
+                </Tooltip>
               </Box>
             </Grid>
             <Grid container direction="row" justifyContent="start" alignItems="center">
@@ -865,39 +893,43 @@ function EditAnnouncement() {
                 </TextField>
               </Box>
             </Grid>
-            {announcementDetails.jobDetails && <Grid container direction="row" justifyContent="start" alignItems="flex-start">
-              <Box sx={{ minWidth: 150, mt: 2 }}>
-                <Typography>Job Details:</Typography>
-                <TextField
-                  placeholder="Enter Job Details..."
-                  name="jobDetails"
-                  value={announcementDetails.jobDetails}
-                  multiline
-                  size="small"
-                  rows={5}
-                  maxRows={20}
-                  sx={{ mt: 2, width: 500 }}
-                  onChange={handleInput}
-                  required
-                  InputProps={{
-                    style: { display: 'flex', flexDirection: 'column' },
-                    endAdornment: (
-                      <>
-                        <hr style={{ width: '100%', margin: '0.5rem 0' }} />
-                        <InputAdornment position="end" style={{ margin: "0.5rem 0rem 0.5rem 0", alignSelf: "flex-end" }}>
-
-                          <hr style={{ width: '100%', margin: '5px 0' }} />
-                          <Typography variant="body2">
-                            Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
-                            <br />
-                          </Typography>
-                        </InputAdornment>
-                      </>),
-                  }}
-                />
+            {<Grid container direction="row" justifyContent="start" alignItems="flex-start">
+              <Box sx={{minWidth: 150, mt: 2}}>
+                <div style={{display: "block"}}>
+                  <Typography paddingTop={3}>Job Details:</Typography>
+                </div>
+                <div style={{margin: "15px 0", display: "block"}}>
+                  <div style={{display: 'flex', flexDirection: 'column', width: '400px', position: 'relative'}}>
+                    <TextareaAutosize
+                        rows={1}
+                        size="small"
+                        name="jobDetails"
+                        multiline
+                        value={announcementDetails.jobDetails}
+                        onChange={handleInput}
+                        placeholder="Enter the job details..."
+                        style={{
+                          width: "100%",
+                          border: "1px solid #c1c4bc",
+                          borderRadius: "5px",
+                          padding: "8px",
+                          outline: "none",
+                          fontFamily: "Arial, sans-serif",
+                          fontSize: "15px",
+                          resize: "vertical",
+                        }}
+                    />
+                    {announcementDetails.jobDetails !== undefined && (
+                        <Typography variant="body2" style={{marginTop: '7px', marginLeft: '3px', width: '100%', fontSize: '11px' }}>
+                          Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
+                          <br/>
+                        </Typography>
+                    )}
+                  </div>
+                </div>
               </Box>
-
             </Grid>}
+
 
             <Grid container direction="row" justifyContent="start" alignItems="flex-start">
               <Box sx={{ minWidth: 150, mt: 2 }}>

@@ -20,6 +20,8 @@ import {
     Chip
 } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
+import HelpCenterIcon from "@mui/icons-material/HelpCenter";
+import Tooltip from "@mui/material/Tooltip";
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -159,8 +161,21 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
                                     Required Letter Grade
                                 </TableCell>
                                 <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-                                    In Progress Applicants
+                                    <div style={{ display: 'flex', alignItems: 'center', marginRight: '-1em' }}>
+                                        <span style={{ marginRight: '0.5em' }}>In Progress Applicants</span>
+                                        <Tooltip
+                                            title="In progress applicants stands for students who are currently enrolled to this course."
+                                            placement="left"
+                                            sx={{ fontSize: 'smaller', marginLeft: '-1em' }}
+                                            arrow
+                                        >
+                                            <IconButton>
+                                                <HelpCenterIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </div>
                                 </TableCell>
+
                                 {eligibilityChecked && <>
                                     <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>
                                         Your Grade

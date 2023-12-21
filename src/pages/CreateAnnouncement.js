@@ -114,7 +114,7 @@ function CreateAnnouncement() {
     }
   };
 
-  const MAX_WORD_COUNT = 255;
+  const MAX_WORD_COUNT = 2048;
 
   const userName = useSelector((state) => state.user.username);
   const name = useSelector((state) => state.user.name);
@@ -421,7 +421,7 @@ function CreateAnnouncement() {
   function handleInput(event) {
     const {name, value} = event.target;
 
-    if (name === "jobDetails" && value.length > 255) {
+    if (name === "jobDetails" && value.length > 2048) {
       return;
     }
 
@@ -874,6 +874,16 @@ function CreateAnnouncement() {
                         sx={{mt: 2, ml: 2}}
                     />
 
+                    <Tooltip
+                        title="By checking this box, you allow students who currently taking this course to apply to be a LA."
+                        placement="right"
+                        sx={{marginLeft: -1, marginTop:2}}
+                    >
+                      <IconButton>
+                        <HelpCenterIcon/>
+                      </IconButton>
+                    </Tooltip>
+
                   </Box>
 
                 </Grid>
@@ -910,85 +920,75 @@ function CreateAnnouncement() {
                     alignItems="flex-start"
                 >
                   <Box sx={{minWidth: 150, mt: 2}}>
-
-                      <div style={{display: "block"}}>
-                        <Typography paddingTop={3}>Job Details:</Typography>
-                      </div>
-                      <div style={{margin: "15px 0", display: "block"}}>
+                    <div style={{display: "block"}}>
+                      <Typography paddingTop={3}>Job Details:</Typography>
+                    </div>
+                    <div style={{margin: "15px 0", display: "block"}}>
+                      <div style={{display: 'flex', flexDirection: 'column', width: '400px', position: 'relative'}}>
                         <TextareaAutosize
-                            minRows={1} // Minimum number of rows
-                            maxRows={20} // Maximum number of rows
                             rows={1}
                             size="small"
-                            InputProps={{
-                              style: {display: 'flex', flexDirection: 'column'},
-                              endAdornment: (
-                                  <>
-                                    <hr style={{width: '100%', margin: '0.5rem 0'}}/>
-                                    <InputAdornment position="end"
-                                                    style={{margin: "0.5rem 0rem 0.5rem 0", alignSelf: "flex-end"}}>
-
-                                      <hr style={{width: '100%', margin: '5px 0'}}/>
-                                      <Typography variant="body2">
-                                        Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
-                                        <br/>
-                                      </Typography>
-                                    </InputAdornment>
-                                  </>),
-                            }}
                             name="jobDetails"
                             multiline
-                            sx={{m: 2, width: 400}}
                             value={announcementDetails.jobDetails}
                             onChange={handleInput}
                             placeholder="Enter the job details..."
                             style={{
-                              width: "150%", // Adjusting width to account for padding and border
+                              width: "100%", // Adjusted width to account for padding and border
                               border: "1px solid #c1c4bc",
-                              minWidth: '200px',
-                              minHeight: "30px",
                               borderRadius: "5px",
                               padding: "8px", // Adjusted padding to give space between text and border
                               outline: "none",
                               fontFamily: "Arial, sans-serif", // Change the font family
                               fontSize: "15px", // Change the font size
+                              resize: "vertical",
+
                             }}
                         />
+                          <Typography variant="body2" style={{marginTop: '7px', marginLeft: '3px', width: '100%', fontSize: '11px' }}>
+                            Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
+                            <br/>
+                          </Typography>
+
+
+
                       </div>
+                    </div>
+
                   </Box>
 
 
-            </Grid>
-            <Grid
-              container
-              direction="row"
-              justifyContent="start"
-              alignItems="flex-start"
-            >
-              <Box sx={{ minWidth: 200, mt: 2 }}>
-                <Typography sx={{ my: 2 }}>Authorized Instructor(s):</Typography>
+                </Grid>
                 <Grid
-                  item
-                  xs={6}
-                  direction="column"
-                  justifyContent="center"
-                  alignItems="flex-center"
+                    container
+                    direction="row"
+                    justifyContent="start"
+                    alignItems="flex-start"
                 >
-                  <Autocomplete
-                    id="controllable-states-demo"
-                    options={authUsersList && authUsersList.map((authUser) => {
-                      return authUser.authOptionValue;
-                    })}
-                    filterOptions={filterOptions}
-                    value={authValue}
-                    inputValue={inputAuthValue}
-                    onInputChange={(event, newInputValue) => {
-                      if (newInputValue !== null) {
-                        setAuthInputValue(newInputValue);
-                      }
-                    }}
-                    onChange={(event, newValue) => {
-                      if (newValue !== null) handleAuthAdd(newValue);
+                  <Box sx={{minWidth: 200, mt: 2}}>
+                    <Typography sx={{my: 2}}>Authorized Instructor(s):</Typography>
+                    <Grid
+                        item
+                        xs={6}
+                        direction="column"
+                        justifyContent="center"
+                        alignItems="flex-center"
+                    >
+                      <Autocomplete
+                          id="controllable-states-demo"
+                          options={authUsersList && authUsersList.map((authUser) => {
+                            return authUser.authOptionValue;
+                          })}
+                          filterOptions={filterOptions}
+                          value={authValue}
+                          inputValue={inputAuthValue}
+                          onInputChange={(event, newInputValue) => {
+                            if (newInputValue !== null) {
+                              setAuthInputValue(newInputValue);
+                            }
+                          }}
+                          onChange={(event, newValue) => {
+                            if (newValue !== null) handleAuthAdd(newValue);
                     }}
                     renderInput={(params) => (
                       <TextField
