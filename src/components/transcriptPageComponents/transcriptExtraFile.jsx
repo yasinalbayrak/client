@@ -40,6 +40,7 @@ const QuestionPage = (props) => {
   const [questionAnswers, setQuestionAnswers] = useState({});
   const data = useRef();
   const isLoading = useRef();
+  const MAX_WORD_COUNT = 512;
 
  /* const onSubmit = () => {
     var temp = [];
@@ -212,13 +213,18 @@ const QuestionPage = (props) => {
                         </FormControl>
                             )*/}
                       {question.type !== "Multiple Choice" && (
-                        <TextField
+                        <>
+                          <TextField
                         value={questionsAndAnswers[index] || ""}
                         onChange={(e) => onAnswerChange(e, index)}
                         multiline
                         fullWidth
                         sx={{ backgroundColor: "white" }}
+                        inputProps={{ maxLength: 512 }}
                       ></TextField>
+                        <Typography variant="body2" style={{marginTop: '7px', marginLeft: '3px', width: '100%', fontSize: '11px' }}>
+                      Remaining Characters: {MAX_WORD_COUNT - (questionsAndAnswers[index]?.length || 0)}
+                    </Typography></>
                       )}
                     </Grid>
                   </Grid>

@@ -41,6 +41,7 @@ const EditQuestionPage = (props) => {
     const [appReqInfo, setAppReqInfo] = useState(null);
     const data = useRef();
     const isLoading = useRef();
+    const MAX_WORD_COUNT = 512;
 
 
     const onSubmit = async () => {
@@ -190,13 +191,18 @@ const EditQuestionPage = (props) => {
                         sx={{ backgroundColor: "white" }}
                       ></TextField>
                       )} */}
+                        <>
                         <TextField
                             value={answers[index] || ""}
                             onChange={(e) => onAnswerChange(e, index)}
                             multiline
                             fullWidth
                             sx={{ backgroundColor: "white" }}
+                            inputProps={{ maxLength: 512 }}
                         ></TextField>
+                        <Typography variant="body2" style={{marginTop: '7px', marginLeft: '3px', width: '100%', fontSize: '11px' }}>
+                            Remaining Characters: {MAX_WORD_COUNT - (answers[index]?.length || 0)}
+                        </Typography></>
                     </Grid>
                   </Grid>
                   
