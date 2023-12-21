@@ -342,6 +342,7 @@ function EditQuestion(props) {
                                     },
                                   }}
                                   onClick={() => handleAddChoice(index)}
+                                  disabled={question.choices.length >= 15}
                                 >
                                   Add Choice
                                 </Button>

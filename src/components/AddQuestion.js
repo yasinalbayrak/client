@@ -406,6 +406,7 @@ function AddQuestion(props) {
                                     },
                                   }}
                                   onClick={() => handleAddChoice(question.questionNumber)}
+                                  disabled={question.mMultiple.length>=15}
                                 >
                                   Add Choice
                                 </Button>
