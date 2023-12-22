@@ -15,8 +15,8 @@ function AnnouncementsTableHead({ tabValue, isInstructor }) {
 
         <TableCell align='left'>Enrolled Allowed</TableCell>
 
-        <TableCell align="left">Weekly Work Hours</TableCell>
-        <TableCell align="left">Grade Requirements</TableCell>
+        <TableCell align="center">Weekly Work Hours</TableCell>
+        <TableCell align="center">Grade Requirements</TableCell>
         <TableCell align="left">Details</TableCell>
         
         {tabValue === 1 && !isInstructor && <TableCell align="left">Application Status</TableCell>}

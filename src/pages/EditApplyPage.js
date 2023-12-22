@@ -31,6 +31,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import Stack from '@mui/material/Stack';
 import SendIcon from "@mui/icons-material/Send";
 import BackButton from "../components/buttons/BackButton";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 function EditApplyPage() {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ function EditApplyPage() {
     { name: "Name Surname:", val: studentInfo?.studentName },
     { name: "GPA:", val: studentInfo?.cumulativeGPA },
     { name: "Current term:", val: studentInfo?.term },
-    { name: "Faculty:", val: "istendi" },
+    { name: "Faculty:", val: studentInfo?.faculty },
     { name: "Major:", val: studentInfo?.program?.majors},
     { name: "Minor:", val: studentInfo?.program?.minors },
     { name: "Year:", val: studentInfo?.year },
@@ -336,9 +337,15 @@ function EditApplyPage() {
                   </Button>
                 </Grid>
                 <Grid item>
+                  {appReqInfo.application?.questions.length > 0 ? (
                   <Button variant="contained" startIcon={<SendIcon />} color="success" onClick={() => navigate("/edit-questionPage/"+ id, { replace: true })}>
                   Continue with questions
                   </Button>
+                  ) : (
+                    <Button variant="contained" startIcon={<ArrowForwardIcon />} color="success" onClick={onSubmit}>
+                      Complete the application
+                    </Button>
+                  )}
                 </Grid>
               </Grid>
             </Grid>

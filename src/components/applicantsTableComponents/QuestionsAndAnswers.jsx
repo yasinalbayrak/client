@@ -1,5 +1,7 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { styled } from '@mui/system';
+import { Typography, Paper, FormControl, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 
 const Container = styled('div')`
   display: flex;
@@ -12,6 +14,7 @@ const Container = styled('div')`
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
+  user-select: none;
 `;
 
 const Question = styled('div')`
@@ -21,38 +24,80 @@ const Question = styled('div')`
 `;
 
 const Answer = styled('div')`
-  color: #333;
+  color: black;
 `;
 
-const ChoicesList = styled('ul')`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const ChoiceItem = styled('li')`
-  margin-bottom: 5px;
-`;
 
 
 const charCodeStart = 'A'.charCodeAt(0);
 
 
 const QuestionAnswer = ({ question, answer, qNo }) => {
+  const greenCheckBox = {
+    color: '#4CAF50',
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+  };
+
+  const defaultCheckBox = {
+    color: '#001B79',
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+  }
   return (
-    <Container>
-      <Question>Q{qNo}: {question.question}</Question>
-      {question.type === 'MULTIPLE_CHOICE' ? (
-        <ChoicesList>
-          {question.choices.map((choice, index) => (
-             <ChoiceItem key={index}>{String.fromCharCode(charCodeStart + index)}) {choice}</ChoiceItem>
-          ))}
-        </ChoicesList>
-      ) : (
-        <Answer>
-          <span style={{ fontWeight: 'bold' }}>Answer:</span> {answer}
-        </Answer>
-      )}
-    </Container>
+    <>
+      <Helmet>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+        />
+      </Helmet>
+      <Container>
+        <Question>Q{qNo}: {question.question} {question.type === 'MULTIPLE_CHOICE' && '?'}</Question>
+        {question.type === 'MULTIPLE_CHOICE' ? (
+          <FormControl component="fieldset">
+            <FormGroup>
+              {question.choices.map((choice, index) => (
+                <FormControlLabel
+                  key={index}
+                  control={
+                    <Checkbox
+                      style={index.toString() === answer ? greenCheckBox : defaultCheckBox}
+                      checked={index.toString() === answer}
+                      disableRipple
+                      size="small"
+                    />
+                  }
+                  label={
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      fontWeight='700'
+                      color={index.toString() === answer ? "rgba(68,115,75,1)" : "rgba(55, 64, 115, 1)"}
+                      fontFamily= "Roboto, sans-serif"
+                    >
+                      {choice}
+                    </Typography>
+                  }
+                  sx={{
+                    border: 'none',
+                    borderRadius: '5px',
+                    margin: '10px 0 0px 1px',
+                    backgroundColor: `${index.toString() !== answer ? 'rgba(243,244,248,1)' : 'rgba(162, 212, 167, 1)'}`,
+                  }}
+                />
+              ))}
+            </FormGroup>
+          </FormControl>
+        ) : (
+          <Answer>
+            <span style={{ fontWeight: 'bold' }}>Answer:</span> {answer}
+          </Answer>
+        )}
+      </Container>
+    </>
   );
 };
 

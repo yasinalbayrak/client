@@ -49,7 +49,7 @@ const TranscriptInfo=(props)=> {
     { name: "Name Surname:", val: studentInfo?.studentName },
     { name: "GPA:", val: studentInfo?.cumulativeGPA },
     { name: "Current term:", val: studentInfo?.term },
-    { name: "Faculty:", val: "istendi" },
+    { name: "Faculty:", val: studentInfo?.faculty },
     { name: "Major:", val: studentInfo?.program?.majors},
     { name: "Minor:", val: studentInfo?.program?.minors },
     { name: "Year:", val: studentInfo?.year },
@@ -102,7 +102,7 @@ const TranscriptInfo=(props)=> {
               <br></br>
               <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                 <Grid item>
-                  <Button variant="contained" startIcon={<ArrowBackIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="error">
+                  <Button variant="contained" startIcon={<ArrowBackIcon />} onClick={() => navigate("/transcriptUploadPage/"+id, { replace: true })} color="error">
                     Upload new transcript
                   </Button>
                 </Grid>

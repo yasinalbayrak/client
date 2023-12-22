@@ -49,7 +49,7 @@ const CompactNumberInput = React.forwardRef(function CompactNumberInput(
 });
 
 export default function UseNumberInputCompact(props) {
-    const [value, setValue] = React.useState(9 - props.index);
+    const [value, setValue] = React.useState(11 - props.index);
 
     return (
         <Layout>
@@ -58,9 +58,9 @@ export default function UseNumberInputCompact(props) {
                 readOnly
                 value={value}
                 onChange={(event, val) => {
-                    if(val >= 0 && val <= 9 ){
+                    if(val >= 0 && val <= 11 ){
                         setValue(val);
-                        props.callback(props.courseCode ,9-val)
+                        props.callback(props.courseCode ,11-val)
                     } }}
             />
             
