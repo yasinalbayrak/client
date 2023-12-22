@@ -766,10 +766,11 @@ function CreateAnnouncement() {
                                   value={announcementDetails.lastApplicationTime}
                                   InputLabelProps={{shrink: true}}
                                   onChange={(newValue) => {
-                                    setAnnouncementDetails((prevDetails) => ({
+                                     setAnnouncementDetails((prevDetails) => ({
                                       ...prevDetails,
                                       lastApplicationTime: (newValue.toString().split(" ")[4]).slice(0, 5),
                                     }));
+
                                   }}
                                   ampm={false}
                                   sx={{
