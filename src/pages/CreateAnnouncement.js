@@ -769,10 +769,9 @@ function CreateAnnouncement() {
                                   value={announcementDetails.lastApplicationTime}
                                   InputLabelProps={{shrink: true}}
                                   onChange={(newValue) => {
-                                    console.log('newValue :>> ', newValue);
                                      setAnnouncementDetails((prevDetails) => ({
                                       ...prevDetails,
-                                      lastApplicationTime: newValue.$H + ':' + newValue.$m                                      ,
+                                      lastApplicationTime: (newValue.$H).toString().padStart(2, '0') + ':' + (newValue.$m).toString().padStart(2, '0')                                      ,
                                     }));
 
                                   }}
