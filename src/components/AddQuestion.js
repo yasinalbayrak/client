@@ -353,9 +353,11 @@ function AddQuestion(props) {
                                 </MenuItem>
                               ))}
                             </TextField>
-                            {question.mValue === "Multiple Choice" && <FormControlLabel
-                              control={<Switch/>}
-                              label="Allow multiple answers" />
+                            {question.mValue === "Multiple Choice" && 
+                            <FormControlLabel
+                              control={<Switch col/>}
+                              label="Allow Multiple Answers" 
+                              sx={{border: "1px grey solid",padding: "0 1rem", borderRadius: "5%"}}/>
                               }
                             <Button
                               variant="contained"
