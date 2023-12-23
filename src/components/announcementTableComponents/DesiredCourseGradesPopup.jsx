@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
-import Tooltip from "@mui/material/Tooltip";
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -166,7 +166,7 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
                                         <span style={{ marginRight: '0.5em' }}>In Progress Applicants</span>
                                         <Tooltip
                                             title="In progress applicants stands for students who are currently enrolled to this course."
-                                            placement="left"
+                                            placement="right"
                                             sx={{ fontSize: 'smaller', marginLeft: '-1em' }}
                                             arrow
                                         >
