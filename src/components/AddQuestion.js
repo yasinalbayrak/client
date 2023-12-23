@@ -22,9 +22,13 @@ import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import { toast } from 'react-toastify';
-import {handleInfo} from "../errors/GlobalErrorHandler"
+import { handleInfo } from "../errors/GlobalErrorHandler"
 import { useDispatch } from "react-redux";
 import { setTerm } from "../redux/userSlice";
+import { CheckBox } from "@mui/icons-material";
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
 const questionType = [
   { value: "Text Answer", label: "Text Answer" },
   { value: "Numeric Answer", label: "Numeric Answer" },
@@ -67,12 +71,13 @@ const suggestedQuestions = [
     sQuestion: "Soru saatine hazırlık için hangi günü/günleri özellikle kullanmayı düşünüyorsunuz?",
     sMultiple: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     sBgColor: "#2196F3",
+    allowMultipleAnswers: true
   },
 ];
 
 function AddQuestion(props) {
   const [questions, setQuestions] = useState([
-    { questionNumber: 1, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""] }
+    { questionNumber: 1, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""], allowMultipleAnswers: false }
   ]);
 
   const term = useSelector((state) => state.user.term);
@@ -81,7 +86,7 @@ function AddQuestion(props) {
 
   function addNewQuestion() {
     const nextNum = questions.length + 1;
-    const nextQuestion = { questionNumber: nextNum, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""] };
+    const nextQuestion = { questionNumber: nextNum, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""], allowMultipleAnswers: false };
     setQuestions([...questions, nextQuestion]);
   }
 
@@ -133,10 +138,11 @@ function AddQuestion(props) {
     const suggestedQuestion = suggestedQuestions[index].sQuestion;
     const suggestedQuestionType = suggestedQuestions[index].sValue;
     const suggestedMultiple = suggestedQuestions[index].sMultiple;
+    const suggestedAllowMultiple = suggestedQuestions[index].allowMultipleAnswers;
 
     if (suggestedMultiple.length === 0) {
       const nextNum = questions.length + 1;
-      const nextQuestion = { questionNumber: nextNum, mQuestion: suggestedQuestion, mValue: suggestedQuestionType, mMultiple: ["", ""] };
+      const nextQuestion = { questionNumber: nextNum, mQuestion: suggestedQuestion, mValue: suggestedQuestionType, mMultiple: ["", ""], allowMultipleAnswers: suggestedAllowMultiple };
       setQuestions([...questions, nextQuestion]);
     } else {
       const nextNum = questions.length + 1;
@@ -145,6 +151,7 @@ function AddQuestion(props) {
         mQuestion: suggestedQuestion,
         mValue: suggestedQuestionType,
         mMultiple: suggestedMultiple,
+        allowMultipleAnswers: suggestedAllowMultiple
       };
       setQuestions([...questions, nextQuestion]);
     }
@@ -252,297 +259,302 @@ function AddQuestion(props) {
 
   return (
     <>
-    <div>
-      <Grid container spacing={2}>
-        <DragDropContext onDragEnd={handleOnDragEnd}>
-          <Droppable droppableId="questions">
-            {(provided) => (
-              <Grid item xs={8} {...provided.droppableProps} ref={provided.innerRef}>
-                <div style={{ display: "flex", alignItems: "center" }}>
+      <div>
+        <Grid container spacing={2}>
+          <DragDropContext onDragEnd={handleOnDragEnd}>
+            <Droppable droppableId="questions">
+              {(provided) => (
+                <Grid item xs={8} {...provided.droppableProps} ref={provided.innerRef}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
                     <Typography variant="h5" sx={{ textDecoration: "underline", mt: 8, mb: 2, fontWeight: "bold" }}>
                       Additional Questions for Students:
                     </Typography>
-                    <HtmlTooltip 
-                    title={<List>
-                    <ListItem>
-                      <ListItemText primary="These information will be provided automatically to you, please do not ask them as questions:" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText secondary="Name" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText secondary="ID" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px" , color: "white"} }} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText secondary="Faculty" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText secondary="Previous Grade" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText secondary="Class" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText secondary="GPA" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px" , color: "white"} }} />
-                    </ListItem>
-                  </List> }
-                    placement="right"
+                    <HtmlTooltip
+                      title={<List>
+                        <ListItem>
+                          <ListItemText primary="These information will be provided automatically to you, please do not ask them as questions:" />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText secondary="Name" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText secondary="ID" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText secondary="Faculty" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText secondary="Previous Grade" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText secondary="Class" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemText secondary="GPA" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                        </ListItem>
+                      </List>}
+                      placement="right"
                     >
                       <IconButton sx={{ marginLeft: '20px', marginTop: '40px' }}>
-                        <ErrorOutlinedIcon sx={{ fontSize: 35,color:"red"}}/>
+                        <ErrorOutlinedIcon sx={{ fontSize: 35, color: "red" }} />
                       </IconButton>
                     </HtmlTooltip>
-                    </div>
-                {questions.map((question, index) => {
-                  return (
-                    <Draggable key={question.questionNumber} draggableId={question.questionNumber.toString()} index={index}>
-                      {(provided, snapshot) => (
-                        <Grid
-                          container
-                          direction="row"
-                          justifyContent="start"
-                          alignItems="center"
-                          sx={{ px: 1, backgroundColor: snapshot.isDragging && "#4D5571", color: snapshot.isDragging && "white" }}
-                          key={question.questionNumber}
-                          {...provided.dragHandleProps}
-                          {...provided.draggableProps}
-                          ref={provided.innerRef}
-                        >
-                          <Typography>Question {question.questionNumber}:</Typography>
-                          <TextField
-                            id="outlined-required"
-                            name="mQuestion"
-                            multiline
-                            maxRows={10}
-                            value={question.mQuestion}
-                            label=""
-                            variant="outlined"
-                            size="small"
-                            sx={{
-                              m: 2,
-                              width: 450,
-                              "& .MuiOutlinedInput-input": { color: snapshot.isDragging && "white" },
-                              "& fieldset": { borderColor: snapshot.isDragging && "white" },
-                            }}
-                            onChange={(event) => handleInput(event, index)}
-                          />
-                          <TextField
-                            id="outlined-select-currency"
-                            name="mValue"
-                            select
-                            value={question.mValue}
-                            size="small"
-                            sx={{
-                              m: 2,
-                              width: 225,
-                              "& .MuiSelect-select": { color: snapshot.isDragging && "white" },
-                              "& fieldset": { borderColor: snapshot.isDragging && "white" },
-                            }}
-                            onChange={(event) => handleInput(event, index)}
+                  </div>
+                  {questions.map((question, index) => {
+                    return (
+                      <Draggable key={question.questionNumber} draggableId={question.questionNumber.toString()} index={index}>
+                        {(provided, snapshot) => (
+                          <Grid
+                            container
+                            direction="row"
+                            justifyContent="start"
+                            alignItems="center"
+                            sx={{ px: 1, backgroundColor: snapshot.isDragging && "#4D5571", color: snapshot.isDragging && "white" }}
+                            key={question.questionNumber}
+                            {...provided.dragHandleProps}
+                            {...provided.draggableProps}
+                            ref={provided.innerRef}
                           >
-                            {questionType.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                          <Button
-                            variant="contained"
-                            size="large"
-                            color="error"
-                            onClick={() => handleDeleteQuestion(question.questionNumber)}
-                          >
-                            <DeleteIcon fontSize="inherit" />
-                          </Button>
-                          {question.mValue === "Multiple Choice" && (
-                            <Grid item xs={10} sx={{ backgroundColor: snapshot.isDragging ? "#6A759C" : "#F5F5F5", px: 2 }}>
-                              {question.mMultiple.map((multiple, idx) => {
-                                return (
-                                  <Grid container direction="row" justifyContent="start" alignItems="center">
-                                    <Typography>Choice {idx + 1}:</Typography>
-                                    <TextField
-                                      id="outlined-required"
-                                      name="mMultiple"
-                                      multiline
-                                      maxRows={10}
-                                      value={multiple}
-                                      label=""
-                                      variant="outlined"
-                                      size="small"
-                                      sx={{
-                                        m: 2,
-                                        width: 300,
-                                        "& .MuiOutlinedInput-input": { color: snapshot.isDragging && "white" },
-                                        "& fieldset": { borderColor: snapshot.isDragging && "white" },
-                                      }}
-                                      onChange={(event) => handleInputChoice(question.questionNumber, idx, event.target.value)}
-                                    />
-                                    <Button
-                                      variant="contained"
-                                      size="large"
-                                      sx={{
-                                        bgcolor: "#b50b0b",
-                                        "&:hover": {
-                                          backgroundColor: "#e60e0e",
-                                        },
-                                      }}
-                                      onClick={() => deleteChoice(question.questionNumber, idx)}
-                                    >
-                                      <CancelIcon fontSize="inherit" />
-                                    </Button>
-                                  </Grid>
-                                );
-                              })}
-                              <Grid container direction="row" justifyContent="start" alignItems="center">
-                                <Button
-                                  variant="contained"
-                                  size="large"
-                                  startIcon={<ControlPointDuplicateIcon />}
-                                  sx={{
-                                    bgcolor: "#2196F3",
-                                    my: 2,
-                                    "&:hover": {
-                                      backgroundColor: "#84BFF7",
-                                    },
-                                  }}
-                                  onClick={() => handleAddChoice(question.questionNumber)}
-                                  disabled={question.mMultiple.length>=15}
-                                >
-                                  Add Choice
-                                </Button>
+                            <Typography>Question {question.questionNumber}:</Typography>
+                            <TextField
+                              id="outlined-required"
+                              name="mQuestion"
+                              multiline
+                              maxRows={10}
+                              value={question.mQuestion}
+                              label=""
+                              variant="outlined"
+                              size="small"
+                              sx={{
+                                m: 2,
+                                width: 450,
+                                "& .MuiOutlinedInput-input": { color: snapshot.isDragging && "white" },
+                                "& fieldset": { borderColor: snapshot.isDragging && "white" },
+                              }}
+                              onChange={(event) => handleInput(event, index)}
+                            />
+                            <TextField
+                              id="outlined-select-currency"
+                              name="mValue"
+                              select
+                              value={question.mValue}
+                              size="small"
+                              sx={{
+                                m: 2,
+                                width: 225,
+                                "& .MuiSelect-select": { color: snapshot.isDragging && "white" },
+                                "& fieldset": { borderColor: snapshot.isDragging && "white" },
+                              }}
+                              onChange={(event) => handleInput(event, index)}
+                            >
+                              {questionType.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                            {question.mValue === "Multiple Choice" && <FormControlLabel
+                              control={<Switch/>}
+                              label="Allow multiple answers" />
+                              }
+                            <Button
+                              variant="contained"
+                              size="large"
+                              color="error"
+                              onClick={() => handleDeleteQuestion(question.questionNumber)}
+                            >
+                              <DeleteIcon fontSize="inherit" />
+                            </Button>
+
+                            {question.mValue === "Multiple Choice" && (
+                              <Grid item xs={10} sx={{ backgroundColor: snapshot.isDragging ? "#6A759C" : "#F5F5F5", px: 2 }}>
+                                {question.mMultiple.map((multiple, idx) => {
+                                  return (
+                                    <Grid container direction="row" justifyContent="start" alignItems="center">
+                                      <Typography>Choice {idx + 1}:</Typography>
+                                      <TextField
+                                        id="outlined-required"
+                                        name="mMultiple"
+                                        multiline
+                                        maxRows={10}
+                                        value={multiple}
+                                        label=""
+                                        variant="outlined"
+                                        size="small"
+                                        sx={{
+                                          m: 2,
+                                          width: 300,
+                                          "& .MuiOutlinedInput-input": { color: snapshot.isDragging && "white" },
+                                          "& fieldset": { borderColor: snapshot.isDragging && "white" },
+                                        }}
+                                        onChange={(event) => handleInputChoice(question.questionNumber, idx, event.target.value)}
+                                      />
+                                      <Button
+                                        variant="contained"
+                                        size="large"
+                                        sx={{
+                                          bgcolor: "#b50b0b",
+                                          "&:hover": {
+                                            backgroundColor: "#e60e0e",
+                                          },
+                                        }}
+                                        onClick={() => deleteChoice(question.questionNumber, idx)}
+                                      >
+                                        <CancelIcon fontSize="inherit" />
+                                      </Button>
+                                    </Grid>
+                                  );
+                                })}
+                                <Grid container direction="row" justifyContent="start" alignItems="center">
+                                  <Button
+                                    variant="contained"
+                                    size="large"
+                                    startIcon={<ControlPointDuplicateIcon />}
+                                    sx={{
+                                      bgcolor: "#2196F3",
+                                      my: 2,
+                                      "&:hover": {
+                                        backgroundColor: "#84BFF7",
+                                      },
+                                    }}
+                                    onClick={() => handleAddChoice(question.questionNumber)}
+                                    disabled={question.mMultiple.length >= 15}
+                                  >
+                                    Add Choice
+                                  </Button>
+                                </Grid>
                               </Grid>
-                            </Grid>
-                          )}
-                        </Grid>
+                            )}
+                          </Grid>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                  <Grid container direction="row" justifyContent="start" alignItems="center">
+                    {questions.length < 10 ? (
+                      <Button
+                        variant="contained"
+                        size="large"
+                        startIcon={<AddCircleIcon />}
+                        sx={{ bgcolor: "#394263", my: 2 }}
+                        onClick={addNewQuestion}
+                      >
+                        Add Question
+                      </Button>
+                    ) :
+                      (
+                        <Stack sx={{ width: '100%' }} spacing={2}>
+                          <br></br>
+                          <Alert severity="info">You can add maximum of 10 questions!</Alert>
+                        </Stack>
                       )}
-                    </Draggable>
-                  );
-                })}
-                {provided.placeholder}
-                <Grid container direction="row" justifyContent="start" alignItems="center">
-                  {questions.length < 10 ? (
-                    <Button
-                      variant="contained"
-                      size="large"
-                      startIcon={<AddCircleIcon />}
-                      sx={{ bgcolor: "#394263", my: 2 }}
-                      onClick={addNewQuestion}
-                    >
-                      Add Question
-                    </Button>
-                  ):
-                  (
-                    <Stack sx={{ width: '100%' }} spacing={2}>
-                      <br></br>
-                    <Alert severity="info">You can add maximum of 10 questions!</Alert>
-                  </Stack>
-                  )}
+                  </Grid>
                 </Grid>
-              </Grid>
-            )}
-          </Droppable>
-        </DragDropContext>
-        <Grid item xs={4}>
-          <Box
-            sx={{
-              backgroundColor: "#F2F2F2",
-              px: 2,
-              border: 1, 
-              borderRadius: 3,
-              borderColor: "#cccccc",
+              )}
+            </Droppable>
+          </DragDropContext>
+          <Grid item xs={4}>
+            <Box
+              sx={{
+                backgroundColor: "#F2F2F2",
+                px: 2,
+                border: 1,
+                borderRadius: 3,
+                borderColor: "#cccccc",
+              }}
+            >
+              <Typography variant="h5" sx={{ textDecoration: "underline", mt: 2, mb: 1, fontWeight: "bold", py: 2 }}>
+                Suggested Questions:
+              </Typography>
+              {suggestedQuestions.map((e, idx) => {
+                return (
+                  <Button
+                    variant="contained"
+                    size="large"
+                    endIcon={<AddIcon />}
+                    sx={{
+                      bgcolor: e.sBgColor,
+                      my: 2,
+                      textTransform: "none",
+                      textAlign: "left",
+                      "&:hover": {
+                        backgroundColor: "#84BFF7",
+                      },
+                      width: "100%",
+                      justifyContent: "space-between",
+                    }}
+                    onClick={() => handleButtonClick(idx)}
+                    disabled={questions.length >= 10}
+                  >
+                    {e.sQuestion}
+                  </Button>
+                );
+              })}
+            </Box>
+          </Grid>
+        </Grid>
+
+
+
+        <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ p: 4 }}>
+          <Button
+            variant="contained"
+            startIcon={<SendIcon />}
+            color="success"
+            sx={{ m: 2, textDecoration: "none" }}
+            onClick={() => {
+              if (
+                props.AnnouncementDetails.course_code &&
+                props.AnnouncementDetails.lastApplicationDate &&
+                props.AnnouncementDetails.lastApplicationTime &&
+                props.AnnouncementDetails.letterGrade &&
+                props.AnnouncementDetails.workHours &&
+                props.AnnouncementDetails.term
+
+              ) {
+                addAnnouncement(
+                  props.AnnouncementDetails.course_code,
+                  props.username,
+                  props.AnnouncementDetails.lastApplicationDate,
+                  props.AnnouncementDetails.lastApplicationTime,
+                  props.AnnouncementDetails.letterGrade,
+                  props.AnnouncementDetails.workHours,
+                  props.AnnouncementDetails?.jobDetails ?? "",
+                  props.AnnouncementDetails.authInstructor,
+                  props.AnnouncementDetails.desiredCourses,
+                  questions,
+                  props.AnnouncementDetails.term,
+                  props.AnnouncementDetails.isInprogressAllowed
+                ).then((data) => {
+                  dispatch(setTerm({ term: props.AnnouncementDetails.term }));
+                  navigate("/Home", {
+                    replace: true
+                  });
+                  toast.success("Your announcement has been successfully added.")
+
+                }).catch((_) => {
+                  /* Error is already printed */
+                });
+
+              } else {
+                handleInfo("Please fill out the required fields.")
+              }
             }}
           >
-            <Typography variant="h5" sx={{ textDecoration: "underline", mt: 2, mb: 1, fontWeight: "bold", py: 2 }}>
-              Suggested Questions:
-            </Typography>
-            {suggestedQuestions.map((e, idx) => {
-              return (
-                <Button
-                  variant="contained"
-                  size="large"
-                  endIcon={<AddIcon />}
-                  sx={{
-                    bgcolor: e.sBgColor,
-                    my: 2,
-                    textTransform: "none",
-                    textAlign: "left",
-                    "&:hover": {
-                      backgroundColor: "#84BFF7",
-                    },
-                    width: "100%",
-                    justifyContent: "space-between", 
-                  }}
-                  onClick={() => handleButtonClick(idx)}
-                  disabled = {questions.length >= 10}
-                >
-                  {e.sQuestion}
-                </Button>
-              );
-            })}
-          </Box>
+            Submit
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<CloseIcon />}
+            color="error"
+            sx={{ mx: 2 }}
+            onClick={() => navigate("/home", { replace: true })}
+          >
+            Cancel
+          </Button>
         </Grid>
-      </Grid>
-
-
-      
-      <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ p: 4 }}>
-        <Button
-          variant="contained"
-          startIcon={<SendIcon />}
-          color="success"
-          sx={{ m: 2, textDecoration: "none" }}
-          onClick={() => {
-            if (
-              props.AnnouncementDetails.course_code &&
-              props.AnnouncementDetails.lastApplicationDate &&
-              props.AnnouncementDetails.lastApplicationTime &&
-              props.AnnouncementDetails.letterGrade &&
-              props.AnnouncementDetails.workHours &&
-              props.AnnouncementDetails.term 
-            
-            ) {
-              addAnnouncement(
-                props.AnnouncementDetails.course_code,
-                props.username,
-                props.AnnouncementDetails.lastApplicationDate,
-                props.AnnouncementDetails.lastApplicationTime,
-                props.AnnouncementDetails.letterGrade,
-                props.AnnouncementDetails.workHours,
-                props.AnnouncementDetails?.jobDetails ?? "",
-                props.AnnouncementDetails.authInstructor,
-                props.AnnouncementDetails.desiredCourses,
-                questions,
-                props.AnnouncementDetails.term,
-                props.AnnouncementDetails.isInprogressAllowed
-              ).then((data) => {
-                dispatch(setTerm({ term: props.AnnouncementDetails.term }));
-                navigate("/Home", {
-                  replace: true
-                });
-                toast.success("Your announcement has been successfully added.")
-
-              }).catch((_) => {
-                /* Error is already printed */
-              });
-
-            } else {
-              handleInfo("Please fill out the required fields.")
-            }
-          }}
-        >
-          Submit
-        </Button>
-        <Button
-          variant="contained"
-          startIcon={<CloseIcon />}
-          color="error"
-          sx={{ mx: 2 }}
-          onClick={() => navigate("/home", { replace: true })}
-        >
-          Cancel
-        </Button>
-      </Grid>
-    </div>
+      </div>
     </>);
 }
 

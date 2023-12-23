@@ -164,7 +164,7 @@ async function updateAnnouncement(
   const faculty = "FENS";
   // const term = "Fall 2022";
   const title = "title update test";
-
+  console.log('isInprogressAllowed :>> ', isInprogressAllowed);
   const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
   console.log(letterGrade);
   const authInstructor_ids = auth_instructors.map(
