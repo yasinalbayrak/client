@@ -576,7 +576,8 @@ function EditAnnouncement() {
           authInstructor: FindAuthPeople,
           desiredCourses: FindDesiredCourses,
           term: findTermObject,
-          questions: results.questions
+          questions: results.questions,
+          isInprogressAllowed: results.isInprogressAllowed
         };
 
         setCourseCode(results.course.courseCode);
@@ -852,15 +853,20 @@ function EditAnnouncement() {
                     </MenuItem>
                   ))}
                 </TextField>
-                <FormControlLabel
+                 <FormControlLabel
+                   
                     value={announcementDetails.isInprogressAllowed}
                     onChange={(event) => {
+
+                      console.log('event :>> ', event);
                       setAnnouncementDetails((prevDetails) => ({
                         ...prevDetails,
-                        isInprogressAllowed: event.target.checked, // Use event.target.checked for checkbox
+                        isInprogressAllowed: event.target.checked, 
                       }));
                     }}
-                    control={<Checkbox/>}
+                    control={ <Checkbox 
+                      checked={announcementDetails.isInprogressAllowed}/>}
+                    
                     label="Allow In Progress Applicants"
                     sx={{mt: 2, ml: 2}}
                 />
