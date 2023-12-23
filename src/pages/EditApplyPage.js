@@ -173,7 +173,7 @@ function EditApplyPage() {
         setSnackOpen(true);
       }
       else {
-        navigate("/success", { replace: true, state: { successText: "Your application has been successfully updated." } });
+        navigate("/home", { replace: true, state: { successText: "Your application has been successfully updated." } });
       }
     });
   };
