@@ -359,15 +359,21 @@ function CreateAnnouncement() {
       return a.title.localeCompare(b.title);
     });
     const isExisting = optionCourseCodes.some((option) => inputValue.toLowerCase().removeSpaces().trim() === option.title.toLowerCase().removeSpaces().trim());
-    if (inputValue && !isExisting) {
+    
+    if (inputValue && !isExisting && isValidString(inputValue.trim()) ) {
+
       filtered.push({
-        inputValue,
-        title: `Add "${inputValue.trim()}"`
+        inputValue: inputValue.addSpaces().trim(),
+        title: `Add "${inputValue.addSpaces().trim()}"`
       })
     }
 
     return filtered;
 
+  }
+
+  function isValidString(str) {
+    return /^[A-Z]+(\s*)?\d+$/.test(str);
   }
 
   //used in autocomplete for keeping value and input value
@@ -450,6 +456,9 @@ function CreateAnnouncement() {
   String.prototype.removeSpaces = function () {
     return this.replace(/\s/g, '');
   };
+  String.prototype.addSpaces = function() {
+    return this.replace(/([A-Z])(\d)/, '$1 $2');
+};
   const handleChange = (event, newValue) => {
 
     setSelectedCourses([]);
@@ -546,6 +555,8 @@ function CreateAnnouncement() {
     const handleCopyPaste = (event) => {
       event.preventDefault();
     };
+
+    const courseCodeValid = (courseCode) => courseCode.trim() != '' && !isValidString(courseCode.trim())
 
     const handleInputChange = (event, newInputValue) => {
       const uppercaseValue = newInputValue.toUpperCase();
@@ -662,6 +673,7 @@ function CreateAnnouncement() {
                         selectOnFocus
                         clearOnBlur
                         handleHomeEndKeys
+                        
                         id="free-solo-with-text-demo"
                         options={courseList}
                         getOptionLabel={(option) => {
@@ -686,9 +698,12 @@ function CreateAnnouncement() {
                                 size="small"
                                 onKeyDown={(event) => {
                                   if (event.key === 'Enter') {
+                                    setCourseCode((prev)=>(prev.addSpaces()))
                                     event.preventDefault();
                                   }
                                 }}
+                                error={courseCodeValid(courseCodeValue)}
+                                helperText={courseCodeValid(courseCodeValue) ? "Coursecode should have letters followed by single space followed by digits: XXX 123" : ""}
                                 onKeyPress={(event) => {
                                   const key = event.key;
                                   const regex = /^[A-Za-z0-9\ ]+$/;
@@ -1146,6 +1161,9 @@ function CreateAnnouncement() {
                                               event.preventDefault();
                                             }
                                           }}
+                                          error={courseCodeValid(desiredCourseCodeValue)}
+                                          helperText={courseCodeValid(desiredCourseCodeValue) ? "Coursecode should have letters followed by single space followed by digits: XXX 123" : ""}
+                                          
                                           onKeyPress={(event) => {
                                             const key = event.key;
                                             const regex = /^[A-Za-z0-9\ ]+$/;
@@ -1158,7 +1176,7 @@ function CreateAnnouncement() {
 
                                           }}
                                           sx={{
-                                            mx: 2, mt: 1, mb: 2, width: 150,
+                                            mx: 2, mt: 1, mb: 2, width: 300,
                                             ...(params.disabled && {
                                               backgroundColor: 'transparent',
                                               color: 'inherit',

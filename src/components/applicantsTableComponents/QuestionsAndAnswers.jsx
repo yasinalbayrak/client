@@ -1,8 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { styled } from '@mui/system';
-import { Typography, Paper, FormControl, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
-
+import { Accordion, AccordionSummary, AccordionDetails, Typography, Paper, FormControl, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 const Container = styled('div')`
   display: flex;
   flex-direction: column;
@@ -46,6 +46,8 @@ const QuestionAnswer = ({ question, answer, qNo }) => {
       backgroundColor: 'transparent',
     },
   }
+  const answerChecked = (index) => answer.toString().includes(index.toString());
+
   return (
     <>
       <Helmet>
@@ -55,47 +57,65 @@ const QuestionAnswer = ({ question, answer, qNo }) => {
         />
       </Helmet>
       <Container>
-        <Question>Q{qNo}: {question.question} {question.type === 'MULTIPLE_CHOICE' && '?'}</Question>
-        {question.type === 'MULTIPLE_CHOICE' ? (
-          <FormControl component="fieldset">
-            <FormGroup>
-              {question.choices.map((choice, index) => (
-                <FormControlLabel
-                  key={index}
-                  control={
-                    <Checkbox
-                      style={index.toString() === answer ? greenCheckBox : defaultCheckBox}
-                      checked={index.toString() === answer}
-                      disableRipple
-                      size="small"
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Question>Q{qNo}: {question.question} </Question>
+          </AccordionSummary>
+          <AccordionDetails style={{ padding: '8px', width: "100%" }}>
+
+
+            {question.type === 'MULTIPLE_CHOICE' ? (
+              <FormControl component="fieldset" style={{ width: "100%" }}>
+                <FormGroup>
+                  {question.choices.map((choice, index) => (
+                    <FormControlLabel
+                      key={index}
+                      control={
+                        <Checkbox
+                          style={answerChecked(index) ? greenCheckBox : defaultCheckBox}
+                          checked={answerChecked(index)}
+                          disableRipple
+                          size="small"
+                        />
+                      }
+                      label={
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          fontWeight='700'
+                          color={answerChecked(index) ? "rgba(68,115,75,1)" : "rgba(55, 64, 115, 1)"}
+                          fontFamily="Roboto, sans-serif"
+                        >
+                          {choice}
+                        </Typography>
+                      }
+                      sx={{
+                        border: 'none',
+                        borderRadius: '5px',
+                        margin: '10px 0 0px 1px',
+                        backgroundColor: `${!answerChecked(index) ? 'rgba(243,244,248,1)' : 'rgba(162, 212, 167, 1)'}`,
+                      }}
                     />
-                  }
-                  label={
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      fontWeight='700'
-                      color={index.toString() === answer ? "rgba(68,115,75,1)" : "rgba(55, 64, 115, 1)"}
-                      fontFamily= "Roboto, sans-serif"
-                    >
-                      {choice}
-                    </Typography>
-                  }
-                  sx={{
-                    border: 'none',
-                    borderRadius: '5px',
-                    margin: '10px 0 0px 1px',
-                    backgroundColor: `${index.toString() !== answer ? 'rgba(243,244,248,1)' : 'rgba(162, 212, 167, 1)'}`,
-                  }}
-                />
-              ))}
-            </FormGroup>
-          </FormControl>
-        ) : (
-          <Answer>
-            <span style={{ fontWeight: 'bold' }}>Answer:</span> {answer}
-          </Answer>
-        )}
+                  ))}
+                </FormGroup>
+              </FormControl>
+            ) : (
+              <Answer>
+                <span style={{ fontWeight: 'bold' }}>Answer:</span> {answer}
+              </Answer>
+            )}
+
+          </AccordionDetails>
+        </Accordion>
+
+
+
+
+
       </Container>
     </>
   );

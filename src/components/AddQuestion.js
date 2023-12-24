@@ -307,7 +307,7 @@ function AddQuestion(props) {
                   </div>
                   {questions.map((question, index) => {
                     return (
-                      <Draggable key={question.questionNumber} draggableId={question.questionNumber.toString()} index={index}>
+                      <Draggable key={index} draggableId={index.toString()} index={index}>
                         {(provided, snapshot) => (
                           <Grid
                             container
@@ -315,7 +315,7 @@ function AddQuestion(props) {
                             justifyContent="start"
                             alignItems="start"
                             sx={{ px: 1, backgroundColor: snapshot.isDragging && "#4D5571", color: snapshot.isDragging && "white" }}
-                            key={question.questionNumber}
+                            key={index.toString()}
                             {...provided.dragHandleProps}
                             {...provided.draggableProps}
                             ref={provided.innerRef}
