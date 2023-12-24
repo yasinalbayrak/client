@@ -112,6 +112,7 @@ async function addAnnouncement(
       question: question.mQuestion,
       type: type,
       choices: question.mMultiple,
+      allowMultipleAnswers: question.allowMultipleAnswers
     };
   });
 
