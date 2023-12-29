@@ -33,6 +33,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   };
 
   const deleteApplication = () => {
+    flipPopup()
     deleteApplicationById(applicationId).then((_) => {
       deleteCallBack(applicationId)
     }).catch((_) => (null))

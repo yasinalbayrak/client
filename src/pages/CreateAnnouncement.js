@@ -772,7 +772,7 @@ function CreateAnnouncement() {
                       label="Section"
                       variant="outlined"
                       name="section"
-                      value={announcementDetails.section}
+                      value={announcementDetails.section ?? ''}
                       onChange={handleInput}
                       autoComplete="off"
                       sx={{marginLeft: "1rem", padding:0, userSelect:"none"}}
