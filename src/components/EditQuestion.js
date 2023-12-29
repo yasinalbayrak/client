@@ -12,11 +12,15 @@ import ControlPointDuplicateIcon from "@mui/icons-material/ControlPointDuplicate
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
 import { addAnnouncement, updateAnnouncement } from "../apiCalls";
+import { handleInfo } from "../errors/GlobalErrorHandler"
 import { useSelector } from "react-redux";
 import { toast } from 'react-toastify';
 import UpdateIcon from '@mui/icons-material/Update';
 import { useDispatch } from "react-redux";
 import { setTerm } from "../redux/userSlice";
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
 const questionType = [
   { value: "TEXT", label: "Text Answer" },
   { value: "NUMERIC", label: "Numeric Answer" },
@@ -29,6 +33,7 @@ const suggestedQuestions = [
     question: "Explain in detail why you want to be an LA for this course.",
     choices: [],
     sBgColor: "#5FB3F6",
+
   },
   {
     type: "TEXT",
@@ -59,6 +64,7 @@ const suggestedQuestions = [
     question: "Soru saatine hazırlık için hangi günü/günleri özellikle kullanmayı düşünüyorsunuz?",
     choices: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     sBgColor: "#2196F3",
+    allowMultipleAnswers: true
   },
 ];
 
@@ -74,16 +80,16 @@ function EditQuestion(props) {
   const term = useSelector((state) => state.user.term);
   const navigate = useNavigate();
 
-  
+
 
   function addNewQuestion() {
-    const nextQuestion = { question: "", type: "TEXT", choices: ["", ""] };
+    const nextQuestion = { question: "", type: "TEXT", choices: ["", ""], allowMultipleAnswers: false };
     setQuestions([...questions, nextQuestion]);
   }
 
   function handleDeleteQuestion(indexToDelete) {
-    setQuestions((prev)=>(
-      prev.filter((_, idx)=>(idx !== indexToDelete))
+    setQuestions((prev) => (
+      prev.filter((_, idx) => (idx !== indexToDelete))
     ))
   }
 
@@ -96,7 +102,7 @@ function EditQuestion(props) {
       return prevQuestions.map((question, i) => {
         if (i === index) {
           const mMultiple = name === "type" && value !== "MULTIPLE_CHOICE" ? ["", ""] : question.choices;
-          return { ...question, [name]: value, choices: mMultiple };
+          return { ...question, [name]: value, choices: mMultiple, allowMultipleAnswers: question?.allowMultipleAnswers ?? null };
         }
         return question;
       });
@@ -107,15 +113,17 @@ function EditQuestion(props) {
     const suggestedQuestion = suggestedQuestions[index].question;
     const suggestedQuestionType = suggestedQuestions[index].type;
     const suggestedMultiple = suggestedQuestions[index].choices;
+    const suggestedAllowMultiple = suggestedQuestions[index].allowMultipleAnswers;
 
     if (suggestedMultiple.length === 0) {
-      const nextQuestion = { question: suggestedQuestion, type: suggestedQuestionType, choices: ["", ""] };
+      const nextQuestion = { question: suggestedQuestion, type: suggestedQuestionType, choices: ["", ""], allowMultipleAnswers: suggestedAllowMultiple };
       setQuestions([...questions, nextQuestion]);
     } else {
       const nextQuestion = {
         question: suggestedQuestion,
         type: suggestedQuestionType,
         choices: suggestedMultiple,
+        allowMultipleAnswers: suggestedAllowMultiple
       };
       setQuestions([...questions, nextQuestion]);
     }
@@ -125,7 +133,7 @@ function EditQuestion(props) {
   function addChoiceToQuestion(questions, questionIndex) {
     const updatedQuestions = [...questions]; // create a copy of the original array
 
-    
+
 
     if (questionIndex !== -1) {
       // if the question exists
@@ -150,7 +158,7 @@ function EditQuestion(props) {
   function deleteChoice(questionNumber, choiceIndex) {
     setQuestions((prevQuestions) => {
       // Find the question by its number
-      const question = prevQuestions.find((q,idx) => idx === questionNumber);
+      const question = prevQuestions.find((q, idx) => idx === questionNumber);
 
       // Make a copy of the question object and its choices array
       const updatedQuestion = { ...question };
@@ -177,7 +185,7 @@ function EditQuestion(props) {
   }
 
   function handleInputChoice(questionNumber, choiceIndex, newValue) {
-    const newQuestions = questions.map((question,index) => {
+    const newQuestions = questions.map((question, index) => {
       if (index === questionNumber) {
         const newMultiple = question.choices.map((choice, index) => {
           if (index === choiceIndex) {
@@ -218,7 +226,7 @@ function EditQuestion(props) {
   // console.log(combinedDate)
   // console.log(combinedDateTime)
   //console.log(typeof props.AnnouncementDetails.lastApplicationDate)
-  
+
   return (
     <div>
       <Grid container spacing={2}>
@@ -231,67 +239,95 @@ function EditQuestion(props) {
                 </Typography>
                 {questions && questions.map((question, index) => {
                   return (
-                    <Draggable key={index} draggableId={index} index={index}>
-                      {(provided, snapshot) => (
+                    
                         <Grid
                           container
                           direction="row"
                           justifyContent="start"
                           alignItems="center"
-                          sx={{ px: 1, backgroundColor: snapshot.isDragging && "#4D5571", color: snapshot.isDragging && "white" }}
-                          key={index}
-                          {...provided.dragHandleProps}
-                          {...provided.draggableProps}
+                          sx={{ px: 1 }}
+                          key={index.toString()}
+                          
                           ref={provided.innerRef}
                         >
-                          <Typography>Question {index + 1}:</Typography>
-                          <TextField
-                            id="outlined-required"
-                            name="question"
-                            multiline
-                            maxRows={20}
-                            value={question.question}
-                            label=""
-                            variant="outlined"
-                            size="small"
-                            sx={{
-                              m: 2,
-                              width: 450,
-                              "& .MuiOutlinedInput-input": { color: snapshot.isDragging && "white" },
-                              "& fieldset": { borderColor: snapshot.isDragging && "white" },
-                            }}
-                            onChange={(event) => handleInput(event, index)}
-                          />
-                          <TextField
-                            id="outlined-select-currency"
-                            name="type"
-                            select
-                            value={question.type}
-                            size="small"
-                            sx={{
-                              m: 2,
-                              width: 225,
-                              "& .MuiSelect-select": { color: snapshot.isDragging && "white" },
-                              "& fieldset": { borderColor: snapshot.isDragging && "white" },
-                            }}
-                            onChange={(event) => handleInput(event, index)}
-                          >
-                            {questionType.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                          <Button
-                            variant="contained"
-                            size="large"
-                            color="error"
-                            onClick={() => handleDeleteQuestion(index)}
-                          >
-                            <DeleteIcon fontSize="inherit" />
-                          </Button>
+                          <Grid container direction="row" justifyContent="start" alignItems="center">
+                            <Typography>Question {index+1}:</Typography>
+                            <TextField
+                              id="outlined-required"
+                              name="mQuestion"
+                              multiline
+                              maxRows={10}
+                              value={question.question}
+                              label=""
+                              variant="outlined"
+                              size="small"
+                              sx={{
+                                m: 1,
+                                width: 450,
+                             
+                              }}
+                              onChange={(event) => handleInput(event, index)}
+                              disabled
+                            />
+
+                            <Button
+                              variant="contained"
+                              size="large"
+                              color="error"
+                              onClick={() => handleDeleteQuestion(question.questionNumber)}
+                              disabled
+                            >
+                              <DeleteIcon fontSize="inherit" />
+                            </Button>
+                          </Grid>
+                          <Grid sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <TextField
+                              id="outlined-select-currency"
+                              name="mValue"
+                              select
+                              value={questionType.find((element) => {
+                                console.log('element :>> ', element);
+                                console.log('question :>> ', question);
+                                return element.value == question.type
+                              }).value}
+                              size="small"
+                              sx={{
+                                m: 2,
+                                width: 225,
+                               
+                              }}
+                              onChange={(event) => handleInput(event, index)}
+                              disabled
+                            >
+                              {questionType.map((option) => (
+                                <MenuItem  key={option.value} value={option.value}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                            {question.type === "MULTIPLE_CHOICE" &&
+                              <FormControlLabel
+                                value={question.allowMultipleAnswers}
+                                disabled
+                                onChange={() => {
+                                  setQuestions((prev) =>
+                                    prev.map((each, idx) =>
+                                      idx === index
+                                        ? { ...each, allowMultipleAnswers: !each.allowMultipleAnswers }
+                                        : each
+                                    )
+                                  );
+                                }}
+                                control={<Switch color="success" checked={question.allowMultipleAnswers} />}
+                                label="Allow Multiple Answers"
+                                sx={{ color: `${question.allowMultipleAnswers ? 'green' : 'black'}`, border: `0.5px ${question.allowMultipleAnswers ? 'green' : 'grey'} solid`, padding: "0 1rem", borderRadius: "5px" }}
+                              />
+
+                            }
+
+                          </Grid>
                           {question.type === "MULTIPLE_CHOICE" && (
-                            <Grid item xs={10} sx={{ backgroundColor: snapshot.isDragging ? "#6A759C" : "#F5F5F5", px: 2 }}>
+                            <Grid item xs={10} sx={{ backgroundColor:"#F5F5F5", px: 2 }}>
                               {question.choices.map((multiple, idx) => {
                                 return (
                                   <Grid container direction="row" justifyContent="start" alignItems="center">
@@ -308,9 +344,9 @@ function EditQuestion(props) {
                                       sx={{
                                         m: 2,
                                         width: 300,
-                                        "& .MuiOutlinedInput-input": { color: snapshot.isDragging && "white" },
-                                        "& fieldset": { borderColor: snapshot.isDragging && "white" },
+                                        
                                       }}
+                                      disabled  
                                       onChange={(event) => handleInputChoice(index, idx, event.target.value)}
                                     />
                                     <Button
@@ -322,6 +358,7 @@ function EditQuestion(props) {
                                           backgroundColor: "#e60e0e",
                                         },
                                       }}
+                                      disabled
                                       onClick={() => deleteChoice(index, idx)}
                                     >
                                       <CancelIcon fontSize="inherit" />
@@ -342,7 +379,7 @@ function EditQuestion(props) {
                                     },
                                   }}
                                   onClick={() => handleAddChoice(index)}
-                                  disabled={question.choices.length >= 15}
+                                  disabled
                                 >
                                   Add Choice
                                 </Button>
@@ -350,70 +387,19 @@ function EditQuestion(props) {
                             </Grid>
                           )}
                         </Grid>
-                      )}
-                    </Draggable>
+                      
                   );
                 })}
-                {provided.placeholder}
-                <Grid container direction="row" justifyContent="start" alignItems="center">
-                  {questions && questions.length < 10 && (
-                    <Button
-                      variant="contained"
-                      size="large"
-                      startIcon={<AddCircleIcon />}
-                      sx={{ bgcolor: "#394263", my: 2 }}
-                      onClick={addNewQuestion}
-                    >
-                      Add Question
-                    </Button>
-                  )}
-                </Grid>
+               
+                
               </Grid>
             )}
           </Droppable>
         </DragDropContext>
-        <Grid item xs={4}>
-          <Box
-            sx={{
-              backgroundColor: "#F2F2F2",
-              px: 2,
-              border: 1, 
-              borderRadius: 3,
-              borderColor: "#cccccc",
-            }}
-          >
-            <Typography variant="h5" sx={{ textDecoration: "underline", mt: 2, mb: 1, fontWeight: "bold", py: 2 }}>
-              Suggested Questions:
-            </Typography>
-            {suggestedQuestions.map((e, idx) => {
-              return (
-                <Button
-                  variant="contained"
-                  size="large"
-                  endIcon={<AddIcon />}
-                  sx={{
-                    bgcolor: e.sBgColor,
-                    my: 2,
-                    textTransform: "none",
-                    textAlign: "left",
-                    "&:hover": {
-                      backgroundColor: "#84BFF7",
-                    },
-                    width: "100%",
-                    justifyContent: "space-between", 
-                  }}
-                  onClick={() => handleButtonClick(idx  )}
-                  disabled = {questions && questions.length >= 10}
-                >
-                  {e.question}
-                </Button>
-              );
-            })}
-          </Box>
-        </Grid>
+
       </Grid>
 
-      
+
       <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ p: 4 }}>
         <Button
           variant="contained"
@@ -421,14 +407,15 @@ function EditQuestion(props) {
           color="success"
           sx={{ m: 2, textDecoration: "none" }}
           onClick={() => {
+            console.log('props.AnnouncementDetails :>> ', props.AnnouncementDetails);
             if (
               props.AnnouncementDetails.course_code &&
               props.AnnouncementDetails.lastApplicationDate &&
               props.AnnouncementDetails.lastApplicationTime &&
               props.AnnouncementDetails.letterGrade &&
               props.AnnouncementDetails.workHours &&
-              props.AnnouncementDetails.term 
-            
+              props.AnnouncementDetails.term &&
+              (!props.AnnouncementDetails.isSectionEnabled || (props.AnnouncementDetails.section !== "" && props.AnnouncementDetails.section))
             ) {
               updateAnnouncement(
                 props.postID,
@@ -443,7 +430,9 @@ function EditQuestion(props) {
                 props.AnnouncementDetails.desiredCourses,
                 questions,
                 props.AnnouncementDetails.term,
-                props.AnnouncementDetails.isInprogressAllowed
+                props.AnnouncementDetails.isInprogressAllowed,
+                props.AnnouncementDetails.section
+                
               ).then((data) => {
                 dispatch(setTerm({ term: props.AnnouncementDetails.term }));
                 navigate("/Home", {
@@ -453,12 +442,12 @@ function EditQuestion(props) {
               }).catch((_) => {
                 /* Error is already printed */
               });
-                
+
             } else {
-                alert("Please fill out all necessary fields before creating the annoucement.");
+              handleInfo("Please fill out the required fields.")
             }
 
-        }}
+          }}
         >
           Update
         </Button>
@@ -475,9 +464,9 @@ function EditQuestion(props) {
       </Grid>
 
 
-        </div>
+    </div>
 
-    );
+  );
 }
 
 export default EditQuestion;

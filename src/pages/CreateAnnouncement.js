@@ -68,30 +68,30 @@ const useStyles = makeStyles((theme) => ({
 const filter = createFilterOptions();
 function CreateAnnouncement() {
   const grades = [
-    {value: "A", label: "A"},
-    {value: "A-", label: "A-"},
-    {value: "B+", label: "B+"},
-    {value: "B", label: "B"},
-    {value: "B-", label: "B-"},
-    {value: "C+", label: "C+"},
-    {value: "C", label: "C"},
-    {value: "C-", label: "C-"},
-    {value: "D+", label: "D+"},
-    {value: "D", label: "D"},
-    {value: "S", label: "S"},
-    {value: "W", label: "W"},
+    { value: "A", label: "A" },
+    { value: "A-", label: "A-" },
+    { value: "B+", label: "B+" },
+    { value: "B", label: "B" },
+    { value: "B-", label: "B-" },
+    { value: "C+", label: "C+" },
+    { value: "C", label: "C" },
+    { value: "C-", label: "C-" },
+    { value: "D+", label: "D+" },
+    { value: "D", label: "D" },
+    { value: "S", label: "S" },
+    { value: "W", label: "W" },
   ];
   const WorkHour = [
-    {value: "PT1H", label: "1 Hour"},
-    {value: "PT2H", label: "2 Hours"},
-    {value: "PT3H", label: "3 Hours"},
-    {value: "PT4H", label: "4 Hours"},
-    {value: "PT5H", label: "5 Hours"},
-    {value: "PT6H", label: "6 Hours"},
-    {value: "PT7H", label: "7 Hours"},
-    {value: "PT8H", label: "8 Hours"},
-    {value: "PT9H", label: "9 Hours"},
-    {value: "PT10H", label: "10 Hours"},
+    { value: "PT1H", label: "1 Hour" },
+    { value: "PT2H", label: "2 Hours" },
+    { value: "PT3H", label: "3 Hours" },
+    { value: "PT4H", label: "4 Hours" },
+    { value: "PT5H", label: "5 Hours" },
+    { value: "PT6H", label: "6 Hours" },
+    { value: "PT7H", label: "7 Hours" },
+    { value: "PT8H", label: "8 Hours" },
+    { value: "PT9H", label: "9 Hours" },
+    { value: "PT10H", label: "10 Hours" },
   ];
 
   const getColorForGrade = (grade) => {
@@ -156,12 +156,12 @@ function CreateAnnouncement() {
   const [inputCourseValue, setCourseInputValue] = useState(""); // for autocomplete
 
   const [allTerms, setAllTerms] = useState([])
-
+  const [desiredLetterGrade, setDesiredLetterGrade] = useState(null)
 
   const [open, setOpen] = React.useState(false);
   const [showAddButton, setShowAddButton] = useState(false);
 
-  const [desiredLetterGrade, setDesiredLetterGrade] = useState({});
+
 
   const [error, setError] = React.useState(false);
   const classes = useStyles();
@@ -259,7 +259,7 @@ function CreateAnnouncement() {
   function handleAuthAdd(newValue) {
     if (newValue !== null) {
       const selectedUser = authUsersList.find(
-          (user) => user.authOptionValue === newValue
+        (user) => user.authOptionValue === newValue
       );
       setAuthPeople([...authPeople, selectedUser]);
     }
@@ -269,14 +269,14 @@ function CreateAnnouncement() {
 
   function handleAuthDelete(userToDelete) {
     const updatedAuthPeople = authPeople.filter(
-        (user) => user.username !== userToDelete.username
+      (user) => user.username !== userToDelete.username
     );
     // console.log(updatedAuthPeople)
     setAuthPeople(updatedAuthPeople);
   }
 
   //for auth filter options
-  function filterOptions(options, {inputValue}) {
+  function filterOptions(options, { inputValue }) {
     const filtered = options.filter((option) => {
       if (authPeople.some((person) => person.authOptionValue === option)) {
         return false; // filter out if already in authPeople
@@ -339,7 +339,7 @@ function CreateAnnouncement() {
     setDesiredCourseCode("");
   }
 
-  function filterCourseCodes(optionCourseCodes, {inputValue}) {
+  function filterCourseCodes(optionCourseCodes, { inputValue }) {
 
     const filtered = optionCourseCodes.filter((option) => {
       if (courseCode.toLowerCase() === option.title.toLowerCase()) {
@@ -359,15 +359,21 @@ function CreateAnnouncement() {
       return a.title.localeCompare(b.title);
     });
     const isExisting = optionCourseCodes.some((option) => inputValue.toLowerCase().removeSpaces().trim() === option.title.toLowerCase().removeSpaces().trim());
-    if (inputValue && !isExisting) {
+
+    if (inputValue && !isExisting && isValidString(inputValue.trim())) {
+
       filtered.push({
-        inputValue,
-        title: `Add "${inputValue.trim()}"`
+        inputValue: inputValue.addSpaces().trim(),
+        title: `Add "${inputValue.addSpaces().trim()}"`
       })
     }
 
     return filtered;
 
+  }
+
+  function isValidString(str) {
+    return /^[A-Z]+(\s*)?\d+$/.test(str);
   }
 
   //used in autocomplete for keeping value and input value
@@ -382,7 +388,7 @@ function CreateAnnouncement() {
 
   function handleCourseDelete(courseToDelete) {
     const updatedSelectedCourses = selectedCourses.filter(
-        (course) => course.courseCode !== courseToDelete
+      (course) => course.courseCode !== courseToDelete
     );
     // console.log(updatedSelectedCourses)
     setSelectedCourses(updatedSelectedCourses);
@@ -407,7 +413,9 @@ function CreateAnnouncement() {
     jobDetails: "",
     authInstructor: authPeople,
     desiredCourses: selectedCourses,
-    isInprogressAllowed: false
+    isInprogressAllowed: false,
+    section: null,
+    isSectionEnabled: false
   });
 
   // set changes for autocomplete
@@ -422,7 +430,7 @@ function CreateAnnouncement() {
   }, [courseCode, authPeople, selectedCourses]);
 
   function handleInput(event) {
-    const {name, value} = event.target;
+    const { name, value } = event.target;
 
     if (name === "jobDetails" && value.length > 2048) {
       return;
@@ -450,6 +458,10 @@ function CreateAnnouncement() {
   String.prototype.removeSpaces = function () {
     return this.replace(/\s/g, '');
   };
+
+  String.prototype.addSpaces = function () {
+    return this.replace(/([A-Z])(\d)/, '$1 $2');
+  };
   const handleChange = (event, newValue) => {
 
     setSelectedCourses([]);
@@ -475,7 +487,7 @@ function CreateAnnouncement() {
       setCourseCode(trimmedValue);
 
       if (!courseList.some(course => course.title === trimmedValue)) {
-        setcourseList((prev) => [...prev, {title: trimmedValue}]);
+        setcourseList((prev) => [...prev, { title: trimmedValue }]);
       }
     }
 
@@ -503,496 +515,536 @@ function CreateAnnouncement() {
       setDesiredCourseCode(trimmedValue);
 
       if (!desiredCourseList.some(course => course.title === trimmedValue)) {
-        setDesiredCourseList((prev) => [...prev, {title: trimmedValue}]);
+        setDesiredCourseList((prev) => [...prev, { title: trimmedValue }]);
       }
     }
   }
-    function extractSubstring(inputString) {
-      const result = inputString.match(/^[^\s\d]+/);
-      return result ? result[0].length : 2;
+  function extractSubstring(inputString) {
+    const result = inputString.match(/^[^\s\d]+/);
+    return result ? result[0].length : 2;
+  }
+
+
+  const handleAdd = () => {
+
+
+    if (!desiredCourseCode || !desiredLetterGrade) {
+      setError("Fill out the form.")
+    } else if (selectedCourses.some((course) => course.courseCode === desiredCourseCode)) {
+      setError("There is already requirement for this course.");
+    } else if (courseCode == null || courseCode.trim() === "") {
+      setError("To add a requirement, first specify the course code for the application")
+    } else {
+
+      setSelectedCourses((prev) => ([
+        ...prev,
+        {
+          courseCode: desiredCourseCode,
+          grade: desiredLetterGrade,
+          isInprogressAllowed: isInprogressAllowed
+        }
+      ]))
+      handleClose();
     }
 
-
-    const handleAdd = () => {
-
-
-      if (!desiredCourseCode || !desiredLetterGrade) {
-        setError("Fill out the form.")
-      } else if (selectedCourses.some((course) => course.courseCode === desiredCourseCode)) {
-        setError("There is already requirement for this course.");
-      } else if (courseCode == null || courseCode.trim() === "") {
-        setError("To add a requirement, first specify the course code for the application")
-      } else {
-
-        setSelectedCourses((prev) => ([
-          ...prev,
-          {
-            courseCode: desiredCourseCode,
-            grade: desiredLetterGrade,
-            isInprogressAllowed: isInprogressAllowed
-          }
-        ]))
-        handleClose();
-      }
-
-    }
+  }
 
 
 
-    useEffect(() => {
-      setError(null)
-    }, [desiredCourseCode, desiredCourseList])
+  useEffect(() => {
+    setError(null)
+  }, [desiredCourseCode, desiredCourseList])
 
-    const handleCopyPaste = (event) => {
-      event.preventDefault();
-    };
+  const handleCopyPaste = (event) => {
+    event.preventDefault();
+  };
 
-    const handleInputChange = (event, newInputValue) => {
-      const uppercaseValue = newInputValue.toUpperCase();
-      const filteredValue = uppercaseValue.replace(/[^A-Z0-9\ ]/g, '');
-      setCourseCodeValue(filteredValue);
-    };
-    const handleDesiredInputChange = (event, newInputValue) => {
-      const uppercaseValue = newInputValue.toUpperCase();
-      const filteredValue = uppercaseValue.replace(/[^A-Z0-9\ ]/g, '');
-      setDesiredCourseCodeValue(filteredValue);
-    };
-    const dispatch = useDispatch();
+  const courseCodeValid = (courseCode) => courseCode.trim() != '' && !isValidString(courseCode.trim())
 
-    console.log(announcementDetails)
+  const handleInputChange = (event, newInputValue) => {
+    const uppercaseValue = newInputValue.toUpperCase();
+    const filteredValue = uppercaseValue.replace(/[^A-Z0-9\ ]/g, '');
+    setCourseCodeValue(filteredValue);
+  };
+  const handleDesiredInputChange = (event, newInputValue) => {
+    const uppercaseValue = newInputValue.toUpperCase();
+    const filteredValue = uppercaseValue.replace(/[^A-Z0-9\ ]/g, '');
+    setDesiredCourseCodeValue(filteredValue);
+  };
+  const dispatch = useDispatch();
 
-    return (
-        <Box sx={{display: "flex"}}>
-          <Sidebar></Sidebar>
-          <Box component="main" sx={{flexGrow: 1, p: 5}}>
-            <BackButton to={"/home"}/>
-            <AppBarHeader/>
-            <Grid
-                container
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                sx={{mb: 4, mt: 2}}
+  console.log(announcementDetails)
+
+  return (
+    <Box sx={{ display: "flex" }}>
+      <Sidebar></Sidebar>
+      <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
+        <BackButton to={"/home"} />
+        <AppBarHeader />
+        <Grid
+          container
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          sx={{ mb: 4, mt: 2 }}
+        >
+          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+            Create Announcement
+          </Typography>
+        </Grid>
+        <Grid container spacing={4}>
+          <Grid item xs={8}>
+            <Typography
+              variant="h5"
+              sx={{
+                textDecoration: "underline",
+                marginY: 2,
+                fontWeight: "bold",
+              }}
             >
-              <Typography variant="h4" sx={{fontWeight: "bold"}}>
-                Create Announcement
-              </Typography>
-            </Grid>
-            <Grid container spacing={4}>
-              <Grid item xs={8}>
-                <Typography
-                    variant="h5"
-                    sx={{
-                      textDecoration: "underline",
-                      marginY: 2,
-                      fontWeight: "bold",
+              Announcement Details:
+            </Typography>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="center"
+              marginY={2}
+            >
+
+              <Box sx={{ minWidth: 150 }}>
+                <Typography>Term <span style={{ color: 'red' }}>*</span>:</Typography>
+                <FormControl fullWidth>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={announcementDetails.term}
+                    name="term"
+                    sx={{ minWidth: 150, mt: 2 }}
+                    MenuProps={{
+                      style: { maxHeight: "360px" },
+                      autoFocus: false,
                     }}
-                >
-                  Announcement Details:
-                </Typography>
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="start"
-                    alignItems="center"
-                    marginY={2}
-                >
-
-                  <Box sx={{minWidth: 150}}>
-                    <Typography>Term <span style={{color: 'red'}}>*</span>:</Typography>
-                    <FormControl fullWidth>
-                      <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          value={announcementDetails.term}
-                          name="term"
-                          sx={{minWidth: 150, mt: 2}}
-                          MenuProps={{
-                            style: {maxHeight: "360px"},
-                            autoFocus: false,
-                          }}
-                          onChange={handleInput}
-                      >
-                        {
-                          allTerms.map((eachTerm, index) => (
-                              <MenuItem
-                                  key={eachTerm.term_desc}
-                                  value={eachTerm}
-                                  sx={{maxHeight: '360px'}}
-                                  className={
-                                    eachTerm.is_active === '1'
-                                        ? classes.activeItem
-                                        : ''
-                                  }
-                              >
-                                {eachTerm.term_desc}
-                              </MenuItem>
-                          ))
-                        }
-
-                      </Select>
-                    </FormControl>
-                  </Box>
-                  {
-
-                  }
-                </Grid>
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="start"
-                    alignItems="center"
-                >
-                  <Box sx={{minWidth: 150}}>
-                    <Typography>Course Code<span style={{color: 'red'}}>*</span>:</Typography>
-
-                    <Autocomplete
-                        onBlur={() => {
-                          if (!courseCode) {
-                            setCourseCodeValue("")
+                    onChange={handleInput}
+                  >
+                    {
+                      allTerms.map((eachTerm, index) => (
+                        <MenuItem
+                          key={eachTerm.term_desc}
+                          value={eachTerm}
+                          sx={{ maxHeight: '360px' }}
+                          className={
+                            eachTerm.is_active === '1'
+                              ? classes.activeItem
+                              : ''
                           }
-
-                        }}
-                        value={courseCodeValue}
-                        onChange={handleChange}
-                        filterOptions={filterCourseCodes}
-                        onCopy={handleCopyPaste}
-                        onPaste={handleCopyPaste}
-                        onInputChange={handleInputChange}
-                        selectOnFocus
-                        clearOnBlur
-                        handleHomeEndKeys
-                        id="free-solo-with-text-demo"
-                        options={courseList}
-                        getOptionLabel={(option) => {
-                          // Value selected with enter, right from the input
-                          if (typeof option === 'string') {
-                            return option;
-                          }
-                          // Add "xxx" option created dynamically
-                          if (option.inputValue) {
-                            return option.inputValue;
-                          }
-                          // Regular option
-                          return option.title;
-                        }}
-                        renderOption={(props, option) => <li {...props}>{option.title}</li>}
-                        sx={{width: 300, ml: -2}}
-                        freeSolo
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                multiline
-                                size="small"
-                                onKeyDown={(event) => {
-                                  if (event.key === 'Enter') {
-                                    event.preventDefault();
-                                  }
-                                }}
-                                onKeyPress={(event) => {
-                                  const key = event.key;
-                                  const regex = /^[A-Za-z0-9\ ]+$/;
-
-                                  if (!regex.test(key) && key !== 'Enter') {
-                                    event.preventDefault();
-                                  } else {
-                                    setCourseCode("")
-                                  }
-                                }}
-
-                                sx={{
-                                  mx: 2, mt: 1, mb: 2, width: 300,
-                                  ...(params.disabled && {
-                                    backgroundColor: 'transparent',
-                                    color: 'inherit',
-                                    pointerEvents: 'none',
-                                  }),
-                                }}
-                                InputProps={{
-                                  ...params.InputProps,
-                                  endAdornment: (
-                                      <>
-                                        {params.InputProps.endAdornment}
-                                        {courseCode && (
-                                            <IconButton
-                                                onClick={handleCourseCodeDelete}
-                                                aria-label="Clear"
-                                                size="small"
-                                            >
-                                              <ClearIcon/>
-                                            </IconButton>
-                                        )}
-                                      </>
-                                  ),
-                                }}
-                            />
-                        )}
-                        disableClearable
-                    />
-
-                  </Box>
-
-
-                </Grid>
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="start"
-                    alignItems="center"
-                >
-                  <Box sx={{minWidth: 150}}>
-                    <Typography>Last Application Date<span style={{color: 'red'}}>*</span>:</Typography>
-                    <Grid container direction="row" spacing={2}>
-                      <Grid item>
-                        <TextField
-                            id="outlined-required"
-                            name="lastApplicationDate"
-                            label="Enter last date"
-                            variant="outlined"
-                            type="date"
-                            value={announcementDetails.lastApplicationDate}
-                            InputLabelProps={{shrink: true}}
-                            size="small"
-                            sx={{mt: 2}}
-                            onChange={handleInput}
-                        />
-                      </Grid>
-                      <Grid item>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DemoContainer components={["TimePicker", "TimePicker"]}>
-                            <div style={{overflow: "hidden", marginLeft: "1rem"}}>
-                              <TimePicker
-                                  id="outlined-required"
-                                  name="lastApplicationTime"
-                                  label="Enter deadline"
-                                  variant="outlined"
-                                  value={announcementDetails.lastApplicationTime}
-                                  InputLabelProps={{shrink: true}}
-                                  onChange={(newValue) => {
-                                     setAnnouncementDetails((prevDetails) => ({
-                                      ...prevDetails,
-                                      lastApplicationTime: (newValue.$H).toString().padStart(2, '0') + ':' + (newValue.$m).toString().padStart(2, '0')                                      ,
-                                    }));
-
-                                  }}
-                                  ampm={false}
-                                  sx={{
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                      borderColor: "lightgray !important",
-                                      borderWidth: "1px ",
-                                    },
-                                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                                      borderColor: "black!important",
-                                    },
-                                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                      borderColor: "black !important",
-                                    },
-                                    "& .MuiInputBase-input": {
-                                      color: "black",
-                                    },
-                                    "& .MuiInputLabel-root": {
-                                      color: "gray !important",
-                                    },
-                                    "& .MuiOutlinedInput-root": {
-                                      width: "105px !important",
-                                      height: "40px !important",
-                                    },
-                                    "& .MuiInputBase-root": {
-                                      height: "100%",
-                                    },
-                                    "& .MuiPickersClock-pin": {
-                                      backgroundColor: "black",
-                                    },
-                                    "& .MuiPickersClockPointer-pointer": {
-                                      backgroundColor: "black",
-                                    },
-                                    "& .MuiIconButton-root": {
-                                      padding: "8px",
-                                      "& .MuiSvgIcon-root": {
-                                        fill: "black",
-                                        fontSize: "1rem",
-                                      },
-                                    },
-                                    "& .MuiTypography-body2": {
-                                      fontSize: "0.8rem",
-                                    },
-                                    "& .MuiPaper-root": {
-                                      overflowY: "hidden ",
-                                    },
-                                    marginTop: "9px",
-                                  }}
-                              />
-                            </div>
-                          </DemoContainer>
-                        </LocalizationProvider>
-                      </Grid>
-                      <Grid item>
-                        <Tooltip
-                            title="The time you select is adjusted to Istanbul local time."
-                            placement="right"
-                            sx={{ marginTop: "15px" }}
                         >
-                          <IconButton>
-                            <HelpCenterIcon/>
-                          </IconButton>
-                        </Tooltip>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                </Grid>
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="start"
-                    alignItems="center"
-                >
+                          {eachTerm.term_desc}
+                        </MenuItem>
+                      ))
+                    }
 
-                  <Box sx={{minWidth: 150, mt: 2}}>
-                    <Typography> Minimum Desired Letter Grade<span style={{color: 'red'}}>*</span>:</Typography>
-                    <TextField
-                        id="outlined-select-currency"
-                        name="letterGrade"
-                        select
-                        value={announcementDetails.letterGrade}
+                  </Select>
+                </FormControl>
+              </Box>
+              {
+
+              }
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="center"
+            >
+              <Box >
+                <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
+                <Grid container direction="row" justifyContent="start" alignItems="start">
+
+
+                  <Autocomplete
+                    onBlur={() => {
+                      if (!courseCode) {
+                        setCourseCodeValue("")
+                      }
+
+                    }}
+                    value={courseCodeValue}
+                    onChange={handleChange}
+                    filterOptions={filterCourseCodes}
+                    onCopy={handleCopyPaste}
+                    onPaste={handleCopyPaste}
+                    onInputChange={handleInputChange}
+                    selectOnFocus
+                    clearOnBlur
+                    handleHomeEndKeys
+
+                    id="free-solo-with-text-demo"
+                    options={courseList}
+                    getOptionLabel={(option) => {
+                      // Value selected with enter, right from the input
+                      if (typeof option === 'string') {
+                        return option;
+                      }
+                      // Add "xxx" option created dynamically
+                      if (option.inputValue) {
+                        return option.inputValue;
+                      }
+                      // Regular option
+                      return option.title;
+                    }}
+                    renderOption={(props, option) => <li {...props}>{option.title}</li>}
+                    sx={{ width: 300 }}
+                    freeSolo
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        multiline
                         size="small"
-                        sx={{mt: 2, width: 225}}
-                        onChange={handleInput}
-                    >
-                      {grades.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                      ))}
-                    </TextField>
-
-                    <FormControlLabel
-                        value={announcementDetails.isInprogressAllowed}
-                        onChange={(event) => {
-                          setAnnouncementDetails((prevDetails) => ({
-                            ...prevDetails,
-                            isInprogressAllowed: event.target.checked, // Use event.target.checked for checkbox
-                          }));
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') {
+                            setCourseCode((prev) => (prev.addSpaces()))
+                            event.preventDefault();
+                          }
                         }}
-                        control={<Checkbox/>}
-                        label="Allow In Progress Applicants"
-                        sx={{mt: 2, ml: 2}}
+                        error={courseCodeValid(courseCodeValue)}
+                        helperText={courseCodeValid(courseCodeValue) ? "Coursecode should have letters followed by single space followed by digits: XXX 123" : ""}
+                        onKeyPress={(event) => {
+                          const key = event.key;
+                          const regex = /^[A-Za-z0-9\ ]+$/;
+
+                          if (!regex.test(key) && key !== 'Enter') {
+                            event.preventDefault();
+                          } else {
+                            setCourseCode("")
+                          }
+                        }}
+
+                        sx={{
+                          width: 300,
+                          ...(params.disabled && {
+                            backgroundColor: 'transparent',
+                            color: 'inherit',
+                            pointerEvents: 'none',
+                          }),
+                        }}
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <>
+                              {params.InputProps.endAdornment}
+                              {courseCode && (
+                                <IconButton
+                                  onClick={handleCourseCodeDelete}
+                                  aria-label="Clear"
+                                  size="small"
+                                >
+                                  <ClearIcon />
+                                </IconButton>
+                              )}
+                            </>
+                          ),
+                        }}
+                      />
+                    )}
+                    disableClearable
+                  />
+                  <Box sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center", marginLeft: "1rem" }}>
+
+                     
+                    <FormControlLabel
+                      value={announcementDetails.isSectionEnabled}
+                      onChange={(event) => {
+                        
+                        setAnnouncementDetails((prev) => ({
+                          ...prev,
+                          isSectionEnabled: event.target.checked,
+                          section: event.target.checked ? prev.section : null
+                        }));
+                      }}
+                      sx={{minWidth: "fit-content"}}
+                      control={<Checkbox />}
+                      label="Add Section"
                     />
-
-                    <Tooltip
-                        title="By checking this box, you allow students who currently taking this course to apply to be a LA."
-                        placement="right"
-                        sx={{marginLeft: -1, marginTop:2}}
-                    >
-                      <IconButton>
-                        <HelpCenterIcon/>
-                      </IconButton>
-                    </Tooltip>
-
-                  </Box>
-
-                </Grid>
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="start"
-                    alignItems="center"
-                >
-                  <Box sx={{minWidth: 150, mt: 2}}>
-                    <Typography>Weekly Work Hours<span style={{color: 'red'}}>*</span>:</Typography>
                     <TextField
-                        id="outlined-select-currency"
-                        name="workHours"
-                        select
-                        value={announcementDetails.workHours}
-                        size="small"
-                        sx={{mt: 2, width: 225}}
-                        onChange={handleInput}
-                    >
-                      {WorkHour && WorkHour.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                      ))}
-                    </TextField>
+                      label="Section"
+                      variant="outlined"
+                      name="section"
+                      value={announcementDetails.section}
+                      onChange={handleInput}
+                      autoComplete="off"
+                      sx={{marginLeft: "1rem", padding:0, userSelect:"none"}}
+                      
+                      disabled={!announcementDetails.isSectionEnabled}
+                    />
                   </Box>
+
                 </Grid>
 
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="start"
-                    alignItems="flex-start"
-                >
-                  <Box sx={{minWidth: 150, mt: 2}}>
-                    <div style={{display: "block"}}>
-                      <Typography paddingTop={3}>Job Details:</Typography>
-                    </div>
-                    <div style={{margin: "15px 0", display: "block"}}>
-                      <div style={{display: 'flex', flexDirection: 'column', width: '400px', position: 'relative'}}>
-                        <TextareaAutosize
-                            rows={1}
-                            size="small"
-                            name="jobDetails"
-                            multiline
-                            value={announcementDetails.jobDetails}
-                            onChange={handleInput}
-                            placeholder="Enter the job details..."
-                            style={{
-                              width: "100%", // Adjusted width to account for padding and border
-                              border: "1px solid #c1c4bc",
-                              borderRadius: "5px",
-                              padding: "8px", // Adjusted padding to give space between text and border
-                              outline: "none",
-                              fontFamily: "Arial, sans-serif", // Change the font family
-                              fontSize: "15px", // Change the font size
-                              resize: "vertical",
+
+              </Box>
+
+
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="center"
+            >
+              <Box sx={{ minWidth: 150 }}>
+                <Typography>Last Application Date<span style={{ color: 'red' }}>*</span>:</Typography>
+                <Grid container direction="row" spacing={2}>
+                  <Grid item>
+                    <TextField
+                      id="outlined-required"
+                      name="lastApplicationDate"
+                      label="Enter last date"
+                      variant="outlined"
+                      type="date"
+                      value={announcementDetails.lastApplicationDate}
+                      InputLabelProps={{ shrink: true }}
+                      size="small"
+                      sx={{ mt: 2 }}
+                      onChange={handleInput}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer components={["TimePicker", "TimePicker"]}>
+                        <div style={{ overflow: "hidden", marginLeft: "1rem" }}>
+                          <TimePicker
+                            id="outlined-required"
+                            name="lastApplicationTime"
+                            label="Enter deadline"
+                            variant="outlined"
+                            value={announcementDetails.lastApplicationTime}
+                            InputLabelProps={{ shrink: true }}
+                            onChange={(newValue) => {
+                              setAnnouncementDetails((prevDetails) => ({
+                                ...prevDetails,
+                                lastApplicationTime: (newValue.$H).toString().padStart(2, '0') + ':' + (newValue.$m).toString().padStart(2, '0'),
+                              }));
 
                             }}
-                        />
-                          <Typography variant="body2" style={{marginTop: '7px', marginLeft: '3px', width: '100%', fontSize: '11px' }}>
-                            Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
-                            <br/>
-                          </Typography>
-
-
-
-                      </div>
-                    </div>
-
-                  </Box>
-
-
-                </Grid>
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="start"
-                    alignItems="flex-start"
-                >
-                  <Box sx={{minWidth: 200, mt: 2}}>
-                    <Typography sx={{my: 2}}>Authorized Instructor(s):</Typography>
-                    <Grid
-                        item
-                        xs={6}
-                        direction="column"
-                        justifyContent="center"
-                        alignItems="flex-center"
+                            ampm={false}
+                            sx={{
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "lightgray !important",
+                                borderWidth: "1px ",
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "black!important",
+                              },
+                              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "black !important",
+                              },
+                              "& .MuiInputBase-input": {
+                                color: "black",
+                              },
+                              "& .MuiInputLabel-root": {
+                                color: "gray !important",
+                              },
+                              "& .MuiOutlinedInput-root": {
+                                width: "105px !important",
+                                height: "40px !important",
+                              },
+                              "& .MuiInputBase-root": {
+                                height: "100%",
+                              },
+                              "& .MuiPickersClock-pin": {
+                                backgroundColor: "black",
+                              },
+                              "& .MuiPickersClockPointer-pointer": {
+                                backgroundColor: "black",
+                              },
+                              "& .MuiIconButton-root": {
+                                padding: "8px",
+                                "& .MuiSvgIcon-root": {
+                                  fill: "black",
+                                  fontSize: "1rem",
+                                },
+                              },
+                              "& .MuiTypography-body2": {
+                                fontSize: "0.8rem",
+                              },
+                              "& .MuiPaper-root": {
+                                overflowY: "hidden ",
+                              },
+                              marginTop: "9px",
+                            }}
+                          />
+                        </div>
+                      </DemoContainer>
+                    </LocalizationProvider>
+                  </Grid>
+                  <Grid item>
+                    <Tooltip
+                      title="The time you select is adjusted to Istanbul local time."
+                      placement="right"
+                      sx={{ marginTop: "15px" }}
                     >
-                      <Autocomplete
-                          id="controllable-states-demo"
-                          options={authUsersList && authUsersList.map((authUser) => {
-                            return authUser.authOptionValue;
-                          })}
-                          filterOptions={filterOptions}
-                          value={authValue}
-                          inputValue={inputAuthValue}
-                          onInputChange={(event, newInputValue) => {
-                            if (newInputValue !== null) {
-                              setAuthInputValue(newInputValue);
-                            }
-                          }}
-                          onChange={(event, newValue) => {
-                            if (newValue !== null) handleAuthAdd(newValue);
+                      <IconButton>
+                        <HelpCenterIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="center"
+            >
+
+              <Box sx={{ minWidth: 150, mt: 2 }}>
+                <Typography> Minimum Desired Letter Grade<span style={{ color: 'red' }}>*</span>:</Typography>
+                <TextField
+                  id="outlined-select-currency"
+                  name="letterGrade"
+                  select
+                  value={announcementDetails.letterGrade}
+                  size="small"
+                  sx={{ mt: 2, width: 225 }}
+                  onChange={handleInput}
+                >
+                  {grades.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+
+                <FormControlLabel
+                  value={announcementDetails.isInprogressAllowed}
+                  onChange={(event) => {
+                    setAnnouncementDetails((prevDetails) => ({
+                      ...prevDetails,
+                      isInprogressAllowed: event.target.checked,
+                    }));
+                  }}
+                  control={<Checkbox />}
+                  label="Allow In Progress Applicants"
+                  sx={{ mt: 2, ml: 2 }}
+                />
+
+                <Tooltip
+                  title="By checking this box, you allow students who currently taking this course to apply to be a LA."
+                  placement="right"
+                  sx={{ marginLeft: -1, marginTop: 2 }}
+                >
+                  <IconButton>
+                    <HelpCenterIcon />
+                  </IconButton>
+                </Tooltip>
+
+              </Box>
+
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="center"
+            >
+              <Box sx={{ minWidth: 150, mt: 2 }}>
+                <Typography>Weekly Work Hours<span style={{ color: 'red' }}>*</span>:</Typography>
+                <TextField
+                  id="outlined-select-currency"
+                  name="workHours"
+                  select
+                  value={announcementDetails.workHours}
+                  size="small"
+                  sx={{ mt: 2, width: 225 }}
+                  onChange={handleInput}
+                >
+                  {WorkHour && WorkHour.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
+            </Grid>
+
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="flex-start"
+            >
+              <Box sx={{ minWidth: 150, mt: 2 }}>
+                <div style={{ display: "block" }}>
+                  <Typography paddingTop={3}>Job Details:</Typography>
+                </div>
+                <div style={{ margin: "15px 0", display: "block" }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', width: '400px', position: 'relative' }}>
+                    <TextareaAutosize
+                      rows={1}
+                      size="small"
+                      name="jobDetails"
+                      multiline
+                      value={announcementDetails.jobDetails}
+                      onChange={handleInput}
+                      placeholder="Enter the job details..."
+                      style={{
+                        width: "100%", // Adjusted width to account for padding and border
+                        border: "1px solid #c1c4bc",
+                        borderRadius: "5px",
+                        padding: "8px", // Adjusted padding to give space between text and border
+                        outline: "none",
+                        fontFamily: "Arial, sans-serif", // Change the font family
+                        fontSize: "15px", // Change the font size
+                        resize: "vertical",
+
+                      }}
+                    />
+                    <Typography variant="body2" style={{ marginTop: '7px', marginLeft: '3px', width: '100%', fontSize: '11px' }}>
+                      Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
+                      <br />
+                    </Typography>
+
+
+
+                  </div>
+                </div>
+
+              </Box>
+
+
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="flex-start"
+            >
+              <Box sx={{ minWidth: 200, mt: 2 }}>
+                <Typography sx={{ my: 2 }}>Authorized Instructor(s):</Typography>
+                <Grid
+                  item
+                  xs={6}
+                  direction="column"
+                  justifyContent="center"
+                  alignItems="flex-center"
+                >
+                  <Autocomplete
+                    id="controllable-states-demo"
+                    options={authUsersList && authUsersList.map((authUser) => {
+                      return authUser.authOptionValue;
+                    })}
+                    filterOptions={filterOptions}
+                    value={authValue}
+                    inputValue={inputAuthValue}
+                    onInputChange={(event, newInputValue) => {
+                      if (newInputValue !== null) {
+                        setAuthInputValue(newInputValue);
+                      }
+                    }}
+                    onChange={(event, newValue) => {
+                      if (newValue !== null) handleAuthAdd(newValue);
                     }}
                     renderInput={(params) => (
                       <TextField
@@ -1006,8 +1058,8 @@ function CreateAnnouncement() {
 
                   <Grid container spacing={1} sx={{ width: '31rem' }}>
 
-                        {authPeople &&
-                            authPeople.map((authPerson, index) => {
+                    {authPeople &&
+                      authPeople.map((authPerson, index) => {
 
 
                         return (
@@ -1031,12 +1083,14 @@ function CreateAnnouncement() {
                                   </Typography>
                                 </Avatar>
                               }
-                              sx={{ width: '100%', justifyContent: 'space-between', minHeight: '2rem',
-                              height: 'fit-content',
-                              '& .MuiChip-label': {
-                                display: 'block',
-                                whiteSpace: 'normal',
-                              }, }}
+                              sx={{
+                                width: '100%', justifyContent: 'space-between', minHeight: '2rem',
+                                height: 'fit-content',
+                                '& .MuiChip-label': {
+                                  display: 'block',
+                                  whiteSpace: 'normal',
+                                },
+                              }}
                               onDelete={() => handleAuthDelete(authPerson)}
                               disabled={authPerson.username === userName}
                             />
@@ -1090,269 +1144,272 @@ function CreateAnnouncement() {
                 </Grid>
 
 
-                    <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
-                      <DialogTitle>New Requirement</DialogTitle>
-                      <DialogContent>
-                        <Box component="form" sx={{display: 'flex', flexWrap: 'wrap'}}>
-                          <FormControl sx={{m: 1, minWidth: 120}}>
-                            <Grid
-                                container
-                                direction="row"
-                                justifyContent="start"
-                                alignItems="center"
-                            >
-                              <Typography>Course Code<span style={{color: 'red'}}>*</span>:</Typography>
+                <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
+                  <DialogTitle>New Requirement</DialogTitle>
+                  <DialogContent>
+                    <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                      <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="start"
+                          alignItems="center"
+                        >
+                          <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
 
-                              <Autocomplete
-                                  onBlur={() => {
-                                    if (!desiredCourseCode) {
-                                      setDesiredCourseCodeValue("")
-                                    }
+                          <Autocomplete
+                            onBlur={() => {
+                              if (!desiredCourseCode) {
+                                setDesiredCourseCodeValue("")
+                              }
 
-                                  }}
-                                  value={desiredCourseCodeValue}
-                                  onChange={handleChangeDesired}
-                                  filterOptions={filterCourseCodes}
-                                  onInputChange={handleDesiredInputChange}
-                                  label="course"
-                                  selectOnFocus
-                                  clearOnBlur
-                                  handleHomeEndKeys
-                                  id="free-solo-with-text-demo"
-                                  options={desiredCourseList}
-                                  getOptionLabel={(option) => {
-                                    // Value selected with enter, right from the input
-                                    if (typeof option === 'string') {
-                                      return option;
-                                    }
-                                    // Add "xxx" option created dynamically
-                                    if (option.inputValue) {
-                                      return option.inputValue;
-                                    }
-                                    // Regular option
-                                    return option.title;
-                                  }}
-                                  renderOption={(props, option) => <li {...props}>{option.title}</li>}
-                                  sx={{width: 'fit-content', marginRight: "1rem"}}
-                                  freeSolo
-                                  renderInput={(params) => (
-                                      <TextField
-                                          {...params}
-
-                                          multiline
-                                          size="small"
-                                          onKeyDown={(event) => {
-                                            if (event.key === 'Enter') {
-                                              event.preventDefault();
-                                            }
-                                          }}
-                                          onKeyPress={(event) => {
-                                            const key = event.key;
-                                            const regex = /^[A-Za-z0-9\ ]+$/;
-
-                                            if (!regex.test(key) && key !== 'Enter') {
-                                              event.preventDefault();
-                                            } else {
-                                              setDesiredCourseCode("")
-                                            }
-
-                                          }}
-                                          sx={{
-                                            mx: 2, mt: 1, mb: 2, width: 150,
-                                            ...(params.disabled && {
-                                              backgroundColor: 'transparent',
-                                              color: 'inherit',
-                                              pointerEvents: 'none',
-                                            }),
-                                          }}
-                                          InputProps={{
-                                            ...params.InputProps,
-                                            endAdornment: (
-                                                <>
-                                                  {params.InputProps.endAdornment}
-                                                  {desiredCourseCode && (
-                                                      <IconButton
-                                                          onClick={handleDesiredCourseCodeDelete}
-                                                          aria-label="Clear"
-                                                          size="small"
-                                                      >
-                                                        <ClearIcon/>
-                                                      </IconButton>
-                                                  )}
-                                                </>
-                                            ),
-                                          }}
-                                      />
-                                  )}
-                                  disableClearable
-                              />
-
-
-                            </Grid>
-                          </FormControl>
-                          <FormControl sx={{m: 1, minWidth: 120}}>
-
-                            <Grid
-                                container
-                                direction="row"
-                                justifyContent="start"
-                                alignItems="center"
-                            >
-                              <Typography> Minimum Desired Letter Grade<span
-                                  style={{color: 'red'}}>*</span>:</Typography>
+                            }}
+                            value={desiredCourseCodeValue}
+                            onChange={handleChangeDesired}
+                            filterOptions={filterCourseCodes}
+                            onInputChange={handleDesiredInputChange}
+                            label="course"
+                            selectOnFocus
+                            clearOnBlur
+                            handleHomeEndKeys
+                            id="free-solo-with-text-demo"
+                            options={desiredCourseList}
+                            getOptionLabel={(option) => {
+                              // Value selected with enter, right from the input
+                              if (typeof option === 'string') {
+                                return option;
+                              }
+                              // Add "xxx" option created dynamically
+                              if (option.inputValue) {
+                                return option.inputValue;
+                              }
+                              // Regular option
+                              return option.title;
+                            }}
+                            renderOption={(props, option) => <li {...props}>{option.title}</li>}
+                            sx={{ width: 'fit-content', marginRight: "1rem" }}
+                            freeSolo
+                            renderInput={(params) => (
                               <TextField
-                                  id="outlined-select-currency"
-                                  name="letterGrade"
-                                  select
-                                  value={desiredLetterGrade}
-                                  size="small"
-                                  sx={{m: 2, width: 225}}
-                                  onChange={(event) => {
-                                    setDesiredLetterGrade(event.target.value)
-                                  }}
-                              >
-                                {grades.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </MenuItem>
-                                ))}
-                              </TextField>
+                                {...params}
 
-                            </Grid>
-
-
-                          </FormControl>
-                          <FormControl sx={{m: 1, minWidth: 120}}>
-                            <Grid
-                                container
-                                direction="row"
-                                justifyContent="start"
-                                alignItems="center"
-                            >
-                              <FormControlLabel
-                                  value={isInprogressAllowed}
-                                  onChange={(_) => {
-                                    setIsInprogressAllowed((prev) => !prev)
-                                  }}
-
-
-                                  control={<Checkbox/>}
-                                  label="Allow In Progress Applicants"
-                              />
-                            </Grid>
-                            {error && <Alert severity="error">{error}</Alert>}
-                          </FormControl>
-                        </Box>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={() => {
-                          handleAdd();
-                        }}>Add</Button>
-                      </DialogActions>
-                    </Dialog>
-                    {selectedCourses.length > 0 && <Table>
-
-                      <TableBody>
-
-                        {selectedCourses.map((courseSelected, i) => (
-                            <TableRow key={courseSelected.courseCode}>
-                              <TableCell>
-                                <Chip
-                                    label={courseSelected.courseCode}
-                                    variant="outlined"
-                                    avatar={
-                                      <Avatar
-                                          sx={{
-                                            backgroundColor: i % 2 === 0 ? "#5FB3F6" : "#2196F3",
-                                          }}
-                                      >
-                                        <Typography fontSize="small" sx={{color: "white"}}>
-                                          {
-                                            courseSelected.courseCode.slice(0, 2)}
-                                        </Typography>
-                                      </Avatar>
-                                    }
-                                />
-                              </TableCell>
-                              <TableCell>
-
-                                <div style={{display: 'flex', alignItems: 'center'}}>
-                                  <Chip
-                                      label={courseSelected.grade}
-                                      color={getColorForGrade(courseSelected.grade)}
-                                      sx={{
-                                        backgroundColor: 'white',
-                                        fontWeight: 'bold',
-                                        marginRight: '8px',
-                                        width: '3rem'
-                                      }}
-                                      variant="outlined"
-                                  />
-                                  {<UseNumberInputCompact
-                                      index={grades.findIndex((grade) => grade.label === courseSelected.grade)}
-                                      grade={courseSelected.grade} courseCode={courseSelected.courseCode}
-                                      callback={updateGrade}/>
+                                multiline
+                                size="small"
+                                onKeyDown={(event) => {
+                                  if (event.key === 'Enter') {
+                                    event.preventDefault();
                                   }
-                                </div>
+                                }}
+                                error={courseCodeValid(desiredCourseCodeValue)}
+                                helperText={courseCodeValid(desiredCourseCodeValue) ? "Coursecode should have letters followed by single space followed by digits: XXX 123" : ""}
+
+                                onKeyPress={(event) => {
+                                  const key = event.key;
+                                  const regex = /^[A-Za-z0-9\ ]+$/;
+
+                                  if (!regex.test(key) && key !== 'Enter') {
+                                    event.preventDefault();
+                                  } else {
+                                    setDesiredCourseCode("")
+                                  }
+
+                                }}
+                                sx={{
+                                  mx: 2, mt: 1, mb: 2, width: 300,
+                                  ...(params.disabled && {
+                                    backgroundColor: 'transparent',
+                                    color: 'inherit',
+                                    pointerEvents: 'none',
+                                  }),
+                                }}
+                                InputProps={{
+                                  ...params.InputProps,
+                                  endAdornment: (
+                                    <>
+                                      {params.InputProps.endAdornment}
+                                      {desiredCourseCode && (
+                                        <IconButton
+                                          onClick={handleDesiredCourseCodeDelete}
+                                          aria-label="Clear"
+                                          size="small"
+                                        >
+                                          <ClearIcon />
+                                        </IconButton>
+                                      )}
+                                    </>
+                                  ),
+                                }}
+                              />
+                            )}
+                            disableClearable
+                          />
 
 
-                              </TableCell>
-                              <TableCell>
-                                <div style={{display: 'flex', alignItems: 'center'}}>
-                                  <FiberManualRecordIcon
-                                      onClick={() => {
+                        </Grid>
+                      </FormControl>
+                      <FormControl sx={{ m: 1, minWidth: 120 }}>
+
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="start"
+                          alignItems="center"
+                        >
+                          <Typography> Minimum Desired Letter Grade<span
+                            style={{ color: 'red' }}>*</span>:</Typography>
+                          <TextField
+                            id="outlined-select-currency"
+                            name="letterGrade"
+                            select
+                            value={desiredLetterGrade}
+                            size="small"
+                            sx={{ m: 2, width: 225 }}
+                            onChange={(event) => {
+                              setDesiredLetterGrade(event.target.value)
+                            }}
+                          >
+                            {grades.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+
+                        </Grid>
 
 
-                                        setSelectedCourses((prev) => {
-                                          return prev.map((course) => {
+                      </FormControl>
+                      <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="start"
+                          alignItems="center"
+                        >
+                          <FormControlLabel
+                            value={isInprogressAllowed}
+                            onChange={(_) => {
+                              setIsInprogressAllowed((prev) => !prev)
+                            }}
 
-                                            if (course.courseCode === courseSelected.courseCode) {
 
-                                              return {
-                                                ...course,
-                                                isInprogressAllowed: !courseSelected.isInprogressAllowed,
-                                              };
-                                            }
-                                            return course;
-                                          });
-                                        });
+                            control={<Checkbox />}
+                            label="Allow In Progress Applicants"
+                          />
+                        </Grid>
+                        {error && <Alert severity="error">{error}</Alert>}
+                      </FormControl>
+                    </Box>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={() => {
+                      handleAdd();
+                    }}>Add</Button>
+                  </DialogActions>
+                </Dialog>
+                {selectedCourses.length > 0 && <Table>
 
-                                      }}
-                                      sx={{
-                                        cursor: "pointer",
-                                        color: courseSelected.isInprogressAllowed ? 'green' : 'red',
-                                        marginRight: 1,
-                                      }}
-                                  />
-                                  {/* TODO do not enter static values */}
-                                  <Typography width={`${"In Progress Not Allowed".length * 8}px`} variant="body2"
-                                              color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
-                                    {"In Progress " + (courseSelected.isInprogressAllowed ? 'Allowed' : 'Not Allowed')}
-                                  </Typography>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <Chip
-                                    label="Delete"
-                                    color="error"
-                                    sx={{cursor: 'pointer'}}
-                                    onClick={() => handleCourseDelete(courseSelected.courseCode)}
-                                />
-                              </TableCell>
-                            </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>}
-                  </Grid>
-                </Grid>
+                  <TableBody>
+
+                    {selectedCourses.map((courseSelected, i) => (
+                      <TableRow key={courseSelected.courseCode}>
+                        <TableCell>
+                          <Chip
+                            label={courseSelected.courseCode}
+                            variant="outlined"
+                            avatar={
+                              <Avatar
+                                sx={{
+                                  backgroundColor: i % 2 === 0 ? "#5FB3F6" : "#2196F3",
+                                }}
+                              >
+                                <Typography fontSize="small" sx={{ color: "white" }}>
+                                  {
+                                    courseSelected.courseCode.slice(0, 2)}
+                                </Typography>
+                              </Avatar>
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Chip
+                              label={courseSelected.grade}
+                              color={getColorForGrade(courseSelected.grade)}
+                              sx={{
+                                backgroundColor: 'white',
+                                fontWeight: 'bold',
+                                marginRight: '8px',
+                                width: '3rem'
+                              }}
+                              variant="outlined"
+                            />
+                            {<UseNumberInputCompact
+                              index={grades.findIndex((grade) => grade.label === courseSelected.grade)}
+                              grade={courseSelected.grade} courseCode={courseSelected.courseCode}
+                              callback={updateGrade} />
+                            }
+                          </div>
+
+
+                        </TableCell>
+                        <TableCell>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <FiberManualRecordIcon
+                              onClick={() => {
+
+
+                                setSelectedCourses((prev) => {
+                                  return prev.map((course) => {
+
+                                    if (course.courseCode === courseSelected.courseCode) {
+
+                                      return {
+                                        ...course,
+                                        isInprogressAllowed: !courseSelected.isInprogressAllowed,
+                                      };
+                                    }
+                                    return course;
+                                  });
+                                });
+
+                              }}
+                              sx={{
+                                cursor: "pointer",
+                                color: courseSelected.isInprogressAllowed ? 'green' : 'red',
+                                marginRight: 1,
+                              }}
+                            />
+                            {/* TODO do not enter static values */}
+                            <Typography width={`${"In Progress Not Allowed".length * 8}px`} variant="body2"
+                              color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
+                              {"In Progress " + (courseSelected.isInprogressAllowed ? 'Allowed' : 'Not Allowed')}
+                            </Typography>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label="Delete"
+                            color="error"
+                            sx={{ cursor: 'pointer' }}
+                            onClick={() => handleCourseDelete(courseSelected.courseCode)}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>}
               </Grid>
             </Grid>
-            <AddQuestion AnnouncementDetails={announcementDetails} username={userName}/>
-          </Box>
-        </Box>
-    );
-  }
+          </Grid>
+        </Grid>
+        <AddQuestion AnnouncementDetails={announcementDetails} username={userName} />
+      </Box>
+    </Box>
+  );
+}
 
 
 export default CreateAnnouncement;

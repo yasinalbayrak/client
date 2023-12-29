@@ -28,6 +28,7 @@ import { setTerm } from "../redux/userSlice";
 import { CheckBox } from "@mui/icons-material";
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { useEffect } from "react";
 
 const questionType = [
   { value: "Text Answer", label: "Text Answer" },
@@ -184,6 +185,10 @@ function AddQuestion(props) {
     setQuestions(updatedQuestions);
   }
 
+  useEffect((() => {
+    console.log('questions :>> ', questions);
+  }), [questions])
+
   function deleteChoice(questionNumber, choiceIndex) {
     setQuestions((prevQuestions) => {
       // Find the question by its number
@@ -302,72 +307,90 @@ function AddQuestion(props) {
                   </div>
                   {questions.map((question, index) => {
                     return (
-                      <Draggable key={question.questionNumber} draggableId={question.questionNumber.toString()} index={index}>
+                      <Draggable key={index} draggableId={index.toString()} index={index}>
                         {(provided, snapshot) => (
                           <Grid
                             container
-                            direction="row"
+                            direction="column"
                             justifyContent="start"
-                            alignItems="center"
+                            alignItems="start"
                             sx={{ px: 1, backgroundColor: snapshot.isDragging && "#4D5571", color: snapshot.isDragging && "white" }}
-                            key={question.questionNumber}
+                            key={index.toString()}
                             {...provided.dragHandleProps}
                             {...provided.draggableProps}
                             ref={provided.innerRef}
                           >
-                            <Typography>Question {question.questionNumber}:</Typography>
-                            <TextField
-                              id="outlined-required"
-                              name="mQuestion"
-                              multiline
-                              maxRows={10}
-                              value={question.mQuestion}
-                              label=""
-                              variant="outlined"
-                              size="small"
-                              sx={{
-                                m: 2,
-                                width: 450,
-                                "& .MuiOutlinedInput-input": { color: snapshot.isDragging && "white" },
-                                "& fieldset": { borderColor: snapshot.isDragging && "white" },
-                              }}
-                              onChange={(event) => handleInput(event, index)}
-                            />
-                            <TextField
-                              id="outlined-select-currency"
-                              name="mValue"
-                              select
-                              value={question.mValue}
-                              size="small"
-                              sx={{
-                                m: 2,
-                                width: 225,
-                                "& .MuiSelect-select": { color: snapshot.isDragging && "white" },
-                                "& fieldset": { borderColor: snapshot.isDragging && "white" },
-                              }}
-                              onChange={(event) => handleInput(event, index)}
-                            >
-                              {questionType.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </MenuItem>
-                              ))}
-                            </TextField>
-                            {question.mValue === "Multiple Choice" && 
-                            <FormControlLabel
-                              control={<Switch col/>}
-                              label="Allow Multiple Answers" 
-                              sx={{border: "1px grey solid",padding: "0 1rem", borderRadius: "5%"}}/>
-                              }
-                            <Button
-                              variant="contained"
-                              size="large"
-                              color="error"
-                              onClick={() => handleDeleteQuestion(question.questionNumber)}
-                            >
-                              <DeleteIcon fontSize="inherit" />
-                            </Button>
+                            <Grid container direction="row" justifyContent="start" alignItems="center">
+                              <Typography>Question {question.questionNumber}:</Typography>
+                              <TextField
+                                id="outlined-required"
+                                name="mQuestion"
+                                multiline
+                                maxRows={10}
+                                value={question.mQuestion}
+                                label=""
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                  m: 1,
+                                  width: 450,
+                                  "& .MuiOutlinedInput-input": { color: snapshot.isDragging && "white" },
+                                  "& fieldset": { borderColor: snapshot.isDragging && "white" },
+                                }}
+                                onChange={(event) => handleInput(event, index)}
+                              />
 
+                              <Button
+                                variant="contained"
+                                size="large"
+                                color="error"
+                                onClick={() => handleDeleteQuestion(question.questionNumber)}
+                              >
+                                <DeleteIcon fontSize="inherit" />
+                              </Button>
+                            </Grid>
+
+                            <Grid sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                              <TextField
+                                id="outlined-select-currency"
+                                name="mValue"
+                                select
+                                value={question.mValue}
+                                size="small"
+                                sx={{
+                                  m: 2,
+                                  width: 225,
+                                  "& .MuiSelect-select": { color: snapshot.isDragging && "white" },
+                                  "& fieldset": { borderColor: snapshot.isDragging && "white" },
+                                }}
+                                onChange={(event) => handleInput(event, index)}
+                              >
+                                {questionType.map((option) => (
+                                  <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                              {question.mValue === "Multiple Choice" &&
+                                <FormControlLabel
+                                  value={question.allowMultipleAnswers}
+                                  onChange={() => {
+                                    setQuestions((prev) =>
+                                      prev.map((each, idx) =>
+                                        idx === index
+                                          ? { ...each, allowMultipleAnswers: !each.allowMultipleAnswers }
+                                          : each
+                                      )
+                                    );
+                                  }}
+                                  control={<Switch color="success" checked={question.allowMultipleAnswers} />}
+                                  label="Allow Multiple Answers"
+                                  sx={{ color: `${question.allowMultipleAnswers ? 'green' : 'black'}`, border: `0.5px ${question.allowMultipleAnswers ? 'green' : 'grey'} solid`, padding: "0 1rem", borderRadius: "5px" }}
+                                />
+
+                              }
+
+                            </Grid>
                             {question.mValue === "Multiple Choice" && (
                               <Grid item xs={10} sx={{ backgroundColor: snapshot.isDragging ? "#6A759C" : "#F5F5F5", px: 2 }}>
                                 {question.mMultiple.map((multiple, idx) => {
@@ -512,7 +535,8 @@ function AddQuestion(props) {
                 props.AnnouncementDetails.lastApplicationTime &&
                 props.AnnouncementDetails.letterGrade &&
                 props.AnnouncementDetails.workHours &&
-                props.AnnouncementDetails.term
+                props.AnnouncementDetails.term &&
+                (!props.AnnouncementDetails.isSectionEnabled || (props.AnnouncementDetails.section !== "" && props.AnnouncementDetails.section))
 
               ) {
                 addAnnouncement(
@@ -527,7 +551,8 @@ function AddQuestion(props) {
                   props.AnnouncementDetails.desiredCourses,
                   questions,
                   props.AnnouncementDetails.term,
-                  props.AnnouncementDetails.isInprogressAllowed
+                  props.AnnouncementDetails.isInprogressAllowed,
+                  props.AnnouncementDetails.section
                 ).then((data) => {
                   dispatch(setTerm({ term: props.AnnouncementDetails.term }));
                   navigate("/Home", {

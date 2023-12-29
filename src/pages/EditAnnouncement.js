@@ -56,18 +56,18 @@ function EditAnnouncement() {
   const userName = name + " " + surname;
   const term = useSelector((state) => state.user.term);
   const grades = [
-    {value: "A", label: "A"},
-    {value: "A-", label: "A-"},
-    {value: "B+", label: "B+"},
-    {value: "B", label: "B"},
-    {value: "B-", label: "B-"},
-    {value: "C+", label: "C+"},
-    {value: "C", label: "C"},
-    {value: "C-", label: "C-"},
-    {value: "D+", label: "D+"},
-    {value: "D", label: "D"},
-    {value: "S", label: "S"},
-    {value: "W", label: "W"},
+    { value: "A", label: "A" },
+    { value: "A-", label: "A-" },
+    { value: "B+", label: "B+" },
+    { value: "B", label: "B" },
+    { value: "B-", label: "B-" },
+    { value: "C+", label: "C+" },
+    { value: "C", label: "C" },
+    { value: "C-", label: "C-" },
+    { value: "D+", label: "D+" },
+    { value: "D", label: "D" },
+    { value: "S", label: "S" },
+    { value: "W", label: "W" },
   ];
   const WorkHour = [
     { value: "PT1H", label: "1 Hour" },
@@ -150,6 +150,7 @@ function EditAnnouncement() {
   const [error, setError] = React.useState(false);
   const [announcementTerm, setAnnouncementTerm] = useState(null);
   const [termSelect, setTermSelect] = React.useState(term);
+  const [isFocused, setIsFocused] = React.useState(false);
   useEffect(() => {
 
     dispatch(flipShowTerms())
@@ -525,7 +526,7 @@ function EditAnnouncement() {
 
   const [announcementDetails, setAnnouncementDetails] = useState(null);
   const [UserDetails, setUserDetails] = useState({});
- 
+
 
   const { id } = useParams(); //for taking post id
   useEffect(() => {
@@ -577,7 +578,9 @@ function EditAnnouncement() {
           desiredCourses: FindDesiredCourses,
           term: findTermObject,
           questions: results.questions,
-          isInprogressAllowed: results.isInprogressAllowed
+          isInprogressAllowed: results.isInprogressAllowed,
+          isSectionEnabled: results.section != null,
+          section: results.section
         };
 
         setCourseCode(results.course.courseCode);
@@ -598,7 +601,7 @@ function EditAnnouncement() {
           };
         });
 
-        
+
 
         // Additional state update checks if needed
         if (results && results.course && results.course.courseCode) {
@@ -722,9 +725,9 @@ function EditAnnouncement() {
               </Box>
             </Grid>
             <Grid container direction="row" justifyContent="start" alignItems="center">
-              <Box sx={{ minWidth: 150 }}>
+              <Box>
                 <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
-
+                <Grid container direction="row" justifyContent="start" alignItems="start">
                 <Autocomplete
                   value={courseCodeValue}
                   onChange={handleChange}
@@ -801,7 +804,40 @@ function EditAnnouncement() {
                   disableClearable
                   getOptionDisabled={(option) => !!courseCode && option !== courseCode}
                 />
+                <Box sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center", marginLeft: "1rem" }}>
 
+
+                  <FormControlLabel
+                    value={announcementDetails.isSectionEnabled}
+                    onChange={(event) => {
+
+                      setAnnouncementDetails((prev) => ({
+                        ...prev,
+                        isSectionEnabled: event.target.checked,
+                        section: event.target.checked ? prev.section : null
+                      }));
+                    }}
+                    sx={{ minWidth: "fit-content", marginLeft: "1rem" }}
+                    control={<Checkbox checked={announcementDetails.isSectionEnabled}/>}
+                    label="Add Section"
+                  />
+                  <TextField
+                    label="Section"
+                    variant="outlined"
+                    name="section"
+                    value={ announcementDetails.section ?? ''}
+                    onChange={handleInput}
+                    autoComplete="off"
+                    sx={{ marginLeft: "1rem", padding: 0, userSelect: "none" }}
+                    InputLabelProps={{
+                      shrink:  (announcementDetails.section !== ''   && announcementDetails.section) || isFocused,
+                    }}
+                    disabled={!announcementDetails.isSectionEnabled}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                  />
+                </Box>
+                </Grid>
 
 
               </Box>
@@ -853,31 +889,29 @@ function EditAnnouncement() {
                     </MenuItem>
                   ))}
                 </TextField>
-                 <FormControlLabel
-                   
-                    value={announcementDetails.isInprogressAllowed}
-                    onChange={(event) => {
+                <FormControlLabel
 
-                      console.log('event :>> ', event);
-                      setAnnouncementDetails((prevDetails) => ({
-                        ...prevDetails,
-                        isInprogressAllowed: event.target.checked, 
-                      }));
-                    }}
-                    control={ <Checkbox 
-                      checked={announcementDetails.isInprogressAllowed}/>}
-                    
-                    label="Allow In Progress Applicants"
-                    sx={{mt: 2, ml: 2}}
+                  value={announcementDetails.isInprogressAllowed}
+                  onChange={(event) => {
+                    setAnnouncementDetails((prevDetails) => ({
+                      ...prevDetails,
+                      isInprogressAllowed: event.target.checked,
+                    }));
+                  }}
+                  control={<Checkbox
+                    checked={announcementDetails.isInprogressAllowed} />}
+
+                  label="Allow In Progress Applicants"
+                  sx={{ mt: 2, ml: 2 }}
                 />
 
                 <Tooltip
-                    title="By checking this box, you allow students who currently taking this course to apply to be a LA."
-                    placement="right"
-                    sx={{marginLeft: -1, marginTop:2}}
+                  title="By checking this box, you allow students who currently taking this course to apply to be a LA."
+                  placement="right"
+                  sx={{ marginLeft: -1, marginTop: 2 }}
                 >
                   <IconButton>
-                    <HelpCenterIcon/>
+                    <HelpCenterIcon />
                   </IconButton>
                 </Tooltip>
               </Box>
@@ -903,36 +937,36 @@ function EditAnnouncement() {
               </Box>
             </Grid>
             {<Grid container direction="row" justifyContent="start" alignItems="flex-start">
-              <Box sx={{minWidth: 150, mt: 2}}>
-                <div style={{display: "block"}}>
+              <Box sx={{ minWidth: 150, mt: 2 }}>
+                <div style={{ display: "block" }}>
                   <Typography paddingTop={3}>Job Details:</Typography>
                 </div>
-                <div style={{margin: "15px 0", display: "block"}}>
-                  <div style={{display: 'flex', flexDirection: 'column', width: '400px', position: 'relative'}}>
+                <div style={{ margin: "15px 0", display: "block" }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', width: '400px', position: 'relative' }}>
                     <TextareaAutosize
-                        rows={1}
-                        size="small"
-                        name="jobDetails"
-                        multiline
-                        value={announcementDetails.jobDetails}
-                        onChange={handleInput}
-                        placeholder="Enter the job details..."
-                        style={{
-                          width: "100%",
-                          border: "1px solid #c1c4bc",
-                          borderRadius: "5px",
-                          padding: "8px",
-                          outline: "none",
-                          fontFamily: "Arial, sans-serif",
-                          fontSize: "15px",
-                          resize: "vertical",
-                        }}
+                      rows={1}
+                      size="small"
+                      name="jobDetails"
+                      multiline
+                      value={announcementDetails.jobDetails}
+                      onChange={handleInput}
+                      placeholder="Enter the job details..."
+                      style={{
+                        width: "100%",
+                        border: "1px solid #c1c4bc",
+                        borderRadius: "5px",
+                        padding: "8px",
+                        outline: "none",
+                        fontFamily: "Arial, sans-serif",
+                        fontSize: "15px",
+                        resize: "vertical",
+                      }}
                     />
                     {announcementDetails.jobDetails !== undefined && (
-                        <Typography variant="body2" style={{marginTop: '7px', marginLeft: '3px', width: '100%', fontSize: '11px' }}>
-                          Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
-                          <br/>
-                        </Typography>
+                      <Typography variant="body2" style={{ marginTop: '7px', marginLeft: '3px', width: '100%', fontSize: '11px' }}>
+                        Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
+                        <br />
+                      </Typography>
                     )}
                   </div>
                 </div>
@@ -977,38 +1011,38 @@ function EditAnnouncement() {
                   />
                   <Grid container spacing={1} sx={{ width: '25rem' }}>
 
-                  {authPeople &&
-                    authPeople.map((authPerson, index) => {
+                    {authPeople &&
+                      authPeople.map((authPerson, index) => {
 
 
-                      return (
-                        <Grid item xs={5} key={index}>
-                          <Chip
-                            key={authPerson.username}
-                            label={authPerson.display_name + (authPerson.username.toLowerCase() === userName.toLowerCase() ? " (You)" : "")}
-                            variant="outlined"
-                            avatar={
-                              <Avatar
-                                sx={{
-                                  backgroundColor: index % 2 === 0 ? "#6A759C" : "#4D5571"
-                                  
-                                }}
-                              >
-                                <Typography
-                                  fontSize="small"
-                                  sx={{ color: "white" }}
+                        return (
+                          <Grid item xs={5} key={index}>
+                            <Chip
+                              key={authPerson.username}
+                              label={authPerson.display_name + (authPerson.username.toLowerCase() === userName.toLowerCase() ? " (You)" : "")}
+                              variant="outlined"
+                              avatar={
+                                <Avatar
+                                  sx={{
+                                    backgroundColor: index % 2 === 0 ? "#6A759C" : "#4D5571"
+
+                                  }}
                                 >
-                                  {authPerson.display_name.split(" ")[0][0].toUpperCase()}
-                                </Typography>
-                              </Avatar>
-                            }
-                            sx={{ width: '100%', justifyContent: 'space-between' }}
-                            onDelete={() => handleAuthDelete(authPerson)}
-                            disabled={authPerson.username === userName}
-                          />
-                        </Grid>
-                      );
-                    })}
+                                  <Typography
+                                    fontSize="small"
+                                    sx={{ color: "white" }}
+                                  >
+                                    {authPerson.display_name.split(" ")[0][0].toUpperCase()}
+                                  </Typography>
+                                </Avatar>
+                              }
+                              sx={{ width: '100%', justifyContent: 'space-between' }}
+                              onDelete={() => handleAuthDelete(authPerson)}
+                              disabled={authPerson.username === userName}
+                            />
+                          </Grid>
+                        );
+                      })}
                   </Grid>
                 </Grid>
               </Box>

@@ -81,7 +81,8 @@ async function addAnnouncement(
   desired_courses,
   questions,
   term,
-  isInprogressAllowed
+  isInprogressAllowed,
+  section
 ) {
   //const mockUserName = "instructor1";
   const faculty = "FENS";
@@ -112,6 +113,7 @@ async function addAnnouncement(
       question: question.mQuestion,
       type: type,
       choices: question.mMultiple,
+      allowMultipleAnswers: question.allowMultipleAnswers
     };
   });
 
@@ -134,7 +136,8 @@ async function addAnnouncement(
       minimumRequiredGrade: letterGrade,
       desiredCourseGrade: letterGrade,
       questions: transformedQuestions,
-      isInprogressAllowed: isInprogressAllowed
+      isInprogressAllowed: isInprogressAllowed,
+      section: section
     });
 
     return response.data;
@@ -159,7 +162,8 @@ async function updateAnnouncement(
   desired_courses,
   questions,
   term,
-  isInprogressAllowed
+  isInprogressAllowed,
+  section
 ) {
   const faculty = "FENS";
   // const term = "Fall 2022";
@@ -185,7 +189,8 @@ async function updateAnnouncement(
       minimumRequiredGrade: letterGrade,
       desiredCourseGrade: letterGrade,
       questions: questions,
-      isInprogressAllowed: isInprogressAllowed
+      isInprogressAllowed: isInprogressAllowed,
+      section: section?.trim()
     });
     return response.data;
   } catch (error) {
