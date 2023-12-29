@@ -881,7 +881,7 @@ function EditAnnouncement() {
                   value={announcementDetails.letterGrade ?? null}
                   size="small"
                   sx={{ mt: 2, width: 225 }}
-                  onChange={handleInput}
+                  disabled
                 >
                   {grades.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -903,17 +903,8 @@ function EditAnnouncement() {
 
                   label="Allow In Progress Applicants"
                   sx={{ mt: 2, ml: 2 }}
+                  disabled
                 />
-
-                <Tooltip
-                  title="By checking this box, you allow students who currently taking this course to apply to be a LA."
-                  placement="right"
-                  sx={{ marginLeft: -1, marginTop: 2 }}
-                >
-                  <IconButton>
-                    <HelpCenterIcon />
-                  </IconButton>
-                </Tooltip>
               </Box>
             </Grid>
             <Grid container direction="row" justifyContent="start" alignItems="center">
@@ -1087,6 +1078,7 @@ function EditAnnouncement() {
                         fontSize: '1rem',
                       },
                     }}
+                    disabled
                   >
                     <AddIcon />
                   </Button>
@@ -1296,8 +1288,7 @@ function EditAnnouncement() {
                               }}
                               variant="outlined"
                             />
-                            {<UseNumberInputCompact index={grades.findIndex((grade) => grade.label === courseSelected.grade)} grade={courseSelected.grade} courseCode={courseSelected.courseCode} callback={updateGrade} />
-                            }
+                            
                           </div>
 
 
@@ -1305,26 +1296,9 @@ function EditAnnouncement() {
                         <TableCell>
                           <div style={{ display: 'flex', alignItems: 'center' }}>
                             <FiberManualRecordIcon
-                              onClick={() => {
 
-
-                                setSelectedCourses((prev) => {
-                                  return prev.map((course) => {
-
-                                    if (course.courseCode === courseSelected.courseCode) {
-
-                                      return {
-                                        ...course,
-                                        isInprogressAllowed: !courseSelected.isInprogressAllowed,
-                                      };
-                                    }
-                                    return course;
-                                  });
-                                });
-
-                              }}
                               sx={{
-                                cursor: "pointer",
+                                
                                 color: courseSelected.isInprogressAllowed ? 'green' : 'red',
                                 marginRight: 1,
                               }}
@@ -1336,12 +1310,7 @@ function EditAnnouncement() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Chip
-                            label="Delete"
-                            color="error"
-                            sx={{ cursor: 'pointer' }}
-                            onClick={() => handleCourseDelete(courseSelected.courseCode)}
-                          />
+                          
                         </TableCell>
                       </TableRow>
                     ))}

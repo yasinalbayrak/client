@@ -137,7 +137,7 @@ async function addAnnouncement(
       desiredCourseGrade: letterGrade,
       questions: transformedQuestions,
       isInprogressAllowed: isInprogressAllowed,
-      section: section
+      section: section?.trim()
     });
 
     return response.data;
