@@ -151,6 +151,12 @@ function EditAnnouncement() {
   const [announcementTerm, setAnnouncementTerm] = useState(null);
   const [termSelect, setTermSelect] = React.useState(term);
   const [isFocused, setIsFocused] = React.useState(false);
+
+  const todayIstanbul = new Date().toLocaleString("en-US", { timeZone: "Europe/Istanbul" });
+  const currentDate = new Date(todayIstanbul);
+  const formattedDate = currentDate.toISOString().split('T')[0];
+
+
   useEffect(() => {
 
     dispatch(flipShowTerms())
@@ -856,6 +862,9 @@ function EditAnnouncement() {
                   size="small"
                   sx={{ mt: 2 }}
                   onChange={handleInput}
+                  inputProps={{
+                    min: formattedDate
+                  }}
                 />
                 <TextField
                   id="outlined-required"
@@ -951,6 +960,8 @@ function EditAnnouncement() {
                         fontFamily: "Arial, sans-serif",
                         fontSize: "15px",
                         resize: "vertical",
+                        minHeight: "40px",
+                        maxHeight: "850px",
                       }}
                     />
                     {announcementDetails.jobDetails !== undefined && (
