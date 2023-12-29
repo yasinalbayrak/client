@@ -315,17 +315,18 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
                 <DialogActions>
                     <Button autoFocus onClick={handleCheckEligibility}>
                         Check My Eligibility
+                        <Tooltip
+                            title="Do not forget that you need to upload your transcript for a correct checking."
+                            placement="right"
+                            sx={{ fontSize: 'smaller' }}
+                            arrow
+                        >
+                            <IconButton>
+                                <HelpCenterIcon />
+                            </IconButton>
+                        </Tooltip>
                     </Button>
-                    <Tooltip
-                        title="Do not forget that you need to upload your transcript for a correct checking."
-                        placement="right"
-                        sx={{ fontSize: 'smaller', marginLeft: '-5em' }}
-                        arrow
-                    >
-                        <IconButton>
-                            <HelpCenterIcon />
-                        </IconButton>
-                    </Tooltip>
+
                 </DialogActions>
             </BootstrapDialog>
         </React.Fragment>

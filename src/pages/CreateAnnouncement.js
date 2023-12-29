@@ -936,7 +936,7 @@ function CreateAnnouncement() {
                 />
 
                 <Tooltip
-                  title="By checking this box, you allow students who currently taking this course to apply to be a LA."
+                  title="By checking this box, you allow students who currently taking this course to apply to be an LA."
                   placement="right"
                   sx={{ marginLeft: -1, marginTop: 2 }}
                 >
