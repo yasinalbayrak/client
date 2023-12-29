@@ -186,12 +186,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left">
         {term}
       </TableCell>
-      <TableCell sx={{ borderBottom: "none", width: "4rem" }} align="center">
-        {minimumRequiredGrade}
-      </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" , color:isInprogressAllowed ? "green":"red" }} align="left">
-        {isInprogressAllowed ? "Allowed" : "Not Allowed"}
-      </TableCell>
+
       <TableCell sx={{ borderBottom: "none", width: "7rem", maxWidth:"7rem", minWidth:"7rem" }} align="center">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
