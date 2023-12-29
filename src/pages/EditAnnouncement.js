@@ -960,6 +960,8 @@ function EditAnnouncement() {
                         fontFamily: "Arial, sans-serif",
                         fontSize: "15px",
                         resize: "vertical",
+                        minHeight: "40px",
+                        maxHeight: "850px",
                       }}
                     />
                     {announcementDetails.jobDetails !== undefined && (
