@@ -998,6 +998,8 @@ function CreateAnnouncement() {
                         fontFamily: "Arial, sans-serif", // Change the font family
                         fontSize: "15px", // Change the font size
                         resize: "vertical",
+                        minHeight: "40px",
+                        maxHeight: "850px",
 
                       }}
                     />
