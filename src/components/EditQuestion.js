@@ -12,6 +12,7 @@ import ControlPointDuplicateIcon from "@mui/icons-material/ControlPointDuplicate
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
 import { addAnnouncement, updateAnnouncement } from "../apiCalls";
+import { handleInfo } from "../errors/GlobalErrorHandler"
 import { useSelector } from "react-redux";
 import { toast } from 'react-toastify';
 import UpdateIcon from '@mui/icons-material/Update';
@@ -406,14 +407,15 @@ function EditQuestion(props) {
           color="success"
           sx={{ m: 2, textDecoration: "none" }}
           onClick={() => {
+            console.log('props.AnnouncementDetails :>> ', props.AnnouncementDetails);
             if (
               props.AnnouncementDetails.course_code &&
               props.AnnouncementDetails.lastApplicationDate &&
               props.AnnouncementDetails.lastApplicationTime &&
               props.AnnouncementDetails.letterGrade &&
               props.AnnouncementDetails.workHours &&
-              props.AnnouncementDetails.term
-
+              props.AnnouncementDetails.term &&
+              (!props.AnnouncementDetails.isSectionEnabled || (props.AnnouncementDetails.section !== "" && props.AnnouncementDetails.section))
             ) {
               updateAnnouncement(
                 props.postID,
@@ -428,7 +430,9 @@ function EditQuestion(props) {
                 props.AnnouncementDetails.desiredCourses,
                 questions,
                 props.AnnouncementDetails.term,
-                props.AnnouncementDetails.isInprogressAllowed
+                props.AnnouncementDetails.isInprogressAllowed,
+                props.AnnouncementDetails.section
+                
               ).then((data) => {
                 dispatch(setTerm({ term: props.AnnouncementDetails.term }));
                 navigate("/Home", {
@@ -440,7 +444,7 @@ function EditQuestion(props) {
               });
 
             } else {
-              alert("Please fill out all necessary fields before creating the annoucement.");
+              handleInfo("Please fill out the required fields.")
             }
 
           }}

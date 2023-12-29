@@ -185,7 +185,7 @@ function AddQuestion(props) {
     setQuestions(updatedQuestions);
   }
 
-  useEffect((()=>{
+  useEffect((() => {
     console.log('questions :>> ', questions);
   }), [questions])
 
@@ -535,7 +535,8 @@ function AddQuestion(props) {
                 props.AnnouncementDetails.lastApplicationTime &&
                 props.AnnouncementDetails.letterGrade &&
                 props.AnnouncementDetails.workHours &&
-                props.AnnouncementDetails.term
+                props.AnnouncementDetails.term &&
+                (!props.AnnouncementDetails.isSectionEnabled || (props.AnnouncementDetails.section !== "" && props.AnnouncementDetails.section))
 
               ) {
                 addAnnouncement(
@@ -550,7 +551,8 @@ function AddQuestion(props) {
                   props.AnnouncementDetails.desiredCourses,
                   questions,
                   props.AnnouncementDetails.term,
-                  props.AnnouncementDetails.isInprogressAllowed
+                  props.AnnouncementDetails.isInprogressAllowed,
+                  props.AnnouncementDetails.section
                 ).then((data) => {
                   dispatch(setTerm({ term: props.AnnouncementDetails.term }));
                   navigate("/Home", {
