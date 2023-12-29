@@ -804,7 +804,7 @@ function CreateAnnouncement() {
                       label="Enter last date"
                       variant="outlined"
                       type="date"
-                      value={formattedDate}
+                      value={announcementDetails.lastApplicationDate}
                       InputLabelProps={{ shrink: true }}
                       size="small"
                       sx={{ mt: 2 }}
