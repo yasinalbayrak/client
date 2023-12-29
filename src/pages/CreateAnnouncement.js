@@ -399,14 +399,16 @@ function CreateAnnouncement() {
     hour12: false,
   });
 
-  const istanbulDate = new Date().toLocaleDateString("en-GB", {
-    timeZone: "Europe/Istanbul",
-  });
+
+
+  const todayIstanbul = new Date().toLocaleString("en-US", { timeZone: "Europe/Istanbul" });
+  const currentDate = new Date(todayIstanbul);
+  const formattedDate = currentDate.toISOString().split('T')[0];
 
   const [announcementDetails, setAnnouncementDetails] = useState({
     term: {},
     course_code: courseCode,
-    lastApplicationDate: istanbulDate,
+    lastApplicationDate: todayIstanbul,
     lastApplicationTime: istanbulTime.replace(/(.*)\D\d+/, "$1"),
     letterGrade: "A",
     workHours: "",
@@ -802,11 +804,14 @@ function CreateAnnouncement() {
                       label="Enter last date"
                       variant="outlined"
                       type="date"
-                      value={announcementDetails.lastApplicationDate}
+                      value={formattedDate}
                       InputLabelProps={{ shrink: true }}
                       size="small"
                       sx={{ mt: 2 }}
                       onChange={handleInput}
+                      inputProps={{
+                        min: formattedDate
+                      }}
                     />
                   </Grid>
                   <Grid item>
