@@ -8,24 +8,14 @@ import {
   Button,
   Grid,
   Divider,
-  TextField,
-  FormControl,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormLabel,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import {  applyToPost,getApplicationRequestById,updateApplicationRequest } from "../../apiCalls";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableRow from "@mui/material/TableRow";
+import { getApplicationRequestById,updateApplicationRequest } from "../../apiCalls";
 import { useSelector } from "react-redux";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {toast} from "react-toastify";
 import BackButton from "../buttons/BackButton";
+import QuestionComponent from "./Questions";
 
 const EditQuestionPage = (props) => {
 
@@ -38,62 +28,74 @@ const EditQuestionPage = (props) => {
     const { id } = useParams();
     const [questionsAndAnswers, setQuestionsAndAnswers] = useState([]);
     const [answers, setAnswers] = useState([]);
+    const [questions, setQuestions] = useState([]);
     const [appReqInfo, setAppReqInfo] = useState(null);
-    const data = useRef();
-    const isLoading = useRef();
-    const MAX_WORD_COUNT = 512;
+
+    const answerCallback = (value, idx) => {
+      console.log('value :>> ', value);
+      console.log('idx :>> ', idx);
+      setAnswers((answers) => {
+        let ans = [...answers]
+        ans[idx] = value;
+        return ans;
+      });
+    }
 
 
-    const onSubmit = async () => {
+      const onSubmit = async () => {
         try {
+          console.log('answers :>> ', answers);
+          if (answers.length !== questions.length) {
+            throw new Error("Not all questions have answers");
+          }
+          
+          var validator = 0;
+          const modifiedAnswers = answers.map((answer, idx) => {
+            validator++
+            const qType = questions[idx].type;
       
-          // Call applyToPost to post the apply request
-          await updateApplicationRequest(id, appReqInfo.application.applicationId , state.user.id, answers);
+            if (!answer || (typeof answer === 'string' && answer.trim() === "")) {
+              throw new Error(`Answer for question ${idx + 1} is missing`);
+            }
       
-          // Navigate to the success page only if the application submission is successful
-          navigate("/Home", { replace: true });
-          toast.success("Your application has been edited successfully.")
+            console.log('answer :>> ', answer);
+      
+            switch (qType) {
+              case "MULTIPLE_CHOICE":
+                if (answer.length <= 0) {
+                  throw new Error(`Multiple choice answer for question ${idx + 1} is empty`);
+                }
+      
+                return questions[idx].allowMultipleAnswers ? 
+                       answer.reduce((accumulator, currentValue) => accumulator + currentValue.toString(), "") : 
+                       answer.toString();
+      
+              case "NUMERIC":
+                return answer.toString();
+      
+              default:
+                return answer;
+            }
+    
+            
+          });
+    
+          if(validator !== questions.length){
+            throw new Error("Not all questions have answers");
+          }
+      
+          console.log('modifiedAnswers:>> ', modifiedAnswers);
+          if(await updateApplicationRequest(id, appReqInfo.application.applicationId , state.user.id, modifiedAnswers)){
+            navigate("/Home", { replace: true });
+            toast.success("Your application has been edited successfully.")
+          }
+    
+          
         } catch (error) {
-          // Handle any errors during the applyToPost
-          console.error('Error during application submission:', error);
-          // Optionally, you can show an error message to the user
+          console.error("Submission error:", error.message);
+          toast.info("Complete all the questions before completing the application.");
         }
       };
-    
-      const onAnswerChange = (e, index) => {
-        e.preventDefault();
-        setAnswers((prev) => ([...prev.slice(0, index), e.target.value, ...prev.slice(index + 1)]));
-      };
-
-      // useEffect(() => {
-      //   setAppReqInfo((prev)=>({
-      //       ...prev,
-      //       qandA:questionsAndAnswers,
-      //       }));
-      //   }, [questionsAndAnswers]);
-    
-      /*const onMultipleChoiceAnswerChange = (e, question) => {
-        e.preventDefault();
-        let temp = questionsAndAnswers;
-        for (const [q, a] of Object.entries(temp)) {
-          if (q == question.id) {
-            temp[q] = e.target.value;
-          }
-        }
-        setQuestionsAndAnswers(temp);
-        console.log(questionsAndAnswers);
-      };*/
-    
-     /*useEffect(() => {
-        var temp = {};
-        if (questions !== undefined) {
-          for (let index = 0; index < questions.length; index++) {
-            const element = questions[index].id;
-            temp[element] = "";
-          }
-          setQuestionsAndAnswers(temp);
-        }
-      }, [questions]);*/
     
       useEffect(() => {
         console.log(appReqInfo)
@@ -103,42 +105,49 @@ const EditQuestionPage = (props) => {
       }, [appReqInfo]);
     
       useEffect(() => {
-        // Ensure 'id' is available and not undefined or null
         if (id) {
           const fetchAnnouncement = async () => {
             try {
-              // Now we're sure 'id' is passed to 'getAnnouncement'
               const results = await getApplicationRequestById(id);
               setAppReqInfo(results);
+              setQuestions(results.application.questions)
               console.log(results);
             } catch (error) {
               console.error('Failed to fetch announcement:', error);
             }
           };
-          fetchAnnouncement(); // Execute the function
+          fetchAnnouncement(); 
         } else {
           console.warn('Warning: missing ID.');
         }
-      }, [id]); // Dependency array is correct, assuming 'id' changes when expected
+      }, [id]); 
 
       useEffect(() => {
         let temp = [];
 
         for(let i = 0; i < appReqInfo?.qandA.length; i++){
-          console.log(appReqInfo?.qandA[i].answer)
-          temp.push(appReqInfo?.qandA[i].answer);
+          let qType = appReqInfo?.qandA[i].question.type;
+          let ans = appReqInfo?.qandA[i].answer;
+          let allowMultiple = appReqInfo?.qandA[i].question.allowMultipleAnswers;
+
+          switch (qType) {
+            case "MULTIPLE_CHOICE":
+              ans = allowMultiple ? ans.split("").map(char => parseInt(char, 10)) : ans;
+              break;
+            case "NUMERIC":
+              ans = parseInt(ans, 10);
+              break;
+            default:
+              break;
+          }
+
+          console.log('ans :>> ', ans);
+          temp.push(ans);
         }        
 
         setAnswers(temp);
       }, [appReqInfo]);
     
-      // console.log("appReqInfo")
-      // console.log(appReqInfo)
-      //  console.log(appReqInfo?.qandA)
-      //  console.log("questionsAndAnswers")
-      //  console.log(questionsAndAnswers)
-      //   console.log("answers")
-      //   console.log(answers)
 
        return(
         <>
@@ -159,56 +168,11 @@ const EditQuestionPage = (props) => {
               <Grid item>
                 <Typography variant="h5">Questions:</Typography>
               </Grid>
-              {questionsAndAnswers &&
-                questionsAndAnswers.map((qAnda, index) => (
-                  <Grid item container direction="column" sx={{ border: 1, borderRadius: 3, borderColor: "#cccccc", backgroundColor: "#f5f5f5", marginY: 2, p: 2 }}>
-                    <Grid item sx={{ m: 1 }}>
-                      <Typography>Question {index + 1} - {qAnda.question.question}</Typography>
-                    </Grid>
-                    <Grid item sx={{ m: 1 }}>
-                      {/*question.type === "Multiple Choice" && (
-                        <FormControl>
-                          <RadioGroup
-                            aria-labelledby="demo-radio-buttons-group-label"
-                            defaultValue={JSON.parse(question.multiple_choices)[0]}
-                            name="radio-buttons-group"
-                            onChange={(e) => {
-                              onMultipleChoiceAnswerChange(e, question);
-                            }}
-                          >
-                            {JSON.parse(question.multiple_choices).map((ans, index) => (
-                              <FormControlLabel value={ans} control={<Radio />} label={ans}></FormControlLabel>
-                            ))}
-                          </RadioGroup>
-                        </FormControl>
-                            )*/}
-                      {/* {question.type !== "Multiple Choice" && (
-                        <TextField
-                        value={questionsAndAnswers[index] || ""}
-                        onChange={(e) => onAnswerChange(e, index)}
-                        multiline
-                        fullWidth
-                        sx={{ backgroundColor: "white" }}
-                      ></TextField>
-                      )} */}
-                        <>
-                        <TextField
-                            value={answers[index] || ""}
-                            onChange={(e) => onAnswerChange(e, index)}
-                            multiline
-                            fullWidth
-                            sx={{ backgroundColor: "white" }}
-                            inputProps={{ maxLength: 512 }}
-                        ></TextField>
-                        <Typography variant="body2" style={{marginTop: '7px', marginLeft: '3px', width: '100%', fontSize: '11px' }}>
-                            Remaining Characters: {MAX_WORD_COUNT - (answers[index]?.length || 0)}
-                        </Typography></>
-                    </Grid>
-                  </Grid>
-                  
-                  
-                  
-                ))}
+              <QuestionComponent
+                questions={questions}
+                answers={answers}
+                answerCallback={answerCallback}
+                />
             </Grid>
             <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                 <Grid item>

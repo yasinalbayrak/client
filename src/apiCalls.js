@@ -14,8 +14,16 @@ async function applyToPost(postId, userID, answers) {
       { applicationId: postId, studentId: userID, answers: answers },
       { headers: { "Content-Type": "application/json" } }
     );
-    return results.data;
-  } catch (error) { return handleError(error); }
+    return true;
+  } catch (error) {
+    try {
+      handleError(error);
+    }
+    catch (e) {
+      return false
+    }
+
+  }
 
 }
 
@@ -91,31 +99,31 @@ async function addAnnouncement(
   const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
 
   const transformedQuestions = questions
-  .filter((question) => question.mQuestion.trim() !== "")
-  .map((question) => {
-    let type;
+    .filter((question) => question.mQuestion.trim() !== "")
+    .map((question) => {
+      let type;
 
-    switch (question.mValue) {
-      case "Text Answer":
-        type = "TEXT";
-        break;
-      case "Numeric Answer":
-        type = "NUMERIC";
-        break;
-      case "Multiple Choice":
-        type = "MULTIPLE_CHOICE";
-        break;
-      default:
-        type = "TEXT";
-    }
+      switch (question.mValue) {
+        case "Text Answer":
+          type = "TEXT";
+          break;
+        case "Numeric Answer":
+          type = "NUMERIC";
+          break;
+        case "Multiple Choice":
+          type = "MULTIPLE_CHOICE";
+          break;
+        default:
+          type = "TEXT";
+      }
 
-    return {
-      question: question.mQuestion,
-      type: type,
-      choices: question.mMultiple,
-      allowMultipleAnswers: question.allowMultipleAnswers
-    };
-  });
+      return {
+        question: question.mQuestion,
+        type: type,
+        choices: question.mMultiple,
+        allowMultipleAnswers: question.allowMultipleAnswers
+      };
+    });
 
   console.log(letterGrade);
   const authInstructor_ids = auth_instructors.map(
@@ -400,11 +408,11 @@ async function updateApplicationRequestStatus(applicationRequestId, status) {
 async function getApplicationRequestById(applicationRequestId) {
   try {
     const result = await axios.get(
-      apiEndpoint + "/applicationRequest/"+ applicationRequestId
+      apiEndpoint + "/applicationRequest/" + applicationRequestId
     );
     console.log(result.data);
     return result.data;
-  }catch (error) { handleError(error)  }
+  } catch (error) { handleError(error) }
 
 }
 
@@ -412,13 +420,20 @@ async function getApplicationRequestById(applicationRequestId) {
 async function updateApplicationRequest(applicationRequestId, applicationId, studentId, answers) {
   try {
     const result = await axios.put(
-      apiEndpoint + "/applicationRequest/update/"+ applicationRequestId,
-      {applicationId: applicationId, studentId: studentId, answers: answers},
-      
+      apiEndpoint + "/applicationRequest/update/" + applicationRequestId,
+      { applicationId: applicationId, studentId: studentId, answers: answers },
+
     );
 
-    return result.data;
-  }catch (error) { handleError(error)  }
+    return true;
+  } catch (error) {
+    try {
+      handleError(error);
+    }
+    catch (e) {
+      return false
+    }
+  }
 
 }
 
