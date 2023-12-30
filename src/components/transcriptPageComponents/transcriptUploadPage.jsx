@@ -17,7 +17,7 @@ import Stack from '@mui/material/Stack';
 import { useSelector } from "react-redux";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import {handleInfo} from "../../errors/GlobalErrorHandler"
+import handleError, {handleInfo} from "../../errors/GlobalErrorHandler"
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ReactDOM from 'react-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -34,7 +34,7 @@ const TranscriptPage = (props) => {
   const { id } = useParams();
   const [transcript, setTranscript] = useState(null);
   const [consentChecked, setConsentChecked] = useState(false);
-  const [filename, setFile] = useState(() => {
+  const [filename, setFilename] = useState(() => {
     const initialFileName = "No File Uploaded";
     return initialFileName;
   });
@@ -44,15 +44,27 @@ const TranscriptPage = (props) => {
   };
 
   const onSubmit = () => {
-    if (!isTranscriptUploded)
-      handleInfo("You should upload your transcript to contiune.")
+    if (!transcript)
+      handleInfo("You should upload your transcript to continue.")
     else if (!consentChecked) {
       // Display an error or prevent submission
       handleInfo("Please consent to the terms before submitting.");
       return;
     }
-    else 
-      navigate("/transcriptInfoPage/"+id, { replace: true });
+    else{
+      const formData = new FormData();
+      formData.append("file", transcript);
+      formData.append("studentId", userId)
+      console.log(filename);
+      postTranscript(formData).then((res) => {
+        navigate("/transcriptInfoPage/"+id, { replace: true });
+          }
+      ).catch((_) => {
+        /* Error is already printed */
+      });
+
+
+      }
   };
 
 
@@ -60,23 +72,15 @@ const TranscriptPage = (props) => {
       if (!e.target.files) {
         return;
       }
-  
+
       const file = e.target.files[0];
+      if (file?.type !== "application/pdf") {
+        handleInfo("Please upload a valid PDF file.");
+        return;
+      }
       setTranscript(file);
       const { name } = file;
-      setFile(name);
-  
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("studentId", userId)
-      console.log(formData);
-  
-      postTranscript(formData).then((res) => {
-        console.log(res);
-        setIsTranscriptUploded(true);
-      }
-      ); 
-
+      setFilename(name);
     };
     const onFileSubmit = () => {
       
@@ -120,9 +124,13 @@ const TranscriptPage = (props) => {
                   </Grid>
                   <Grid item xs={6}>
                     <Grid item container direction="rows">
-                      <Button variant="contained" component="label" onClick={onFileSubmit}>
+                      <Button variant="contained" component="label" onClick={onFileSubmit}  size="small"
+                              sx={{
+                                height: '45px',
+                                fontSize: '0.750rem',
+                              }}>
                         Upload File
-                        <input type="file" hidden onChange={onFileChange} />
+                        <input type="file" hidden onChange={onFileChange} accept=".pdf" />
                       </Button>
                       <Typography alignItems="center" justifyContent="center" textAlign="center" m={2}>
                         {filename !== "No File Uploaded" ? (
