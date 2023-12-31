@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 const NumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
 
-  if (props.answer >= 0 && props.answer <= 5000) {
+  if ((!props.edit ||( props.answer >= 0 && props.answer <= 5000))) {
     return (
       <BaseNumberInput
         slots={{
@@ -39,7 +39,7 @@ export default function QuantityInput(props) {
   return (
     <>
 
-      {props.answer !== null && <NumberInput aria-label="Quantity Input" key={props.key} idx={props.idx} answer={props.answer} onAnswerChange={props.onAnswerChange} min={0} max={5000} />}
+      {(!props.edit || props.answer !== null) && <NumberInput aria-label="Quantity Input"  key={props.key} idx={props.idx} answer={props.answer} onAnswerChange={props.onAnswerChange} min={0} max={5000} />}
     </>
   );
 }

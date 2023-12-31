@@ -151,6 +151,7 @@ const QuestionPage = (props) => {
                 questions={questions}
                 answers={answers}
                 answerCallback={answerCallback}
+                edit={false}
                 />
 
               </Grid>

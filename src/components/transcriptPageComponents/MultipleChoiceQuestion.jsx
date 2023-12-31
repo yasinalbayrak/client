@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FormControl, FormControlLabel, Checkbox, Radio, RadioGroup, FormLabel, Paper } from '@mui/material';
 
-const MultipleChoiceQuestion = ({ question, options, allowMultiple, onAnswerChange, answer, idx}) => {
+const MultipleChoiceQuestion = ({ question, options, allowMultiple, onAnswerChange, answer, idx, edit}) => {
     const handleOptionChange = (optIdx) => {
         if (allowMultiple) {
 
@@ -19,7 +19,7 @@ const MultipleChoiceQuestion = ({ question, options, allowMultiple, onAnswerChan
         }
     };
     console.log('answerYasin :>> ', answer);
-    if (answer == null || answer === undefined ) {
+    if (edit && (answer == null || answer === undefined) ) {
         return ;
     }
     return (
@@ -33,7 +33,7 @@ const MultipleChoiceQuestion = ({ question, options, allowMultiple, onAnswerChan
                         
                             control={
                                 <Checkbox
-                                    checked={answer.includes(idx)}
+                                    checked={answer?.includes(idx)}
                                     onChange={() => {handleOptionChange(idx)}} 
                                     value={option}
                                 />

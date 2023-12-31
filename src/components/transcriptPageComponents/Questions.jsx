@@ -13,7 +13,7 @@ import MultipleChoiceQuestion from './MultipleChoiceQuestion';
 
 const MAX_WORD_COUNT = 512;
 
-const QuestionComponent = ({ questions, answers, answerCallback}) => {
+const QuestionComponent = ({ questions, answers, answerCallback, edit}) => {
     const greenCheckBox = {
         color: '#4CAF50',
         '&:hover': {
@@ -28,7 +28,6 @@ const QuestionComponent = ({ questions, answers, answerCallback}) => {
         },
     };
 
-
     const renderQuestion = (question, index) => {
         console.log('question :>> ', question);
 
@@ -40,10 +39,11 @@ const QuestionComponent = ({ questions, answers, answerCallback}) => {
                     onAnswerChange={answerCallback} 
                     answer={answers[index]}
                     idx ={index}
+                    edit ={edit}
                     />;
 
             case 'NUMERIC':
-                return <QuantityInput answer={answers[index]} key={index} idx={index} onAnswerChange={answerCallback} />;
+                return <QuantityInput answer={answers[index]} edit ={edit} key={index} idx={index} onAnswerChange={answerCallback} />;
 
             default:
                 return (

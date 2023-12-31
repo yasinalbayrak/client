@@ -172,6 +172,7 @@ const EditQuestionPage = (props) => {
                 questions={questions}
                 answers={answers}
                 answerCallback={answerCallback}
+                edit={true}
                 />
             </Grid>
             <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
