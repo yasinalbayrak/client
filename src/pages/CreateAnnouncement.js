@@ -953,7 +953,7 @@ function CreateAnnouncement() {
                       checked={announcementDetails.isDesiredLetterGradeEnabled}
                       onChange={flipDesiredLetterGrade}
                     />
-                    <label htmlFor="toggler-1">
+                    <label htmlFor="toggler-1" className={announcementDetails.isDesiredLetterGradeEnabled ? "label-on" : "label-off"}>
                       <svg className={announcementDetails.isDesiredLetterGradeEnabled ? "toggler-on" : "toggler-off"} version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
                         {announcementDetails.isDesiredLetterGradeEnabled ? (
                           <polyline className="path check" points="100.2,40.2 51.5,88.8 29.8,67.5"></polyline>

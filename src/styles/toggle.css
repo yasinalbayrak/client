@@ -17,7 +17,8 @@
     background: #e4e8e8;
     cursor: pointer;
   }
-  
+
+
   .toggler label::after {
     display: block;
     border-radius: 100%;
@@ -92,4 +93,9 @@
       height: 20px;
     }
   }
-   
+  .toggler .label-on {
+    background-color: #90d79a;
+  }
+  .toggler .label-off {
+    background-color: #e08a98;
+  }
