@@ -215,9 +215,9 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
                                     <TableCell sx={{ textAlign: 'center' }}>
 
                                         <Chip
-                                            label={prevGrades.grade}
+                                            label={prevGrades.grade ?? "-"}
                                             variant="filled"
-                                            title={prevGrades.grade}
+                                            title={prevGrades.grade ?? "-"}
                                             color="primary"
                                             clickable={true}
                                             style={{ backgroundColor: 'lightblue', fontWeight: 'normal', color: 'black' }}

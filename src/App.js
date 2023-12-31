@@ -23,6 +23,7 @@ import TranscriptPage from "./components/transcriptPageComponents/transcriptUplo
 import TranscriptInfo from "./components/transcriptPageComponents/transcriptInfoPage";
 import QuestionPage from "./components/transcriptPageComponents/transcriptExtraFile";
 import EditQuestionPage from "./components/transcriptPageComponents/EditQuestionPage";
+import EligibilityPage from "./pages/EligibilityPage";
 function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
@@ -87,7 +88,7 @@ function App() {
               <Route path="/transcriptUploadPage/:id" element={<TranscriptPage></TranscriptPage>}></Route>
               <Route path="transcriptInfoPage/:id" element={<TranscriptInfo></TranscriptInfo>}></Route>
               <Route path="/questionPage/:id" element={<QuestionPage></QuestionPage>}></Route>
-            
+              <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
 
 
           </>

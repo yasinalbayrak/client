@@ -437,11 +437,20 @@ async function updateApplicationRequest(applicationRequestId, applicationId, stu
 
 }
 
+async function checkStudentEligibility(applicationId, studentId) {
+  try {
+    const result = await axios.post(
+      apiEndpoint + "/applicationRequest/checkEligibility",
+      { applicationId: applicationId, studentId: studentId }
+    );
 
+    return result.data;
+  } catch (error) { handleError(error) }
 
-
+}
 
 export {
+  checkStudentEligibility,
   updateApplicationRequestStatus,
   getCourseGrades,
   getAllAnnouncements,

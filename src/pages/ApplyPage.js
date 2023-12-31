@@ -31,7 +31,7 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Stack from '@mui/material/Stack';
 import BackButton from "../components/buttons/BackButton";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
 
 const ApplyPage = (props) => {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ const ApplyPage = (props) => {
     { name: "GPA:", val: studentInfo?.cumulativeGPA },
     { name: "Current term:", val: studentInfo?.term },
     { name: "Faculty:", val: studentInfo?.faculty },
-    { name: "Major:", val: studentInfo?.program?.majors},
+    { name: "Major:", val: studentInfo?.program?.majors },
     { name: "Minor:", val: studentInfo?.program?.minors },
     { name: "Year:", val: studentInfo?.year },
 
@@ -80,18 +80,7 @@ const ApplyPage = (props) => {
   const data = useRef();
   const isLoading = useRef();
 
-  const onSubmit = () => {
-    console.log(questionsAndAnswers);
-    var temp = [];
-    console.log(temp);
-    applyToPost(id, state.user.id, []).then((res) => {
-      console.log(res);
-      navigate("/home", { replace: true, state: { successText: "You have applied successfully." } });
-    }).catch((_) => {
-      /* Already handled */
-    });
 
-  };
 
   console.log(state.user)
 
@@ -189,7 +178,7 @@ const ApplyPage = (props) => {
         <Box sx={{ display: "flex" }}>
           <Sidebar></Sidebar>
           <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
-            <BackButton to={"/home"}/>
+            <BackButton to={"/home"} />
             <AppBarHeader />
             <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
               <Grid item>
@@ -217,19 +206,22 @@ const ApplyPage = (props) => {
               <Grid>
                 <Stack sx={{ width: '100%' }} spacing={2}>
                   <Alert severity="info">
-                  You are applying with the information above. If there is a mistake, you can upload another transcript.  — <strong>Please upload your most current transcript!</strong>
+                    You are applying with the information above. If there is a mistake, you can upload another transcript.  — <strong>Please upload your most current transcript!</strong>
                   </Alert>
                 </Stack>
               </Grid>
               <br></br>
               <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                 <Grid item>
-                  <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage/"+id, { replace: true })} color="primary">
+                  <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage/" + id, { replace: true })} color="primary">
                     Upload new transcript
                   </Button>
                 </Grid>
                 <Grid item>
-                  {announcementInfo.questions.length > 0 ? (
+                  <Button variant="contained" startIcon={<SendIcon />} color="success" onClick={() => navigate("/eligibilityPage/" + id)}>
+                    Check my eligibility
+                  </Button>
+                  {/* {announcementInfo.questions.length > 0 ? (
                   <Button variant="contained" startIcon={<SendIcon />} color="success" onClick={() => navigate("/questionPage/"+ id, { replace: true })}>
                   Continue with questions
                   </Button>
@@ -237,7 +229,7 @@ const ApplyPage = (props) => {
                     <Button variant="contained" startIcon={<ArrowForwardIcon />} color="success" onClick={onSubmit}>
                       Complete the application
                     </Button>
-                  )}
+                  )} */}
                 </Grid>
               </Grid>
             </Grid>

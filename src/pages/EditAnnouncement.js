@@ -734,115 +734,115 @@ function EditAnnouncement() {
               <Box>
                 <Typography>Course Code<span style={{ color: 'red' }}>*</span>:</Typography>
                 <Grid container direction="row" justifyContent="start" alignItems="start">
-                <Autocomplete
-                  value={courseCodeValue}
-                  onChange={handleChange}
-                  filterOptions={filterCourseCodes}
-                  disabled
-                  selectOnFocus
-                  clearOnBlur
-                  handleHomeEndKeys
-                  id="free-solo-with-text-demo"
-                  options={courseList}
-                  getOptionLabel={(option) => {
-                    // Value selected with enter, right from the input
-                    if (typeof option === 'string') {
-                      return option;
-                    }
-                    // Add "xxx" option created dynamically
-                    if (option.inputValue) {
-                      return option.inputValue;
-                    }
-                    // Regular option
-                    return option.title;
-                  }}
-                  renderOption={(props, option) => <li {...props}>{option.title}</li>}
-                  sx={{ width: 300, ml: -2 }}
-                  freeSolo
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
+                  <Autocomplete
+                    value={courseCodeValue}
+                    onChange={handleChange}
+                    filterOptions={filterCourseCodes}
+                    disabled
+                    selectOnFocus
+                    clearOnBlur
+                    handleHomeEndKeys
+                    id="free-solo-with-text-demo"
+                    options={courseList}
+                    getOptionLabel={(option) => {
+                      // Value selected with enter, right from the input
+                      if (typeof option === 'string') {
+                        return option;
+                      }
+                      // Add "xxx" option created dynamically
+                      if (option.inputValue) {
+                        return option.inputValue;
+                      }
+                      // Regular option
+                      return option.title;
+                    }}
+                    renderOption={(props, option) => <li {...props}>{option.title}</li>}
+                    sx={{ width: 300, ml: -2 }}
+                    freeSolo
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
 
-                      multiline
-                      size="small"
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                          event.preventDefault();
-                        }
-                      }}
-                      onKeyPress={(event) => {
-                        const key = event.key;
-                        const regex = /^[A-Za-z0-9]+$/;
+                        multiline
+                        size="small"
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') {
+                            event.preventDefault();
+                          }
+                        }}
+                        onKeyPress={(event) => {
+                          const key = event.key;
+                          const regex = /^[A-Za-z0-9]+$/;
 
-                        if (!regex.test(key) && key !== 'Enter') {
-                          event.preventDefault();
-                        }
+                          if (!regex.test(key) && key !== 'Enter') {
+                            event.preventDefault();
+                          }
 
+                        }}
+                        sx={{
+                          mx: 2, mt: 1, mb: 2, width: 300,
+                          ...(params.disabled && {
+                            backgroundColor: 'transparent',
+                            color: 'inherit',
+                            pointerEvents: 'none',
+                          }),
+                        }}
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <>
+                              {params.InputProps.endAdornment}
+                              {courseCode && (
+                                <IconButton
+                                  onClick={handleCourseCodeDelete}
+                                  aria-label="Clear"
+                                  size="small"
+                                  disabled
+                                >
+                                  <ClearIcon />
+                                </IconButton>
+                              )}
+                            </>
+                          ),
+                        }}
+                      />
+                    )}
+                    disableClearable
+                    getOptionDisabled={(option) => !!courseCode && option !== courseCode}
+                  />
+                  <Box sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center", marginLeft: "1rem" }}>
+
+
+                    <FormControlLabel
+                      value={announcementDetails.isSectionEnabled}
+                      onChange={(event) => {
+
+                        setAnnouncementDetails((prev) => ({
+                          ...prev,
+                          isSectionEnabled: event.target.checked,
+                          section: event.target.checked ? prev.section : null
+                        }));
                       }}
-                      sx={{
-                        mx: 2, mt: 1, mb: 2, width: 300,
-                        ...(params.disabled && {
-                          backgroundColor: 'transparent',
-                          color: 'inherit',
-                          pointerEvents: 'none',
-                        }),
-                      }}
-                      InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                          <>
-                            {params.InputProps.endAdornment}
-                            {courseCode && (
-                              <IconButton
-                                onClick={handleCourseCodeDelete}
-                                aria-label="Clear"
-                                size="small"
-                                disabled
-                              >
-                                <ClearIcon />
-                              </IconButton>
-                            )}
-                          </>
-                        ),
-                      }}
+                      sx={{ minWidth: "fit-content", marginLeft: "1rem" }}
+                      control={<Checkbox checked={announcementDetails.isSectionEnabled} />}
+                      label="Add Section"
                     />
-                  )}
-                  disableClearable
-                  getOptionDisabled={(option) => !!courseCode && option !== courseCode}
-                />
-                <Box sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center", marginLeft: "1rem" }}>
-
-
-                  <FormControlLabel
-                    value={announcementDetails.isSectionEnabled}
-                    onChange={(event) => {
-
-                      setAnnouncementDetails((prev) => ({
-                        ...prev,
-                        isSectionEnabled: event.target.checked,
-                        section: event.target.checked ? prev.section : null
-                      }));
-                    }}
-                    sx={{ minWidth: "fit-content", marginLeft: "1rem" }}
-                    control={<Checkbox checked={announcementDetails.isSectionEnabled}/>}
-                    label="Add Section"
-                  />
-                  <TextField
-                    label="Section"
-                    variant="outlined"
-                    name="section"
-                    value={ announcementDetails.section ?? ''}
-                    onChange={handleInput}
-                    autoComplete="off"
-                    sx={{ marginLeft: "1rem", padding: 0, userSelect: "none" }}
-                    InputLabelProps={{
-                      shrink:  (announcementDetails.section !== ''   && announcementDetails.section) || isFocused,
-                    }}
-                    disabled={!announcementDetails.isSectionEnabled}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                  />
-                </Box>
+                    <TextField
+                      label="Section"
+                      variant="outlined"
+                      name="section"
+                      value={announcementDetails.section ?? ''}
+                      onChange={handleInput}
+                      autoComplete="off"
+                      sx={{ marginLeft: "1rem", padding: 0, userSelect: "none" }}
+                      InputLabelProps={{
+                        shrink: (announcementDetails.section !== '' && announcementDetails.section) || isFocused,
+                      }}
+                      disabled={!announcementDetails.isSectionEnabled}
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                    />
+                  </Box>
                 </Grid>
 
 
@@ -880,9 +880,31 @@ function EditAnnouncement() {
                 />
               </Box>
             </Grid>
+
             <Grid container direction="row" justifyContent="start" alignItems="center">
               <Box sx={{ minWidth: 150, mt: 2 }}>
-                <Typography> Minimum Desired Letter Grade<span style={{ color: 'red' }}>*</span>:</Typography>
+                <Typography>Weekly Work Hours<span style={{ color: 'red' }}>*</span>:</Typography>
+                <TextField
+                  id="outlined-select-currency"
+                  name="workHours"
+                  select
+                  value={announcementDetails.workHours ?? null}
+                  size="small"
+                  sx={{ mt: 2, width: 225 }}
+                  onChange={handleInput}
+                >
+                  {WorkHour.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
+            </Grid>
+
+            <Grid container direction="row" justifyContent="start" alignItems="center">
+              <Box sx={{ minWidth: 150, mt: 2 }}>
+                <Typography> Minimum Desired Letter Grade:</Typography>
                 <TextField
                   id="outlined-select-currency"
                   name="letterGrade"
@@ -914,26 +936,6 @@ function EditAnnouncement() {
                   sx={{ mt: 2, ml: 2 }}
                   disabled
                 />
-              </Box>
-            </Grid>
-            <Grid container direction="row" justifyContent="start" alignItems="center">
-              <Box sx={{ minWidth: 150, mt: 2 }}>
-                <Typography>Weekly Work Hours<span style={{ color: 'red' }}>*</span>:</Typography>
-                <TextField
-                  id="outlined-select-currency"
-                  name="workHours"
-                  select
-                  value={announcementDetails.workHours ?? null}
-                  size="small"
-                  sx={{ mt: 2, width: 225 }}
-                  onChange={handleInput}
-                >
-                  {WorkHour.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
               </Box>
             </Grid>
             {<Grid container direction="row" justifyContent="start" alignItems="flex-start">
@@ -1299,7 +1301,7 @@ function EditAnnouncement() {
                               }}
                               variant="outlined"
                             />
-                            
+
                           </div>
 
 
@@ -1309,7 +1311,7 @@ function EditAnnouncement() {
                             <FiberManualRecordIcon
 
                               sx={{
-                                
+
                                 color: courseSelected.isInprogressAllowed ? 'green' : 'red',
                                 marginRight: 1,
                               }}
@@ -1321,7 +1323,7 @@ function EditAnnouncement() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          
+
                         </TableCell>
                       </TableRow>
                     ))}

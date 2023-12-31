@@ -533,9 +533,10 @@ function AddQuestion(props) {
                 props.AnnouncementDetails.course_code &&
                 props.AnnouncementDetails.lastApplicationDate &&
                 props.AnnouncementDetails.lastApplicationTime &&
-                props.AnnouncementDetails.letterGrade &&
                 props.AnnouncementDetails.workHours &&
                 props.AnnouncementDetails.term &&
+                (!props.AnnouncementDetails.isDesiredLetterGradeEnabled || (props.AnnouncementDetails.letterGrade)) &&
+
                 (!props.AnnouncementDetails.isSectionEnabled || (props.AnnouncementDetails.section !== "" && props.AnnouncementDetails.section))
 
               ) {
@@ -544,14 +545,14 @@ function AddQuestion(props) {
                   props.username,
                   props.AnnouncementDetails.lastApplicationDate,
                   props.AnnouncementDetails.lastApplicationTime,
-                  props.AnnouncementDetails.letterGrade,
+                  props.AnnouncementDetails.isDesiredLetterGradeEnabled ? props.AnnouncementDetails.letterGrade : null,
                   props.AnnouncementDetails.workHours,
                   props.AnnouncementDetails?.jobDetails ?? "",
                   props.AnnouncementDetails.authInstructor,
                   props.AnnouncementDetails.desiredCourses,
                   questions,
                   props.AnnouncementDetails.term,
-                  props.AnnouncementDetails.isInprogressAllowed,
+                  props.AnnouncementDetails.isDesiredLetterGradeEnabled ? props.AnnouncementDetails.isInprogressAllowed : null,
                   props.AnnouncementDetails.section
                 ).then((data) => {
                   dispatch(setTerm({ term: props.AnnouncementDetails.term }));

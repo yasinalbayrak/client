@@ -53,6 +53,7 @@ import { flipShowTerms } from "../redux/userSlice";
 import BackButton from "../components/buttons/BackButton";
 import { toast } from "react-toastify";
 import { handleInfo } from "../errors/GlobalErrorHandler";
+import "../styles/toggle.css"
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const useStyles = makeStyles((theme) => ({
@@ -417,7 +418,8 @@ function CreateAnnouncement() {
     desiredCourses: selectedCourses,
     isInprogressAllowed: false,
     section: null,
-    isSectionEnabled: false
+    isSectionEnabled: false,
+    isDesiredLetterGradeEnabled: false
   });
 
   // set changes for autocomplete
@@ -573,6 +575,15 @@ function CreateAnnouncement() {
     const filteredValue = uppercaseValue.replace(/[^A-Z0-9\ ]/g, '');
     setDesiredCourseCodeValue(filteredValue);
   };
+
+  const flipDesiredLetterGrade = () => {
+    setAnnouncementDetails((prev) => (
+      {
+        ...prev,
+        isDesiredLetterGradeEnabled: !prev.isDesiredLetterGradeEnabled
+      }
+    ))
+  }
   const dispatch = useDispatch();
 
   console.log(announcementDetails)
@@ -753,18 +764,18 @@ function CreateAnnouncement() {
                   />
                   <Box sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center", marginLeft: "1rem" }}>
 
-                     
+
                     <FormControlLabel
                       value={announcementDetails.isSectionEnabled}
                       onChange={(event) => {
-                        
+
                         setAnnouncementDetails((prev) => ({
                           ...prev,
                           isSectionEnabled: event.target.checked,
                           section: event.target.checked ? prev.section : null
                         }));
                       }}
-                      sx={{minWidth: "fit-content"}}
+                      sx={{ minWidth: "fit-content" }}
                       control={<Checkbox />}
                       label="Add Section"
                     />
@@ -775,8 +786,8 @@ function CreateAnnouncement() {
                       value={announcementDetails.section ?? ''}
                       onChange={handleInput}
                       autoComplete="off"
-                      sx={{marginLeft: "1rem", padding:0, userSelect:"none"}}
-                      
+                      sx={{ marginLeft: "1rem", padding: 0, userSelect: "none" }}
+
                       disabled={!announcementDetails.isSectionEnabled}
                     />
                   </Box>
@@ -897,57 +908,7 @@ function CreateAnnouncement() {
                 </Grid>
               </Box>
             </Grid>
-            <Grid
-              container
-              direction="row"
-              justifyContent="start"
-              alignItems="center"
-            >
 
-              <Box sx={{ minWidth: 150, mt: 2 }}>
-                <Typography> Minimum Desired Letter Grade<span style={{ color: 'red' }}>*</span>:</Typography>
-                <TextField
-                  id="outlined-select-currency"
-                  name="letterGrade"
-                  select
-                  value={announcementDetails.letterGrade}
-                  size="small"
-                  sx={{ mt: 2, width: 225 }}
-                  onChange={handleInput}
-                >
-                  {grades.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-
-                <FormControlLabel
-                  value={announcementDetails.isInprogressAllowed}
-                  onChange={(event) => {
-                    setAnnouncementDetails((prevDetails) => ({
-                      ...prevDetails,
-                      isInprogressAllowed: event.target.checked,
-                    }));
-                  }}
-                  control={<Checkbox />}
-                  label="Allow In Progress Applicants"
-                  sx={{ mt: 2, ml: 2 }}
-                />
-
-                <Tooltip
-                  title="By checking this box, you allow students who currently taking this course to apply to be an LA."
-                  placement="right"
-                  sx={{ marginLeft: -1, marginTop: 2 }}
-                >
-                  <IconButton>
-                    <HelpCenterIcon />
-                  </IconButton>
-                </Tooltip>
-
-              </Box>
-
-            </Grid>
             <Grid
               container
               direction="row"
@@ -973,7 +934,85 @@ function CreateAnnouncement() {
                 </TextField>
               </Box>
             </Grid>
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="center"
+            >
 
+              <Box sx={{ minWidth: 150, mt: 2 }}>
+                <Grid item container direction="row" alignItems="center">
+                  <Typography>Minimum Desired Letter Grade</Typography>
+                  <div className="toggler">
+                    <input
+                      id="toggler-1"
+                      name="toggler-1"
+                      type="checkbox"
+                      value="1"
+                      checked={announcementDetails.isDesiredLetterGradeEnabled}
+                      onChange={flipDesiredLetterGrade}
+                    />
+                    <label htmlFor="toggler-1">
+                      <svg className={announcementDetails.isDesiredLetterGradeEnabled ? "toggler-on" : "toggler-off"} version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                        {announcementDetails.isDesiredLetterGradeEnabled ? (
+                          <polyline className="path check" points="100.2,40.2 51.5,88.8 29.8,67.5"></polyline>
+                        ) : (
+                          <>
+                            <line className="path line" x1="34.4" y1="34.4" x2="95.8" y2="95.8"></line>
+                            <line className="path line" x1="95.8" y1="34.4" x2="34.4" y2="95.8"></line>
+                          </>
+                        )}
+                      </svg>
+                    </label>
+                  </div>
+                </Grid>
+
+
+                <TextField
+                  id="outlined-select-currency"
+                  name="letterGrade"
+                  select
+                  value={announcementDetails.letterGrade}
+                  size="small"
+                  sx={{ mt: 2, width: 225 }}
+                  onChange={handleInput}
+                  disabled={!announcementDetails.isDesiredLetterGradeEnabled}
+                >
+                  {grades.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+
+                <FormControlLabel
+                  value={announcementDetails.isInprogressAllowed}
+                  onChange={(event) => {
+                    setAnnouncementDetails((prevDetails) => ({
+                      ...prevDetails,
+                      isInprogressAllowed: event.target.checked,
+                    }));
+                  }}
+                  control={<Checkbox />}
+                  label="Allow In Progress Applicants"
+                  sx={{ mt: 2, ml: 2 }}
+                  disabled={!announcementDetails.isDesiredLetterGradeEnabled}
+                />
+
+                <Tooltip
+                  title="By checking this box, you allow students who currently taking this course to apply to be an LA."
+                  placement="right"
+                  sx={{ marginLeft: -1, marginTop: 2 }}
+                >
+                  <IconButton>
+                    <HelpCenterIcon />
+                  </IconButton>
+                </Tooltip>
+
+              </Box>
+
+            </Grid>
             <Grid
               container
               direction="row"
@@ -995,13 +1034,13 @@ function CreateAnnouncement() {
                       onChange={handleInput}
                       placeholder="Enter the job details..."
                       style={{
-                        width: "100%", // Adjusted width to account for padding and border
+                        width: "100%",
                         border: "1px solid #c1c4bc",
                         borderRadius: "5px",
-                        padding: "8px", // Adjusted padding to give space between text and border
+                        padding: "8px",
                         outline: "none",
-                        fontFamily: "Arial, sans-serif", // Change the font family
-                        fontSize: "15px", // Change the font size
+                        fontFamily: "Arial, sans-serif",
+                        fontSize: "15px",
                         resize: "vertical",
                         minHeight: "40px",
                         maxHeight: "850px",
@@ -1262,8 +1301,7 @@ function CreateAnnouncement() {
                           justifyContent="start"
                           alignItems="center"
                         >
-                          <Typography> Minimum Desired Letter Grade<span
-                            style={{ color: 'red' }}>*</span>:</Typography>
+                          <Typography> Minimum Desired Letter Grade</Typography>
                           <TextField
                             id="outlined-select-currency"
                             name="letterGrade"
@@ -1414,7 +1452,7 @@ function CreateAnnouncement() {
         </Grid>
         <AddQuestion AnnouncementDetails={announcementDetails} username={userName} />
       </Box>
-    </Box>
+    </Box >
   );
 }
 

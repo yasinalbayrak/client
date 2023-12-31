@@ -46,55 +46,55 @@ const QuestionPage = (props) => {
       if (answers.length !== questions.length) {
         throw new Error("Not all questions have answers");
       }
-      
+
       var validator = 0;
       const modifiedAnswers = answers.map((answer, idx) => {
         validator++
         const qType = questions[idx].type;
-  
+
         if (!answer || (typeof answer === 'string' && answer.trim() === "")) {
           throw new Error(`Answer for question ${idx + 1} is missing`);
         }
-  
+
         console.log('answer :>> ', answer);
-  
+
         switch (qType) {
           case "MULTIPLE_CHOICE":
             if (answer.length <= 0) {
               throw new Error(`Multiple choice answer for question ${idx + 1} is empty`);
             }
-  
-            return questions[idx].allowMultipleAnswers ? 
-                   answer.reduce((accumulator, currentValue) => accumulator + currentValue.toString(), "") : 
-                   answer.toString();
-  
+
+            return questions[idx].allowMultipleAnswers ?
+              answer.reduce((accumulator, currentValue) => accumulator + currentValue.toString(), "") :
+              answer.toString();
+
           case "NUMERIC":
             return answer.toString();
-  
+
           default:
             return answer;
         }
 
-        
+
       });
 
-      if(validator !== questions.length){
+      if (validator !== questions.length) {
         throw new Error("Not all questions have answers");
       }
-  
+
       console.log('modifiedAnswers:>> ', modifiedAnswers);
-      if(await applyToPost(id, state.user.id, modifiedAnswers)){
+      if (await applyToPost(id, state.user.id, modifiedAnswers)) {
         navigate("/Home", { replace: true });
         toast.success("Your application has been received successfully.");
       }
 
-      
+
     } catch (error) {
       console.error("Submission error:", error.message);
       toast.info("Complete all the questions before completing the application.");
     }
   };
-  
+
 
   const onAnswerChange = (e, index) => {
     e.preventDefault();
@@ -104,7 +104,7 @@ const QuestionPage = (props) => {
   useEffect(() => {
     if (announcementInfo?.questions !== undefined) {
       setQuestions(announcementInfo.questions);
-      
+
     }
   }, [announcementInfo]);
 
@@ -148,18 +148,21 @@ const QuestionPage = (props) => {
                   <Typography variant="h5">Questions:</Typography>
                 </Grid>
                 <QuestionComponent
-                questions={questions}
-                answers={answers}
-                answerCallback={answerCallback}
-                edit={false}
+                  questions={questions}
+                  answers={answers}
+                  answerCallback={answerCallback}
+                  edit={false}
                 />
 
               </Grid>
               <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                 <Grid item>
-                  <Button variant="contained" startIcon={<ArrowForwardIcon />} color="success" onClick={onSubmit}>
-                    Complete the application
-                  </Button>
+                  <button class="button" onClick={onSubmit}>
+                    Apply Now
+                    <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd"></path>
+                    </svg>
+                  </button>
                 </Grid>
               </Grid>
             </Box>

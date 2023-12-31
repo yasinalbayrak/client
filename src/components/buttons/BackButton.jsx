@@ -7,7 +7,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 const useStyles = makeStyles((_) => ({
   backButton: {
     position: 'relative',
-    top: '3rem',
+    margin: "3rem 0 0 0"
   },
 }));
 
