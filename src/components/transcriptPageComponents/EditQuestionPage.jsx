@@ -132,7 +132,7 @@ const EditQuestionPage = (props) => {
 
           switch (qType) {
             case "MULTIPLE_CHOICE":
-              ans = allowMultiple ? ans.split("").map(char => parseInt(char, 10)) : ans;
+              ans = allowMultiple ? ans.split("").map(char => parseInt(char, 10)) : parseInt(ans, 10);
               break;
             case "NUMERIC":
               ans = parseInt(ans, 10);

@@ -27,9 +27,9 @@ export default function AnnouncementTable(props) {
       try {
         let data = [];
         if (!isInstructor) {
-          data = await getApplicationRequestsByStudentId(userID);
+          data = await getApplicationRequestsByStudentId();
         } else {
-          data = await getAllAnnouncementsOfInstructor(userID);
+          data = await getAllAnnouncementsOfInstructor();
         }
   
         

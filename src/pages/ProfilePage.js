@@ -44,7 +44,7 @@ function ProfilePage(){
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const currentTranscript = await getCurrentTranscript(id);
+            const currentTranscript = await getCurrentTranscript();
             setUser(currentTranscript);
           } catch (error) {
             // Centralized error handling or log the error

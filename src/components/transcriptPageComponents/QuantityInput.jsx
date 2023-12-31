@@ -39,7 +39,7 @@ export default function QuantityInput(props) {
   return (
     <>
 
-      {(!props.edit || props.answer !== null) && <NumberInput aria-label="Quantity Input"  key={props.key} idx={props.idx} answer={props.answer} onAnswerChange={props.onAnswerChange} min={0} max={5000} />}
+      {(!props.edit || props.answer !== null) && <NumberInput aria-label="Quantity Input" edit={props.edit}  key={props.key} idx={props.idx} answer={props.answer} onAnswerChange={props.onAnswerChange} min={0} max={5000} />}
     </>
   );
 }

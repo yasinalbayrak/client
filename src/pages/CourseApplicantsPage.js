@@ -13,8 +13,7 @@ function CourseApplicantsPage() {
   const userId = useSelector((state) => state.user.id);
 
   useEffect(() => {
-    console.log("User id = " + userId);
-    getAllAnnouncementsOfInstructor(userId).then((res) => {
+    getAllAnnouncementsOfInstructor().then((res) => {
       setAnnouncements(res);
     }).catch(_=>{
       // Already catched.

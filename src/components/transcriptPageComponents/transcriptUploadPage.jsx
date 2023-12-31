@@ -54,7 +54,6 @@ const TranscriptPage = (props) => {
     else{
       const formData = new FormData();
       formData.append("file", transcript);
-      formData.append("studentId", userId)
       console.log(filename);
       postTranscript(formData).then((res) => {
         navigate("/transcriptInfoPage/"+id, { replace: true });

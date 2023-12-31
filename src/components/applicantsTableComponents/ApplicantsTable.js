@@ -69,10 +69,10 @@ function CustomRow(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const currentTranscript = await getCurrentTranscript(row.student.user.id);
+        const currentTranscript = await getCurrentTranscript();
         setStudentDetails(currentTranscript);
 
-        const courseGrades = await getCourseGrades(row.student.user.id, [props.courseCode]);
+        const courseGrades = await getCourseGrades([props.courseCode]);
         if (courseGrades.length > 0) {
           setStudentDetails((prev) => ({
             ...prev,
@@ -111,7 +111,7 @@ function CustomRow(props) {
   // }, [row.student.user.id, courseCode]);
 
   useEffect(() => {
-    getApplicationRequestsByStudentId(row.student.user.id)
+    getApplicationRequestsByStudentId()
       .then((res) => {
         setLaHistory(res);
       })

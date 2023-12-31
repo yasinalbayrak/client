@@ -826,6 +826,7 @@ function EditAnnouncement() {
                       sx={{ minWidth: "fit-content", marginLeft: "1rem" }}
                       control={<Checkbox checked={announcementDetails.isSectionEnabled} />}
                       label="Add Section"
+                      disabled
                     />
                     <TextField
                       label="Section"

@@ -29,7 +29,7 @@ function HomePage() {
       try {
         // Fetch the announcements data here using your API function
         if(!isInstructor){
-          const applicationRequest = await getApplicationRequestsByStudentId(state.user.id);
+          const applicationRequest = await getApplicationRequestsByStudentId();
           setApplicationRequests(applicationRequest);
         }
         const announcements = await getAllAnnouncements();
@@ -52,17 +52,6 @@ function HomePage() {
     fetchAnnouncements();
   }, [location, updated]); // Include the updated status in the dependencies
 
-  // useEffect(() => {
-  //   const fetchApplicationRequestByStudentId = async () => {
-  //     try{
-  //       const applicationRequest = await getApplicationRequestsByStudentId(state.user.id);
-  //       setRows(applicationRequest);
-  //     }catch(error){
-  //       console.error("Failed to fetch application request:", error);
-  //     }
-  //   };
-  //   fetchApplicationRequestByStudentId();
-  // }, [location, updated]);
 
   const handleAnnouncementTableChange = (event, newValue) => {
     setValue(newValue);

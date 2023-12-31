@@ -93,12 +93,15 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
     React.useEffect(() => {
         setEligibilityChecked(false);
         function fetchStudentGrades() {
-            getStudentCourseGrades(userID).then((data) => {
+            getStudentCourseGrades().then((data) => {
                 setStudentCourseAndGrades(data)
             }
             ).catch((_) => { })
         }
-        fetchStudentGrades();
+        if(!isInstructor ){
+            fetchStudentGrades();
+        }
+        
     }, [userID])
 
 

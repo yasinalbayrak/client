@@ -25,7 +25,7 @@ export default function EligibilityPage() {
     useEffect(() => {
         async function checkEligibility() {
             try {
-                const result = await checkStudentEligibility(ApplicationId, userID);
+                const result = await checkStudentEligibility(ApplicationId);
                 setEligibilityInfo(result);
 
             } catch (error) {

@@ -412,7 +412,6 @@ function EditQuestion(props) {
               props.AnnouncementDetails.course_code &&
               props.AnnouncementDetails.lastApplicationDate &&
               props.AnnouncementDetails.lastApplicationTime &&
-              props.AnnouncementDetails.letterGrade &&
               props.AnnouncementDetails.workHours &&
               props.AnnouncementDetails.term &&
               (!props.AnnouncementDetails.isSectionEnabled || (props.AnnouncementDetails.section !== "" && props.AnnouncementDetails.section))

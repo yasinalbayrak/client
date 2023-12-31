@@ -44,7 +44,7 @@ function EditApplyPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const currentTranscript = await getCurrentTranscript(userID);
+        const currentTranscript = await getCurrentTranscript();
         setstudentInfo(currentTranscript);
 
       } catch (error) {
