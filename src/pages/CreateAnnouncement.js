@@ -404,7 +404,10 @@ function CreateAnnouncement() {
 
   const todayIstanbul = new Date().toLocaleString("en-US", { timeZone: "Europe/Istanbul" });
   const currentDate = new Date(todayIstanbul);
-  const formattedDate = currentDate.toISOString().split('T')[0];
+  const timeZoneOffset = 3 * 60 * 60 * 1000;
+  const adjustedDate = new Date(currentDate.getTime() + timeZoneOffset);
+  const formattedDate = adjustedDate.toISOString().split('T')[0];
+  console.log(formattedDate)
 
   const [announcementDetails, setAnnouncementDetails] = useState({
     term: {},
