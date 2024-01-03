@@ -111,6 +111,7 @@ const TranscriptPage = (props) => {
             <Sidebar></Sidebar>
               <AppBarHeader />
               <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
+
                 <Grid item>
                   <Typography variant="h4">Welcome to LA Application Page</Typography>
                   <Divider></Divider>
@@ -125,12 +126,16 @@ const TranscriptPage = (props) => {
                     <br />
                 </Grid>
                 <Grid item container direction="rows" alignItems="center" justifyContent="center" sx={{ m: 1, marginBottom: 3 }}>
+
                   <Grid item xs={3}></Grid>
                   <Grid item xs={2}>
                     <Typography textAlign="center">Upload your transcript:</Typography>
                   </Grid>
+
                   <Grid item xs={6}>
+
                     <Grid item container direction="rows">
+
                       <Button variant="contained" component="label" onClick={onFileSubmit} size="small"
                               sx={{
                                 height: '45px',
@@ -150,34 +155,59 @@ const TranscriptPage = (props) => {
                             <span style={{fontSize: 'smaller'}}>{filename}</span>
                         )}
                       </Typography>
+
+                    </Grid>
+
+
+                  </Grid>
+
+
+                </Grid>
+
+
+                <Grid container direction="column" alignItems="center" justifyContent="center" spacing={2}>
+
+                  <Grid item>
+                    <FormControlLabel
+                        required
+                        control={<Checkbox onChange={onCheckboxChange}/>}
+                        label="By uploading my transcript, I consent to the collection and use of this personal data for the purpose of LA application."
+                    />
+                  </Grid>
+
+                  {/* New Grid container for buttons */}
+                  <Grid item container direction="row" justifyContent="center" spacing={3}>
+                    <Grid item>
+                      <Button
+                          variant="contained"
+                          startIcon={<CloseIcon />}
+                          onClick={() => navigate("/home", { replace: true })}
+                          size="large"
+                          color="error"
+                      >
+                        Cancel
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <Button
+                          variant="contained"
+                          startIcon={<DoneIcon />}
+                          color="success"
+                          size="large"
+                          onClick={onSubmit}
+                      >
+                        DONE
+                      </Button>
                     </Grid>
                   </Grid>
-                  <Grid item xs={2}></Grid>
+
                 </Grid>
-                <Grid>  
-                  <FormControlLabel
-                   required
-                   control={<Checkbox onChange={onCheckboxChange}/>} label="By uploading my transcript, I consent to the collection and use of this personal data for the purpose of LA application." />
-                </Grid>
-                <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
-                    
-                  <Grid item>
-                  <br></br>
-                    <Button variant="contained" startIcon={<CloseIcon />} onClick={() => navigate("/home", { replace: true })} color="error">
-                      Cancel
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                  <br></br>
-                    <Button variant="contained" startIcon={<DoneIcon />} color="success" onClick={onSubmit}>
-                      DONE
-                    </Button>
-                  </Grid>
-                </Grid>
-                
+
               </Grid>
             </Box>
+
           </Box>
+
         )}
       </>
     );
