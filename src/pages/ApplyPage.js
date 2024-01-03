@@ -190,14 +190,18 @@ const ApplyPage = (props) => {
                   <Table sx={{ minWidth: 500, border: 1.5, borderColor: "#cccccc" }} aria-label="simple table">
                     <TableBody>
                       {rows.map((row, index) => (
-                        <TableRow key={row.name}>
-                          <TableCell component="th" scope="row" align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
-                            {row.name}
-                          </TableCell>
-                          <TableCell align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
-                            {row.val}
-                          </TableCell>
-                        </TableRow>
+                          <TableRow key={row.name}>
+                            <TableCell component="th" scope="row" align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
+                              {row.name}
+                            </TableCell>
+                            <TableCell align="center" sx={index % 2 === 0 && { backgroundColor: "#f2f2f2" }}>
+                              {Array.isArray(row.val) ? row.val.map((item, idx) => (
+                                  <React.Fragment key={idx}>
+                                    {item}{idx < row.val.length - 1 && <br/>}
+                                  </React.Fragment>
+                              )) : row.val}
+                            </TableCell>
+                          </TableRow>
                       ))}
                     </TableBody>
                   </Table>
