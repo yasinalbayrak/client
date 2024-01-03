@@ -127,16 +127,15 @@ function CustomRow(props) {
           {row.student.user.name + " " + row.student.user.surname}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
-          {
-            // TODO 
-            studentDetails?.program && studentDetails.program.majors
-          }
+          {studentDetails?.program && studentDetails.program.majors.map((major, index) => (
+              <div key={index}>{major}</div>
+          ))}
         </TableCell>
+
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} component="th" scope="row">
-          {
-            // TODO 
-            studentDetails?.program && studentDetails.program.minors
-          }
+          {studentDetails?.program && studentDetails.program.minors.map((minor, index) => (
+              <div key={index}>{minor}</div>
+          ))}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} align="left">
           {studentDetails?.course && studentDetails.course.grade}
