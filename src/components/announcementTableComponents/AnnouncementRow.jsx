@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TableHead from "@mui/material/TableHead";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
-
+import { useSelector } from "react-redux";
 import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -14,6 +14,8 @@ import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack }) {
 
   const { instructor_names, weeklyWorkingTime, term, status: applicationStatus, isTimedOut } = data;
+
+  const isTranscriptUploaded = useSelector((state) => state.user.isTranscriptUploded);
 
   const { lastApplicationDate,
     minimumRequiredGrade,
@@ -114,12 +116,20 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           );
         } else {
           return (
-            <Button
-              variant="contained"
-              onClick={() => navigate("/apply/" + applicationId, { replace: true })}
-            >
-              Apply
-            </Button>
+              <Button
+                  variant="contained"
+                  onClick={() => {
+                    if (isTranscriptUploaded) {
+                      // Navigate to the apply page if the transcript is uploaded
+                      navigate("/apply/" + applicationId, { replace: true });
+                    } else {
+                      // Navigate to a different page (e.g., transcript upload page) if the transcript is not uploaded
+                      navigate("/transcriptUploadPage/"+applicationId, { replace: true });
+                    }
+                  }}
+              >
+                Apply
+              </Button>
           );
         }
       }

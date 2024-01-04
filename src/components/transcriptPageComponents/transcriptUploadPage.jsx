@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { uploadedTranscript } from "../../redux/userSlice";
 import AppBarHeader from "../AppBarHeader";
 import Sidebar from "../Sidebar";
 import {
@@ -23,6 +25,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 
 const TranscriptPage = (props) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const username = useSelector((state) => state.user.username);
   const state = useSelector((state) => state);
@@ -56,6 +59,7 @@ const TranscriptPage = (props) => {
       formData.append("file", transcript);
       console.log(filename);
       postTranscript(formData).then((res) => {
+        dispatch(uploadedTranscript());
         navigate("/transcriptInfoPage/"+id, { replace: true });
           }
       ).catch((_) => {
