@@ -205,7 +205,7 @@ function CustomRow(props) {
               <Box sx={{ minWidth: 120, mY: "15px", height: "100%" }} textAlign="center">
 
                 <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
-                  <Button
+                  {/* <Button
                     variant="outlined"
                     endIcon={<DownloadIcon />}
                     sx={{ m: "10px", padding: "20px" }}
@@ -230,7 +230,7 @@ function CustomRow(props) {
                     }}
                   >
                     Transcript
-                  </Button>
+                  </Button> */}
 
                   <Button
                     variant="outlined"
