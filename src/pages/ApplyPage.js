@@ -41,21 +41,21 @@ const ApplyPage = (props) => {
   const surname = useSelector((state) => state.user.surname);
   const userID = useSelector((state) => state.user.id);
   const [studentInfo, setstudentInfo] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const currentTranscript = await getCurrentTranscript();
-        setstudentInfo(currentTranscript);
+  const [questionsAndAnswers, setQuestionsAndAnswers] = useState({});
+  const [questions, setQuestions] = useState([]);
+  const [announcementInfo, setAnnouncementInfo] = useState(null);
+  const [courseCode, setCourseCode] = useState(null);
+  const { id } = useParams();
+  const [transcript, setTranscript] = useState(null);
+  const [courseGrade, setCourseGrade] = useState(null);
+  const [filename, setFile] = useState(() => {
+    const initialFileName = "No File Uploaded";
+    return initialFileName;
+  });
 
-      } catch (error) {
-        // Centralized error handling or log the error
-        console.error("Error fetching data:", error);
-        setstudentInfo(null);
-      }
-    };
+  const data = useRef();
+  const isLoading = useRef();
 
-    fetchData();
-  }, [userID]);
   const rows = [
     { name: "Student ID:", val: studentInfo?.studentSuId },
     { name: "Name Surname:", val: studentInfo?.studentName },
@@ -65,24 +65,33 @@ const ApplyPage = (props) => {
     { name: "Major:", val: studentInfo?.program?.majors },
     { name: "Minor:", val: studentInfo?.program?.minors },
     { name: "Year:", val: studentInfo?.year },
+    { name: `${announcementInfo?.course.courseCode} Grade:`, val: courseGrade?? "" },
 
   ];
-  const [questionsAndAnswers, setQuestionsAndAnswers] = useState({});
-  const [questions, setQuestions] = useState([]);
-  const [announcementInfo, setAnnouncementInfo] = useState(null);
-  const { id } = useParams();
-  const [transcript, setTranscript] = useState(null);
-  const [filename, setFile] = useState(() => {
-    const initialFileName = "No File Uploaded";
-    return initialFileName;
-  });
-
-  const data = useRef();
-  const isLoading = useRef();
-
-
 
   console.log(state.user)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const currentTranscript = await getCurrentTranscript();
+        setstudentInfo(currentTranscript);
+        for (const [c,g] of Object.entries(currentTranscript?.course)){
+          if (g.courseCode == courseCode){
+            setCourseGrade(g.grade);
+            break;
+          }
+        }
+
+      } catch (error) {
+        // Centralized error handling or log the error
+        console.error("Error fetching data:", error);
+        setstudentInfo(null);
+      }
+    };
+
+    fetchData();
+  }, [userID, courseCode]);
 
   const onAnswerChange = (e, question) => {
     e.preventDefault();
@@ -151,6 +160,14 @@ const ApplyPage = (props) => {
     }
   }, [transcript]);
 
+  // useEffect(() => {
+  //   for (const [c,g] of Object.entries(studentInfo?.course)){
+  //     if (c == courseCode){
+  //       setCourseGrade(g);
+  //     }
+  //   }
+  // }, [courseCode])
+
   useEffect(() => {
     // Ensure 'id' is available and not undefined or null
     if (id) {
@@ -159,6 +176,7 @@ const ApplyPage = (props) => {
           // Now we're sure 'id' is passed to 'getAnnouncement'
           const results = await getAnnouncement(id);
           setAnnouncementInfo(results);
+          setCourseCode(results.course.courseCode);
           data.current = results;
           isLoading.current = false;
           console.log(results);
