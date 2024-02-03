@@ -529,6 +529,24 @@ function AddQuestion(props) {
             color="success"
             sx={{ m: 2, textDecoration: "none" }}
             onClick={() => {
+              console.log("*******************************************************",props.AnnouncementDetails.lastApplicationDate)
+              console.log("*******************************************************",props.AnnouncementDetails.lastApplicationTime)
+              if (!props.AnnouncementDetails.lastApplicationDate || !props.AnnouncementDetails.lastApplicationTime) {
+                handleInfo("Please fill out the required fields.");
+                return;
+              }
+
+
+              const currentIstanbulTime = new Date(new Date().getTime() );
+
+              const combinedDateTime = props.AnnouncementDetails.lastApplicationDate + "T" + props.AnnouncementDetails.lastApplicationTime + ":00";
+              const selectedTime = new Date(combinedDateTime);
+              console.log("Selected time:",selectedTime)
+              console.log("current time:",currentIstanbulTime)
+              if (selectedTime < currentIstanbulTime) {
+                handleInfo("Selected last application date and time cannot be before the current Istanbul time.");
+                return;
+              }
               if (
                 props.AnnouncementDetails.course_code &&
                 props.AnnouncementDetails.lastApplicationDate &&

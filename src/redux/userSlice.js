@@ -41,7 +41,7 @@ const userSlice = createSlice({
     },
 
     uploadedTranscript:(state)=>{
-      state.isTranscriptUploded=false;
+      state.isTranscriptUploded=true;
     },
 
     logout: (state) => {
@@ -68,6 +68,13 @@ const userSlice = createSlice({
 
 console.log(userSlice);
 
-export const {flipShowTerms, startLoginProcess, successLogin, failLogin, logout, switchIsInstructor, setTerm } = userSlice.actions;
+export const {flipShowTerms,
+  startLoginProcess,
+  successLogin,
+  failLogin,
+  logout,
+  switchIsInstructor,
+  setTerm,
+  uploadedTranscript} = userSlice.actions;
 
 export default userSlice.reducer;

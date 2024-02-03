@@ -404,13 +404,16 @@ function CreateAnnouncement() {
 
   const todayIstanbul = new Date().toLocaleString("en-US", { timeZone: "Europe/Istanbul" });
   const currentDate = new Date(todayIstanbul);
-  const formattedDate = currentDate.toISOString().split('T')[0];
+  const timeZoneOffset = 3 * 60 * 60 * 1000;
+  const adjustedDate = new Date(currentDate.getTime() + timeZoneOffset);
+  const formattedDate = adjustedDate.toISOString().split('T')[0];
+  console.log(formattedDate)
 
   const [announcementDetails, setAnnouncementDetails] = useState({
     term: {},
     course_code: courseCode,
     lastApplicationDate: todayIstanbul,
-    lastApplicationTime: istanbulTime.replace(/(.*)\D\d+/, "$1"),
+    lastApplicationTime: "",//istanbulTime.replace(/(.*)\D\d+/, "$1"),
     letterGrade: "A",
     workHours: "",
     jobDetails: "",
@@ -844,6 +847,7 @@ function CreateAnnouncement() {
 
                             }}
                             ampm={false}
+                            renderInput={(params) => <TextField {...params} placeholder="hh:mm" />}
                             sx={{
                               "& .MuiOutlinedInput-notchedOutline": {
                                 borderColor: "lightgray !important",
@@ -1037,13 +1041,15 @@ function CreateAnnouncement() {
                         width: "100%",
                         border: "1px solid #c1c4bc",
                         borderRadius: "5px",
-                        padding: "8px",
+                        padding: "12px",
                         outline: "none",
                         fontFamily: "Arial, sans-serif",
                         fontSize: "15px",
                         resize: "vertical",
                         minHeight: "40px",
                         maxHeight: "850px",
+                        boxSizing: "border-box",
+                        minWidth: "400px"
 
                       }}
                     />

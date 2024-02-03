@@ -15,10 +15,11 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements } from "../../apiCalls";
+import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus } from "../../apiCalls";
 import { useParams } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
 import QuestionAnswer from "./QuestionsAndAnswers";
 import LaHistoryTable from "./LaHistoryTable";
@@ -38,6 +39,7 @@ function CustomRow(props) {
   const navigate = useNavigate();
   const [studentDetails, setStudentDetails] = React.useState({});
 
+  console.log(row);
 
   useEffect(() => {
     setUserID(row.student.user.id);
@@ -54,10 +56,23 @@ function CustomRow(props) {
   const handleChange = (event) => {
     const toStatus = event.target.value
     updateApplicationRequestStatus(row.applicationRequestId, toStatus).then((res) => {
-      row.status = toStatus;
+      row.statusIns = toStatus;
       setSnackOpen(true);
       console.log(res);
     });
+  };
+
+  console.log(row.applicationRequestId);
+
+  const handleFinalize = () => {
+    try {
+      finalizeStatus(row.applicationRequestId).then((res) => {
+        console.log(res);
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
   };
 
   function changeName(student_name) {
@@ -129,16 +144,15 @@ function CustomRow(props) {
           {row.student.user.name + " " + row.student.user.surname}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
-          {
-            // TODO 
-            studentDetails?.program && studentDetails.program.majors
-          }
+          {studentDetails?.program && studentDetails.program.majors.map((major, index) => (
+              <div key={index}>{major}</div>
+          ))}
         </TableCell>
+
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} component="th" scope="row">
-          {
-            // TODO 
-            studentDetails?.program && studentDetails.program.minors
-          }
+          {studentDetails?.program && studentDetails.program.minors.map((minor, index) => (
+              <div key={index}>{minor}</div>
+          ))}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} align="left">
           {studentDetails?.course && studentDetails.course.grade}
@@ -157,7 +171,7 @@ function CustomRow(props) {
           </Snackbar>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Status</InputLabel>
-            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.status} label="Status" onChange={handleChange}>
+            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label="Status" onChange={handleChange}>
               <MenuItem value={"ACCEPTED"}>Accepted</MenuItem>
               <MenuItem value={"REJECTED"}>Rejected</MenuItem>
               <MenuItem value={"IN_PROGRESS"}>In Progress</MenuItem>
@@ -208,7 +222,7 @@ function CustomRow(props) {
               <Box sx={{ minWidth: 120, mY: "15px", height: "100%" }} textAlign="center">
 
                 <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
-                  <Button
+                  {/* <Button
                     variant="outlined"
                     endIcon={<DownloadIcon />}
                     sx={{ m: "10px", padding: "20px" }}
@@ -233,7 +247,7 @@ function CustomRow(props) {
                     }}
                   >
                     Transcript
-                  </Button>
+                  </Button> */}
 
                   <Button
                     variant="outlined"
@@ -242,6 +256,15 @@ function CustomRow(props) {
                     onClick={() => navigate("/profile/" + userID, { replace: false })}
                   >
                     Student Profile
+                  </Button>
+
+                  <Button
+                    variant="outlined"
+                    endIcon={<SaveIcon />}
+                    sx={{ m: "10px" }}
+                    onClick={handleFinalize}
+                  >
+                    Announce Final Status
                   </Button>
                 </Box>
 

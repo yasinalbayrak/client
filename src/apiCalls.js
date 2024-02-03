@@ -545,6 +545,23 @@ async function checkStudentEligibility(applicationId) {
   }
 }
 
+async function finalizeStatus(appReqId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/instructor/finalizeStatus/" + appReqId,
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
 export {
   checkStudentEligibility,
   updateApplicationRequestStatus,
@@ -571,5 +588,6 @@ export {
   deleteApplicationById,
   getStudentCourseGrades,
   getApplicationRequestById,
-  updateApplicationRequest
+  updateApplicationRequest,
+  finalizeStatus
 };

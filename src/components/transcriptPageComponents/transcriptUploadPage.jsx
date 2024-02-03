@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { uploadedTranscript } from "../../redux/userSlice";
 import AppBarHeader from "../AppBarHeader";
 import Sidebar from "../Sidebar";
 import {
@@ -18,12 +20,12 @@ import { useSelector } from "react-redux";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import handleError, {handleInfo} from "../../errors/GlobalErrorHandler"
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ReactDOM from 'react-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 
 const TranscriptPage = (props) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const username = useSelector((state) => state.user.username);
   const state = useSelector((state) => state);
@@ -34,6 +36,7 @@ const TranscriptPage = (props) => {
   const { id } = useParams();
   const [transcript, setTranscript] = useState(null);
   const [consentChecked, setConsentChecked] = useState(false);
+  const [fileUrl, setFileUrl] = useState("");
   const [filename, setFilename] = useState(() => {
     const initialFileName = "No File Uploaded";
     return initialFileName;
@@ -56,6 +59,7 @@ const TranscriptPage = (props) => {
       formData.append("file", transcript);
       console.log(filename);
       postTranscript(formData).then((res) => {
+        dispatch(uploadedTranscript());
         navigate("/transcriptInfoPage/"+id, { replace: true });
           }
       ).catch((_) => {
@@ -80,6 +84,8 @@ const TranscriptPage = (props) => {
       setTranscript(file);
       const { name } = file;
       setFilename(name);
+      const fileUrl = URL.createObjectURL(file);
+      setFileUrl(fileUrl);
     };
     const onFileSubmit = () => {
       
@@ -93,6 +99,12 @@ const TranscriptPage = (props) => {
       }
     }, [transcript]);
 
+
+    const openFile = () => {
+      if (fileUrl) {
+        window.open(fileUrl, '_blank'); // Open the file in a new tab
+      }
+    };
     console.log(id);
   
     return (
@@ -103,6 +115,7 @@ const TranscriptPage = (props) => {
             <Sidebar></Sidebar>
               <AppBarHeader />
               <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
+
                 <Grid item>
                   <Typography variant="h4">Welcome to LA Application Page</Typography>
                   <Divider></Divider>
@@ -117,13 +130,17 @@ const TranscriptPage = (props) => {
                     <br />
                 </Grid>
                 <Grid item container direction="rows" alignItems="center" justifyContent="center" sx={{ m: 1, marginBottom: 3 }}>
+
                   <Grid item xs={3}></Grid>
                   <Grid item xs={2}>
                     <Typography textAlign="center">Upload your transcript:</Typography>
                   </Grid>
+
                   <Grid item xs={6}>
+
                     <Grid item container direction="rows">
-                      <Button variant="contained" component="label" onClick={onFileSubmit}  size="small"
+
+                      <Button variant="contained" component="label" onClick={onFileSubmit} size="small"
                               sx={{
                                 height: '45px',
                                 fontSize: '0.750rem',
@@ -133,42 +150,68 @@ const TranscriptPage = (props) => {
                       </Button>
                       <Typography alignItems="center" justifyContent="center" textAlign="center" m={2}>
                         {filename !== "No File Uploaded" ? (
-                            <>
-                              <FontAwesomeIcon icon={faFilePdf} style={{ color: 'red' }}/>
-                              <span style={{ fontSize: 'smaller', marginLeft: '0.3em' }}>{filename}</span>
-                            </>
+                            <button onClick={openFile}
+                                    style={{background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                              <FontAwesomeIcon icon={faFilePdf} style={{color: 'red',fontSize: '18px'}}/>
+                              <span style={{fontSize: 'larger', marginLeft: '0.3em'}}>{filename}</span>
+                            </button>
                         ) : (
-                            <span style={{ fontSize: 'smaller' }}>{filename}</span>
+                            <span style={{fontSize: 'smaller'}}>{filename}</span>
                         )}
                       </Typography>
+
+                    </Grid>
+
+
+                  </Grid>
+
+
+                </Grid>
+
+
+                <Grid container direction="column" alignItems="center" justifyContent="center" spacing={2}>
+
+                  <Grid item>
+                    <FormControlLabel
+                        required
+                        control={<Checkbox onChange={onCheckboxChange}/>}
+                        label="By uploading my transcript, I consent to the collection and use of this personal data for the purpose of LA application."
+                    />
+                  </Grid>
+
+                  {/* New Grid container for buttons */}
+                  <Grid item container direction="row" justifyContent="center" spacing={3}>
+                    <Grid item>
+                      <Button
+                          variant="contained"
+                          startIcon={<CloseIcon />}
+                          onClick={() => navigate("/home", { replace: true })}
+                          size="large"
+                          color="error"
+                      >
+                        Cancel
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <Button
+                          variant="contained"
+                          startIcon={<DoneIcon />}
+                          color="success"
+                          size="large"
+                          onClick={onSubmit}
+                      >
+                        DONE
+                      </Button>
                     </Grid>
                   </Grid>
-                  <Grid item xs={2}></Grid>
+
                 </Grid>
-                <Grid>  
-                  <FormControlLabel
-                   required
-                   control={<Checkbox onChange={onCheckboxChange}/>} label="By uploading my transcript, I consent to the collection and use of this personal data for the purpose of LA application." />
-                </Grid>
-                <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
-                    
-                  <Grid item>
-                  <br></br>
-                    <Button variant="contained" startIcon={<CloseIcon />} onClick={() => navigate("/home", { replace: true })} color="error">
-                      Cancel
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                  <br></br>
-                    <Button variant="contained" startIcon={<DoneIcon />} color="success" onClick={onSubmit}>
-                      DONE
-                    </Button>
-                  </Grid>
-                </Grid>
-                
+
               </Grid>
             </Box>
+
           </Box>
+
         )}
       </>
     );
