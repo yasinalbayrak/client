@@ -22,6 +22,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useNavigate } from "react-router-dom";
 import QuestionAnswer from "./QuestionsAndAnswers";
 import LaHistoryTable from "./LaHistoryTable";
+import { useSelector } from "react-redux";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -35,7 +36,6 @@ function CustomRow(props) {
   const [LaHistory, setLaHistory] = React.useState([]);
   const [userID, setUserID] = React.useState("");
   const navigate = useNavigate();
-
   const [studentDetails, setStudentDetails] = React.useState({});
 
 
@@ -69,10 +69,10 @@ function CustomRow(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const currentTranscript = await getCurrentTranscript();
+        const currentTranscript = await getCurrentTranscript(userID);
         setStudentDetails(currentTranscript);
 
-        const courseGrades = await getCourseGrades([props.courseCode]);
+        const courseGrades = await getCourseGrades([props.courseCode], userID);
         if (courseGrades.length > 0) {
           setStudentDetails((prev) => ({
             ...prev,
@@ -88,9 +88,11 @@ function CustomRow(props) {
         setStudentDetails(null);
       }
     };
-
-    fetchData();
-  }, [row.student.user.id, props.courseCode]);
+    if (userID){
+      fetchData();
+    }
+    
+  }, [row.student.user.id, props.courseCode, userID]);
 
   // useEffect(() => {
   //   getApplicationRequestsByStudentId(row.student.user.id)
@@ -111,7 +113,7 @@ function CustomRow(props) {
   // }, [row.student.user.id, courseCode]);
 
   useEffect(() => {
-    getApplicationRequestsByStudentId()
+    getApplicationRequestsByStudentId(row.student.user.id)
       .then((res) => {
         setLaHistory(res);
       })

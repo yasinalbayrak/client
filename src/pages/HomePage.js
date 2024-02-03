@@ -17,6 +17,7 @@ function HomePage() {
   const [rows, setRows] = useState([]);
   const state = useSelector((state) => state);
   const isInstructor = useSelector((state) => state.user.isInstructor);
+  const userID = useSelector((state) => state.user.id);
   const [applicationRequests, setApplicationRequests] = useState([]);
   
   // useEffect(() => {
@@ -29,7 +30,7 @@ function HomePage() {
       try {
         // Fetch the announcements data here using your API function
         if(!isInstructor){
-          const applicationRequest = await getApplicationRequestsByStudentId();
+          const applicationRequest = await getApplicationRequestsByStudentId(userID);
           setApplicationRequests(applicationRequest);
         }
         const announcements = await getAllAnnouncements();

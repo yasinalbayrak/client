@@ -26,7 +26,7 @@ async function applyToPost(postId, userID, answers) {
   try {
     const token = getJwtFromCookie()
     const results = await axios.post(
-      apiEndpoint + "/applicationRequest/student",
+      apiEndpoint + "/applicationRequest/student" ,
       { applicationId: postId, answers: answers },
       {
         headers: {
@@ -265,11 +265,12 @@ async function getApplicationByUsername(username) {
 
 }
 
-async function getApplicationRequestsByStudentId() {
+async function getApplicationRequestsByStudentId(studentId) {
   try {
     const token = getJwtFromCookie()
+    
     const results = await axios.get(
-      apiEndpoint + "/applicationRequest/student", {
+      apiEndpoint + "/applicationRequest/student/" + studentId, {
       headers: { "Authorization": "Bearer " + token }
     }
     );
@@ -429,10 +430,10 @@ async function postTranscript(formData) {
 
 }
 
-async function getCurrentTranscript() {
+async function getCurrentTranscript(studentId) {
   try {
     const token = getJwtFromCookie()
-    const result = await axios.get(apiEndpoint + "/transcript/get-current-transcript", {
+    const result = await axios.get(apiEndpoint + "/transcript/get-current-transcript/" + studentId, {
       headers: { "Authorization": "Bearer " + token }
     });
     return result.data;
@@ -450,11 +451,11 @@ async function getStudentCourseGrades() {
   } catch (error) { }
 }
 
-async function getCourseGrades(courseIds) {
+async function getCourseGrades(courseIds,studentId) {
   try {
     const token = getJwtFromCookie()
     const result = await axios.post(
-      apiEndpoint + "/transcript/course-grades/",
+      apiEndpoint + "/transcript/course-grades/" + studentId,
       { courses: courseIds },
       {
         headers: {

@@ -17,7 +17,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function ProfilePage(){
     const {id} = useParams();
-
+    const userID = useSelector((state) => state.user.id);
     const[user, setUser] = useState();
     const[showAll, setShowAll] = useState(false);
     const[courses, setCourses] = useState();
@@ -44,7 +44,7 @@ function ProfilePage(){
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const currentTranscript = await getCurrentTranscript();
+            const currentTranscript = await getCurrentTranscript(userID);
             setUser(currentTranscript);
           } catch (error) {
             // Centralized error handling or log the error
