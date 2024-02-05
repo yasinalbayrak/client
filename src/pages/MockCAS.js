@@ -5,10 +5,17 @@ import { Helmet } from "react-helmet";
 import subg from "../assets/subg.jpg";
 import sula from "../assets/sula.png";
 import sulogo from "../assets/sulogo.png";
+import {useMediaQuery} from 'react-responsive';
 
 function MockCAS() {
   const [isLeaving, setIsLeaving] = useState(false);
   const navigate = useNavigate();
+
+  const isDesktopOrLaptop = useMediaQuery({query: '(min-width: 1224px)'})
+  const isonBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isonTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isonPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isonRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
   const containerStyle = {
     height: "100vh",
