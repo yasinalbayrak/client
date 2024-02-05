@@ -10,6 +10,7 @@ import AnnouncementsTableHead from "./AnnouncementsTableHead"
 import AnnouncementRow from "./AnnouncementRow"
 import { WidthFull } from "@mui/icons-material";
 import { Box } from "@mui/material";
+import { TextField, Input } from '@mui/material';
 
 export default function AnnouncementTable(props) {
   const [rows, setRows] = useState([]);
@@ -21,6 +22,7 @@ export default function AnnouncementTable(props) {
   const userID = useSelector((state) => state.user.id);
 
   const [userApplications, setUserApplications] = useState([]);
+  const [filterTerm, setFilterTerm] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,9 +120,24 @@ export default function AnnouncementTable(props) {
     setUserApplications((prev) => prev.filter((app) => (app?.application?.applicationId || app?.applicationId) !== id));
     setRows((prev) => prev.filter((app) => app?.applicationId !== id));
   };
+  const handleFilter = (event) => {
+    const value = event.target.value;
+    setFilterTerm(value);
+  };
+
+  useEffect(() => {
+    console.log(filterTerm)
+  }
+  , [filterTerm]);
   
   return (
+
+     <Box sx={{ width: '100%' }}> 
+    <TextField label="Filter" id="filled-size-normal" variant="filled" onChange={handleFilter} margin="normal" />
     <TableContainer component={Paper}>
+      
+      
+
       <Table sx={{ minWidth: 600 }} aria-label="simple table">
         <AnnouncementsTableHead isInstructor={isInstructor} tabValue={tabValue} />
         <TableBody>
@@ -128,9 +145,11 @@ export default function AnnouncementTable(props) {
             ? userApplications 
             : rows 
           )
-          .filter((rowData)=> (rowData.term === term.term_desc))
+          .filter((rowData)=> ((rowData.term === term.term_desc)))
+          .filter((rowData)=> (rowData.course.courseCode.toLowerCase().includes(filterTerm?.toLowerCase()) || rowData.instructor_names.some((instructor) => instructor.toLowerCase().includes(filterTerm?.toLowerCase())) || rowData.jobDetails.toLowerCase().includes(filterTerm?.toLowerCase())))
+
           .map((rowData, index) => {
-            console.log(rowData)
+            console.log("rowdata",rowData)
             return (
             <AnnouncementRow
               key={index}
@@ -146,5 +165,6 @@ export default function AnnouncementTable(props) {
         </TableBody>
       </Table>
     </TableContainer>
+    </Box>
   );
 }
