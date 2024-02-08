@@ -87,7 +87,7 @@ const ApplyPage = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const currentTranscript = await getCurrentTranscript();
+        const currentTranscript = await getCurrentTranscript(userID);
         setstudentInfo(currentTranscript);
         for (const [c,g] of Object.entries(currentTranscript?.course)){
           if (g.courseCode == courseCode){
