@@ -22,7 +22,9 @@ export default function AnnouncementTable(props) {
   const userID = useSelector((state) => state.user.id);
 
   const [userApplications, setUserApplications] = useState([]);
-  const [filterTerm, setFilterTerm] = useState("");
+  const [courseFilterTerm, setCourseFilterTerm] = useState("");
+  const [instructorFilterTerm, setInstructorFilterTerm] = useState("");
+  const [jobDetailsFilterTerm, setJobDetailsFilterTerm] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -120,33 +122,44 @@ export default function AnnouncementTable(props) {
     setUserApplications((prev) => prev.filter((app) => (app?.application?.applicationId || app?.applicationId) !== id));
     setRows((prev) => prev.filter((app) => app?.applicationId !== id));
   };
-  const handleFilter = (event) => {
+  const handleCourseFilter = (event) => {
     const value = event.target.value;
-    setFilterTerm(value);
+    setCourseFilterTerm(value);
   };
 
-  useEffect(() => {
-    console.log(filterTerm)
+  const handleInstructorFilter = (event) => {
+    const value = event.target.value;
+    setInstructorFilterTerm(value);
   }
-  , [filterTerm]);
+
+  const handleJobDetailsFilter = (event) => {
+    const value = event.target.value;
+    setJobDetailsFilterTerm(value);
+  }
+
+  useEffect(() => {
+    console.log(courseFilterTerm)
+  }
+  , [courseFilterTerm]);
   
   return (
 
      <Box sx={{ width: '100%' }}> 
-    <TextField label="Filter" id="filled-size-normal" variant="filled" onChange={handleFilter} margin="normal" />
     <TableContainer component={Paper}>
       
       
 
       <Table sx={{ minWidth: 600 }} aria-label="simple table">
-        <AnnouncementsTableHead isInstructor={isInstructor} tabValue={tabValue} />
+        <AnnouncementsTableHead isInstructor={isInstructor} tabValue={tabValue} handleCourseFilter={handleCourseFilter} handleInstructorFilter={handleInstructorFilter} handleJobDetailsFilter = {handleJobDetailsFilter} />
         <TableBody>
           { ( tabValue === 1
             ? userApplications 
             : rows 
           )
           .filter((rowData)=> ((rowData.term === term.term_desc)))
-          .filter((rowData)=> (rowData.course.courseCode.toLowerCase().includes(filterTerm?.toLowerCase()) || rowData.instructor_names.some((instructor) => instructor.toLowerCase().includes(filterTerm?.toLowerCase())) || rowData.jobDetails.toLowerCase().includes(filterTerm?.toLowerCase())))
+          .filter((rowData)=> (rowData.application ? rowData.application.course.courseCode.toLowerCase().includes(courseFilterTerm?.toLowerCase()): rowData.course.courseCode.toLowerCase().includes(courseFilterTerm?.toLowerCase())))
+          .filter((rowData)=> (rowData.instructor_names.some((instructor) => instructor.toLowerCase().includes(instructorFilterTerm?.toLowerCase()))))
+          .filter((rowData)=> (rowData.application ? rowData.application.jobDetails.toLowerCase().includes(jobDetailsFilterTerm?.toLowerCase()) : rowData.jobDetails.toLowerCase().includes(jobDetailsFilterTerm?.toLowerCase())))
 
           .map((rowData, index) => {
             console.log("rowdata",rowData)
