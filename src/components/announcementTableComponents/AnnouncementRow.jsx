@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import TableHead from "@mui/material/TableHead";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
@@ -7,15 +7,33 @@ import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Popup from '../popup/Popup';
-import { deleteApplicationById } from "../../apiCalls"
+import {deleteApplicationById, getTranscriptInfo} from "../../apiCalls"
 import InstructorList from './InstructorList';
 import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
 
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack }) {
 
   const { instructor_names, weeklyWorkingTime, term,section, status: applicationStatus, isTimedOut } = data;
+  const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
 
-  const isTranscriptUploaded = useSelector((state) => state.user.isTranscriptUploded);
+  useEffect(() => {
+    getTranscriptInfo().then((res) => {
+      if (res.isUploadedAnyTranscript !== undefined) {
+        setIsTranscriptUploaded(res.isUploadedAnyTranscript);
+      } else {
+        console.log('isUploadedAnyTranscript not found in the response');
+      }
+    }).catch(_ => {
+      // Error handling
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log(isTranscriptUploaded);
+  }, [isTranscriptUploaded]);
+
+
+
 
   const { lastApplicationDate,
     minimumRequiredGrade,

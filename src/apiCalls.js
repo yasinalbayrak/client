@@ -97,6 +97,21 @@ async function getAllAnnouncementsOfInstructor() {
   }
 }
 
+async function getTranscriptInfo() {
+  try {
+    const token = getJwtFromCookie()
+    const results = await axios.get(apiEndpoint + "/transcript/current-transcript-status", {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    return results.data;
+  } catch (error) {
+    return handleError(error);
+  }
+}
+
+
+
+
 async function getAllCourses() {
   try {
     const token = getJwtFromCookie()
@@ -589,5 +604,7 @@ export {
   getStudentCourseGrades,
   getApplicationRequestById,
   updateApplicationRequest,
-  finalizeStatus
+  finalizeStatus,
+  getTranscriptInfo
+
 };

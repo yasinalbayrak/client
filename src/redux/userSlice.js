@@ -11,7 +11,6 @@ const initialState = {
   isLoading: false,
   isFailed: false,
   isLoggedIn: false,
-  isTranscriptUploded:false,
   showTerms: true
 };
 
@@ -40,9 +39,7 @@ const userSlice = createSlice({
       state.isLoggedIn = false;
     },
 
-    uploadedTranscript:(state)=>{
-      state.isTranscriptUploded=true;
-    },
+
 
     logout: (state) => {
       state.name = "";
@@ -75,6 +72,6 @@ export const {flipShowTerms,
   logout,
   switchIsInstructor,
   setTerm,
-  uploadedTranscript} = userSlice.actions;
+  } = userSlice.actions;
 
 export default userSlice.reducer;
