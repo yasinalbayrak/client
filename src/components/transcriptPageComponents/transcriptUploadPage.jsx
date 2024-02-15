@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { uploadedTranscript } from "../../redux/userSlice";
 import AppBarHeader from "../AppBarHeader";
 import Sidebar from "../Sidebar";
 import {
@@ -32,7 +31,6 @@ const TranscriptPage = (props) => {
   const name = useSelector((state) => state.user.name);
   const surname = useSelector((state) => state.user.surname);
   const userId = useSelector((state) => state.user.id)
-  const [isTranscriptUploded, setIsTranscriptUploded] = useState(false);
   const { id } = useParams();
   const [transcript, setTranscript] = useState(null);
   const [consentChecked, setConsentChecked] = useState(false);
@@ -59,7 +57,6 @@ const TranscriptPage = (props) => {
       formData.append("file", transcript);
       console.log(filename);
       postTranscript(formData).then((res) => {
-        dispatch(uploadedTranscript());
         navigate("/transcriptInfoPage/"+id, { replace: true });
           }
       ).catch((_) => {
