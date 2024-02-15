@@ -22,6 +22,7 @@ function CourseApplicantsTable(props) {
           <TableHead>
             <TableRow sx={{ bgcolor: "#eeeeee" }}>
               <TableCell align="center">Course Code</TableCell>
+              <TableCell align="center">Course Section</TableCell>
               <TableCell align="center">Term</TableCell>
               <TableCell align="center">Deadline</TableCell>
               <TableCell align="center"></TableCell>
@@ -35,6 +36,9 @@ function CourseApplicantsTable(props) {
                 <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                   <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
                     {row.course.courseCode}
+                  </TableCell>
+                  <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="center">
+                    {row.section !== null ? row.section : "Not Specified"}
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="center">
                     {row.term}

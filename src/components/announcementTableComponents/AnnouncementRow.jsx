@@ -13,7 +13,7 @@ import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
 
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack }) {
 
-  const { instructor_names, weeklyWorkingTime, term, status: applicationStatus, isTimedOut } = data;
+  const { instructor_names, weeklyWorkingTime, term,section, status: applicationStatus, isTimedOut } = data;
 
   const isTranscriptUploaded = useSelector((state) => state.user.isTranscriptUploded);
 
@@ -171,6 +171,9 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell sx={{ borderBottom: "none", width:"6rem", minWidth:"6rem", maxWidth:"6rem"  }} component="th" scope="row">
         {course.courseCode}
+      </TableCell>
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left">
+        {section !== null ? section : "Not Specified"}
       </TableCell>
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: "14rem", maxWidth: "14rem", width:"14rem" }} align="left">
         <InstructorList instructor_names={instructor_names} />
