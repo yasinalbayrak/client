@@ -17,16 +17,17 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
 
   useEffect(() => {
-    getTranscriptInfo().then((res) => {
-      if (res.isUploadedAnyTranscript !== undefined) {
-        setIsTranscriptUploaded(res.isUploadedAnyTranscript);
-      } else {
-        console.log('isUploadedAnyTranscript not found in the response');
-      }
-    }).catch(_ => {
-      // Error handling
-    });
-  }, []);
+    if(isInstructor==false){
+        getTranscriptInfo().then((res) => {
+          if (res.isUploadedAnyTranscript !== undefined) {
+            setIsTranscriptUploaded(res.isUploadedAnyTranscript);
+          } else {
+            console.log('isUploadedAnyTranscript not found in the response');
+          }
+        }).catch(_ => {
+          // Error handling
+        });
+    }}, []);
 
   useEffect(() => {
     console.log(isTranscriptUploaded);
