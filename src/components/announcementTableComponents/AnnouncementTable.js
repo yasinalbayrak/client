@@ -127,6 +127,13 @@ export default function AnnouncementTable(props) {
     setCourseFilterTerm(value);
   };
 
+  const emptyFilter = (event) => {
+    setCourseFilterTerm("");
+    setInstructorFilterTerm("");
+    setJobDetailsFilterTerm("");
+  }
+
+
   const handleInstructorFilter = (event) => {
     const value = event.target.value;
     setInstructorFilterTerm(value);
@@ -150,7 +157,7 @@ export default function AnnouncementTable(props) {
       
 
       <Table sx={{ minWidth: 600 }} aria-label="simple table">
-        <AnnouncementsTableHead isInstructor={isInstructor} tabValue={tabValue} handleCourseFilter={handleCourseFilter} handleInstructorFilter={handleInstructorFilter} handleJobDetailsFilter = {handleJobDetailsFilter} />
+        <AnnouncementsTableHead isInstructor={isInstructor} tabValue={tabValue} handleCourseFilter={handleCourseFilter} handleInstructorFilter={handleInstructorFilter} handleJobDetailsFilter = {handleJobDetailsFilter} emptyFilter={emptyFilter} />
         <TableBody>
           { ( tabValue === 1
             ? userApplications 
