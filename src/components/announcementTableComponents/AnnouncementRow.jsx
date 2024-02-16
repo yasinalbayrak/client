@@ -194,11 +194,11 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left">
         {section !== null ? section : "Not Specified"}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: "14rem", maxWidth: "14rem", width:"14rem" }} align="left">
+      <TableCell sx={{ borderBottom: "none", minWidth: "14rem", maxWidth: "14rem", width:"14rem" }} align="left">
         <InstructorList instructor_names={instructor_names} />
 
       </TableCell>
-      <TableCell sx={{ borderBottom: "none",width:"4rem", minWidth:"4rem", maxWidth:"4rem"  }} align="left">
+      <TableCell sx={{bgcolor: "#FAFAFA", borderBottom: "none",width:"4rem", minWidth:"4rem", maxWidth:"4rem"  }} align="left">
         {lastApplicationDate ? (
           <>
             {new Date(lastApplicationDate).toLocaleDateString("en-GB", {
@@ -216,21 +216,21 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           "N/A"
         )}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left">
+      <TableCell sx={{ borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left">
         {term}
       </TableCell>
 
-      <TableCell sx={{ borderBottom: "none", width: "7rem", maxWidth:"7rem", minWidth:"7rem" }} align="center">
+      <TableCell sx={{bgcolor: "#FAFAFA", borderBottom: "none", width: "7rem", maxWidth:"7rem", minWidth:"7rem" }} align="center">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA",borderBottom: "none", width: "7rem" }} align="center">
+      <TableCell sx={{borderBottom: "none", width: "7rem" }} align="center">
         <DesiredCourseGradesPopup isInprogressAllowed={isInprogressAllowed} courseCode={course.courseCode} grade ={minimumRequiredGrade} previousCourseGrades={previousCourseGrades}/>
       </TableCell>
-      <TableCell sx={{ borderBottom: "none", maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left">
         {jobDetails}
       </TableCell>
 
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "6rem", minWidth:"6rem" }} align="center">
+      <TableCell sx={{ borderBottom: "none", width: "6rem", minWidth:"6rem" }} align="center">
         {renderButtons()}
       </TableCell>
 
