@@ -18,65 +18,75 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
   return (
     <TableHead>
       <TableRow sx={{ bgcolor: "#eeeeee" }}>
-        <TableCell sx={{display: 'flex', justifyContent: courseSearch? 'space-between': 'column', width:'max-content',height:'5.2rem' }}>
-          <div>Course Code </div>
-         {courseSearch ? <div sx={{display: 'flex'}}>
+        <TableCell >
+          <Box sx={{width:120, display: 'flex', justifyContent: courseSearch? 'flex-start': 'center', alignItems: courseSearch? 'left':'center', flexDirection: courseSearch? 'column':''}}>
+          Course Code
+         {courseSearch ? <Box sx={{display:'flex',alignSelf:'flex-start', alignItems:'left', width:'100%', flexDirection: 'row'}}>
          <TextField 
           id="outlined-basic" 
           label="Search" 
           variant="outlined" 
-          size="small" 
-          onChange={handleCourseFilter} 
-          sx={{ width: 100 }} />
-          <div><CancelIcon 
+          size="small"
+          onChange={handleCourseFilter}
+          sx={{paddingInline:0.5}}
+           />
+          <CancelIcon 
           variant='outlined' 
           fontSize='small' 
           color='disabled' 
+          sx={{marginTop:1.25}}
           onClick={() => {setCourseSearch(false); emptyFilter()} } />
-          </div></div>: <div> <SearchIcon  onClick={() => setCourseSearch(true)}/></div>}
+          </Box>:  <SearchIcon sx={{paddingInline:0.5}} onClick={() => setCourseSearch(true)}/>}</Box>
         </TableCell>
+
+
         <TableCell align="left">Course Section</TableCell>
         
-        <TableCell sx={{display: 'flex', justifyContent: 'space-between', height:'5.2rem' }}>
-         <div>Instructors</div> 
-        {instructorSearch? <div>
+        <TableCell>
+        <Box sx={{width:1, height:1, display: 'flex', justifyContent: instructorSearch? 'flex-start': 'center', alignItems: instructorSearch? 'left':'center', flexDirection: instructorSearch? 'column': ''}}>
+         Instructors
+        {instructorSearch? <Box sx={{display:'flex',alignSelf:'flex-start',alignItems:'left', width:'100%', flexDirection: 'row'}}>
           <TextField 
             id="outlined-basic" 
             label="Search" 
             variant="outlined" 
             size="small" 
             onChange={handleInstructorFilter} 
-            sx={{ width: 100 }} />
-           <div> <CancelIcon 
+            />
+            <CancelIcon 
             variant='outlined' 
             fontSize='small' 
             color='disabled'
-            onClick={() => {setInstructorSearch(false); emptyFilter()}} /></div>
-            </div> 
-            : <div> <SearchIcon onClick={() => setInstructorSearch(true)}/> </div>}
+            sx={{marginTop:1.25}}
+            onClick={() => {setInstructorSearch(false); emptyFilter()}} /></Box>
+            
+            : <SearchIcon sx={{paddingInline:0.5}} onClick={() => setInstructorSearch(true)}/>}</Box>
         </TableCell>
         
         <TableCell align="left">Last Application Date/Time</TableCell>
         <TableCell align="left">Term</TableCell>
         <TableCell align="center">Weekly Work Hours</TableCell>
         <TableCell align="center">More Details</TableCell>
-        <TableCell sx={{ display: 'flex', justifyContent: 'space-between', verticalAlign:'center', alignItems:'center', height:'7rem'}} >
-        <div>Details</div>
-        {jobDetailsSearch ? <div sx={{}}>
+
+        <TableCell >
+
+        <Box sx={{width:1, height:1, display: 'flex', justifyContent: jobDetailsSearch? 'flex-start':'center', alignItems: jobDetailsSearch? 'left':'center', flexDirection: jobDetailsSearch? 'column':''}}> 
+        Details
+        {jobDetailsSearch ? <Box sx={{display:'flex', justifyContent:'center', alignItems:'center', width:'90%', flexDirection: 'row'}}>
           <TextField 
           id="outlined-basic" 
           label="Search" 
           variant="outlined" 
           size="small" 
           onChange={handleJobDetailsFilter} 
-          sx={{ width: 100 }} />
-          <div><CancelIcon 
+          />
+          <CancelIcon 
           variant='outlined' 
           fontSize='small' 
           color='disabled'
           onClick={() => {setJobDetailsSearch(false); emptyFilter()}} />
-          </div> </div>
-        : <div sx={{}} ><SearchIcon onClick={() => setJobDetailsSearch(true)}/></div>}
+           </Box>
+        :  <SearchIcon sx={{paddingInline:0.5}} onClick={() => setJobDetailsSearch(true)}/>} </Box>
         </TableCell>
         
         {tabValue === 1 && !isInstructor && <TableCell align="left">Application Status</TableCell>}
