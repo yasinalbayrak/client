@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useSelector } from "react-redux";
 
+
 function CourseApplicantsTable(props) {
   const navigate = useNavigate();
   const term = useSelector((state) => state.user.term);
@@ -63,12 +64,16 @@ function CourseApplicantsTable(props) {
                   </TableCell>
                   <TableCell sx={{ borderBottom: "none" }} align="center">
                     <Button
-                      variant="contained"
-                      onClick={() => navigate("/application-of/" + row.applicationId)}
-                      endIcon={<ChevronRightIcon />}
+                        variant="contained"
+                        onClick={() => navigate("/application-of/" + row.applicationId)}
+                        endIcon={<ChevronRightIcon />}
                     >
                       Check Applicants
                     </Button>
+                    {/* Displaying the number of applicants */}
+                    <span style={{ marginLeft: '10px' }}>
+                      {row.applicantCount ? row.applicantCount : '0'} Applicants
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}

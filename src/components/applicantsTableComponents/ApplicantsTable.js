@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import QuestionAnswer from "./QuestionsAndAnswers";
 import LaHistoryTable from "./LaHistoryTable";
 import { useSelector } from "react-redux";
+import Stack from '@mui/material/Stack';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -135,6 +136,8 @@ function CustomRow(props) {
       .catch((_) => {
       });
   }, [row.student.user.id, courseCode, row.status]);
+
+
 
 
   return (
@@ -291,30 +294,46 @@ function ApplicantsTable(props) {
   //     { id: 9, courseCode: 'HUM201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B+', wHour: "5", details: "lorem ipsum"},
   //   ];
   const [questions, setQuestions] = React.useState([]);
-
+  const isApplicantsListEmpty = props.rows.length === 0;
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 600 }} aria-label="simple table">
-        <TableHead>
-          <TableRow sx={{ bgcolor: "#eeeeee" }}>
-            <TableCell align="left">Student Name</TableCell>
-            <TableCell align="left">Majors</TableCell>
-            <TableCell align="left">Minors</TableCell>
-            <TableCell>Grade</TableCell>
-            <TableCell align="left" sx={{ width: "10rem" }}>Status</TableCell>
-            <TableCell align="left">Details</TableCell>
-            <TableCell align="left"></TableCell>
-            <TableCell align="left"></TableCell>
-
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {props.rows.map((row, index) => (
-            <CustomRow appId={props.appId} row={row} courseCode={props.courseCode} index={index} questions={questions}></CustomRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+      <TableContainer component={Paper}>
+        {isApplicantsListEmpty ? (
+            <Typography variant="h6" align="center" style={{ padding: 20 }}>
+              <Stack sx={{ width: '100%' }} spacing={2}>
+                <Alert severity="info">
+                  There are no students who applied to this announcement.
+                </Alert>
+              </Stack>
+            </Typography>
+        ) : (
+            <Table sx={{ minWidth: 600 }} aria-label="simple table">
+              <TableHead>
+                <TableRow sx={{ bgcolor: "#eeeeee" }}>
+                  <TableCell align="left">Student Name</TableCell>
+                  <TableCell align="left">Majors</TableCell>
+                  <TableCell align="left">Minors</TableCell>
+                  <TableCell>Grade</TableCell>
+                  <TableCell align="left" sx={{ width: "10rem" }}>Status</TableCell>
+                  <TableCell align="left">Details</TableCell>
+                  <TableCell align="left"></TableCell>
+                  <TableCell align="left"></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {props.rows.map((row, index) => (
+                    <CustomRow
+                        appId={props.appId}
+                        row={row}
+                        courseCode={props.courseCode}
+                        index={index}
+                        questions={props.questions}
+                        key={index}
+                    />
+                ))}
+              </TableBody>
+            </Table>
+        )}
+      </TableContainer>
   );
 }
 
