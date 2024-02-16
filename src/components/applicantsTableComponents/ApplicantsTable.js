@@ -299,11 +299,9 @@ function ApplicantsTable(props) {
       <TableContainer component={Paper}>
         {isApplicantsListEmpty ? (
             <Typography variant="h6" align="center" style={{ padding: 20 }}>
-              <Stack sx={{ width: '100%' }} spacing={2}>
                 <Alert severity="info">
                   There are no students who applied to this announcement.
                 </Alert>
-              </Stack>
             </Typography>
         ) : (
             <Table sx={{ minWidth: 600 }} aria-label="simple table">

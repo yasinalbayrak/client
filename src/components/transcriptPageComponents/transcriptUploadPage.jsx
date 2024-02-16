@@ -44,6 +44,19 @@ const TranscriptPage = (props) => {
     setConsentChecked(e.target.checked);
   };
 
+
+  const truncateFilenameMiddle = (filename, maxLength) => {
+    if (filename.length <= maxLength) {
+      return filename;
+    }
+
+    // Calculate the length of the start and end parts of the filename
+    const partLength = Math.floor((maxLength - 3) / 2); // '-3' for the ellipsis length
+    const start = filename.substring(0, partLength);
+    const end = filename.substring(filename.length - partLength);
+
+    return `${start}...${end}`;
+  };
   const onSubmit = () => {
     if (!transcript)
       handleInfo("You should upload your transcript to continue.")
@@ -135,27 +148,35 @@ const TranscriptPage = (props) => {
 
                   <Grid item xs={6}>
 
-                    <Grid item container direction="rows">
+                    <Grid item container direction="row" alignItems="center" justifyContent="flex-start" spacing={2}>
 
-                      <Button variant="contained" component="label" onClick={onFileSubmit} size="small"
-                              sx={{
-                                height: '45px',
-                                fontSize: '0.750rem',
-                              }}>
-                        Upload File
-                        <input type="file" hidden onChange={onFileChange} accept=".pdf" />
-                      </Button>
-                      <Typography alignItems="center" justifyContent="center" textAlign="center" m={2}>
-                        {filename !== "No File Uploaded" ? (
-                            <button onClick={openFile}
-                                    style={{background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
-                              <FontAwesomeIcon icon={faFilePdf} style={{color: 'red',fontSize: '18px'}}/>
-                              <span style={{fontSize: 'larger', marginLeft: '0.3em'}}>{filename}</span>
-                            </button>
-                        ) : (
-                            <span style={{fontSize: 'smaller'}}>{filename}</span>
-                        )}
-                      </Typography>
+                      <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                        <Button variant="contained" component="label" onClick={onFileSubmit} size="small"
+                                style={{
+                                  height: '45px',
+                                  fontSize: '0.750rem',
+                                  marginRight: '10px', // Add some space between the button and the filename
+                                }}>
+                          Upload File
+                          <input type="file" hidden onChange={onFileChange} accept=".pdf" />
+                        </Button>
+
+                        <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          <Typography textAlign="start" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {filename !== "No File Uploaded" ? (
+                                <button onClick={openFile}
+                                        style={{background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                                  <FontAwesomeIcon icon={faFilePdf} style={{color: 'red', fontSize: '18px'}}/>
+                                    <span style={{fontSize: 'larger', marginLeft: '0.3em'}}>
+                                      {truncateFilenameMiddle(filename, 40)}
+                                    </span>
+                                </button>
+                            ) : (
+                                <span style={{fontSize: 'smaller'}}>{filename}</span>
+                            )}
+                          </Typography>
+                        </div>
+                      </div>
 
                     </Grid>
 
