@@ -408,6 +408,17 @@ function EditQuestion(props) {
           sx={{ m: 2, textDecoration: "none" }}
           onClick={() => {
             console.log('props.AnnouncementDetails :>> ', props.AnnouncementDetails);
+            const currentIstanbulTime = new Date(new Date().getTime() );
+
+            const combinedDateTime = props.AnnouncementDetails.lastApplicationDate + "T" + props.AnnouncementDetails.lastApplicationTime + ":00";
+            const selectedTime = new Date(combinedDateTime);
+            console.log("Selected time:",selectedTime)
+            console.log("current time:",currentIstanbulTime)
+            if (selectedTime < currentIstanbulTime) {
+              handleInfo("Selected last application date and time cannot be before the current Istanbul time.");
+              return;
+            }
+            
             if (
               props.AnnouncementDetails.course_code &&
               props.AnnouncementDetails.lastApplicationDate &&

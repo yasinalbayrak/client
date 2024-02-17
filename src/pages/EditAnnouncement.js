@@ -37,6 +37,10 @@ import BackButton from "../components/buttons/BackButton";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import Tooltip from "@mui/material/Tooltip";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 
 const useStyles = makeStyles((theme) => ({
   activeItem: {
@@ -849,7 +853,8 @@ function EditAnnouncement() {
 
               </Box>
             </Grid>
-            <Grid container direction="row" justifyContent="start" alignItems="center">
+            
+            {/*<Grid container direction="row" justifyContent="start" alignItems="center">
               <Box sx={{ minWidth: 150 }}>
                 <Typography>Last Application Date<span style={{ color: 'red' }}>*</span>:</Typography>
                 <TextField
@@ -879,6 +884,117 @@ function EditAnnouncement() {
                   sx={{ mt: 2, ml: 2 }}
                   onChange={handleInput}
                 />
+              </Box>
+            </Grid>*/}
+
+            <Grid
+              container
+              direction="row"
+              justifyContent="start"
+              alignItems="center"
+            >
+              <Box sx={{ minWidth: 150 }}>
+                <Typography>Last Application Date<span style={{ color: 'red' }}>*</span>:</Typography>
+                <Grid container direction="row" spacing={2}>
+                  <Grid item>
+                    <TextField
+                      id="outlined-required"
+                      name="lastApplicationDate"
+                      label="Enter last date"
+                      variant="outlined"
+                      type="date"
+                      value={announcementDetails.lastApplicationDate}
+                      InputLabelProps={{ shrink: true }}
+                      size="small"
+                      sx={{ mt: 2 }}
+                      onChange={handleInput}
+                      inputProps={{
+                        min: formattedDate
+                      }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer components={["TimePicker", "TimePicker"]}>
+                        <div style={{ overflow: "hidden", marginLeft: "1rem" }}>
+                          <TimePicker
+                            id="outlined-required"
+                            name="lastApplicationTime"
+                            label="Enter deadline"
+                            variant="outlined"
+                            value={announcementDetails.lastApplicationTime}
+                            InputLabelProps={{ shrink: true }}
+                            onChange={(newValue) => {
+                              setAnnouncementDetails((prevDetails) => ({
+                                ...prevDetails,
+                                lastApplicationTime: (newValue.$H).toString().padStart(2, '0') + ':' + (newValue.$m).toString().padStart(2, '0'),
+                              }));
+
+                            }}
+                            ampm={false}
+                            renderInput={(params) => <TextField {...params} placeholder="hh:mm" />}
+                            sx={{
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "lightgray !important",
+                                borderWidth: "1px ",
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "black!important",
+                              },
+                              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "black !important",
+                              },
+                              "& .MuiInputBase-input": {
+                                color: "black",
+                              },
+                              "& .MuiInputLabel-root": {
+                                color: "gray !important",
+                              },
+                              "& .MuiOutlinedInput-root": {
+                                width: "105px !important",
+                                height: "40px !important",
+                              },
+                              "& .MuiInputBase-root": {
+                                height: "100%",
+                              },
+                              "& .MuiPickersClock-pin": {
+                                backgroundColor: "black",
+                              },
+                              "& .MuiPickersClockPointer-pointer": {
+                                backgroundColor: "black",
+                              },
+                              "& .MuiIconButton-root": {
+                                padding: "8px",
+                                "& .MuiSvgIcon-root": {
+                                  fill: "black",
+                                  fontSize: "1rem",
+                                },
+                              },
+                              "& .MuiTypography-body2": {
+                                fontSize: "0.8rem",
+                              },
+                              "& .MuiPaper-root": {
+                                overflowY: "hidden ",
+                              },
+                              marginTop: "9px",
+                            }}
+                          />
+                        </div>
+                      </DemoContainer>
+                    </LocalizationProvider>
+                  </Grid>
+                  <Grid item>
+                    <Tooltip
+                      title="The time you select is adjusted to Istanbul local time."
+                      placement="right"
+                      sx={{ marginTop: "15px" }}
+                    >
+                      <IconButton>
+                        <HelpCenterIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Grid>
+                </Grid>
               </Box>
             </Grid>
 
