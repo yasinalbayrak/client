@@ -17,7 +17,7 @@ function MockCAS() {
   const isonPortrait = useMediaQuery({ query: '(orientation: portrait)' })
   const isonRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
-  const containerStyle = {
+  const containerGeneralStyle = {
     height: "100vh",
     background: `url(${subg}) center/cover no-repeat`,
     display: "flex",
@@ -32,12 +32,30 @@ function MockCAS() {
     backgroundSize: isLeaving ? "220%" : "100%"
   };
 
-  const headingStyle = {
+  
+
+  const headingGeneralStyle = {
     fontSize: "3rem",
     fontWeight: "700",
     color: "#2E3A4F",
     letterSpacing: "0.1em",
     fontFamily: "'Montserrat', sans-serif",
+    marginBottom: "10px",
+    position: "absolute",
+    top: "2rem",
+    userSelect: "none",
+    textRendering: "optimizeLegibility",
+    transition: "color 0.3s ease-in-out",
+    lineHeight: "1.2",
+  };
+
+  const headingMobileStyle = {
+    fontSize: "2rem",
+    fontWeight: "700",
+    color: "#2E3A4F",
+    letterSpacing: "0.1em",
+    fontFamily: "'Montserrat', sans-serif",
+    marginTop: "1rem",
     marginBottom: "10px",
     position: "absolute",
     top: "2rem",
@@ -97,8 +115,8 @@ function MockCAS() {
           href="https://fonts.googleapis.com/css2?family=Mulish:wght@500&display=swap"
         />
       </Helmet>
-      <div style={containerStyle}>
-        <Typography variant="h1" style={headingStyle}>
+      <div style={containerGeneralStyle}>
+        <Typography variant="h1" style={isDesktopOrLaptop? headingGeneralStyle:headingMobileStyle}>
           <div style={{ display: "block" }}>
             <div style={{ whiteSpace: "nowrap" }}>{titlePart1}</div>
             <div>{titlePart2}</div>
