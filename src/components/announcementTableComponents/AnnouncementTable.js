@@ -168,17 +168,6 @@ export default function AnnouncementTable(props) {
             ? userApplications 
             : rows 
           )
-          /*.filter((rowData)=> ((rowData.term === term.term_desc)))
-          .filter((rowData)=> (rowData.application ? rowData.application.course.courseCode.toLowerCase().includes(courseFilterTerm?.toLowerCase()): rowData.course.courseCode.toLowerCase().includes(courseFilterTerm?.toLowerCase())))
-          .filter((rowData)=> (rowData.instructor_names.some((instructor) => instructor.toLowerCase().includes(instructorFilterTerm?.toLowerCase()))))
-          .filter((rowData)=> (rowData.application ? rowData.application.jobDetails.toLowerCase().includes(jobDetailsFilterTerm?.toLowerCase()) : rowData.jobDetails.toLowerCase().includes(jobDetailsFilterTerm?.toLowerCase())))
-          
-          .sort((a,b) => {
-            if(sortLastDate) 
-
-            return (a.application? new Date(a.application.lastApplicationDate) - new Date(b.application.lastApplicationDate) : new Date(a.lastApplicationDate) - new Date(b.lastApplicationDate)); 
-            
-            else return 0})*/
           .filter((rowData) => rowData.term === term.term_desc)
           .filter((rowData) => {
             const courseCode = rowData.application ? rowData.application.course.courseCode : rowData.course.courseCode;
