@@ -25,6 +25,7 @@ export default function AnnouncementTable(props) {
   const [courseFilterTerm, setCourseFilterTerm] = useState("");
   const [instructorFilterTerm, setInstructorFilterTerm] = useState("");
   const [jobDetailsFilterTerm, setJobDetailsFilterTerm] = useState("");
+  const [sortLastDate, setSortLastDate] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -144,6 +145,10 @@ export default function AnnouncementTable(props) {
     setJobDetailsFilterTerm(value);
   }
 
+  const handleSortLastDate = () => {
+    setSortLastDate((prev) => !prev);
+  }
+
   useEffect(() => {
     console.log(courseFilterTerm)
   }
@@ -157,16 +162,39 @@ export default function AnnouncementTable(props) {
       
 
       <Table sx={{ minWidth: 600 }} aria-label="simple table">
-        <AnnouncementsTableHead isInstructor={isInstructor} tabValue={tabValue} handleCourseFilter={handleCourseFilter} handleInstructorFilter={handleInstructorFilter} handleJobDetailsFilter = {handleJobDetailsFilter} emptyFilter={emptyFilter} />
+        <AnnouncementsTableHead isInstructor={isInstructor} tabValue={tabValue} handleCourseFilter={handleCourseFilter} handleInstructorFilter={handleInstructorFilter} handleJobDetailsFilter = {handleJobDetailsFilter} emptyFilter={emptyFilter} handleSortLastDate={handleSortLastDate} sortLastDate= {sortLastDate} />
         <TableBody>
           { ( tabValue === 1
             ? userApplications 
             : rows 
           )
-          .filter((rowData)=> ((rowData.term === term.term_desc)))
+          /*.filter((rowData)=> ((rowData.term === term.term_desc)))
           .filter((rowData)=> (rowData.application ? rowData.application.course.courseCode.toLowerCase().includes(courseFilterTerm?.toLowerCase()): rowData.course.courseCode.toLowerCase().includes(courseFilterTerm?.toLowerCase())))
           .filter((rowData)=> (rowData.instructor_names.some((instructor) => instructor.toLowerCase().includes(instructorFilterTerm?.toLowerCase()))))
           .filter((rowData)=> (rowData.application ? rowData.application.jobDetails.toLowerCase().includes(jobDetailsFilterTerm?.toLowerCase()) : rowData.jobDetails.toLowerCase().includes(jobDetailsFilterTerm?.toLowerCase())))
+          
+          .sort((a,b) => {
+            if(sortLastDate) 
+
+            return (a.application? new Date(a.application.lastApplicationDate) - new Date(b.application.lastApplicationDate) : new Date(a.lastApplicationDate) - new Date(b.lastApplicationDate)); 
+            
+            else return 0})*/
+          .filter((rowData) => rowData.term === term.term_desc)
+          .filter((rowData) => {
+            const courseCode = rowData.application ? rowData.application.course.courseCode : rowData.course.courseCode;
+            return courseCode.toLowerCase().includes(courseFilterTerm?.toLowerCase());
+          })
+          .filter((rowData) => rowData.instructor_names.some((instructor) => instructor.toLowerCase().includes(instructorFilterTerm?.toLowerCase())))
+          .filter((rowData) => {
+            const jobDetails = rowData.application ? rowData.application.jobDetails : rowData.jobDetails;
+            return jobDetails.toLowerCase().includes(jobDetailsFilterTerm?.toLowerCase());
+          })
+          .sort((a, b) => {
+            if (!sortLastDate) return 0;
+            const dateA = new Date(a.application ? a.application.lastApplicationDate : a.lastApplicationDate);
+            const dateB = new Date(b.application ? b.application.lastApplicationDate : b.lastApplicationDate);
+            return dateA - dateB;
+          })
 
           .map((rowData, index) => {
             console.log("rowdata",rowData)
