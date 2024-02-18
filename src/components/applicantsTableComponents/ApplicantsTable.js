@@ -300,7 +300,7 @@ function ApplicantsTable(props) {
         {isApplicantsListEmpty ? (
             <Typography variant="h6" align="center" style={{ padding: 20 }}>
                 <Alert severity="info">
-                  There are no students who applied to this announcement.
+                  No student has applied yet.
                 </Alert>
             </Typography>
         ) : (
