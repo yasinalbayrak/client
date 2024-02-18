@@ -840,12 +840,17 @@ function CreateAnnouncement() {
                             value={announcementDetails.lastApplicationTime}
                             InputLabelProps={{ shrink: true }}
                             onChange={(newValue) => {
+                              let newTime = '';
+                              if (newValue) {
+                                newTime = newValue.$H.toString().padStart(2, '0') + ':' + newValue.$m.toString().padStart(2, '0');
+                              }
+
                               setAnnouncementDetails((prevDetails) => ({
                                 ...prevDetails,
-                                lastApplicationTime: (newValue.$H).toString().padStart(2, '0') + ':' + (newValue.$m).toString().padStart(2, '0'),
+                                lastApplicationTime: newTime,
                               }));
-
                             }}
+
                             ampm={false}
                             renderInput={(params) => <TextField {...params} placeholder="hh:mm" />}
                             sx={{

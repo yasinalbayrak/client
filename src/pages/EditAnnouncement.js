@@ -925,11 +925,20 @@ function EditAnnouncement() {
                             value={announcementDetails.lastApplicationTime}
                             InputLabelProps={{ shrink: true }}
                             onChange={(newValue) => {
-                              setAnnouncementDetails((prevDetails) => ({
-                                ...prevDetails,
-                                lastApplicationTime: (newValue.$H).toString().padStart(2, '0') + ':' + (newValue.$m).toString().padStart(2, '0'),
-                              }));
-
+                              setAnnouncementDetails((prevDetails) => {
+                                // Check if newValue is not null
+                                if (newValue) {
+                                  return {
+                                    ...prevDetails,
+                                    lastApplicationTime: newValue.$H.toString().padStart(2, '0') + ':' + newValue.$m.toString().padStart(2, '0'),
+                                  };
+                                } else {
+                                  return {
+                                    ...prevDetails,
+                                    lastApplicationTime: '', // or some default value if you prefer
+                                  };
+                                }
+                              });
                             }}
                             ampm={false}
                             renderInput={(params) => <TextField {...params} placeholder="hh:mm" />}
