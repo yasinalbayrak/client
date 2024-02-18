@@ -1,46 +1,84 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import MailIcon from '@mui/icons-material/Mail';
+import { useTheme } from '@mui/material/styles';
 
 const InstructorList = ({ instructor_names }) => {
- 
-  return (
-    <Grid container rowSpacing={1} columnSpacing={{ xs: 0, sm: 0, md: 1 }}>
-      {instructor_names.map((instructor) => (
-        <Grid item xs={instructor_names.length==1? 12: 6} sm={6} key={instructor}>
-            <Chip
-                label={
-              <>
-                {instructor}
-                <Tooltip title="Send Email" placement="top" style={{ marginRight: '8px' , marginTop: '4px',marginBottom: '-4px' }}>
-                  <MailIcon fontSize="small"/>
-                </Tooltip>
-              </>
-            }
-                variant="outlined"
-                title={instructor}
-                color="primary"
-                clickable={true}
-                style={{ backgroundColor: '#F4CE14',fontWeight: 'normal', color: 'black'
-             }}
-                sx={{
-                    minHeight: '3rem',
-                    width:'6rem',
-                    minWidth: '6rem',
-                    height: 'auto',
-                    '& .MuiChip-label': {
-                      display: 'block',
-                      whiteSpace: 'normal',
-                    },
-                  }}
-            />
+    const theme = useTheme();
+
+    // Create refs for each chip
+    const chipRefs = useRef(instructor_names.map(() => React.createRef()));
+
+    // State to store the height for each chip
+    const [chipHeights, setChipHeights] = useState(instructor_names.map(() => '2rem'));
+
+    const updateChipHeights = () => {
+        const updatedHeights = chipRefs.current.map(ref => {
+            return ref.current && ref.current.offsetWidth > 13 * 16 ? '3rem' : '2rem'; // 13rem in pixels
+        });
+        setChipHeights(updatedHeights);
+    };
+
+    useEffect(() => {
+        updateChipHeights(); // Initial check
+        window.addEventListener('resize', updateChipHeights);
+
+        return () => {
+            window.removeEventListener('resize', updateChipHeights);
+        };
+    }, []);
+
+    const iconStyle = {
+        borderRadius: '50%',
+        backgroundColor: '#e8e9ed',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2px',
+        marginRight: '-4px',
+    };
+
+    return (
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
+            {instructor_names.map((instructor, index) => (
+                <Grid item xs={'auto'} key={instructor}>
+                    <Chip
+                        ref={chipRefs.current[index]}
+                        icon={
+                            <Tooltip title="Send Email" placement="top">
+                                <div style={iconStyle}>
+                                    <MailIcon fontSize="small" style={{ color: '#2c457a' }}/>
+                                </div>
+                            </Tooltip>
+                        }
+                        label={instructor}
+                        variant="elevated"
+                        title={instructor}
+                        color="primary"
+                        clickable={true}
+                        style={{
+                            fontWeight: 'normal',
+                            color: 'whitesmoke',
+                            backgroundColor: theme.palette.primary.main,
+                            minWidth: '3rem',
+                            maxWidth: '13.5rem',
+                            height: chipHeights[index],
+                        }}
+                        sx={{
+                            minHeight: chipHeights[index],
+                            borderRadius: '25px',
+                            '& .MuiChip-label': {
+                                display: 'block',
+                                whiteSpace: 'normal',
+                            },
+                        }}
+                    />
+                </Grid>
+            ))}
         </Grid>
-      ))}
-    </Grid>
-  );
+    );
 };
 
 export default InstructorList;
