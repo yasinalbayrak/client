@@ -6,7 +6,8 @@ import { TextField, Input, Box} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SortIcon from '@mui/icons-material/Sort';
-import { blue } from '@mui/material/colors';
+import Popup from 'reactjs-popup';
+import SearchBar from '../SearchBar';
 
 function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, handleInstructorFilter, handleJobDetailsFilter, emptyFilter, handleSortLastDate, sortLastDate }) {
 
@@ -24,22 +25,10 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
         <TableCell >
           <Box sx={{width:120, display: 'flex', justifyContent: courseSearch? 'flex-start': 'center', alignItems: courseSearch? 'left':'center', flexDirection: courseSearch? 'column':''}}>
           Course Code
-         {courseSearch ? <Box sx={{display:'flex', justifyContent:'center', alignItems:'center', width:'90%', flexDirection: 'row'}}>
-         <TextField 
-          id="outlined-basic" 
-          label="Search" 
-          variant="outlined" 
-          size="small"
-          onChange={handleCourseFilter}
-          sx={{paddingInline:0.5}}
-           />
-          <CancelIcon 
-          variant='outlined' 
-          fontSize='small' 
-          color='disabled' 
-          sx={{"&:hover": { color: "red", cursor:"pointer" }}}
-          onClick={() => {setCourseSearch(false); emptyFilter()} } />
-          </Box>:  <SearchIcon sx={{paddingInline:0.5, "&:hover": { color: "green", cursor:"pointer" }}} onClick={() => setCourseSearch(true)}/>}</Box>
+         <Popup trigger={<SearchIcon sx={{paddingInline:0.5, "&:hover": { color: "green", cursor:"pointer" }}}/>} position="right">
+          <SearchBar handleSearch={handleCourseFilter} empty={emptyFilter} />
+        </Popup> 
+          </Box>
         </TableCell>
 
 
@@ -48,22 +37,10 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
         <TableCell>
         <Box sx={{width:1, height:1, display: 'flex', justifyContent: instructorSearch? 'flex-start': 'center', alignItems: instructorSearch? 'left':'center', flexDirection: instructorSearch? 'column': ''}}>
          Instructors
-        {instructorSearch? <Box sx={{display:'flex', justifyContent:'center', alignItems:'center', width:'90%', flexDirection: 'row'}}>
-          <TextField 
-            id="outlined-basic" 
-            label="Search" 
-            variant="outlined" 
-            size="small" 
-            onChange={handleInstructorFilter} 
-            />
-            <CancelIcon 
-            variant='outlined' 
-            fontSize='small' 
-            color='disabled'
-            sx={{ "&:hover": { color: "red", cursor:"pointer" }}}
-            onClick={() => {setInstructorSearch(false); emptyFilter()}} /></Box>
-            
-            : <SearchIcon sx={{paddingInline:0.5, "&:hover": { color: "green", cursor:"pointer" }}} onClick={() => setInstructorSearch(true)}/>}</Box>
+         <Popup trigger={<SearchIcon sx={{paddingInline:0.5, "&:hover": { color: "green", cursor:"pointer" }}}/>} position="right">
+          <SearchBar handleSearch={handleInstructorFilter} empty={emptyFilter} />
+        </Popup> 
+        </Box>
         </TableCell>
         
         <TableCell>
@@ -98,7 +75,9 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
           sx={{ "&:hover": { color: "red",  cursor:"pointer" }}}
           onClick={() => {setJobDetailsSearch(false); emptyFilter()}} />
            </Box>
-        :  <SearchIcon sx={{paddingInline:0.5, "&:hover": { color: "green",  cursor:"pointer" }}} onClick={() => setJobDetailsSearch(true)}/>} </Box>
+        :  <Popup trigger={<SearchIcon sx={{paddingInline:0.5, "&:hover": { color: "green", cursor:"pointer" }}}/>} position="left">
+        <SearchBar handleSearch={handleJobDetailsFilter} empty={emptyFilter} />
+        </Popup>} </Box>
         </TableCell>
         
         {tabValue === 1 && !isInstructor && <TableCell align="left">Application Status</TableCell>}

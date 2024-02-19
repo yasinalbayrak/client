@@ -123,9 +123,8 @@ export default function AnnouncementTable(props) {
     setUserApplications((prev) => prev.filter((app) => (app?.application?.applicationId || app?.applicationId) !== id));
     setRows((prev) => prev.filter((app) => app?.applicationId !== id));
   };
-  const handleCourseFilter = (event) => {
-    const value = event.target.value;
-    setCourseFilterTerm(value);
+  const handleCourseFilter = (event, term) => {
+    setCourseFilterTerm(term);
   };
 
   const emptyFilter = (event) => {
@@ -135,14 +134,14 @@ export default function AnnouncementTable(props) {
   }
 
 
-  const handleInstructorFilter = (event) => {
+  const handleInstructorFilter = (event,term) => {
     const value = event.target.value;
-    setInstructorFilterTerm(value);
+    setInstructorFilterTerm(term);
   }
 
-  const handleJobDetailsFilter = (event) => {
+  const handleJobDetailsFilter = (event, term) => {
     const value = event.target.value;
-    setJobDetailsFilterTerm(value);
+    setJobDetailsFilterTerm(term);
   }
 
   const handleSortLastDate = () => {
