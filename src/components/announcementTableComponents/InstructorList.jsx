@@ -5,15 +5,11 @@ import Tooltip from "@mui/material/Tooltip";
 import MailIcon from '@mui/icons-material/Mail';
 import { useTheme } from '@mui/material/styles';
 
-const InstructorList = ({ instructor_names }) => {
+const InstructorList = ({ instructor_names, authorizedInstructors }) => {
     const theme = useTheme();
 
-    // Create refs for each chip
-    const chipRefs = useRef(instructor_names.map(() => React.createRef()));
-
-    // State to store the height for each chip
-    const [chipHeights, setChipHeights] = useState(instructor_names.map(() => '2rem'));
-
+    const chipRefs = useRef((instructor_names ?? []).map(() => React.createRef()));
+    const [chipHeights, setChipHeights] = useState((instructor_names ?? []).map(() => '2rem'));
     const updateChipHeights = () => {
         const updatedHeights = chipRefs.current.map(ref => {
             return ref.current && ref.current.offsetWidth > 13 * 16 ? '3rem' : '2rem'; // 13rem in pixels
@@ -43,11 +39,12 @@ const InstructorList = ({ instructor_names }) => {
     return (
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
             {instructor_names.map((instructor, index) => (
+
                 <Grid item xs={'auto'} key={instructor}>
                     <Chip
                         ref={chipRefs.current[index]}
                         icon={
-                            <Tooltip title="Send Email" placement="top">
+                            <Tooltip title={authorizedInstructors?.[index]?.user?.email || ''} placement="top">
                                 <div style={iconStyle}>
                                     <MailIcon fontSize="small" style={{ color: '#2c457a' }}/>
                                 </div>

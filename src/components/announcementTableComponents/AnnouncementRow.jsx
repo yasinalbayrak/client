@@ -13,7 +13,7 @@ import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
 
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack }) {
 
-  const { instructor_names, weeklyWorkingTime, term,section, status: applicationStatus, isTimedOut } = data;
+  const { instructor_names, weeklyWorkingTime, term,section, status: applicationStatus, isTimedOut,authorizedInstructors } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
 
 
@@ -197,8 +197,10 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         {(!isInstructor && tabValue === 1 ? data.application?.section : section) || "Not Specified"}
       </TableCell>
       <TableCell sx={{ borderBottom: "none", minWidth: "14rem", maxWidth: "14rem", width:"14rem" }} align="left">
-        <InstructorList instructor_names={instructor_names} />
-
+        <InstructorList
+            instructor_names={instructor_names}
+            authorizedInstructors={(!isInstructor && tabValue === 1) ? data.application.authorizedInstructors : authorizedInstructors}
+        />
       </TableCell>
       <TableCell sx={{bgcolor: "#FAFAFA", borderBottom: "none",width:"4rem", minWidth:"4rem", maxWidth:"4rem"  }} align="left">
         {lastApplicationDate ? (
