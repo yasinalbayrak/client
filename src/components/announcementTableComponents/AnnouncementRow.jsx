@@ -16,6 +16,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   const { instructor_names, weeklyWorkingTime, term,section, status: applicationStatus, isTimedOut } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
 
+
   useEffect(() => {
     if(isInstructor==false){
         getTranscriptInfo().then((res) => {
@@ -42,7 +43,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     applicationId,
     previousCourseGrades,
     isInprogressAllowed,
-    course
+    course,
   } = data.application ?? data;
 
   const applicationRequestId = data.applicationRequestId ?? "";
@@ -185,6 +186,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     "Murat Demiraslan",
     "Erkay Savas"
   ]
+  console.log('Data:', data);
   console.log('previousCourseGrades :>> ', previousCourseGrades);
   return (course.courseCode &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
@@ -192,7 +194,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         {course.courseCode}
       </TableCell>
       <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left">
-        {section !== null ? section : "Not Specified"}
+        {(!isInstructor && tabValue === 1 ? data.application?.section : section) || "Not Specified"}
       </TableCell>
       <TableCell sx={{ borderBottom: "none", minWidth: "14rem", maxWidth: "14rem", width:"14rem" }} align="left">
         <InstructorList instructor_names={instructor_names} />
