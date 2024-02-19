@@ -10,21 +10,20 @@ import { Typography, IconButton, Collapse, Snackbar, Grid, Button, Divider } fro
 import MuiAlert from "@mui/material/Alert";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import SwapVertTwoToneIcon from '@mui/icons-material/SwapVertTwoTone';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
 import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus } from "../../apiCalls";
-import { useParams } from "react-router";
-import DownloadIcon from '@mui/icons-material/Download';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
 import QuestionAnswer from "./QuestionsAndAnswers";
 import LaHistoryTable from "./LaHistoryTable";
-import { useSelector } from "react-redux";
-import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -41,6 +40,7 @@ function CustomRow(props) {
   const [studentDetails, setStudentDetails] = React.useState({});
 
   console.log(row);
+
 
   useEffect(() => {
     setUserID(row.student.user.id);
@@ -110,23 +110,6 @@ function CustomRow(props) {
     
   }, [row.student.user.id, props.courseCode, userID]);
 
-  // useEffect(() => {
-  //   getApplicationRequestsByStudentId(row.student.user.id)
-  //     .then((res) => {
-  //       const { courseHistory, laHistory } = res.reduce(
-  //         (acc, each) => {
-  //           each.application.course.courseCode === courseCode ? acc.courseHistory.push(each) : acc.laHistory.push(each);
-  //           return acc;
-  //         },
-  //         { courseHistory: [], laHistory: [] }
-  //       );
-
-  //       setLaHistory(laHistory);
-  //       setCourseHistory(courseHistory);
-  //     })
-  //     .catch((_) => {
-  //     });
-  // }, [row.student.user.id, courseCode]);
 
   useEffect(() => {
     getApplicationRequestsByStudentId(row.student.user.id)
@@ -225,32 +208,6 @@ function CustomRow(props) {
               <Box sx={{ minWidth: 120, mY: "15px", height: "100%" }} textAlign="center">
 
                 <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
-                  {/* <Button
-                    variant="outlined"
-                    endIcon={<DownloadIcon />}
-                    sx={{ m: "10px", padding: "20px" }}
-                    onClick={() => {
-                      getTranscript(studentDetails.transcriptId).then((res) => {
-                        const base64Content = res.content;
-
-                        // Decode the base64 content
-                        const byteCharacters = atob(base64Content);
-                        const byteArray = new Uint8Array(byteCharacters.length);
-                        for (let i = 0; i < byteCharacters.length; i++) {
-                          byteArray[i] = byteCharacters.charCodeAt(i);
-                        }
-
-                        // Create a Blob from the byte array
-                        const file = new Blob([byteArray], { type: 'application/pdf' });
-
-                        // Open the PDF in a new window
-                        const fileURL = URL.createObjectURL(file);
-                        window.open(fileURL, '_blank');
-                      });
-                    }}
-                  >
-                    Transcript
-                  </Button> */}
 
                   <Button
                     variant="outlined"
@@ -282,19 +239,71 @@ function CustomRow(props) {
 }
 
 function ApplicantsTable(props) {
-  // const rows = [
-  //     { id: 1, courseCode: 'CS201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B+', wHour: "5", details: "lorem ipsum"},
-  //     { id: 2, courseCode: 'CS210', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "5", details: "lorem ipsum"},
-  //     { id: 3, courseCode: 'MATH201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A-', wHour: "5", details: "lorem ipsum"},
-  //     { id: 4, courseCode: 'CS300', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "5", details: "lorem ipsum"},
-  //     { id: 5, courseCode: 'MATH204', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "10", details: "lorem ipsum" },
-  //     { id: 6, courseCode: 'ENS206', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B+', wHour: "10", details: "lorem ipsum"},
-  //     { id: 7, courseCode: 'ECON201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B', wHour: "5", details: "lorem ipsum"},
-  //     { id: 8, courseCode: 'CS301', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'A', wHour: "10", details: "lorem ipsum"},
-  //     { id: 9, courseCode: 'HUM201', instructors: 'John Doe', lDate: 'dd/mm/yyyy', grade: 'B+', wHour: "5", details: "lorem ipsum"},
-  //   ];
+  const [sortOrder, setSortOrder] = React.useState(null);
+  const [sortedRows, setSortedRows] = React.useState([]);
+  const [gradeSortOrder, setGradeSortOrder] = React.useState(null);
+  const [searchText, setSearchText] = React.useState('');
+  const [isFilterVisible, setIsFilterVisible] = React.useState(false);
   const [questions, setQuestions] = React.useState([]);
   const isApplicantsListEmpty = props.rows.length === 0;
+
+  const handleSearchChange = (event) => {
+    setSearchText(event.target.value.toLowerCase());
+  };
+
+  const filteredRows = sortedRows.filter((row) => {
+    const fullName = row.student.user.name.toLowerCase() + " " + row.student.user.surname.toLowerCase();
+    return fullName.includes(searchText);
+  });
+
+  const sortRows = (rows) => {
+    return rows.sort((a, b) => {
+      let nameComparison = 0;
+      let gradeComparison = 0;
+
+      if (sortOrder === "asc" || sortOrder === "desc") {
+        const nameA = a.student.user.name.toLowerCase();
+        const nameB = b.student.user.name.toLowerCase();
+        nameComparison = nameA.localeCompare(nameB);
+        if (sortOrder === "desc") nameComparison *= -1;
+      }
+
+      if (gradeSortOrder === "asc" || gradeSortOrder === "desc") {
+        const gradeA = a.studentDetails?.course?.grade || 0;
+        const gradeB = b.studentDetails?.course?.grade || 0;
+        gradeComparison = gradeA - gradeB;
+        if (gradeSortOrder === "desc") gradeComparison *= -1;
+      }
+
+      return gradeSortOrder ? gradeComparison || nameComparison : nameComparison || gradeComparison;
+    });
+  };
+
+  useEffect(() => {
+    setSortedRows(sortRows([...props.rows]));
+  }, [props.rows, sortOrder, gradeSortOrder]);
+  console.log(props.rows)
+
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === "asc" ? "desc" : sortOrder === "desc" ? null : "asc");
+  };
+
+  const toggleGradeSortOrder = () => {
+    setGradeSortOrder(gradeSortOrder === "asc" ? "desc" : gradeSortOrder === "desc" ? null : "asc");
+  };
+
+  const toggleFilterVisibility = () => {
+    setIsFilterVisible(!isFilterVisible);
+  };
+
+  const getSortIconColor = () => {
+    return sortOrder ? (sortOrder === "asc" ? "blue" : "red") : "grey";
+  };
+
+  const getGradeSortIconColor = () => {
+    return gradeSortOrder ? (gradeSortOrder === "asc" ? "blue" : "red") : "grey";
+  };
+
   return (
       <TableContainer component={Paper}>
         {isApplicantsListEmpty ? (
@@ -307,10 +316,34 @@ function ApplicantsTable(props) {
             <Table sx={{ minWidth: 600 }} aria-label="simple table">
               <TableHead>
                 <TableRow sx={{ bgcolor: "#eeeeee" }}>
-                  <TableCell align="left">Student Name</TableCell>
+                  <TableCell align="left">
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Student Name
+                      <IconButton onClick={toggleSortOrder} style={{ color: getSortIconColor() }}>
+                        <SwapVertTwoToneIcon />
+                      </IconButton>
+                      <IconButton onClick={toggleFilterVisibility} style={{ color: isFilterVisible ? 'blue' : undefined }}>
+                        <FilterAltIcon />
+                      </IconButton>
+                    </Box>
+                    {isFilterVisible && (
+                        <TextField
+                            fullWidth
+                            size="small"
+                            value={searchText}
+                            onChange={handleSearchChange}
+                            placeholder="Filter by name..."
+                        />
+                    )}
+                  </TableCell>
                   <TableCell align="left">Majors</TableCell>
                   <TableCell align="left">Minors</TableCell>
-                  <TableCell>Grade</TableCell>
+                  <TableCell align="left">
+                    Grade
+                    <IconButton onClick={toggleGradeSortOrder} style={{ color: getGradeSortIconColor() }}>
+                      <SwapVertTwoToneIcon />
+                    </IconButton>
+                  </TableCell>
                   <TableCell align="left" sx={{ width: "10rem" }}>Status</TableCell>
                   <TableCell align="left">Details</TableCell>
                   <TableCell align="left"></TableCell>
@@ -318,7 +351,7 @@ function ApplicantsTable(props) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {props.rows.map((row, index) => (
+                {filteredRows.map((row, index) => (
                     <CustomRow
                         appId={props.appId}
                         row={row}
