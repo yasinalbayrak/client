@@ -22,6 +22,7 @@ export default function SearchBar(props) {
                 label="Search" 
                 variant="outlined" 
                 size="small" 
+                value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 sx={{paddingInline:0.5}}
                 ></TextField>
