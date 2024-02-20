@@ -92,7 +92,7 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
         </Popup>} </Box>
         </StyledTableCell>
         
-        {tabValue === 1 && !isInstructor && <TableCell align="left">Application Status</TableCell>}
+        {tabValue === 1 && !isInstructor && <StyledTableCell align="left">Application Status</StyledTableCell>}
         <StyledTableCell align="left">Actions</StyledTableCell>
         
           
