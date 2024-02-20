@@ -45,8 +45,11 @@ const InstructorList = ({ instructor_names, authorizedInstructors }) => {
                         ref={chipRefs.current[index]}
                         icon={
                             <Tooltip title={authorizedInstructors?.[index]?.user?.email || ''} placement="top">
-                                <div style={iconStyle}>
-                                    <MailIcon fontSize="small" style={{ color: '#2c457a' }}/>
+                                <div style={{ ...iconStyle, marginLeft: 4,marginRight: -4, padding: 1.5, lineHeight: 'normal' }}>
+                                    <a href={`mailto:${authorizedInstructors?.[index]?.user?.email || ''}`}
+                                       style={{ display: 'inline-block' }}>
+                                        <MailIcon fontSize="small" style={{ color: '#2c457a', padding: 1.1,marginBottom:-1 }}/>
+                                    </a>
                                 </div>
                             </Tooltip>
                         }
