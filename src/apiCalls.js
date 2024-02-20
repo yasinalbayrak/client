@@ -357,7 +357,7 @@ async function validateLogin(serviceUrl, ticket) {
     });
 
     console.log(result.data);
-    console.log('result.data.token :>> ', result.data.token);
+    
     const expiryDays = 1;
     const now = new Date();
     now.setTime(now.getTime() + (expiryDays * 24 * 60 * 60 * 1000)); // 1 day
@@ -562,7 +562,76 @@ async function finalizeStatus(appReqId){
   }
 }
 
+async function getNotifications() {
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.get(
+      apiEndpoint + "/notifications",
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+async function changeNotificationStatus(requestData){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/notifications",
+      {
+        "notificationChanges": requestData
+      },
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+async function changeNotificationPreferences(requestData){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/notifications/preferences",
+      requestData,
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+async function getUnreadNotificationCount(token) {
+  try {
+    const result = await axios.get(
+      apiEndpoint + "/notifications/unread",
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
 export {
+  getUnreadNotificationCount,
+  changeNotificationPreferences,
+  changeNotificationStatus,
+  getNotifications,
   checkStudentEligibility,
   updateApplicationRequestStatus,
   getCourseGrades,

@@ -9,21 +9,24 @@ import ApplicantsPage from "./pages/ApplicantsPage";
 import { useDispatch, useSelector } from "react-redux";
 import LoginCAS from "./pages/LoginCAS";
 import { useEffect, useState } from "react";
-import { startLoginProcess, successLogin, logout, failLogin } from "./redux/userSlice";
-import { validateLogin } from "./apiCalls";
+import { startLoginProcess, successLogin, logout, failLogin, setUnreadNotificationCount, increaseUnreadNotificationCountByOne } from "./redux/userSlice";
+import { getUnreadNotificationCount, validateLogin } from "./apiCalls";
 import CourseApplicantsPage from "./pages/CourseApplicantsPage";
 import EditApplyPage from "./pages/EditApplyPage";
 import SuccessPage from "./pages/SuccessPage";
 import ProfilePage from "./pages/ProfilePage";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import handleError, { handleServerDownError } from "./errors/GlobalErrorHandler";
+import handleError, { handleInfo, handleServerDownError } from "./errors/GlobalErrorHandler";
 
 import TranscriptPage from "./components/transcriptPageComponents/transcriptUploadPage";
 import TranscriptInfo from "./components/transcriptPageComponents/transcriptInfoPage";
 import QuestionPage from "./components/transcriptPageComponents/transcriptExtraFile";
 import EditQuestionPage from "./components/transcriptPageComponents/EditQuestionPage";
 import EligibilityPage from "./pages/EligibilityPage";
+import SockJS from "sockjs-client"
+import {Stomp} from "@stomp/stompjs"
+
 function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
@@ -52,18 +55,55 @@ function App() {
                 name: result.user.name,
                 surname: result.user.surname,
                 isInstructor: result.user.role === "INSTRUCTOR",
+                notificationPreference: result.user.notificationPreference
               })
             );
+            
+            var authToken = result.token
+            getUnreadNotificationCount(authToken)
+            .then((r) => {
+              dispatch(
+                setUnreadNotificationCount({unreadNotifications: r.count})
+              )
+            })
+            
+            var stompClient = null;
+            
+           
+            var socket = new SockJS('http://localhost:8080/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect(
+                {'Authorization': authToken},function (frame) {
+              
+                console.log('Connected: ' + frame);
+                
+                
+                stompClient.subscribe(`/user/${result.user.id}/notifications`, function (notification) {
+                    dispatch(increaseUnreadNotificationCountByOne())
+                    console.log('notification type: ', notification)
+                   
+                    console.log('notification', notification._binaryBody)
+                    console.log('notification body', notification.body)
+                    let parsedMessage = JSON.parse(notification._body);
+                    handleInfo(parsedMessage.description)
+                });
+            });
+          
+    
+            function disconnect() {
+                if (stompClient !== null) {
+                    stompClient.disconnect();
+                }
+         
+                console.log("Disconnected");
+            }
 
             urlParams.delete("ticket");
             const newPath = location.pathname + (urlParams.toString() ? `?${urlParams.toString()}` : '');
             navigate(newPath, { replace: true });
           })
-          .catch(() => {
-            dispatch(failLogin())
-            navigate("/")
-            handleServerDownError();
-          });
+          
       }
     }
   }, [isLoggedIn, isLoading, dispatch, navigate, location.pathname, urlParams]);

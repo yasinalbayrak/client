@@ -10,7 +10,8 @@ import Popup from '../popup/Popup';
 import { deleteApplicationById } from "../../apiCalls"
 import InstructorList from './InstructorList';
 import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
-
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack }) {
 
   const { instructor_names, weeklyWorkingTime, term, status: applicationStatus, isTimedOut } = data;
@@ -116,20 +117,20 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           );
         } else {
           return (
-              <Button
-                  variant="contained"
-                  onClick={() => {
-                    if (isTranscriptUploaded) {
-                      // Navigate to the apply page if the transcript is uploaded
-                      navigate("/apply/" + applicationId, { replace: true });
-                    } else {
-                      // Navigate to a different page (e.g., transcript upload page) if the transcript is not uploaded
-                      navigate("/transcriptUploadPage/"+applicationId, { replace: true });
-                    }
-                  }}
-              >
-                Apply
-              </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                if (isTranscriptUploaded) {
+                  // Navigate to the apply page if the transcript is uploaded
+                  navigate("/apply/" + applicationId, { replace: true });
+                } else {
+                  // Navigate to a different page (e.g., transcript upload page) if the transcript is not uploaded
+                  navigate("/transcriptUploadPage/" + applicationId, { replace: true });
+                }
+              }}
+            >
+              Apply
+            </Button>
           );
         }
       }
@@ -169,14 +170,14 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   console.log('previousCourseGrades :>> ', previousCourseGrades);
   return (course.courseCode &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-      <TableCell sx={{ borderBottom: "none", width:"6rem", minWidth:"6rem", maxWidth:"6rem"  }} component="th" scope="row">
+      <TableCell sx={{ borderBottom: "none", width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
         {course.courseCode}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: "14rem", maxWidth: "14rem", width:"14rem" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", minWidth: "14rem", maxWidth: "14rem", width: "14rem" }} align="left">
         <InstructorList instructor_names={instructor_names} />
 
       </TableCell>
-      <TableCell sx={{ borderBottom: "none",width:"4rem", minWidth:"4rem", maxWidth:"4rem"  }} align="left">
+      <TableCell sx={{ borderBottom: "none", width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left">
         {lastApplicationDate ? (
           <>
             {new Date(lastApplicationDate).toLocaleDateString("en-GB", {
@@ -194,31 +195,33 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           "N/A"
         )}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left">
         {term}
       </TableCell>
 
-      <TableCell sx={{ borderBottom: "none", width: "7rem", maxWidth:"7rem", minWidth:"7rem" }} align="center">
+      <TableCell sx={{ borderBottom: "none", width: "7rem", maxWidth: "7rem", minWidth: "7rem" }} align="center">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA",borderBottom: "none", width: "7rem" }} align="center">
-        <DesiredCourseGradesPopup isInprogressAllowed={isInprogressAllowed} courseCode={course.courseCode} grade ={minimumRequiredGrade} previousCourseGrades={previousCourseGrades}/>
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "7rem" }} align="center">
+        <DesiredCourseGradesPopup isInprogressAllowed={isInprogressAllowed} courseCode={course.courseCode} grade={minimumRequiredGrade} previousCourseGrades={previousCourseGrades} />
       </TableCell>
       <TableCell sx={{ borderBottom: "none", maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left">
         {jobDetails}
       </TableCell>
 
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "6rem", minWidth:"6rem" }} align="center">
+      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width: "6rem", minWidth: "6rem" }} align="center">
         {renderButtons()}
       </TableCell>
 
-      {!isInstructor && tabValue === 1 && <TableCell sx={{ borderBottom: "none", width:"4rem" }} align="right">
+      {!isInstructor && tabValue === 1 && <TableCell sx={{ borderBottom: "none", width: "4rem" }} align="right">
         <Button
           variant='contained'
           onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}
           startIcon={<EditIcon />} >
         </Button>
       </TableCell>}
+      
+
     </TableRow>
   );
 }

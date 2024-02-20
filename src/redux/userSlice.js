@@ -12,8 +12,11 @@ const initialState = {
   isFailed: false,
   isLoggedIn: false,
   isTranscriptUploded:false,
-  showTerms: true
+  showTerms: true,
+  notificationPreference: null,
+  unreadNotifications: 0
 };
+
 
 const userSlice = createSlice({
   name: "user",
@@ -33,6 +36,7 @@ const userSlice = createSlice({
 
       state.isInstructor = action.payload.isInstructor;
       state.JwtToken = action.payload.jwtToken;
+      state.notificationPreference = action.payload.notificationPreference
     },
     failLogin: (state) => {
       state.isFailed = true;
@@ -53,6 +57,7 @@ const userSlice = createSlice({
       state.isLoading = false;
       state.isFailed = false;
       state.isLoggedIn = false;
+      state.notificationPreference = null
     },
     switchIsInstructor: (state) => {
       state.isInstructor = !state.isInstructor;
@@ -62,13 +67,26 @@ const userSlice = createSlice({
     },
     flipShowTerms: (state) => {
       state.showTerms = !state.showTerms
+    },
+    setNotificationPreference: (state, action) => {
+      state.notificationPreference = action.payload.notificationPreference
+    },
+    setUnreadNotificationCount: (state, action) => {
+      state.unreadNotifications = action.payload.unreadNotifications
+    },
+    increaseUnreadNotificationCountByOne: (state) => {
+      state.unreadNotifications = state.unreadNotifications + 1
     }
   },
 });
 
 console.log(userSlice);
 
-export const {flipShowTerms,
+export const {
+  increaseUnreadNotificationCountByOne,
+  setUnreadNotificationCount,
+  setNotificationPreference,
+  flipShowTerms,
   startLoginProcess,
   successLogin,
   failLogin,
