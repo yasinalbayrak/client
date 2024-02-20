@@ -64,9 +64,7 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
           sx={{color:sortLastDate? '#ffffff':"text.disabled"  , paddingInline:0.5, "&:hover": { color: sortLastDate? "": "green", cursor:"pointer" }, bgcolor: sortLastDate? "info.main":"", borderRadius:'50%' }}/>
           </Box>
         </StyledTableCell>
-        <StyledTableCell align="left">Term</StyledTableCell>
         <StyledTableCell align="center">Weekly Work Hours</StyledTableCell>
-        <StyledTableCell align="center">More Details</StyledTableCell>
 
         <StyledTableCell >
 

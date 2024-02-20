@@ -220,16 +220,17 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           "N/A"
         )}
       </TableCell>
-      <TableCell sx={{  width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left" component="th" scope="row">
-        {term}
-      </TableCell>
 
-      <TableCell sx={{bgcolor: "#FAFAFA", width: "7rem", maxWidth:"7rem", minWidth:"7rem" }} align="center" component="th" scope="row">
+
+      <TableCell sx={{ width: "7rem", maxWidth:"7rem", minWidth:"7rem" }} align="center" component="th" scope="row">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
+
+      {/*
       <TableCell sx={{ width: "7rem" }} align="center" component="th" scope="row">
         <DesiredCourseGradesPopup isInprogressAllowed={isInprogressAllowed} courseCode={course.courseCode} grade ={minimumRequiredGrade} previousCourseGrades={previousCourseGrades}/>
       </TableCell>
+      */}
       <TableCell sx={{ bgcolor: "#FAFAFA",  maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left" component="th" scope="row">
         {jobDetails}
       </TableCell>
