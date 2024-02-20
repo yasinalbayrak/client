@@ -189,7 +189,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   console.log('Data:', data);
   console.log('previousCourseGrades :>> ', previousCourseGrades);
   return (course.courseCode &&
-    <TableRow  sx={{ "&:last-child td, &:last-child th": { border: 0, borderBottom:0}, borderBottom:1, borderBottomColor:'blue' }}>
+    <TableRow  sx={{ "&:last-child td, &:last-child th": { border: 0}, borderBottom:1 }}>
       <TableCell sx={{ width:"6rem", minWidth:"6rem", maxWidth:"6rem"  }} component="th" scope="row">
         {course.courseCode}
       </TableCell>
