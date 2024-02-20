@@ -1,6 +1,6 @@
 import React from 'react';
 import TableHead from "@mui/material/TableHead";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import { TextField, Input, Box} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -8,6 +8,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import SortIcon from '@mui/icons-material/Sort';
 import Popup from 'reactjs-popup';
 import SearchBar from '../SearchBar';
+import { styled } from '@mui/material/styles';
 
 function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, handleInstructorFilter, handleJobDetailsFilter, emptyFilter, handleSortLastDate, sortLastDate }) {
 
@@ -16,34 +17,45 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
   const [jobDetailsSearch, setJobDetailsSearch] = React.useState(false);
   
 
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      //backgroundColor: theme.palette.common.black,
+      //color: theme.palette.common.white,
+      backgroundColor: '#FAFAFA',
+      color: theme.palette.common.black,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
   
 
 
   return (
     <TableHead>
-      <TableRow sx={{ bgcolor: "#eeeeee" }}>
-        <TableCell >
+      <TableRow  sx={{ bgcolor: "#eeeeee" }}>
+        <StyledTableCell >
           <Box sx={{width:120, display: 'flex', justifyContent: courseSearch? 'flex-start': 'center', alignItems: courseSearch? 'left':'center', flexDirection: courseSearch? 'column':''}}>
           Course Code
          <Popup trigger={<SearchIcon sx={{paddingInline:0.5, "&:hover": { color: "green", cursor:"pointer" }}}/>} position="right">
           <SearchBar handleSearch={handleCourseFilter} empty={emptyFilter} />
         </Popup> 
           </Box>
-        </TableCell>
+        </StyledTableCell>
 
 
-        <TableCell align="left">Course Section</TableCell>
+        <StyledTableCell align="left">Course Section</StyledTableCell>
         
-        <TableCell>
+        <StyledTableCell>
         <Box sx={{width:1, height:1, display: 'flex', justifyContent: instructorSearch? 'flex-start': 'center', alignItems: instructorSearch? 'left':'center', flexDirection: instructorSearch? 'column': ''}}>
          Instructors
          <Popup trigger={<SearchIcon sx={{paddingInline:0.5, "&:hover": { color: "green", cursor:"pointer" }}}/>} position="right">
           <SearchBar handleSearch={handleInstructorFilter} empty={emptyFilter} />
         </Popup> 
         </Box>
-        </TableCell>
+        </StyledTableCell>
         
-        <TableCell>
+        <StyledTableCell>
           <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', flexDirection: 'row'}}>
           Last Application Date/Time
           <SortIcon
@@ -51,12 +63,12 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
           onClick={handleSortLastDate}
           sx={{color:sortLastDate? '#ffffff':"text.disabled"  , paddingInline:0.5, "&:hover": { color: sortLastDate? "": "green", cursor:"pointer" }, bgcolor: sortLastDate? "info.main":"", borderRadius:'50%' }}/>
           </Box>
-        </TableCell>
-        <TableCell align="left">Term</TableCell>
-        <TableCell align="center">Weekly Work Hours</TableCell>
-        <TableCell align="center">More Details</TableCell>
+        </StyledTableCell>
+        <StyledTableCell align="left">Term</StyledTableCell>
+        <StyledTableCell align="center">Weekly Work Hours</StyledTableCell>
+        <StyledTableCell align="center">More Details</StyledTableCell>
 
-        <TableCell >
+        <StyledTableCell >
 
         <Box sx={{width:1, height:1, display: 'flex', justifyContent: jobDetailsSearch? 'flex-start':'center', alignItems: jobDetailsSearch? 'left':'center', flexDirection: jobDetailsSearch? 'column':''}}> 
         Details
@@ -78,10 +90,10 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
         :  <Popup trigger={<SearchIcon sx={{paddingInline:0.5, "&:hover": { color: "green", cursor:"pointer" }}}/>} position="left">
         <SearchBar handleSearch={handleJobDetailsFilter} empty={emptyFilter} />
         </Popup>} </Box>
-        </TableCell>
+        </StyledTableCell>
         
         {tabValue === 1 && !isInstructor && <TableCell align="left">Application Status</TableCell>}
-        <TableCell align="left">Actions</TableCell>
+        <StyledTableCell align="left">Actions</StyledTableCell>
         
           
         
