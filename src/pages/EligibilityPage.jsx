@@ -74,7 +74,7 @@ export default function EligibilityPage() {
                         /* Student Eligible */
                         eligibilityInfo.questionCount > 0 ? (
                             <Button variant="contained" startIcon={<QuizIcon />} color="secondary" onClick={() => navigate("/questionPage/" + ApplicationId, { replace: true })}>
-                                Continue with questions
+                                Start my application
                             </Button>
                         ) : (
                             <button class="button" onClick={onSubmit}>
