@@ -33,9 +33,9 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
 
   return (
     <TableHead>
-      <TableRow  sx={{ bgcolor: "#eeeeee" }}>
+      <TableRow  sx={{ borderBottom:0, borderColor:'#FAFAFA' }}>
         <StyledTableCell >
-          <Box sx={{width:120, display: 'flex', justifyContent: courseSearch? 'flex-start': 'center', alignItems: courseSearch? 'left':'center', flexDirection: courseSearch? 'column':''}}>
+          <Box sx={{ display: 'flex', justifyContent: courseSearch? 'flex-start': 'center', alignItems: courseSearch? 'left':'center', flexDirection: courseSearch? 'column':''}}>
           Course Code
          <Popup trigger={<SearchIcon sx={{paddingInline:0.5, "&:hover": { color: "green", cursor:"pointer" }}}/>} position="right">
           <SearchBar handleSearch={handleCourseFilter} empty={emptyFilter} />

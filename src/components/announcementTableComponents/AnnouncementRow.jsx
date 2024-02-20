@@ -189,20 +189,20 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   console.log('Data:', data);
   console.log('previousCourseGrades :>> ', previousCourseGrades);
   return (course.courseCode &&
-    <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-      <TableCell sx={{ borderBottom: "none", width:"6rem", minWidth:"6rem", maxWidth:"6rem"  }} component="th" scope="row">
+    <TableRow  sx={{ "&:last-child td, &:last-child th": { border: 0, borderBottom:0}, borderBottom:1, borderBottomColor:'blue' }}>
+      <TableCell sx={{ width:"6rem", minWidth:"6rem", maxWidth:"6rem"  }} component="th" scope="row">
         {course.courseCode}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left" component="th" scope="row">
         {(!isInstructor && tabValue === 1 ? data.application?.section : section) || "Not Specified"}
       </TableCell>
-      <TableCell sx={{ borderBottom: "none", minWidth: "14rem", maxWidth: "14rem", width:"14rem" }} align="left">
+      <TableCell sx={{  minWidth: "14rem", maxWidth: "14rem", width:"14rem" }} align="left" component="th" scope="row">
         <InstructorList
             instructor_names={instructor_names}
             authorizedInstructors={(!isInstructor && tabValue === 1) ? data.application.authorizedInstructors : authorizedInstructors}
         />
       </TableCell>
-      <TableCell sx={{bgcolor: "#FAFAFA", borderBottom: "none",width:"4rem", minWidth:"4rem", maxWidth:"4rem"  }} align="left">
+      <TableCell sx={{bgcolor: "#FAFAFA", width:"4rem", minWidth:"4rem", maxWidth:"4rem"  }} align="left" component="th" scope="row">
         {lastApplicationDate ? (
           <>
             {new Date(lastApplicationDate).toLocaleDateString("en-GB", {
@@ -220,25 +220,25 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           "N/A"
         )}
       </TableCell>
-      <TableCell sx={{ borderBottom: "none", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left">
+      <TableCell sx={{  width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left" component="th" scope="row">
         {term}
       </TableCell>
 
-      <TableCell sx={{bgcolor: "#FAFAFA", borderBottom: "none", width: "7rem", maxWidth:"7rem", minWidth:"7rem" }} align="center">
+      <TableCell sx={{bgcolor: "#FAFAFA", width: "7rem", maxWidth:"7rem", minWidth:"7rem" }} align="center" component="th" scope="row">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
-      <TableCell sx={{borderBottom: "none", width: "7rem" }} align="center">
+      <TableCell sx={{ width: "7rem" }} align="center" component="th" scope="row">
         <DesiredCourseGradesPopup isInprogressAllowed={isInprogressAllowed} courseCode={course.courseCode} grade ={minimumRequiredGrade} previousCourseGrades={previousCourseGrades}/>
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none", maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left">
+      <TableCell sx={{ bgcolor: "#FAFAFA",  maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left" component="th" scope="row">
         {jobDetails}
       </TableCell>
 
-      <TableCell sx={{ borderBottom: "none", width: "6rem", minWidth:"6rem" }} align="center">
+      <TableCell sx={{  width: "6rem", minWidth:"6rem" }} align="center" component="th" scope="row">
         {renderButtons()}
       </TableCell>
 
-      {!isInstructor && tabValue === 1 && <TableCell sx={{ borderBottom: "none", width:"4rem" }} align="right">
+      {!isInstructor && tabValue === 1 && <TableCell sx={{  width:"4rem" }} align="right" component="th" scope="row">
         <Button
           variant='contained'
           onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}

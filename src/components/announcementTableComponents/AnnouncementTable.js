@@ -155,12 +155,13 @@ export default function AnnouncementTable(props) {
   
   return (
 
-     <Box sx={{ width: '100%' }}> 
-    <TableContainer component={Paper} sx={{maxHeight:'75vh'}}>
+     <Box sx={{ width: '100%'}}> 
+    <TableContainer component={Paper} sx={{maxHeight:'75vh', overflow: "auto",
+    scrollbarWidth: "none", '&::-webkit-scrollbar': { display: 'none'},'&-ms-overflow-style:': {display: 'none'}}}>
       
       
 
-      <Table sx={{ minWidth: 600 }} stickyHeader aria-label="simple table">
+      <Table sx={{ minWidth: 600 }} stickyHeader aria-label="simple table" >
         <AnnouncementsTableHead isInstructor={isInstructor} tabValue={tabValue} handleCourseFilter={handleCourseFilter} handleInstructorFilter={handleInstructorFilter} handleJobDetailsFilter = {handleJobDetailsFilter} emptyFilter={emptyFilter} handleSortLastDate={handleSortLastDate} sortLastDate= {sortLastDate} />
         <TableBody>
           { ( tabValue === 1
