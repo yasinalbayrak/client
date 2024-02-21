@@ -60,8 +60,8 @@ const TranscriptInfo=(props)=> {
     <>
         {(
           <Box sx={{ display: "flex" }}>
-            <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
             <Sidebar></Sidebar>
+            <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
               <AppBarHeader />
               <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
               <Grid item>

@@ -121,23 +121,24 @@ const TranscriptPage = (props) => {
       <>
         {(
           <Box sx={{ display: "flex" }}>
-            <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
             <Sidebar></Sidebar>
+            <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
               <AppBarHeader />
               <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
 
                 <Grid item>
-                  <Typography variant="h4">Welcome to LA Application Page</Typography>
+                  <div style={{ textAlign: 'center' }}>
+                    <Typography variant="h4">Upload Transcript</Typography>
+                  </div>
                   <Divider></Divider>
                   <br />
-                  <Typography variant="h4"></Typography>
-                    <Stack sx={{ width: '100%' }} spacing={2}>
-                        <Alert severity="warning">
-                        To proceed to applications, please upload your most current transcript in pdf format first!<br />
-                        The information in the transcript you upload will be used in your LA applications.
-                        </Alert>
-                    </Stack>
-                    <br />
+                  <Stack sx={{ width: '100%' }} spacing={2}>
+                    <Alert severity="warning">
+                      To proceed to applications, please upload your most current transcript in pdf format first!<br />
+                      The information in the transcript you upload will be used in your LA applications.
+                    </Alert>
+                  </Stack>
+                  <br />
                 </Grid>
                 <Grid item container direction="rows" alignItems="center" justifyContent="center" sx={{ m: 1, marginBottom: 3 }}>
 
