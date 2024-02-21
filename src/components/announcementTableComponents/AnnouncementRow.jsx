@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import TableHead from "@mui/material/TableHead";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
@@ -7,28 +7,32 @@ import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Popup from '../popup/Popup';
-import {deleteApplicationById, getTranscriptInfo} from "../../apiCalls"
+import { deleteApplicationById, getTranscriptInfo } from "../../apiCalls"
 import InstructorList from './InstructorList';
 import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
+import IconButton from '@mui/material/IconButton';
+import { useStyles } from '../../pages/EligibilityTable';
+import { Box } from '@mui/material';
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack, filterEligibilityCallback }) {
 
-export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack }) {
-
-  const { instructor_names, weeklyWorkingTime, term,section, status: applicationStatus, isTimedOut,authorizedInstructors } = data;
+  const { instructor_names, weeklyWorkingTime, term, section, status: applicationStatus, isTimedOut, authorizedInstructors } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
 
+  const classes = useStyles();
 
   useEffect(() => {
-    if(isInstructor==false){
-        getTranscriptInfo().then((res) => {
-          if (res.isUploadedAnyTranscript !== undefined) {
-            setIsTranscriptUploaded(res.isUploadedAnyTranscript);
-          } else {
-            console.log('isUploadedAnyTranscript not found in the response');
-          }
-        }).catch(_ => {
-          // Error handling
-        });
-    }}, []);
+    if (isInstructor == false) {
+      getTranscriptInfo().then((res) => {
+        if (res.isUploadedAnyTranscript !== undefined) {
+          setIsTranscriptUploaded(res.isUploadedAnyTranscript);
+        } else {
+          console.log('isUploadedAnyTranscript not found in the response');
+        }
+      }).catch(_ => {
+        // Error handling
+      });
+    }
+  }, []);
 
   useEffect(() => {
     console.log(isTranscriptUploaded);
@@ -44,6 +48,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     previousCourseGrades,
     isInprogressAllowed,
     course,
+    isStudentEligible
   } = data.application ?? data;
 
   const applicationRequestId = data.applicationRequestId ?? "";
@@ -68,33 +73,23 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     if (isInstructor) {
       if (instructor_names.some((instructor) => (userName.toLowerCase() === instructor.toLowerCase()))) {
         return (<>
-          <Button
-            variant="contained"
+          <IconButton
             onClick={() => navigate(`/edit-announcement/${applicationId}`, { replace: true })}
-            sx={{
-              justifyContent: 'center',
-              paddingRight: 0,
-              paddingLeft: 0,
-
-            }}
-
+            sx={{ color: "blue" }}
           >
             <EditIcon />
-          </Button>
-          <Button
-            variant="contained"
+          </IconButton>
+
+          <IconButton
             onClick={flipPopup}
             color='error'
             sx={{
-              justifyContent: 'center',
-              paddingRight: 0,
-              paddingLeft: 0,
-              marginLeft: '0rem'
+              marginLeft: '0rem',
+              color: "red"
             }}
-
           >
             <DeleteForeverIcon />
-          </Button>
+          </IconButton>
 
           <Popup
             opened={deletePopupOpened}
@@ -136,20 +131,20 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           );
         } else {
           return (
-              <Button
-                  variant="contained"
-                  onClick={() => {
-                    if (isTranscriptUploaded) {
-                      // Navigate to the apply page if the transcript is uploaded
-                      navigate("/apply/" + applicationId, { replace: true });
-                    } else {
-                      // Navigate to a different page (e.g., transcript upload page) if the transcript is not uploaded
-                      navigate("/transcriptUploadPage/"+applicationId, { replace: true });
-                    }
-                  }}
-              >
-                Apply
-              </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                if (isTranscriptUploaded) {
+                  // Navigate to the apply page if the transcript is uploaded
+                  navigate("/apply/" + applicationId, { replace: true });
+                } else {
+                  // Navigate to a different page (e.g., transcript upload page) if the transcript is not uploaded
+                  navigate("/transcriptUploadPage/" + applicationId, { replace: true });
+                }
+              }}
+            >
+              Apply
+            </Button>
           );
         }
       }
@@ -177,32 +172,38 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       </span>
     );
   };
-  const example_ins_list = [
-    "Atil Utku Ay",
-    "Inanc Arin",
-    "Duygu Karaoglan Altop",
-    "Yasin Albayrak",
-    "Sila Ozinan",
-    "Murat Demiraslan",
-    "Erkay Savas"
-  ]
-  console.log('Data:', data);
-  console.log('previousCourseGrades :>> ', previousCourseGrades);
+
+  const getClassByElibility = (elibility) => {
+    switch (elibility) {
+      case "Eligible":
+        
+        return classes.eligibleBox;
+      case "Not Eligible":
+        
+        return classes.notEligibleBox;
+    
+      case "Deadline Passed":
+        return classes.deadlinePassed;
+      default:
+        return ;
+    }
+  }
+
   return (course.courseCode &&
-    <TableRow  sx={{ "&:last-child td, &:last-child th": { border: 0}, borderBottom:1 }}>
-      <TableCell sx={{ width:"6rem", minWidth:"6rem", maxWidth:"6rem"  }} component="th" scope="row">
+    <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1 }}>
+      <TableCell sx={{ bgcolor: "#FAFAFA",width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
         {course.courseCode}
       </TableCell>
-      <TableCell sx={{ bgcolor: "#FAFAFA", width:"4rem", minWidth:"4rem", maxWidth:"4rem" }} align="left" component="th" scope="row">
+      <TableCell sx={{  width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left" component="th" scope="row">
         {(!isInstructor && tabValue === 1 ? data.application?.section : section) || "Not Specified"}
       </TableCell>
-      <TableCell sx={{  minWidth: "14rem", maxWidth: "14rem", width:"14rem" }} align="left" component="th" scope="row">
+      <TableCell sx={{bgcolor: "#FAFAFA", minWidth: "14rem", maxWidth: "14rem", width: "14rem" }} align="left" component="th" scope="row">
         <InstructorList
-            instructor_names={instructor_names}
-            authorizedInstructors={(!isInstructor && tabValue === 1) ? data.application.authorizedInstructors : authorizedInstructors}
+          instructor_names={instructor_names}
+          authorizedInstructors={(!isInstructor && tabValue === 1) ? data.application.authorizedInstructors : authorizedInstructors}
         />
       </TableCell>
-      <TableCell sx={{bgcolor: "#FAFAFA", width:"4rem", minWidth:"4rem", maxWidth:"4rem"  }} align="left" component="th" scope="row">
+      <TableCell sx={{  width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left" component="th" scope="row">
         {lastApplicationDate ? (
           <>
             {new Date(lastApplicationDate).toLocaleDateString("en-GB", {
@@ -222,7 +223,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       </TableCell>
 
 
-      <TableCell sx={{ width: "7rem", maxWidth:"7rem", minWidth:"7rem" }} align="center" component="th" scope="row">
+      <TableCell sx={{bgcolor: "#FAFAFA", width: "7rem", maxWidth: "7rem", minWidth: "7rem" }} align="center" component="th" scope="row">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
 
@@ -231,20 +232,26 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         <DesiredCourseGradesPopup isInprogressAllowed={isInprogressAllowed} courseCode={course.courseCode} grade ={minimumRequiredGrade} previousCourseGrades={previousCourseGrades}/>
       </TableCell>
       */}
-      <TableCell sx={{ bgcolor: "#FAFAFA",  maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left" component="th" scope="row">
+      <TableCell sx={{   maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left" component="th" scope="row">
         {jobDetails}
       </TableCell>
 
-      <TableCell sx={{  width: "6rem", minWidth:"6rem" }} align="center" component="th" scope="row">
+      <TableCell sx={{bgcolor: "#FAFAFA", width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
         {renderButtons()}
       </TableCell>
 
-      {!isInstructor && tabValue === 1 && <TableCell sx={{  width:"4rem" }} align="right" component="th" scope="row">
+      {!isInstructor && tabValue === 1 && <TableCell sx={{ width: "4rem" }} align="right" component="th" scope="row">
         <Button
           variant='contained'
           onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}
           startIcon={<EditIcon />} >
         </Button>
+      </TableCell>}
+
+      {(!isInstructor && tabValue === 0) && <TableCell sx={{ width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
+        <Box align="center" className={getClassByElibility(isStudentEligible)}>
+          {isStudentEligible}
+        </Box>
       </TableCell>}
     </TableRow>
   );

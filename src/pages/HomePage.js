@@ -18,21 +18,12 @@ function HomePage() {
   const state = useSelector((state) => state);
   const isInstructor = useSelector((state) => state.user.isInstructor);
   const userID = useSelector((state) => state.user.id);
-  const [applicationRequests, setApplicationRequests] = useState([]);
   
-  // useEffect(() => {
-  //   getAllAnnouncements().then((results) => setRows(results));
-  //   console.log(rows);
-  // }, []); //needs to be fixed
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        // Fetch the announcements data here using your API function
-        if(!isInstructor){
-          const applicationRequest = await getApplicationRequestsByStudentId(userID);
-          setApplicationRequests(applicationRequest);
-        }
+
         const announcements = await getAllAnnouncements();
 
         // If the location state includes updatedAnnouncement and the update status is false, update the rows state

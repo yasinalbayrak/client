@@ -4,7 +4,7 @@ import { makeStyles } from '@mui/styles';
 
 import "../pages/font-file.css"
 
-const useStyles = makeStyles({
+export const useStyles = makeStyles({
     
     table: {
         minWidth: 650,
@@ -34,6 +34,12 @@ const useStyles = makeStyles({
         padding: "2px 4px",
         backgroundColor: "rgba(253,242,233,1)",
         color: "rgba(195,69,36,1)"
+    },
+    deadlinePassed: {
+        border: "2px solid rgb(157, 158, 157)",
+        padding: "2px 4px",
+        backgroundColor: "rgb(245, 245, 245)",
+        color: "rgb(135, 136, 135)"
     },
     tableCell: {
         padding: "20px",
