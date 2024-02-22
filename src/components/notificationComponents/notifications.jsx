@@ -301,6 +301,9 @@ const Settings = () => {
     };
 
 
+    /*
+    // very nice public subscription  feature but another design is applied :(
+
     useEffect(() => {
         console.log('reduxPreferences', reduxPreferences)
         console.log('publicSubscription', publicSubscription)
@@ -325,7 +328,7 @@ const Settings = () => {
         }
 
     }, [publicSubscription, stompClient, dispatch, reduxPreferences?.followingNewAnnouncement]);
-
+    */
 
 
     return (
