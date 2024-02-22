@@ -9,96 +9,139 @@ import ApplicantsPage from "./pages/ApplicantsPage";
 import { useDispatch, useSelector } from "react-redux";
 import LoginCAS from "./pages/LoginCAS";
 import { useEffect, useState } from "react";
-import { startLoginProcess, successLogin, logout, failLogin } from "./redux/userSlice";
-import { validateLogin } from "./apiCalls";
+import { startLoginProcess, successLogin, logout, failLogin, setUnreadNotificationCount, increaseUnreadNotificationCountByOne, setStompClient, setPublicSubscription } from "./redux/userSlice";
+import { getUnreadNotificationCount, validateLogin } from "./apiCalls";
 import CourseApplicantsPage from "./pages/CourseApplicantsPage";
 import EditApplyPage from "./pages/EditApplyPage";
 import SuccessPage from "./pages/SuccessPage";
 import ProfilePage from "./pages/ProfilePage";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import handleError, { handleServerDownError } from "./errors/GlobalErrorHandler";
+import handleError, { handleInfo, handleServerDownError } from "./errors/GlobalErrorHandler";
 
 import TranscriptPage from "./components/transcriptPageComponents/transcriptUploadPage";
 import TranscriptInfo from "./components/transcriptPageComponents/transcriptInfoPage";
 import QuestionPage from "./components/transcriptPageComponents/transcriptExtraFile";
 import EditQuestionPage from "./components/transcriptPageComponents/EditQuestionPage";
 import EligibilityPage from "./pages/EligibilityPage";
+import SockJS from "sockjs-client"
+import { Stomp } from "@stomp/stompjs"
+import { WebSocketProvider } from "./context/WebSocketContext";
+
+import { useWebSocket } from "./context/WebSocketContext";
+import webSocketService from "./components/service/WebSocketService";
 function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
   const isTranscriptUploded = useSelector((state) => state.user.isTranscriptUploded);
+  const authToken = useSelector((state) => state.user.jwtToken);
+
   const isInstructor = useSelector((state) => state.user.isInstructor);
   const dispatch = useDispatch();
   const url = window.location.href;
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
+  const webSocketContext = useWebSocket();
+
+  const { subscribe, unsubscribe } = webSocketContext;
   useEffect(() => {
-    if (!isLoggedIn && !isLoading) {
-      if (url.includes("?ticket=")) {
-        dispatch(startLoginProcess());
+    var stompClient = null;
 
-        const ticket = urlParams.get("ticket");
-        const baseUrl = url.split("?")[0];
+    const handleLogin = (baseUrl, ticket) => {
+      validateLogin(baseUrl, ticket)
+        .then((result) => {
+          dispatch(
+            successLogin({
+              id: result.user.id,
+              jwtToken: result.token,
+              username: result.user.email,
+              name: result.user.name,
+              surname: result.user.surname,
+              isInstructor: result.user.role === "INSTRUCTOR",
+              notificationPreference: result.user.notificationPreference
+            })
+          );
 
-        validateLogin(baseUrl, ticket)
-          .then((result) => {
-            dispatch(
-              successLogin({
-                id: result.user.id,
-                jwtToken: result.token,
-                username: result.user.email,
-                name: result.user.name,
-                surname: result.user.surname,
-                isInstructor: result.user.role === "INSTRUCTOR",
-              })
-            );
+          var authToken = result.token;
+          getUnreadNotificationCount(authToken)
+            .then((r) => {
+              dispatch(
+                setUnreadNotificationCount({ unreadNotifications: r.count })
+              )
+            })
 
-            urlParams.delete("ticket");
-            const newPath = location.pathname + (urlParams.toString() ? `?${urlParams.toString()}` : '');
-            navigate(newPath, { replace: true });
-          })
-          .catch(() => {
-            dispatch(failLogin())
-            navigate("/")
-            handleServerDownError();
-          });
-      }
+
+          webSocketService.connectWebSocket(authToken)
+
+          const handleNotification = (notification) => {
+            dispatch(increaseUnreadNotificationCountByOne());
+            handleInfo(notification.description);
+          };
+          const topic = `/user/${result.user.id}/notifications`;
+
+          console.log('calling subscribe: ' + topic)
+          webSocketService.subscribe(topic, handleNotification);
+
+
+    
+
+          urlParams.delete("ticket");
+          const newPath = location.pathname + (urlParams.toString() ? `?${urlParams.toString()}` : '');
+          navigate(newPath, { replace: true });
+        })
+        .catch(error => {
+          console.error('Login error:', error);
+        });
+    };
+
+    if (!isLoggedIn && !isLoading && url.includes("?ticket=")) {
+      const ticket = urlParams.get("ticket");
+      const baseUrl = url.split("?")[0];
+      dispatch(startLoginProcess());
+      handleLogin(baseUrl, ticket);
     }
-  }, [isLoggedIn, isLoading, dispatch, navigate, location.pathname, urlParams]);
 
+    return () => {
+      if (stompClient !== null) {
+        stompClient.disconnect();
+        dispatch(setStompClient({ stompClient: null }));
+      }
+    };
+  }, [isLoggedIn, isLoading, url, dispatch, navigate, location.pathname, urlParams]);
   return (
     <>
-      <ToastContainer position="top-right" autoClose={5000} />
-      <Routes>
-        {isLoggedIn ? (
-          <>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/create-announcement" element={<CreateAnnouncement />} />
-            <Route path="/edit-announcement/:id" element={<EditAnnouncement />} />
-            <Route path="/apply/:id" element={<ApplyPage />} />
-            <Route path="/edit-apply/:id" element={<EditApplyPage />} />
-            <Route path="/applicants" element={<CourseApplicantsPage />} />
-            <Route path="/application-of/:appId" element={<ApplicantsPage />} />
-            <Route path="/success" element={<SuccessPage />} />
-            <Route path="/profile/:id" element={<ProfilePage />} />
-            <Route path="/edit-questionPage/:id" element={<EditQuestionPage/>}/>
-            <Route path="*" element={<MockCAS />} />
+      <WebSocketProvider authToken={authToken}>
+        <ToastContainer position="top-right" autoClose={5000} />
+        <Routes>
+          {isLoggedIn ? (
+            <>
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/create-announcement" element={<CreateAnnouncement />} />
+              <Route path="/edit-announcement/:id" element={<EditAnnouncement />} />
+              <Route path="/apply/:id" element={<ApplyPage />} />
+              <Route path="/edit-apply/:id" element={<EditApplyPage />} />
+              <Route path="/applicants" element={<CourseApplicantsPage />} />
+              <Route path="/application-of/:appId" element={<ApplicantsPage />} />
+              <Route path="/success" element={<SuccessPage />} />
+              <Route path="/profile/:id" element={<ProfilePage />} />
+              <Route path="/edit-questionPage/:id" element={<EditQuestionPage />} />
+              <Route path="*" element={<MockCAS />} />
               <Route path="/transcriptUploadPage/:id" element={<TranscriptPage></TranscriptPage>}></Route>
               <Route path="transcriptInfoPage/:id" element={<TranscriptInfo></TranscriptInfo>}></Route>
               <Route path="/questionPage/:id" element={<QuestionPage></QuestionPage>}></Route>
               <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
 
 
-          </>
-        ) : (
-          <>
-            <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
-            <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
-          </>
-        )}
-      </Routes>
+            </>
+          ) : (
+            <>
+              <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
+              <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
+            </>
+          )}
+        </Routes>
+      </WebSocketProvider>
     </>
   );
 }

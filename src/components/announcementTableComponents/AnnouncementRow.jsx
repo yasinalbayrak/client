@@ -10,6 +10,9 @@ import Popup from '../popup/Popup';
 import { deleteApplicationById, getTranscriptInfo } from "../../apiCalls"
 import InstructorList from './InstructorList';
 import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack }) {
 import IconButton from '@mui/material/IconButton';
 import { useStyles } from '../../pages/EligibilityTable';
 import { Box } from '@mui/material';
@@ -176,12 +179,12 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   const getClassByElibility = (elibility) => {
     switch (elibility) {
       case "Eligible":
-        
+
         return classes.eligibleBox;
       case "Not Eligible":
-        
+
         return classes.notEligibleBox;
-    
+
       case "Deadline Passed":
         return classes.deadlinePassed;
       default:

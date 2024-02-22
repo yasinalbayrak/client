@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Client</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+    <h2>WebSocket Client</h2>
+    <button onclick="connect()">Connect</button>
+    <button onclick="disconnect()" disabled="true">Disconnect</button>
+
+    <script type="text/javascript">
+        var stompClient = null;
+        var authToken = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiU1RVREVOVCIsInVzZXJJRCI6MSwic3ViIjoieWFzaW5hbGJheXJha0BzYWJhbmNpdW5pdi5lZHUiLCJpYXQiOjE3MDgwMjg5NjIsImV4cCI6MTcwODAzMjU2Mn0.KgcaKFFLbutVAQgLhWwzgYCAZNEfvPAqjmTAbdwe7pM'
+        function connect() {
+            var socket = new SockJS('http://localhost:8080/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect(
+                {'Authorization': authToken},function (frame) {
+                setConnected(true);
+                console.log('Connected: ' + frame);
+
+                
+                stompClient.subscribe(`/user/1/notifications`, function (notification) {
+                    console.log('hi')
+                    alert("Notification received: " + notification.body);
+                    console.log('notification', notification)
+                });
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            setConnected(false);
+            console.log("Disconnected");
+        }
+
+        function setConnected(connected) {
+            document.querySelector('button[onclick="connect()"]').disabled = connected;
+            document.querySelector('button[onclick="disconnect()"]').disabled = !connected;
+        }
+    </script>
+</body>
+</html>

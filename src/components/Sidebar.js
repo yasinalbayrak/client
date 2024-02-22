@@ -3,7 +3,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import HistoryIcon from "@mui/icons-material/History";
 import HomeIcon from "@mui/icons-material/Home";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+
 import SearchIcon from "@mui/icons-material/Search";
 import { Avatar, Button, Collapse, FormControl, IconButton, InputLabel, MenuItem, Select, styled, Toolbar, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -26,6 +26,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { logout, setTerm, switchIsInstructor } from "../redux/userSlice";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { getTerms, logout as invalidateToken } from "../apiCalls";
+import NotificationButton from "./notificationComponents/notifications";
 
 const drawerWidth = 210;
 
@@ -95,6 +96,7 @@ function Sidebar({ setTabInitial }) {
   const term = useSelector((state) => state.user.term);
   const token = useSelector((state) => state.user.JwtToken);
   const showTerms = useSelector((state) => state.user.showTerms);
+  const unreadCount = useSelector((state) => state.user.unreadNotifications);
 
   const [termSelect, setTermSelect] = React.useState(term);
   const [allTerms, setAllTerms] = React.useState([]);
@@ -130,12 +132,12 @@ function Sidebar({ setTabInitial }) {
       const termSet = (termSelect !== "")
       console.log('termSet :>> ', termSet);
       if (res.length > 0) {
-        const activeTerm = res.find(term => termSet ? term.term_code === termSelect.term_code :term.is_active === '1');
+        const activeTerm = res.find(term => termSet ? term.term_code === termSelect.term_code : term.is_active === '1');
         if (activeTerm) {
           dispatch(setTerm({ term: activeTerm }));
           setTermSelect(activeTerm);
         }
-      } 
+      }
 
     }).catch(() => {
     });
@@ -155,7 +157,7 @@ function Sidebar({ setTabInitial }) {
 
 
     //TODO
-    const homePageURL = "http://pro2-dev.sabanciuniv.edu/build/ ";
+    const homePageURL = "http://localhost:3000/build/ ";
     const logoutURL = `https://login.sabanciuniv.edu/cas/logout?service=${encodeURIComponent(homePageURL)}`;
 
 
@@ -247,26 +249,18 @@ function Sidebar({ setTabInitial }) {
             </FormControl>}
           </Box>
 
-          <Button
-            sx={{
-              color: "white",
-              borderColor: "white",
-              marginLeft: "auto",
-              display: "flex",
-              alignItems: "center",
-              paddingRight: 0,
-              width: "fit-content",
-              backgroundColor: "red", // Button color
-              transition: "background-color 0.3s", // Smooth transition for the hover effect
-              "&:hover": {
-                backgroundColor: "#4DB6AC", // Hover color (light blue)
-              },
-            }}
-            startIcon={<LogoutIcon />}
-            color="error"
-            variant="contained"
-            onClick={handleLogout}
-          />
+          <Box
+           sx={{ display: "flex", marginLeft: "auto" }}
+          >
+            <NotificationButton unreadCount={unreadCount} />
+            
+            <Button
+              startIcon={<LogoutIcon />}
+              variant="none"
+              onClick={handleLogout}
+            />
+          </Box>
+
 
         </Toolbar>
       </AppBar>
