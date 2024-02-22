@@ -14,7 +14,10 @@ const initialState = {
   isTranscriptUploded:false,
   showTerms: true,
   notificationPreference: null,
-  unreadNotifications: 0
+  unreadNotifications: 0,
+  stompClient: null,
+  connectToPublicTopic: false,
+  publicSubscription: false
 };
 
 
@@ -76,6 +79,15 @@ const userSlice = createSlice({
     },
     increaseUnreadNotificationCountByOne: (state) => {
       state.unreadNotifications = state.unreadNotifications + 1
+    },
+    setStompClient: (state, action) => {
+      state.stompClient = action.payload.stompClient
+    },
+    setConnectToPublicTopic: (state, action) => {
+      state.connectToPublicTopic = action.payload.connectToPublicTopic
+    },
+    setPublicSubscription: (state, action) => {
+      state.publicSubscription = action.payload.publicSubscription
     }
   },
 });
@@ -83,6 +95,9 @@ const userSlice = createSlice({
 console.log(userSlice);
 
 export const {
+  setPublicSubscription,
+  setConnectToPublicTopic,
+  setStompClient,
   increaseUnreadNotificationCountByOne,
   setUnreadNotificationCount,
   setNotificationPreference,

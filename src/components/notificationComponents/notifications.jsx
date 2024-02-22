@@ -25,7 +25,9 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { useDispatch, useSelector } from "react-redux";
-import { setNotificationPreference, setUnreadNotificationCount } from "../../redux/userSlice"
+import { increaseUnreadNotificationCountByOne, setNotificationPreference, setPublicSubscription, setUnreadNotificationCount } from "../../redux/userSlice"
+import { handleInfo } from '../../errors/GlobalErrorHandler';
+import webSocketService from '../service/WebSocketService';
 
 const NotificationButton = ({ unreadCount }) => {
 
@@ -116,14 +118,14 @@ const NotificationDropdown = () => {
         setAllNotifications(newData);
         setFilteredNotifications(showAll ? newData : newData.filter(each => !each.read));
     };
-    
+
 
     const handleNotificationStatusChange = (read, notificationId) => {
         const request = [{ notificationId, read }];
-        
+
         changeNotificationStatus(request).then(() => {
             dispatch(
-                setUnreadNotificationCount({unreadNotifications: unreadCount + (read ? -1 : 1)})
+                setUnreadNotificationCount({ unreadNotifications: unreadCount + (read ? -1 : 1) })
             )
             updateNotifications(allNotifications.map((nt) => {
                 return nt.id === notificationId ? { ...nt, read } : nt;
@@ -134,14 +136,14 @@ const NotificationDropdown = () => {
     };
 
     const handleMarkAllRead = () => {
-        
+
         const request = allNotifications.map((each) => ({
             "notificationId": each.id,
             "read": true
         }));
         changeNotificationStatus(request).then(() => {
             dispatch(
-                setUnreadNotificationCount({unreadNotifications:0})
+                setUnreadNotificationCount({ unreadNotifications: 0 })
             )
             updateNotifications(allNotifications.map((nt) => ({ ...nt, read: true })));
         }).catch((_) => {
@@ -176,7 +178,7 @@ const NotificationDropdown = () => {
                     handleNotificationStatusChangeCallback={handleNotificationStatusChange}
                 />;
             case "two":
-                
+
                 return null;
             case "three":
                 return <Settings />;
@@ -199,7 +201,7 @@ const NotificationDropdown = () => {
                     </div>
                     {/*<MoreVertIcon sx={{ color: "black", marginLeft: "5px" }} />*/}
                 </div>
-}
+                }
 
             </div>
 
@@ -231,23 +233,23 @@ const NotificationDropdown = () => {
 const getIconForNotification = (type) => {
     switch (type) {
         case "NEW_ANNOUNCEMENT":
-            return  <CampaignIcon sx={{ color: "#ffd900", width: "30px", height: "30px" }} />
+            return <CampaignIcon sx={{ color: "#ffd900", width: "30px", height: "30px" }} />
         case "ANNOUNCEMENT_UPDATE":
             return <UpdateIcon sx={{ color: "grey", width: "30px", height: "30px" }} />
         case "INFO":
             return <InfoIcon sx={{ color: "blue", width: "30px", height: "30px" }} />
         case "ACCEPT":
-            return <svg fill="none" height="30" viewBox="0 0 24 24" width="30" xmlns="http://www.w3.org/2000/svg"><path d="M9.00012 12L11.0001 14L15.0001 10M7.83486 4.69705C8.55239 4.63979 9.23358 4.35763 9.78144 3.89075C11.0599 2.80123 12.9403 2.80123 14.2188 3.89075C14.7667 4.35763 15.4478 4.63979 16.1654 4.69705C17.8398 4.83067 19.1695 6.16031 19.3031 7.83474C19.3603 8.55227 19.6425 9.23346 20.1094 9.78132C21.1989 11.0598 21.1989 12.9402 20.1094 14.2187C19.6425 14.7665 19.3603 15.4477 19.3031 16.1653C19.1695 17.8397 17.8398 19.1693 16.1654 19.303C15.4479 19.3602 14.7667 19.6424 14.2188 20.1093C12.9403 21.1988 11.0599 21.1988 9.78144 20.1093C9.23358 19.6424 8.55239 19.3602 7.83486 19.303C6.16043 19.1693 4.83079 17.8397 4.69717 16.1653C4.63991 15.4477 4.35775 14.7665 3.89087 14.2187C2.80135 12.9402 2.80135 11.0598 3.89087 9.78132C4.35775 9.23346 4.63991 8.55227 4.69717 7.83474C4.83079 6.16031 6.16043 4.83067 7.83486 4.69705Z"  
-                        stroke="green" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>
+            return <svg fill="none" height="30" viewBox="0 0 24 24" width="30" xmlns="http://www.w3.org/2000/svg"><path d="M9.00012 12L11.0001 14L15.0001 10M7.83486 4.69705C8.55239 4.63979 9.23358 4.35763 9.78144 3.89075C11.0599 2.80123 12.9403 2.80123 14.2188 3.89075C14.7667 4.35763 15.4478 4.63979 16.1654 4.69705C17.8398 4.83067 19.1695 6.16031 19.3031 7.83474C19.3603 8.55227 19.6425 9.23346 20.1094 9.78132C21.1989 11.0598 21.1989 12.9402 20.1094 14.2187C19.6425 14.7665 19.3603 15.4477 19.3031 16.1653C19.1695 17.8397 17.8398 19.1693 16.1654 19.303C15.4479 19.3602 14.7667 19.6424 14.2188 20.1093C12.9403 21.1988 11.0599 21.1988 9.78144 20.1093C9.23358 19.6424 8.55239 19.3602 7.83486 19.303C6.16043 19.1693 4.83079 17.8397 4.69717 16.1653C4.63991 15.4477 4.35775 14.7665 3.89087 14.2187C2.80135 12.9402 2.80135 11.0598 3.89087 9.78132C4.35775 9.23346 4.63991 8.55227 4.69717 7.83474C4.83079 6.16031 6.16043 4.83067 7.83486 4.69705Z"
+                stroke="green" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>
         case "REJECT":
-            return  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="24" viewBox="0 0 512 512">
-                        <path fill="#fa0000" d="M256 48a208 208 0 1 1 0 416a208 208 0 1 1 0-416m0 464a256 256 0 1 0 0-512a256 256 0 1 0 0 512m-81-337c-9.4 9.4-9.4 24.6 0 33.9l47 47l-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47l47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47l47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47l-47-47c-9.4-9.4-24.6-9.4-33.9 0"></path></svg>
+            return <svg xmlns="http://www.w3.org/2000/svg" width="30" height="24" viewBox="0 0 512 512">
+                <path fill="#fa0000" d="M256 48a208 208 0 1 1 0 416a208 208 0 1 1 0-416m0 464a256 256 0 1 0 0-512a256 256 0 1 0 0 512m-81-337c-9.4 9.4-9.4 24.6 0 33.9l47 47l-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47l47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47l47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47l-47-47c-9.4-9.4-24.6-9.4-33.9 0"></path></svg>
         case "STUDENT_STATUS_UPDATE":
             return <img src={graduated} alt="Logo Right" style={{ width: "30px", height: "30px" }} />
         default:
             return <InfoIcon sx={{ color: "blue", width: "30px", height: "30px" }} />
     }
-} 
+}
 
 const NotificationItem = ({ allNotifications, filteredNotifications, handleNotificationStatusChangeCallback }) => filteredNotifications.length === 0 ? <>
     <div className="no-data">
@@ -278,7 +280,9 @@ const NotificationItem = ({ allNotifications, filteredNotifications, handleNotif
 const Settings = () => {
     const dispatch = useDispatch();
     const reduxPreferences = useSelector((state) => (state.user.notificationPreference));
-   
+    const stompClient = useSelector((state) => (state.user.stompClient));
+    const publicSubscription = useSelector((state) => (state.user.publicSubscription));
+
 
 
     const handleChange = (preferenceKey) => (event) => {
@@ -286,17 +290,43 @@ const Settings = () => {
             ...reduxPreferences,
             [preferenceKey]: event.target.checked
         };
-        
+
         delete updatedPreferences.id
 
-        changeNotificationPreferences(updatedPreferences).then((response)=>{
-           
-            dispatch(setNotificationPreference({notificationPreference: response}));
-        }).catch((_)=>{})
-       
+        changeNotificationPreferences(updatedPreferences).then((response) => {
+
+            dispatch(setNotificationPreference({ notificationPreference: response }));
+        }).catch((_) => { })
+
     };
 
-    
+
+    useEffect(() => {
+        console.log('reduxPreferences', reduxPreferences)
+        console.log('publicSubscription', publicSubscription)
+        const handlePublicNotification = (notification) => {
+
+            dispatch(increaseUnreadNotificationCountByOne());
+            handleInfo(notification.description);
+        };
+        const topic = `/topic`;
+
+        if (!publicSubscription) {
+            if (reduxPreferences?.followingNewAnnouncement) {
+                webSocketService.subscribe(topic, handlePublicNotification);
+                dispatch(setPublicSubscription({ publicSubscription: true }))
+            }
+        } else {
+            if (!(reduxPreferences?.followingNewAnnouncement ?? false)) {
+                
+                webSocketService.unsubscribe(topic, handlePublicNotification);
+                dispatch(setPublicSubscription({ publicSubscription: false }))
+            }
+        }
+
+    }, [publicSubscription, stompClient, dispatch, reduxPreferences?.followingNewAnnouncement]);
+
+
 
     return (
         <div className="settings-form-group">
@@ -335,6 +365,17 @@ const Settings = () => {
                     onChange={handleChange('followingEmail')}
                 />
             </div>
+
+            <span className='ctg'>Preferences</span>
+            <div className="settings-form-control">
+                <span>Notify me on new announcements</span>
+                <Switch
+                    className='sw'
+                    checked={reduxPreferences?.followingNewAnnouncement}
+                    onChange={handleChange('followingNewAnnouncement')}
+                />
+            </div>
+
         </div>
     );
 };
