@@ -170,25 +170,30 @@ function EditApplyPage() {
       console.log("file too big")
       return;
     }
-    updateApplicationById(
-      applicationInfo.id,
-      applicationInfo.student_username,
-      applicationInfo.grade,
-      applicationInfo.faculty,
-      applicationInfo.working_hours,
-      applicationInfo.status,
-      intID,
-      temp,
-      transcript
-    ).then((res) => {
-      console.log(res);
-      if (res == "invalid transcript") {
-        setSnackOpen(true);
-      }
-      else {
-        navigate("/home", { replace: true, state: { successText: "Your application has been successfully updated." } });
-      }
-    });
+    try{
+      updateApplicationById(
+        applicationInfo.id,
+        applicationInfo.student_username,
+        applicationInfo.grade,
+        applicationInfo.faculty,
+        applicationInfo.working_hours,
+        applicationInfo.status,
+        intID,
+        temp,
+        transcript
+      ).then((res) => {
+        console.log(res);
+        if (res == "invalid transcript") {
+          setSnackOpen(true);
+        }
+        else {
+          navigate("/home", { replace: true, state: { successText: "Your application has been successfully updated." } });
+        }
+      });
+    }
+    catch (error) {
+    }
+    
   };
 
   const onAnswerChange = (e, question) => {
