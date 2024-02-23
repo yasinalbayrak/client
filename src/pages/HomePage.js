@@ -29,11 +29,11 @@ function HomePage() {
         // If the location state includes updatedAnnouncement and the update status is false, update the rows state
         if (location.state && location.state.updatedAnnouncement && !updated) {
           // Update the rows state with the updated data or refetch the announcements data
-          setRows(announcements);
+          setRows(announcements.content);
           setUpdated(true); // Set the update status to true
         } else {
           // Set the rows state with the fetched data
-          setRows(announcements);
+          setRows(announcements.content);
         }
       } catch (error) {
         // Handle the error here

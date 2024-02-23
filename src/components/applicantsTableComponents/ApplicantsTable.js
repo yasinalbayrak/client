@@ -85,7 +85,7 @@ function CustomRow(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const currentTranscript = await getCurrentTranscript(userID);
+        const currentTranscript = await getCurrentTranscript(row.student.user.id);
         setStudentDetails(currentTranscript);
 
         const courseGrades = await getCourseGrades([props.courseCode], userID);
