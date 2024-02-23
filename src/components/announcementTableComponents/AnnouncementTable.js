@@ -121,6 +121,12 @@ export default function AnnouncementTable(props) {
       return userApplication.application?.applicationId === applicationID;
     });
   }
+
+  const isApplied2 = (applicationID) => {
+    return userApplications?.filter((userApplication) => {
+      return userApplication.application?.applicationId === applicationID;
+    });
+  }
   const deleteApplication = (id) => {
     setUserApplications((prev) => prev.filter((app) => (app?.application?.applicationId || app?.applicationId) !== id));
     setRows((prev) => prev.filter((app) => app?.applicationId !== id));
@@ -215,6 +221,7 @@ export default function AnnouncementTable(props) {
                     navigate={navigate}
                     isInstructor={isInstructor}
                     isApplied={isApplied}
+                    isApplied2={isApplied2}
                     deleteCallBack={deleteApplication}
 
                   />
