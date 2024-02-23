@@ -25,7 +25,7 @@ import Sidebar from "../components/Sidebar";
 import AppBarHeader from "../components/AppBarHeader";
 import { useNavigate, useParams } from "react-router";
 import { useSelector } from "react-redux";
-import { getAnnouncement, getApplicationByUsername, updateApplicationById, getCurrentTranscript, getApplicationRequestById} from "../apiCalls";
+import { getAnnouncement, getApplicationByUsername, updateApplicationById, getCurrentTranscript, getApplicationRequestById, updateApplicationRequest} from "../apiCalls";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AlertTitle from '@mui/material/AlertTitle';
 import Stack from '@mui/material/Stack';
@@ -98,6 +98,30 @@ function EditApplyPage() {
     flipPopup()
     
   }
+
+  useEffect(() => {
+    // Ensure 'id' is available and not undefined or null
+    if (id) {
+      const fetchApplicationRequest = async () => {
+        try {
+          // Now we're sure 'id' is passed to 'getAnnouncement'
+          const results = await getApplicationRequestById(id);
+          setAppReqInfo(results);
+          setApplicationId(results.application.applicationId);
+          data.current = results;
+          isLoading.current = false;
+          console.log(results);
+        } catch (error) {
+          console.error('Failed to fetch app request:', error);
+        }
+      };
+
+      fetchApplicationRequest(); // Execute the function
+    } else {
+      console.warn('Warning: missing ID.');
+    }
+  }, [id]); // Dependency array is correct, assuming 'id' changes when expected
+  
 
   const handleSnackClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -181,6 +205,66 @@ function EditApplyPage() {
         intID,
         temp,
         transcript
+      ).then((res) => {
+        console.log(res);
+        if (res == "invalid transcript") {
+          setSnackOpen(true);
+        }
+        else {
+          navigate("/home", { replace: true, state: { successText: "Your application has been successfully updated." } });
+        }
+      });
+    }
+    catch (error) {
+    }
+    
+  };
+
+  const onSubmit2 = () => {
+    console.log(questionsAndAnswers);
+    let intID = parseInt(id);
+    console.log(
+      appReqInfo.applicationRequestId,
+      appReqInfo.application.applicationId,
+      appReqInfo.qandA
+    );
+    var temp = [];
+    var idx = 0;
+    for (var q in questionsAndAnswers) {
+      if (!questionsAndAnswers.hasOwnProperty(q)) continue;
+
+      var temp2 = {};
+      temp2.question_id = parseInt(q);
+      temp2.id = answerIds[idx];
+      if (!questionsAndAnswers[q]) {
+        for (let index = 0; index < questions.length; index++) {
+          const element = questions[index];
+          if (element.id == q && element.type !== "Multiple Choice") {
+            temp2.answer = defaultAnswers[index];
+          }
+          if (element.id == q && element.type === "Multiple Choice") {
+            temp2.answer = defaultAnswers[index];
+          }
+        }
+      } else {
+        temp2.answer = questionsAndAnswers[q];
+      }
+      temp.push(temp2);
+      idx += 1;
+    }
+    console.log(temp);
+    
+    if (transcript && transcript.size > 1000000) {
+      setSnackOpen(true);
+      console.log("file too big")
+      return;
+    }
+    try{
+      updateApplicationRequest(
+        appReqInfo.applicationRequestId,
+      appReqInfo.application.applicationId,
+      "",
+      appReqInfo.qandA
       ).then((res) => {
         console.log(res);
         if (res == "invalid transcript") {
@@ -283,28 +367,6 @@ function EditApplyPage() {
   //   });
   // }, [announcementInfo]);
 
-  useEffect(() => {
-    // Ensure 'id' is available and not undefined or null
-    if (id) {
-      const fetchApplicationRequest = async () => {
-        try {
-          // Now we're sure 'id' is passed to 'getAnnouncement'
-          const results = await getApplicationRequestById(id);
-          setAppReqInfo(results);
-          setApplicationId(results.application.applicationId);
-          data.current = results;
-          isLoading.current = false;
-          console.log(results);
-        } catch (error) {
-          console.error('Failed to fetch app request:', error);
-        }
-      };
-
-      fetchApplicationRequest(); // Execute the function
-    } else {
-      console.warn('Warning: missing ID.');
-    }
-  }, [id]); // Dependency array is correct, assuming 'id' changes when expected
   
   console.log(appReqInfo)
   console.log(data.current)
@@ -361,7 +423,7 @@ function EditApplyPage() {
                   Continue with questions
                   </Button>
                   ) : (
-                    <Button variant="contained" startIcon={<ArrowForwardIcon />} color="success" onClick={onSubmit}>
+                    <Button variant="contained" startIcon={<ArrowForwardIcon />} color="success" onClick={onSubmit2}>
                       Complete the application
                     </Button>
                   )}
