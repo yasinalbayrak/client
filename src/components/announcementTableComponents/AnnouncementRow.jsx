@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Popup from '../popup/Popup';
-import { deleteApplicationById, getTranscriptInfo, addFollowerToApplication } from "../../apiCalls"
+import { deleteApplicationById, getTranscriptInfo, addFollowerToApplication, removeFollowerFromApplication } from "../../apiCalls"
 import InstructorList from './InstructorList';
 import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -204,6 +204,13 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     }).catch((_) => (null))
   }
 
+  const removeFollower = (applicationId) => {
+    removeFollowerFromApplication(applicationId).then((res) => {
+      filterEligibilityCallback(applicationId);
+    }).catch((_) => (null))
+  }
+
+
   return (course.courseCode &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1 }}>
       <TableCell sx={{ bgcolor: "#FAFAFA",width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
@@ -213,6 +220,12 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
             sx={{ color: "blue" }}
           >
             <BookmarkBorderIcon />
+          </IconButton>
+          <IconButton
+            onClick={() => removeFollower(applicationId)}
+            sx={{ color: "red" }}
+          >
+            <BookmarkIcon />
           </IconButton>
       </TableCell>
       <TableCell sx={{  width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left" component="th" scope="row">
