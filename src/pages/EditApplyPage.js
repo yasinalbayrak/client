@@ -32,6 +32,8 @@ import Stack from '@mui/material/Stack';
 import SendIcon from "@mui/icons-material/Send";
 import BackButton from "../components/buttons/BackButton";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ClearIcon from '@mui/icons-material/Clear';
+import Popup from "../components/popup/Popup";
 
 function EditApplyPage() {
   const navigate = useNavigate();
@@ -85,6 +87,17 @@ function EditApplyPage() {
 
   const data = useRef();
   const isLoading = useRef();
+
+  const [withdrawPopupOpened, setWithdrawPopupOpened] = useState(false);
+
+  const flipPopup = () => {
+    setWithdrawPopupOpened((prev) => !prev);
+  };
+
+  const withdrawApplication = () => {
+    flipPopup()
+    
+  }
 
   const handleSnackClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -330,6 +343,7 @@ function EditApplyPage() {
                 </Stack>
               </Grid>
               <br></br>
+            <Grid direction="column" alignItems="center" display="flex">
               <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                 <Grid item>
                   <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage/"+id, { replace: true })} color="primary">
@@ -348,6 +362,27 @@ function EditApplyPage() {
                   )}
                 </Grid>
               </Grid>
+              <br></br>
+              <Grid>
+                {appReqInfo.application?.questions.length == 0 ? (
+                 <> <Button variant="contained" startIcon={<ClearIcon />} color="error" onClick={flipPopup}>
+                  Withdraw the application
+                  </Button>
+                  <Popup
+                  opened={withdrawPopupOpened}
+                  flipPopup={flipPopup}
+                  title={"Confirm Withdrawal?"}
+                  text={"This action is irreversible, and the selected application will be permanently withdrawed."}
+                  posAction={withdrawApplication}
+                  negAction={flipPopup}
+                  posActionText={"Withdraw"}
+                />
+                </>
+                ) : (
+                  null
+                )}
+              </Grid>
+            </Grid>
             </Grid>
           </Box>
         </Box>

@@ -16,7 +16,7 @@ import IconButton from '@mui/material/IconButton';
 import { useStyles } from '../../pages/EligibilityTable';
 import { Box } from '@mui/material';
 
-export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, deleteCallBack, filterEligibilityCallback }) {
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied,isApplied2, deleteCallBack, filterEligibilityCallback }) {
 
   const { instructor_names, weeklyWorkingTime, term, section, status: applicationStatus, isTimedOut, authorizedInstructors } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
@@ -54,6 +54,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     isStudentEligible
   } = data.application ?? data;
 
+  const appliedAppReqId = isApplied2(applicationId)[0]?.applicationRequestId;
   const applicationRequestId = data.applicationRequestId ?? "";
 
   const [deletePopupOpened, setDeletePopupOpened] = useState(false);
@@ -120,9 +121,13 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       //const applicationId = data.applicationId;
       if (isApplied(applicationId)) {
         return (
-          <span style={{ color: 'green' }}>
-            Applied
-          </span>
+          <IconButton
+          sx={{ color: "blue" }}
+          onClick={() => navigate("/edit-apply/" + appliedAppReqId, { replace: true })}
+           >
+
+            <EditIcon />
+        </IconButton>
         );
       }
       else {
@@ -243,12 +248,13 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         {renderButtons()}
       </TableCell>
 
-      {!isInstructor && tabValue === 1 && <TableCell sx={{ width: "4rem" }} align="right" component="th" scope="row">
-        <Button
-          variant='contained'
-          onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}
-          startIcon={<EditIcon />} >
-        </Button>
+      {!isInstructor && tabValue === 1 && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
+      <IconButton
+        sx={{ color: "blue" }}
+        onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}>
+        
+          <EditIcon />
+      </IconButton>
       </TableCell>}
 
       {(!isInstructor && tabValue === 0) && <TableCell sx={{ width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
