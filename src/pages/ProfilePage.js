@@ -44,7 +44,7 @@ function ProfilePage(){
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const currentTranscript = await getCurrentTranscript(userID);
+            const currentTranscript = await getCurrentTranscript(id);
             setUser(currentTranscript);
           } catch (error) {
             // Centralized error handling or log the error
@@ -54,7 +54,7 @@ function ProfilePage(){
         };
     
         fetchData();
-      }, []);
+      }, [id]);
 
     console.log(user);
 
@@ -113,6 +113,7 @@ return(
           <TableRow>
             <TableCell sx={{ fontWeight: 'bold' }}>Course Name</TableCell>
             <TableCell align="center" sx={{ fontWeight: 'bold' }}>Grade</TableCell>
+            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Term</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -122,6 +123,7 @@ return(
                 {course.courseCode}
               </TableCell>
               <TableCell align="center">{course.grade}</TableCell>
+              <TableCell align="center">{course.term}</TableCell>
             </TableRow>
           ))}
         </TableBody>
