@@ -677,6 +677,23 @@ async function removeFollowerFromApplication(applicationId){
   }
 }
 
+async function getApplicationsByFollower(){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.get(
+      apiEndpoint + "/applications/byFollowers",
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+
+}
+
 export {
   getUnreadNotificationCount,
   changeNotificationPreferences,
@@ -711,6 +728,7 @@ export {
   finalizeStatus,
   getTranscriptInfo,
   addFollowerToApplication,
-  removeFollowerFromApplication
+  removeFollowerFromApplication,
+  getApplicationsByFollower
 
 };
