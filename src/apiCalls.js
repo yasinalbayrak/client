@@ -642,6 +642,24 @@ async function getUnreadNotificationCount(token) {
     handleError(error)
   }
 }
+
+async function addFollowerToApplication(applicationId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applications/" + applicationId + "/followers",
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
 export {
   getUnreadNotificationCount,
   changeNotificationPreferences,
@@ -674,6 +692,7 @@ export {
   getApplicationRequestById,
   updateApplicationRequest,
   finalizeStatus,
-  getTranscriptInfo
+  getTranscriptInfo,
+  addFollowerToApplication
 
 };
