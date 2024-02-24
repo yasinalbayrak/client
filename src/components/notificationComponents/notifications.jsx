@@ -265,7 +265,7 @@ const getIconForNotification = (type) => {
 const NotificationItem = ({ allNotifications, filteredNotifications, handleNotificationStatusChangeCallback }) => filteredNotifications.length === 0 ? <>
     <div className="no-data">
         {allNotifications.length === 0 ? <NotificationsOffIcon sx={{ color: "black", fontSize: "12rem" }} /> : <MarkChatReadSharpIcon sx={{ color: "green", fontSize: "12rem" }} />}
-        <div className="no-not">{allNotifications.length === 0 ? "No notifications yet." : "You have read all of your notifications."}</div>
+        <div className="no-not">{allNotifications.length === 0 ? "No notifications for the last 60 days." : "You have read all of your notifications."}</div>
 
     </div>
 </>
