@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Popup from '../popup/Popup';
-import { deleteApplicationById, getTranscriptInfo } from "../../apiCalls"
+import { deleteApplicationById, getTranscriptInfo, addFollowerToApplication, removeFollowerFromApplication } from "../../apiCalls"
 import InstructorList from './InstructorList';
 import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -16,7 +16,8 @@ import IconButton from '@mui/material/IconButton';
 import { useStyles } from '../../pages/EligibilityTable';
 import { Box } from '@mui/material';
 
-export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied,isApplied2, deleteCallBack, filterEligibilityCallback }) {
+
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied,isApplied2, deleteCallBack, filterEligibilityCallback, followedApplications, handleFollowedApplications }) {
 
   const { instructor_names, weeklyWorkingTime, term, section, status: applicationStatus, isTimedOut, authorizedInstructors } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
@@ -69,6 +70,16 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       deleteCallBack(applicationId)
     }).catch((_) => (null))
   }
+
+  const inFollowedApplications = (applicationId) => {
+    return followedApplications.some((app) => app.applicationId === applicationId);
+  }
+
+
+  // useEffect(() => {
+  //   inFollowedApplications(applicationId);
+  // }, [followedApplications, changedFollowed]);
+
 
   console.log('appReqId :>> ', applicationRequestId);
 
@@ -197,10 +208,35 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     }
   }
 
+  const addFollower = (applicationId) => {
+    addFollowerToApplication(applicationId).then((res) => {
+      filterEligibilityCallback(applicationId);
+    }).catch((_) => (null))
+  }
+
+  const removeFollower = (applicationId) => {
+    removeFollowerFromApplication(applicationId).then((res) => {
+      filterEligibilityCallback(applicationId);
+    }).catch((_) => (null))
+  }
+
+
   return (course.courseCode &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1 }}>
       <TableCell sx={{ bgcolor: "#FAFAFA",width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
         {course.courseCode}
+       { !inFollowedApplications(applicationId)? <IconButton
+            onClick={() => {addFollower(applicationId); handleFollowedApplications()}}
+            sx={{ color: "blue" }}
+          >
+            <BookmarkBorderIcon />
+          </IconButton>:
+          <IconButton
+            onClick={() => {removeFollower(applicationId); handleFollowedApplications()}}
+            sx={{ color: "red" }}
+          >
+            <BookmarkIcon />
+          </IconButton>}
       </TableCell>
       <TableCell sx={{  width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left" component="th" scope="row">
         {(!isInstructor && tabValue === 1 ? data.application?.section : section) || "Not Specified"}

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './notification.css';
-import { Button } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import useOutsideAlerter from '../alerts/outsideAlerter';
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CloseIcon from '@mui/icons-material/Close';
@@ -11,7 +11,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import AssignmentTurnedInSharpIcon from '@mui/icons-material/AssignmentTurnedInSharp';
 import MarkChatReadSharpIcon from '@mui/icons-material/MarkChatReadSharp';
 import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
-import { changeNotificationPreferences, changeNotificationStatus, getNotifications } from '../../apiCalls';
+import { changeNotificationPreferences, changeNotificationStatus, getNotifications, getApplicationsByFollower } from '../../apiCalls';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import CampaignIcon from '@mui/icons-material/Campaign';
@@ -99,6 +99,11 @@ const NotificationDropdown = () => {
     const dispatch = useDispatch();
 
 
+
+
+    const [followedApplications, setFollowedApplications] = useState([]);
+
+
     useEffect(() => {
         getNotifications().then((data) => {
             setAllNotifications(data);
@@ -108,6 +113,15 @@ const NotificationDropdown = () => {
         });
 
 
+    }, []);
+
+    useEffect(() => {
+        getApplicationsByFollower().then((data) => {
+            console.log('data', data)
+            setFollowedApplications(data);
+        }).catch((_) => {
+            /* Error already printed */
+        });
     }, []);
 
     const updateNotifications = (newData) => {
@@ -175,7 +189,8 @@ const NotificationDropdown = () => {
                 />;
             case "two":
 
-                return null;
+                return <FollowedItems followedApplications={followedApplications} />;
+
             case "three":
                 return <Settings />;
             default:
@@ -271,6 +286,36 @@ const NotificationItem = ({ allNotifications, filteredNotifications, handleNotif
             </div>
         </div>
     ))
+
+
+const FollowedItems = ({ followedApplications }) => followedApplications.length === 0 ? <>
+<div className="no-data">
+    {followedApplications.length === 0 ? <NotificationsOffIcon sx={{ color: "black", fontSize: "12rem" }} /> : <MarkChatReadSharpIcon sx={{ color: "green", fontSize: "12rem" }} />}
+    <div className="no-not">{followedApplications.length === 0 ? "No followed applications yet." : "You have followed all applications."}</div>
+</div>
+</>
+    : followedApplications.map(application => (
+        <div className='otr'>
+            <div className="ic">
+                <AssignmentTurnedInSharpIcon sx={{ color: "green", width: "30px", height: "30px" }} />
+            </div>
+            <div key={application.applicationId} className={`notification-item`}>
+                <div className="notification-title">
+                    {application.course.courseCode}
+                </div>
+                <div className="notification-title">
+                {application.term}
+                </div>
+                <div className="notification-title">
+                    {application.isTimedOut? "Closed":"Active"}
+                </div>
+                <div className="notification-description">Instructor: {application.authorizedInstructors[0].user.name + " " + application.authorizedInstructors[0].user.surname }</div>
+                <div ></div>
+            </div>
+        </div>
+    ))
+
+
 
 
 const Settings = () => {

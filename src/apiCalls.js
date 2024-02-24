@@ -642,6 +642,58 @@ async function getUnreadNotificationCount(token) {
     handleError(error)
   }
 }
+
+async function addFollowerToApplication(applicationId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applications/" + applicationId + "/followers/add",
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+async function removeFollowerFromApplication(applicationId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applications/" + applicationId + "/followers/remove",
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+async function getApplicationsByFollower(){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.get(
+      apiEndpoint + "/applications/byFollowers",
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+
+}
+
 export {
   getUnreadNotificationCount,
   changeNotificationPreferences,
@@ -674,6 +726,9 @@ export {
   getApplicationRequestById,
   updateApplicationRequest,
   finalizeStatus,
-  getTranscriptInfo
+  getTranscriptInfo,
+  addFollowerToApplication,
+  removeFollowerFromApplication,
+  getApplicationsByFollower
 
 };
