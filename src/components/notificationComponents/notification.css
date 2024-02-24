@@ -29,7 +29,7 @@
 
 .notification-dropdown {
     position: absolute;
-    top: 150%; 
+    top: 35px; 
     right: 10px;
     background-color: white;
     border: 1px solid #ccc;

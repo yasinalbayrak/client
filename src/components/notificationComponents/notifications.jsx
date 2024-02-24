@@ -80,7 +80,7 @@ const NotificationIcon = ({ unreadCount, dropdownVisible, setDropdownVisible }) 
     return (
         <div className="notification-icon-wrapper" onClick={handleDropdownClick}>
             <div className="nt" onClick={() => setDropdownVisible(!dropdownVisible)}>
-                {unreadCount > 0 ? <i className="your-icon-class">🔔</i> : <NotificationsIcon />}
+                {unreadCount > 0 ? <div className="icon-class" style={{width: "24px", height: "24px"}}>🔔</div> : <NotificationsIcon />}
                 {unreadCount > 0 && <span className="notification-counter">{unreadCount}</span>}
             </div>
 
@@ -97,11 +97,7 @@ const NotificationDropdown = () => {
     const [notificationPreferences, setNotificationPreferences] = useState(null);
     const unreadCount = useSelector((state) => state.user.unreadNotifications);
     const dispatch = useDispatch();
-    useEffect(() => {
-        console.log('unreadCount', unreadCount)
 
-
-    }, [unreadCount]);
 
     useEffect(() => {
         getNotifications().then((data) => {
