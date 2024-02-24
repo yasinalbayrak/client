@@ -63,8 +63,12 @@ export default function FilterDropdown({ labels, setLabels, searchCallback, chec
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
+                
             >
-                <FilterAltIcon />
+                <FilterAltIcon 
+                sx={{
+                    fontSize: "18px"
+                }}/>
             </IconButton>
             {labels && (
                 <Menu

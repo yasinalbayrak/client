@@ -89,7 +89,7 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
 
         <StyledTableCell>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', flexDirection: 'row' }}>
-            Last Application Date/Time
+            Deadline
             <SortIcon
 
               onClick={handleSortLastDate}
@@ -122,9 +122,9 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
               </Popup>} </Box>
         </StyledTableCell>
 
-        {tabValue === 1 && !isInstructor && <StyledTableCell align="left">Application Status</StyledTableCell>}
+        {tabValue === 1 && !isInstructor && <StyledTableCell align="center">Application Status</StyledTableCell>}
         <StyledTableCell align="left">Actions</StyledTableCell>
-        {(!isInstructor && tabValue === 0) && <StyledTableCell align="left">
+        {(!isInstructor && tabValue === 0) && <StyledTableCell align="center" sx={{minWidth: "8rem"}}>
           Eligibility
           <FilterDropdown 
             labels={ labels}

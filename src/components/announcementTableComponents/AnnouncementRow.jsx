@@ -294,7 +294,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       </TableCell>}
 
       {(!isInstructor && tabValue === 0) && <TableCell sx={{ width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
-        <Box align="center" className={getClassByElibility(isStudentEligible)}>
+      <Box sx={{ width: "70%", marginLeft: "auto", marginRight: "auto" }} className={getClassByElibility(isStudentEligible)}>
           {isStudentEligible}
         </Box>
       </TableCell>}
