@@ -17,12 +17,12 @@ import { useStyles } from '../../pages/EligibilityTable';
 import { Box } from '@mui/material';
 
 
-export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied,isApplied2, deleteCallBack, filterEligibilityCallback }) {
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied,isApplied2, deleteCallBack, filterEligibilityCallback,setFollowingCallback }) {
 
-  const { instructor_names, weeklyWorkingTime, term, section, status: applicationStatus, isTimedOut, authorizedInstructors } = data;
+  const { instructor_names, weeklyWorkingTime, term, section, status: applicationStatus, isTimedOut, authorizedInstructors, isFollowing } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
-  const [isFollowed, setIsFollowed] = useState(false);
-  const [followedApplications, setFollowedApplications] = useState(null);
+  
+
 
   const classes = useStyles();
 
@@ -75,47 +75,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
   
 
-  useEffect(() => {
-    getApplicationsByFollower().then((res) => {
-      setFollowedApplications(res);
-      console.log("res", res);
-    }).catch((_) => (null))
-  }, [ isFollowed]);
-
-  //console.log("followedApplications", followedApplications);
-
-  useEffect(() => {
-    if (followedApplications) {
-      const isFollowed = inFollowedApplications(applicationId);
-      setIsFollowed(isFollowed);
-    }
-  }, [followedApplications]);
-
-
-  // useEffect(() => {
-  //   const isFollowed = inFollowedApplications(applicationId);
-  //   setIsFollowed(isFollowed);
-  //   console.log("followedApplications", followedApplications);
-  //   console.log("isFollowed", isFollowed);
-  
-  // }, [applicationId]);
-
-  const inFollowedApplications = (applicationId) => {
-    if(followedApplications){
-      return followedApplications?.some((app) => app.applicationId === applicationId);
-    }
-  }
-
-
-  // useEffect(() => {
-  //   inFollowedApplications(applicationId);
-  // }, [followedApplications, changedFollowed]);
-
-
-  console.log('appReqId :>> ', applicationRequestId);
-
   const renderButtons = () => {
-    // Condition for instructor
     if (isInstructor) {
       if (instructor_names.some((instructor) => (userName.toLowerCase() === instructor.toLowerCase()))) {
         return (<>
@@ -241,28 +201,27 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
   const addFollower = (applicationId) => {
     addFollowerToApplication(applicationId).then((res) => {
-      filterEligibilityCallback(applicationId);
+      setFollowingCallback(applicationId)
       console.log("res", res);
 
     }).catch((_) => (null))
 
-    setIsFollowed((prev) => !prev);
+
   }
 
   const removeFollower = (applicationId) => {
     removeFollowerFromApplication(applicationId).then((res) => {
-      filterEligibilityCallback(applicationId);
+      setFollowingCallback(applicationId)
     }).catch((_) => (null))
 
-    setIsFollowed(isFollowed => !isFollowed);
   }
 
 
-  return ((course.courseCode && followedApplications) &&
+  return ((course.courseCode) &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1 }}>
       <TableCell sx={{ bgcolor: "#FAFAFA",width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
         {course.courseCode}
-       { !isFollowed? <IconButton
+       { !isFollowing? <IconButton
             onClick={() => {addFollower(applicationId);}}
             sx={{ color: "blue", paddingInline: 0.5, }}
           >

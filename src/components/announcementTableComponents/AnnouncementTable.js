@@ -165,7 +165,14 @@ export default function AnnouncementTable(props) {
   const filterEligibility = (filter) => {
     setRows(filter.length > 0 ? allRows.filter((row) => (filter.includes(row.isStudentEligible))) : allRows)
   }
-
+  const setFollowingCallback = (applicationId) => {
+    setRows(prev => prev.map(
+      item => item.applicationId === applicationId 
+        ? { ...item, isFollowing: !item.isFollowing } 
+        : item
+    ));
+  };
+  
   return (
 
     <Box sx={{ width: '100%' }}>
@@ -223,7 +230,7 @@ export default function AnnouncementTable(props) {
                     isApplied={isApplied}
                     isApplied2={isApplied2}
                     deleteCallBack={deleteApplication}
-
+                    setFollowingCallback={setFollowingCallback}
                   />
                 )
               })}

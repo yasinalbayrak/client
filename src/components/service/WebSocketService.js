@@ -14,7 +14,7 @@ class WebSocketService {
 
       
         this.client.reconnect_delay = 5000; 
-
+        console.log('jwtToken', jwtToken)
         this.client.connect({ 'Authorization': jwtToken }, frame => {
             console.log('Connected:', frame);
 
