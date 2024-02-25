@@ -201,6 +201,7 @@ export default function AnnouncementTable(props) {
               : rows
             )
               .filter((rowData) => rowData.term === term.term_desc)
+              
               .filter((rowData) => {
                 const courseCode = rowData.application ? rowData.application.course.courseCode : rowData.course.courseCode;
                 return courseCode.toLowerCase().includes(courseFilterTerm?.toLowerCase());

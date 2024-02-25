@@ -694,6 +694,23 @@ async function getApplicationsByFollower(){
 
 }
 
+async function withdrawApplication(applicationReqId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/withdraw/" + applicationReqId,
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
 export {
   getUnreadNotificationCount,
   changeNotificationPreferences,
@@ -729,6 +746,7 @@ export {
   getTranscriptInfo,
   addFollowerToApplication,
   removeFollowerFromApplication,
-  getApplicationsByFollower
+  getApplicationsByFollower,
+  withdrawApplication
 
 };

@@ -25,7 +25,7 @@ import Sidebar from "../components/Sidebar";
 import AppBarHeader from "../components/AppBarHeader";
 import { useNavigate, useParams } from "react-router";
 import { useSelector } from "react-redux";
-import { getAnnouncement, getApplicationByUsername, updateApplicationById, getCurrentTranscript, getApplicationRequestById, updateApplicationRequest} from "../apiCalls";
+import { getAnnouncement, getApplicationByUsername, updateApplicationById, getCurrentTranscript, getApplicationRequestById, updateApplicationRequest, withdrawApplication} from "../apiCalls";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AlertTitle from '@mui/material/AlertTitle';
 import Stack from '@mui/material/Stack';
@@ -34,6 +34,7 @@ import BackButton from "../components/buttons/BackButton";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ClearIcon from '@mui/icons-material/Clear';
 import Popup from "../components/popup/Popup";
+import { toast } from 'react-toastify';
 
 function EditApplyPage() {
   const navigate = useNavigate();
@@ -94,8 +95,15 @@ function EditApplyPage() {
     setWithdrawPopupOpened((prev) => !prev);
   };
 
-  const withdrawApplication = () => {
+  const withdrawApplicationn = () => {
+    
     flipPopup()
+    withdrawApplication(id).then((_) => {
+      navigate("/home", { replace: true });
+      toast.success("Your application has been withdrawn successfully.")
+    }).catch((_) => (null))
+
+    
     
   }
 
@@ -440,7 +448,7 @@ function EditApplyPage() {
                   flipPopup={flipPopup}
                   title={"Confirm Withdrawal?"}
                   text={"This action is irreversible, and the selected application will be permanently withdrawed."}
-                  posAction={withdrawApplication}
+                  posAction={withdrawApplicationn}
                   negAction={flipPopup}
                   posActionText={"Withdraw"}
                 />
