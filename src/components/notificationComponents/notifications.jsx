@@ -189,10 +189,14 @@ const NotificationDropdown = () => {
                 />;
             case "two":
 
-                return <FollowedItems followedApplications={followedApplications} />;
+                return null;
 
             case "three":
                 return <Settings />;
+
+            case "four":
+                return <FollowedItems followedApplications={followedApplications} />;
+                
             default:
                 return null;
         }
@@ -226,6 +230,7 @@ const NotificationDropdown = () => {
                 >
                     <Tab sx={{ textTransform: 'none' }} value="one" label="Direct" />
                     <Tab sx={{ textTransform: 'none' }} value="two" label="Following" />
+                    <Tab sx={{ textTransform: 'none' }} value="four" label="Saved" />
                     <Tab sx={{ textTransform: 'none' }} value="three" label="Settings" />
                 </Tabs>
             </Box>
