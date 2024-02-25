@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Popup from '../popup/Popup';
-import { deleteApplicationById, getTranscriptInfo, addFollowerToApplication, removeFollowerFromApplication } from "../../apiCalls"
+import { deleteApplicationById, getTranscriptInfo, addFollowerToApplication, removeFollowerFromApplication, getApplicationsByFollower } from "../../apiCalls"
 import InstructorList from './InstructorList';
 import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -17,10 +17,12 @@ import { useStyles } from '../../pages/EligibilityTable';
 import { Box } from '@mui/material';
 
 
-export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied,isApplied2, deleteCallBack, filterEligibilityCallback, followedApplications, handleFollowedApplications }) {
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied,isApplied2, deleteCallBack, filterEligibilityCallback }) {
 
   const { instructor_names, weeklyWorkingTime, term, section, status: applicationStatus, isTimedOut, authorizedInstructors } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
+  const [isFollowed, setIsFollowed] = useState(false);
+  const [followedApplications, setFollowedApplications] = useState(null);
 
   const classes = useStyles();
 
@@ -71,8 +73,37 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     }).catch((_) => (null))
   }
 
+  
+
+  useEffect(() => {
+    getApplicationsByFollower().then((res) => {
+      setFollowedApplications(res);
+      console.log("res", res);
+    }).catch((_) => (null))
+  }, [ isFollowed]);
+
+  //console.log("followedApplications", followedApplications);
+
+  useEffect(() => {
+    if (followedApplications) {
+      const isFollowed = inFollowedApplications(applicationId);
+      setIsFollowed(isFollowed);
+    }
+  }, [followedApplications]);
+
+
+  // useEffect(() => {
+  //   const isFollowed = inFollowedApplications(applicationId);
+  //   setIsFollowed(isFollowed);
+  //   console.log("followedApplications", followedApplications);
+  //   console.log("isFollowed", isFollowed);
+  
+  // }, [applicationId]);
+
   const inFollowedApplications = (applicationId) => {
-    return followedApplications.some((app) => app.applicationId === applicationId);
+    if(followedApplications){
+      return followedApplications?.some((app) => app.applicationId === applicationId);
+    }
   }
 
 
@@ -211,29 +242,35 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   const addFollower = (applicationId) => {
     addFollowerToApplication(applicationId).then((res) => {
       filterEligibilityCallback(applicationId);
+      console.log("res", res);
+
     }).catch((_) => (null))
+
+    setIsFollowed((prev) => !prev);
   }
 
   const removeFollower = (applicationId) => {
     removeFollowerFromApplication(applicationId).then((res) => {
       filterEligibilityCallback(applicationId);
     }).catch((_) => (null))
+
+    setIsFollowed(isFollowed => !isFollowed);
   }
 
 
-  return (course.courseCode &&
+  return ((course.courseCode && followedApplications) &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1 }}>
       <TableCell sx={{ bgcolor: "#FAFAFA",width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
         {course.courseCode}
-       { !inFollowedApplications(applicationId)? <IconButton
-            onClick={() => {addFollower(applicationId); handleFollowedApplications()}}
-            sx={{ color: "blue" }}
+       { !isFollowed? <IconButton
+            onClick={() => {addFollower(applicationId);}}
+            sx={{ color: "blue", paddingInline: 0.5, }}
           >
             <BookmarkBorderIcon />
           </IconButton>:
           <IconButton
-            onClick={() => {removeFollower(applicationId); handleFollowedApplications()}}
-            sx={{ color: "red" }}
+            onClick={() => {removeFollower(applicationId);}}
+            sx={{ color: "red", paddingInline: 0.5 }}
           >
             <BookmarkIcon />
           </IconButton>}

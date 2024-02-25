@@ -27,8 +27,6 @@ export default function AnnouncementTable(props) {
   const [instructorFilterTerm, setInstructorFilterTerm] = useState("");
   const [jobDetailsFilterTerm, setJobDetailsFilterTerm] = useState("");
   const [sortLastDate, setSortLastDate] = useState(false);
-  const [followedApplications, setFollowedApplications] = useState([]);
-  const [changedFollowed, setChangedFollowed] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -168,23 +166,6 @@ export default function AnnouncementTable(props) {
     setRows(filter.length > 0 ? allRows.filter((row) => (filter.includes(row.isStudentEligible))) : allRows)
   }
 
-  const fetchFollowedApplications = async () => {
-    try {
-      const data = await getApplicationsByFollower();
-      setFollowedApplications(data);
-    } catch (error) {
-      console.error("Failed to fetch followed applications:", error);
-    }
-  }
-
-  useEffect(() => {
-    fetchFollowedApplications();
-  }, [userID, changedFollowed]);
-
-  const handleFollowedApplications = () => {
-    setChangedFollowed((prev) => !prev);
-  }
-
   return (
 
     <Box sx={{ width: '100%' }}>
@@ -242,8 +223,6 @@ export default function AnnouncementTable(props) {
                     isApplied={isApplied}
                     isApplied2={isApplied2}
                     deleteCallBack={deleteApplication}
-                    followedApplications={followedApplications}
-                    handleFollowedApplications={handleFollowedApplications}
 
                   />
                 )
