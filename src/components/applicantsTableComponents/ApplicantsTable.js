@@ -65,16 +65,7 @@ function CustomRow(props) {
 
   console.log(row.applicationRequestId);
 
-  const handleFinalize = () => {
-    try {
-      finalizeStatus(row.applicationRequestId).then((res) => {
-        console.log(res);
-      });
-    }
-    catch (error) {
-      console.log(error);
-    }
-  };
+
 
   function changeName(student_name) {
     const [lastName, firstName] = student_name.split(",");
@@ -217,15 +208,6 @@ function CustomRow(props) {
                   >
                     Student Profile
                   </Button>
-
-                  <Button
-                    variant="outlined"
-                    endIcon={<SaveIcon />}
-                    sx={{ m: "10px" }}
-                    onClick={handleFinalize}
-                  >
-                    Announce Final Status
-                  </Button>
                 </Box>
 
               </Box>
@@ -304,6 +286,17 @@ function ApplicantsTable(props) {
     return gradeSortOrder ? (gradeSortOrder === "asc" ? "blue" : "red") : "grey";
   };
 
+  const finalizeStatuss = (appId) => {
+    try {
+      finalizeStatus(appId).then((res) => {
+        console.log(res);
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
       <TableContainer component={Paper}>
         {isApplicantsListEmpty ? (
@@ -313,7 +306,7 @@ function ApplicantsTable(props) {
                 </Alert>
             </Typography>
         ) : (
-            <Table sx={{ minWidth: 600 }} aria-label="simple table">
+            <Table sx={{ minWidth: 600}}  aria-label="simple table">
               <TableHead>
                 <TableRow sx={{ bgcolor: "#eeeeee" }}>
                   <TableCell align="left">
@@ -362,6 +355,17 @@ function ApplicantsTable(props) {
                     />
                 ))}
               </TableBody>
+            
+              
+              <Button
+                    variant="outlined"
+                    endIcon={<SaveIcon />}
+                    sx={{ m: "10px", bgcolor: "green", color: "white", ":hover": { bgcolor: "black"}, float: "right", alignSelf: "center"}}
+                    onClick={() => {finalizeStatuss(props.appId)}}
+                  >
+                    Announce Final Results
+              </Button>
+              
             </Table>
         )}
       </TableContainer>

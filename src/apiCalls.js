@@ -560,11 +560,11 @@ async function checkStudentEligibility(applicationId) {
   }
 }
 
-async function finalizeStatus(appReqId){
+async function finalizeStatus(appId){
   try {
     const token = getJwtFromCookie()
     const result = await axios.put(
-      apiEndpoint + "/applicationRequest/instructor/finalizeStatus/" + appReqId,
+      apiEndpoint + "/applications/" + appId + "/finalizeStatus",
       {},
       {
         headers: { "Authorization": "Bearer " + token }
