@@ -647,7 +647,7 @@ async function addFollowerToApplication(applicationId){
   try {
     const token = getJwtFromCookie()
     const result = await axios.put(
-      apiEndpoint + "/applications/" + applicationId + "/followers/add",
+      apiEndpoint + "/applications/student/" + applicationId + "/followers/add",
       {},
       {
         headers: { "Authorization": "Bearer " + token }
@@ -664,7 +664,7 @@ async function removeFollowerFromApplication(applicationId){
   try {
     const token = getJwtFromCookie()
     const result = await axios.put(
-      apiEndpoint + "/applications/" + applicationId + "/followers/remove",
+      apiEndpoint + "/applications/student/" + applicationId + "/followers/remove",
       {},
       {
         headers: { "Authorization": "Bearer " + token }

@@ -220,8 +220,8 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   return ((course.courseCode) &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1 }}>
       <TableCell sx={{ bgcolor: "#FAFAFA",width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
-        {course.courseCode}
-       { !isFollowing? <IconButton
+        {course.courseCode}{!isInstructor && <> 
+        { !isFollowing? <IconButton
             onClick={() => {addFollower(applicationId);}}
             sx={{ color: "blue", paddingInline: 0.5, }}
           >
@@ -233,6 +233,8 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           >
             <BookmarkIcon />
           </IconButton>}
+        </>}
+       
       </TableCell>
       <TableCell sx={{  width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left" component="th" scope="row">
         {(!isInstructor && tabValue === 1 ? data.application?.section : section) || "Not Specified"}
