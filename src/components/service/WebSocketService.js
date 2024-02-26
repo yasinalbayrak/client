@@ -20,9 +20,7 @@ class WebSocketService {
 
       
             Object.keys(this.subscribers).forEach(topic => {
-                console.log('I am Here 1')
                 this.subscribers[topic].forEach(sub => {
-                    console.log('I am Here 2')
                     sub.subscription = this.client.subscribe(topic, message => {
                         sub.callback(JSON.parse(message.body));
                     });

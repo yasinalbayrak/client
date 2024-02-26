@@ -51,8 +51,10 @@ const QuestionPage = (props) => {
       const modifiedAnswers = answers.map((answer, idx) => {
         validator++
         const qType = questions[idx].type;
-
-        if (!answer || (typeof answer === 'string' && answer.trim() === "")) {
+        console.log('log1', !answer )
+        console.log('log2', (typeof answer === 'string' && answer.trim() === ""))
+      
+        if (answer == null || (typeof answer === 'string' && answer.trim() === "")) {
           throw new Error(`Answer for question ${idx + 1} is missing`);
         }
 
