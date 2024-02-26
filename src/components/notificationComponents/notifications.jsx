@@ -106,6 +106,7 @@ const NotificationDropdown = () => {
 
     useEffect(() => {
         getNotifications().then((data) => {
+            console.log('data', data)
             setAllNotifications(data);
             setFilteredNotifications(data);
         }).catch((_) => {
@@ -186,16 +187,22 @@ const NotificationDropdown = () => {
                     allNotifications={allNotifications}
                     filteredNotifications={filteredNotifications}
                     handleNotificationStatusChangeCallback={handleNotificationStatusChange}
+                    relation="DIRECT"
                 />;
             case "two":
 
-                return null;
+                return <NotificationItem
+                allNotifications={allNotifications}
+                filteredNotifications={filteredNotifications}
+                handleNotificationStatusChangeCallback={handleNotificationStatusChange}
+                relation="FOLLOW"
+                />;
 
             case "three":
                 return <Settings />;
 
             case "four":
-                return <FollowedItems followedApplications={followedApplications} />;
+                return <SavedItems followedApplications={followedApplications} />;
                 
             default:
                 return null;
@@ -267,15 +274,15 @@ const getIconForNotification = (type) => {
     }
 }
 
-const NotificationItem = ({ allNotifications, filteredNotifications, handleNotificationStatusChangeCallback }) => filteredNotifications.length === 0 ? <>
+const NotificationItem = ({ allNotifications, filteredNotifications, handleNotificationStatusChangeCallback, relation }) => filteredNotifications.filter((notification) => notification.relation==relation).length === 0 ? <>
     <div className="no-data">
-        {allNotifications.length === 0 ? <NotificationsOffIcon sx={{ color: "black", fontSize: "12rem" }} /> : <MarkChatReadSharpIcon sx={{ color: "green", fontSize: "12rem" }} />}
-        <div className="no-not">{allNotifications.length === 0 ? "No notifications for the last 60 days." : "You have read all of your notifications."}</div>
+        {allNotifications.filter((notification) => notification.relation==relation).length === 0 ? <NotificationsOffIcon sx={{ color: "black", fontSize: "12rem" }} /> : <MarkChatReadSharpIcon sx={{ color: "green", fontSize: "12rem" }} />}
+        <div className="no-not">{allNotifications.filter((notification) => notification.relation==relation).length === 0 ? "No notifications for the last 60 days." : "You have read all of your notifications."}</div>
 
     </div>
 </>
 
-    : filteredNotifications.map(notification => (
+    : filteredNotifications.filter((notification)=> notification.relation==relation).map(notification => (
         <div className='otr'>
             <div className="ic">
                 {getIconForNotification(notification.notificationType)}
@@ -293,7 +300,7 @@ const NotificationItem = ({ allNotifications, filteredNotifications, handleNotif
     ))
 
 
-const FollowedItems = ({ followedApplications }) => followedApplications.length === 0 ? <>
+const SavedItems = ({ followedApplications }) => followedApplications.length === 0 ? <>
 <div className="no-data">
     {followedApplications.length === 0 ? <NotificationsOffIcon sx={{ color: "black", fontSize: "12rem" }} /> : <MarkChatReadSharpIcon sx={{ color: "green", fontSize: "12rem" }} />}
     <div className="no-not">{followedApplications.length === 0 ? "No followed applications yet." : "You have followed all applications."}</div>
