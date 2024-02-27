@@ -282,7 +282,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         {renderButtons()}
       </TableCell>
 
-      {!isInstructor && tabValue === 1 && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
+      {!isInstructor && tabValue === 1 && applicationStatus!=="WITHDRAWN" && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
       <IconButton
         sx={{ color: "blue" }}
         onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}>

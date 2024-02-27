@@ -439,8 +439,8 @@ function EditApplyPage() {
               </Grid>
               <br></br>
               <Grid>
-                {appReqInfo.application?.questions.length == 0 ? (
-                 <> <Button variant="contained" startIcon={<ClearIcon />} color="error" onClick={flipPopup}>
+                
+                  <Button variant="contained" startIcon={<ClearIcon />} color="error" onClick={flipPopup}>
                   Withdraw the application
                   </Button>
                   <Popup
@@ -452,10 +452,6 @@ function EditApplyPage() {
                   negAction={flipPopup}
                   posActionText={"Withdraw"}
                 />
-                </>
-                ) : (
-                  null
-                )}
               </Grid>
             </Grid>
             </Grid>
