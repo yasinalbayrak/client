@@ -170,7 +170,7 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
             clearCallback={clearStatusLabels}
 
             /></StyledTableCell>}
-        <StyledTableCell align="center">Actions</StyledTableCell>
+
         {(!isInstructor && tabValue === 0) && <StyledTableCell align="center" sx={{minWidth: "8rem"}}>
           Eligibility
           <FilterDropdown 
@@ -183,6 +183,7 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
             />
           
         </StyledTableCell>}
+        <StyledTableCell align="center">Actions</StyledTableCell>
 
 
 

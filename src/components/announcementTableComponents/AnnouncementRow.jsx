@@ -278,7 +278,14 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         {jobDetails}
       </TableCell>
 
-      <TableCell sx={{bgcolor: "#FAFAFA", width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
+      {(!isInstructor && tabValue === 0) && <TableCell sx={{ bgcolor: "#FAFAFA",width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
+        <Box sx={{ width: "70%", marginLeft: "auto", marginRight: "auto" }} className={getClassByElibility(isStudentEligible)}>
+          {isStudentEligible}
+        </Box>
+      </TableCell>}
+
+
+      <TableCell sx={{bgcolor: ((!isInstructor && tabValue===0)  ?  "#ffffff": "#FAFAFA"), width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
         {renderButtons()}
       </TableCell>
 
@@ -295,11 +302,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       </span>
     </TableCell>)}
 
-      {(!isInstructor && tabValue === 0) && <TableCell sx={{ width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
-      <Box sx={{ width: "70%", marginLeft: "auto", marginRight: "auto" }} className={getClassByElibility(isStudentEligible)}>
-          {isStudentEligible}
-        </Box>
-      </TableCell>}
+
     </TableRow>
   );
 }
