@@ -220,8 +220,8 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   return ((course.courseCode) &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1 }}>
       <TableCell sx={{ bgcolor: "#FAFAFA",width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
-        {course.courseCode}{!isInstructor && <> 
-        { !isFollowing? <IconButton
+        {course.courseCode}{!isInstructor && tabValue!== 1&& <> 
+        { !isFollowing?  <IconButton
             onClick={() => {addFollower(applicationId);}}
             sx={{ color: "blue", paddingInline: 0.5, }}
           >
@@ -282,14 +282,18 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         {renderButtons()}
       </TableCell>
 
-      {!isInstructor && tabValue === 1 && applicationStatus!=="WITHDRAWN" && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
+      {applicationStatus!=="WITHDRAWN"? (!isInstructor && tabValue === 1 && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
       <IconButton
         sx={{ color: "blue" }}
         onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}>
         
           <EditIcon />
       </IconButton>
-      </TableCell>}
+      </TableCell>):(<TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
+      <span style={{ color: "red" }}>
+        Withdrawn
+      </span>
+    </TableCell>)}
 
       {(!isInstructor && tabValue === 0) && <TableCell sx={{ width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
       <Box sx={{ width: "70%", marginLeft: "auto", marginRight: "auto" }} className={getClassByElibility(isStudentEligible)}>

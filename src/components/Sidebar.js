@@ -126,7 +126,7 @@ function Sidebar({ setTabInitial }) {
 
   useEffect(() => {
     getTerms().then((res) => {
-      setAllTerms(res.slice(0,-1));
+      setAllTerms(res);
       console.log('term :>> ', term);
       console.log('termSelect :>> ', termSelect);
       const termSet = (termSelect !== "")
