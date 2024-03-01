@@ -15,6 +15,7 @@ import { TextField, Input } from '@mui/material';
 export default function AnnouncementTable(props) {
   const [rows, setRows] = useState([]);
   const [allRows, setAllRows] = useState([]);
+  const [userApplications2, setUserApplications2] = useState([]);
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(props.tabValue);
   const isInstructor = useSelector((state) => state.user.isInstructor);
@@ -71,6 +72,7 @@ export default function AnnouncementTable(props) {
         });
         console.log(modifiedUserApplications)
         setUserApplications(modifiedUserApplications);
+        setUserApplications2(modifiedUserApplications);
       } catch (error) {
         console.error("Failed to fetch user applications:", error);
       }
@@ -165,6 +167,10 @@ export default function AnnouncementTable(props) {
   const filterEligibility = (filter) => {
     setRows(filter.length > 0 ? allRows.filter((row) => (filter.includes(row.isStudentEligible))) : allRows)
   }
+
+  const statusFilter = (filter) => {
+    setUserApplications(filter.length>0 ? userApplications2.filter((row) => (filter.includes((row.status).toLowerCase()))) : userApplications2)
+  }
   const setFollowingCallback = (applicationId) => {
     setRows(prev => prev.map(
       item => item.applicationId === applicationId 
@@ -194,6 +200,7 @@ export default function AnnouncementTable(props) {
             handleSortLastDate={handleSortLastDate} 
             sortLastDate={sortLastDate} 
             filterEligibilityCallback = {filterEligibility}
+            statusFilterCallback = {statusFilter}
             />
           <TableBody>
             {(tabValue === 1
@@ -232,6 +239,7 @@ export default function AnnouncementTable(props) {
                     isApplied2={isApplied2}
                     deleteCallBack={deleteApplication}
                     setFollowingCallback={setFollowingCallback}
+
                   />
                 )
               })}
