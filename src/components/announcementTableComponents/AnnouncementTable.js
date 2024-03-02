@@ -23,6 +23,7 @@ export default function AnnouncementTable(props) {
   const userID = useSelector((state) => state.user.id);
 
   const [userApplications, setUserApplications] = useState([]);
+  const [userApplications2, setUserApplications2] = useState([]);
   const [courseFilterTerm, setCourseFilterTerm] = useState("");
   const [instructorFilterTerm, setInstructorFilterTerm] = useState("");
   const [jobDetailsFilterTerm, setJobDetailsFilterTerm] = useState("");
@@ -39,7 +40,7 @@ export default function AnnouncementTable(props) {
         }
 
 
-        const modifiedUserApplications = data.map((userApplication) => {
+        const modifiedUserApplications = data.content.map((userApplication) => {
           let app = userApplication
           if (!isInstructor) {
             app = userApplication.application
@@ -71,6 +72,7 @@ export default function AnnouncementTable(props) {
         });
         console.log(modifiedUserApplications)
         setUserApplications(modifiedUserApplications);
+        setUserApplications2(modifiedUserApplications);
       } catch (error) {
         console.error("Failed to fetch user applications:", error);
       }
@@ -164,7 +166,9 @@ export default function AnnouncementTable(props) {
   const filterEligibility = (filter) => {
     setRows(filter.length > 0 ? allRows.filter((row) => (filter.includes(row.isStudentEligible))) : allRows)
   }
-
+  const statusFilter = (filter) => {
+    setUserApplications(filter.length>0 ? userApplications2.filter((row) => (filter.includes((row.status).toLowerCase()))) : userApplications2)
+  }
   const filterActionCallback = (filter) => {
     console.log('filtterr :>> ', filter);
     setRows(filter.length == 1 ? allRows.filter((row) => (filter.includes("Saved") ? row.isFollowing : !row.isFollowing)) : allRows)
@@ -204,6 +208,7 @@ export default function AnnouncementTable(props) {
             sortLastDate={sortLastDate} 
             filterEligibilityCallback = {filterEligibility}
             filterActionCallback= {filterActionCallback}
+            statusFilterCallback = {statusFilter}
             />
           <TableBody>
             {(tabValue === 1

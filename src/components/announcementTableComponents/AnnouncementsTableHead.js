@@ -12,7 +12,7 @@ import { styled } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import IconButton from '@mui/material/IconButton';
 import FilterDropdown from './FilterDropdown';
-function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, handleInstructorFilter, handleJobDetailsFilter, emptyFilter, handleSortLastDate, sortLastDate, filterEligibilityCallback, filterActionCallback }) {
+function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, handleInstructorFilter, handleJobDetailsFilter, emptyFilter, handleSortLastDate, sortLastDate, filterEligibilityCallback, filterActionCallback , statusFilterCallback}) {
 
   const [courseSearch, setCourseSearch] = React.useState(false);
   const [instructorSearch, setInstructorSearch] = React.useState(false);
@@ -48,6 +48,42 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
       checked: false
     }
   ])
+
+  const [statusLabels, setStatusLabels] = React.useState([
+    {
+      id: 1,
+      name: "accepted",
+      checked: false
+    },
+    {
+      id: 2,
+      name: "rejected",
+      checked: false
+    },
+    {
+      label: 3,
+      name: "in_progress",
+      checked: false
+    },
+    {
+      label: 4,
+      name: "withdrawn",
+      checked: false
+    }])
+
+  const checkStatusLabel = (labelName) => {
+    setStatusLabels(prevLabels =>
+      prevLabels.map(label =>
+        label.name === labelName ? { ...label, checked: !label.checked } : label
+      )
+    );
+  }
+
+  const clearStatusLabels = () => {
+    setStatusLabels(prevLabels =>
+      prevLabels.map(label => ({ ...label, checked: false }))
+    );
+  }
 
   const checkLabel = (labelName) => {
     setLabels(prevLabels =>
@@ -149,7 +185,17 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
               </Popup>} </Box>
         </StyledTableCell>
 
-        {tabValue === 1 && !isInstructor && <StyledTableCell align="center" >Application Status</StyledTableCell>}
+        
+        {tabValue === 1 && !isInstructor && <StyledTableCell align="center">
+          Application Status 
+          <FilterDropdown 
+            labels={ statusLabels}
+            setLabels={setStatusLabels}
+            checkLabelCallback={checkStatusLabel}
+            searchCallback={statusFilterCallback} 
+            clearCallback={clearStatusLabels}
+
+            /></StyledTableCell>}
         <StyledTableCell align="center"
         >Actions
           {(!isInstructor && tabValue === 0 )&& <FilterDropdown
