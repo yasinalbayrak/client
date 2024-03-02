@@ -42,7 +42,7 @@ const LaHistoryTable = ({ LaHistory }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {LaHistory && LaHistory.map((appRequest) => (
+          {LaHistory.content && LaHistory.content.map((appRequest) => (
             <TableRow key={appRequest.applicationRequestId}>
               <TableCell colSpan={2}>
                 <Grid container direction="column" justifyContent="flex-start">

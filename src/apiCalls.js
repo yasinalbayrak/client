@@ -711,7 +711,43 @@ async function withdrawApplication(applicationReqId){
   }
 }
 
+
+async function acceptAllRequestByAppId(applicationId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/" + applicationId + "/accept-all",
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+async function rejectAllRequestByAppId(applicationId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/" + applicationId + "/reject-all",
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
 export {
+  acceptAllRequestByAppId,
+  rejectAllRequestByAppId,
   getUnreadNotificationCount,
   changeNotificationPreferences,
   changeNotificationStatus,

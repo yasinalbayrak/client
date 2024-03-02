@@ -59,6 +59,9 @@ const userSlice = createSlice({
       state.isLoggedIn = false;
       state.notificationPreference = null
     },
+    setIsLoading: (state, action) => {
+      state.isLoading = action.payload.isLoading;
+    },
     switchIsInstructor: (state) => {
       state.isInstructor = !state.isInstructor;
     },
@@ -92,6 +95,7 @@ const userSlice = createSlice({
 console.log(userSlice);
 
 export const {
+  setIsLoading,
   setPublicSubscription,
   setConnectToPublicTopic,
   setStompClient,

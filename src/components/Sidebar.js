@@ -23,7 +23,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import AppBarHeader from "./AppBarHeader";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { logout, setTerm, switchIsInstructor } from "../redux/userSlice";
+import { logout, setIsLoading, setTerm, switchIsInstructor } from "../redux/userSlice";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { getTerms, logout as invalidateToken } from "../apiCalls";
 import NotificationButton from "./notificationComponents/notifications";
@@ -146,6 +146,7 @@ function Sidebar({ setTabInitial }) {
 
 
   const handleLogout = () => {
+    dispatch(setIsLoading({ isLoading: true}));
     token && invalidateToken(token)
       .then(result => {
         console.log("Logout successful");
@@ -162,7 +163,7 @@ function Sidebar({ setTabInitial }) {
 
 
     window.location.href = logoutURL;
-
+    
 
 
   }

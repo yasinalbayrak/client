@@ -83,9 +83,8 @@ export default function AnnouncementTable(props) {
     setTabValue(props.tabValue);
   }, [props.tabValue]);
 
-  // useEffect(() => {
-  //   console.log(userApplications)
-  // }, [userApplications]);
+
+
 
   useEffect(() => {
     if (props.rows && props.rows.length > 0) {
@@ -165,10 +164,20 @@ export default function AnnouncementTable(props) {
   const filterEligibility = (filter) => {
     setRows(filter.length > 0 ? allRows.filter((row) => (filter.includes(row.isStudentEligible))) : allRows)
   }
-  const setFollowingCallback = (applicationId) => {
+
+  const filterActionCallback = (filter) => {
+    console.log('filtterr :>> ', filter);
+    setRows(filter.length == 1 ? allRows.filter((row) => (filter.includes("Saved") ? row.isFollowing : !row.isFollowing)) : allRows)
+  }
+  const setFollowingCallback = (applicationId, isFollowing) => {
+    setAllRows(prev => prev.map(
+      item => item.applicationId === applicationId 
+        ? { ...item, isFollowing: isFollowing } 
+        : item
+    ));
     setRows(prev => prev.map(
       item => item.applicationId === applicationId 
-        ? { ...item, isFollowing: !item.isFollowing } 
+        ? { ...item, isFollowing: isFollowing } 
         : item
     ));
   };
@@ -194,6 +203,7 @@ export default function AnnouncementTable(props) {
             handleSortLastDate={handleSortLastDate} 
             sortLastDate={sortLastDate} 
             filterEligibilityCallback = {filterEligibility}
+            filterActionCallback= {filterActionCallback}
             />
           <TableBody>
             {(tabValue === 1

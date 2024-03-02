@@ -15,13 +15,14 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import IconButton from '@mui/material/IconButton';
 import { useStyles } from '../../pages/EligibilityTable';
 import { Box } from '@mui/material';
+import FollowButton from '../buttons/FollowButton';
 
 
-export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied,isApplied2, deleteCallBack, filterEligibilityCallback,setFollowingCallback }) {
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, isApplied2, deleteCallBack, filterEligibilityCallback, setFollowingCallback }) {
 
   const { instructor_names, weeklyWorkingTime, term, section, status: applicationStatus, isTimedOut, authorizedInstructors, isFollowing } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
-  
+
 
 
   const classes = useStyles();
@@ -73,7 +74,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     }).catch((_) => (null))
   }
 
-  
+
 
   const renderButtons = () => {
     if (isInstructor) {
@@ -124,12 +125,12 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       if (isApplied(applicationId)) {
         return (
           <IconButton
-          sx={{ color: "blue" }}
-          onClick={() => navigate("/edit-apply/" + appliedAppReqId, { replace: true })}
-           >
+            sx={{ color: "blue" }}
+            onClick={() => navigate("/edit-apply/" + appliedAppReqId, { replace: true })}
+          >
 
             <EditIcon />
-        </IconButton>
+          </IconButton>
         );
       }
       else {
@@ -141,20 +142,41 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           );
         } else {
           return (
-            <Button
-              variant="contained"
-              onClick={() => {
-                if (isTranscriptUploaded) {
-                  // Navigate to the apply page if the transcript is uploaded
-                  navigate("/apply/" + applicationId, { replace: true });
-                } else {
-                  // Navigate to a different page (e.g., transcript upload page) if the transcript is not uploaded
-                  navigate("/transcriptUploadPage/" + applicationId, { replace: true });
-                }
-              }}
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              gap={2}
+              maxWidth="fit-content"
+              minWidth="12rem"
             >
-              Apply
-            </Button>
+
+              <FollowButton
+                isInstructor={isInstructor}
+                isFollowing={isFollowing}
+                applicationId={applicationId}
+                addFollower={addFollower}
+                removeFollower={removeFollower}
+              />
+
+              <Button
+                variant="contained"
+                onClick={() => {
+                  if (isTranscriptUploaded) {
+                    // Navigate to the apply page if the transcript is uploaded
+                    navigate("/apply/" + applicationId, { replace: true });
+                  } else {
+                    // Navigate to a different page (e.g., transcript upload page) if the transcript is not uploaded
+                    navigate("/transcriptUploadPage/" + applicationId, { replace: true });
+                  }
+                }}
+                sx={{
+                  height:"40px"
+              }}
+              >
+                Apply
+              </Button>
+            </Box>
           );
         }
       }
@@ -195,14 +217,13 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       case "Deadline Passed":
         return classes.deadlinePassed;
       default:
-        return ;
+        return;
     }
   }
 
   const addFollower = (applicationId) => {
     addFollowerToApplication(applicationId).then((res) => {
-      setFollowingCallback(applicationId)
-      console.log("res", res);
+      setFollowingCallback(applicationId, res.isFollowing)
 
     }).catch((_) => (null))
 
@@ -211,7 +232,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
   const removeFollower = (applicationId) => {
     removeFollowerFromApplication(applicationId).then((res) => {
-      setFollowingCallback(applicationId)
+      setFollowingCallback(applicationId, res.isFollowing)
     }).catch((_) => (null))
 
   }
@@ -219,33 +240,20 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
   return ((course.courseCode) &&
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1 }}>
-      <TableCell sx={{ bgcolor: "#FAFAFA",width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
-        {course.courseCode}{!isInstructor && <> 
-        { !isFollowing? <IconButton
-            onClick={() => {addFollower(applicationId);}}
-            sx={{ color: "blue", paddingInline: 0.5, }}
-          >
-            <BookmarkBorderIcon />
-          </IconButton>:
-          <IconButton
-            onClick={() => {removeFollower(applicationId);}}
-            sx={{ color: "red", paddingInline: 0.5 }}
-          >
-            <BookmarkIcon />
-          </IconButton>}
-        </>}
-       
+      <TableCell sx={{ bgcolor: "#FAFAFA", width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
+        {course.courseCode}
+
       </TableCell>
-      <TableCell sx={{  width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left" component="th" scope="row">
+      <TableCell sx={{ width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left" component="th" scope="row">
         {(!isInstructor && tabValue === 1 ? data.application?.section : section) || "Not Specified"}
       </TableCell>
-      <TableCell sx={{bgcolor: "#FAFAFA", minWidth: "14rem", maxWidth: "14rem", width: "14rem" }} align="left" component="th" scope="row">
+      <TableCell sx={{ bgcolor: "#FAFAFA", minWidth: "14rem", maxWidth: "14rem", width: "14rem" }} align="left" component="th" scope="row">
         <InstructorList
           instructor_names={instructor_names}
           authorizedInstructors={(!isInstructor && tabValue === 1) ? data.application.authorizedInstructors : authorizedInstructors}
         />
       </TableCell>
-      <TableCell sx={{  width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left" component="th" scope="row">
+      <TableCell sx={{ width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left" component="th" scope="row">
         {lastApplicationDate ? (
           <>
             {new Date(lastApplicationDate).toLocaleDateString("en-GB", {
@@ -265,7 +273,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       </TableCell>
 
 
-      <TableCell sx={{bgcolor: "#FAFAFA", width: "7rem", maxWidth: "7rem", minWidth: "7rem" }} align="center" component="th" scope="row">
+      <TableCell sx={{ bgcolor: "#FAFAFA", width: "7rem", maxWidth: "7rem", minWidth: "7rem" }} align="center" component="th" scope="row">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
 
@@ -274,28 +282,32 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         <DesiredCourseGradesPopup isInprogressAllowed={isInprogressAllowed} courseCode={course.courseCode} grade ={minimumRequiredGrade} previousCourseGrades={previousCourseGrades}/>
       </TableCell>
       */}
-      <TableCell sx={{   maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left" component="th" scope="row">
+      <TableCell sx={{ maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left" component="th" scope="row">
         {jobDetails}
       </TableCell>
 
-      <TableCell sx={{bgcolor: "#FAFAFA", width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
-        {renderButtons()}
+      <TableCell sx={{ bgcolor: "#FAFAFA", width: "4rem", minWidth: "5rem", padding: 0 }} align="center" component="th" scope="row">
+        <Box width="100%" display="flex" justifyContent="center">
+          {renderButtons()}
+        </Box>
       </TableCell>
 
-      {!isInstructor && tabValue === 1 && applicationStatus!=="WITHDRAWN" && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
-      <IconButton
-        sx={{ color: "blue" }}
-        onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}>
-        
+      {!isInstructor && tabValue === 1 && applicationStatus !== "WITHDRAWN" && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
+        <IconButton
+          sx={{ color: "blue" }}
+          onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}>
+
           <EditIcon />
-      </IconButton>
+        </IconButton>
       </TableCell>}
 
       {(!isInstructor && tabValue === 0) && <TableCell sx={{ width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
-      <Box sx={{ width: "70%", marginLeft: "auto", marginRight: "auto" }} className={getClassByElibility(isStudentEligible)}>
+        <Box sx={{ width: "70%", marginLeft: "auto", marginRight: "auto" }} className={getClassByElibility(isStudentEligible)}>
           {isStudentEligible}
         </Box>
       </TableCell>}
+
+
     </TableRow>
   );
 }

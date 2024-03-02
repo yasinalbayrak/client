@@ -1,11 +1,17 @@
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 
+
 class WebSocketService {
     constructor() {
         this.client = null;
         this.subscribers = {};
-        this.socketFactory = () => new SockJS('http://localhost:8080/ws');
+        const url = window.location.href;
+        var host = "http://pro2-dev.sabanciuniv.edu:8080";
+        if (url.indexOf("pro2") === -1) {
+            host = "http://localhost:8080";
+        }
+        this.socketFactory = () => new SockJS(host + '/ws');
     }
 
     connectWebSocket(jwtToken) {
@@ -13,7 +19,7 @@ class WebSocketService {
         this.client = Stomp.over(this.socketFactory);
 
       
-        this.client.reconnect_delay = 5000; 
+        this.client.reconnect_delay = 120000; 
         console.log('jwtToken', jwtToken)
         this.client.connect({ 'Authorization': jwtToken }, frame => {
             console.log('Connected:', frame);

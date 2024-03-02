@@ -17,7 +17,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus } from "../../apiCalls";
+import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId } from "../../apiCalls";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
@@ -95,10 +95,10 @@ function CustomRow(props) {
         setStudentDetails(null);
       }
     };
-    if (userID){
+    if (userID) {
       fetchData();
     }
-    
+
   }, [row.student.user.id, props.courseCode, userID]);
 
 
@@ -122,13 +122,13 @@ function CustomRow(props) {
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
           {studentDetails?.program && studentDetails.program.majors.map((major, index) => (
-              <div key={index}>{major}</div>
+            <div key={index}>{major}</div>
           ))}
         </TableCell>
 
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} component="th" scope="row">
           {studentDetails?.program && studentDetails.program.minors.map((minor, index) => (
-              <div key={index}>{minor}</div>
+            <div key={index}>{minor}</div>
           ))}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} align="left">
@@ -149,10 +149,10 @@ function CustomRow(props) {
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Status</InputLabel>
             <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label="Status" onChange={handleChange}>
-              <MenuItem value={"ACCEPTED"}>Accepted</MenuItem>
-              <MenuItem value={"REJECTED"}>Rejected</MenuItem>
-              <MenuItem value={"IN_PROGRESS"}>In Progress</MenuItem>
-              <MenuItem value={"WAIT_LISTED"}>Wait Listed</MenuItem>
+              <MenuItem value={"Accepted"}>Accepted</MenuItem>
+              <MenuItem value={"Rejected"}>Rejected</MenuItem>
+              <MenuItem value={"In Progress"}>In Progress</MenuItem>
+              <MenuItem value={"Added to Waiting List"}>Wait Listed</MenuItem>
             </Select>
           </FormControl>
 
@@ -170,10 +170,10 @@ function CustomRow(props) {
           </IconButton>
         </TableCell>
       </TableRow>
-      <TableRow style={{alignItems: "start", verticalAlign: "top"}}>
-        <TableCell style={{ paddingBottom: 0, paddingTop: "1rem" ,}} colSpan={2}>
+      <TableRow style={{ alignItems: "start", verticalAlign: "top" }}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: "1rem", }} colSpan={2}>
           <td>
-            <Collapse in={open} align="top" component="tr" style={{ padding: 0, display: "block",  }}>
+            <Collapse in={open} align="top" component="tr" style={{ padding: 0, display: "block", }}>
               <Grid container direction="column" alignItems="flex-start" justifyContent="flex-start" style={{ width: "20rem" }}>
                 {/* Q&A Section */}
                 {row.qandA.length > 0 && row.qandA.map((element, index) => (
@@ -297,78 +297,112 @@ function ApplicantsTable(props) {
     }
   }
 
+  const handleAcceptAll = () => {
+    acceptAllRequestByAppId(props.appId).then(()=>{
+      
+      setSortedRows((prev)=>prev.map(
+        (row)=>({...row, statusIns:"Accepted"})
+      ))
+    }).catch(_=>{
+      console.error("Error");
+    })
+  }
+  const handleRejectAll = () => {
+    rejectAllRequestByAppId(props.appId).then(()=>{
+      setSortedRows((prev)=>prev.map(
+        (row)=>({...row, statusIns:"Rejected"})
+      ))
+    }).catch(_=>{
+      console.error("Error");
+    })
+  }
+
   return (
-      <TableContainer component={Paper}>
-        {isApplicantsListEmpty ? (
-            <Typography variant="h6" align="center" style={{ padding: 20 }}>
-                <Alert severity="info">
-                  No student has applied yet.
-                </Alert>
-            </Typography>
-        ) : (
-            <Table sx={{ minWidth: 600}}  aria-label="simple table">
-              <TableHead>
-                <TableRow sx={{ bgcolor: "#eeeeee" }}>
-                  <TableCell align="left">
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      Student Name
-                      <IconButton onClick={toggleSortOrder} style={{ color: getSortIconColor() }}>
-                        <SwapVertTwoToneIcon />
-                      </IconButton>
-                      <IconButton onClick={toggleFilterVisibility} style={{ color: isFilterVisible ? 'blue' : undefined }}>
-                        <FilterAltIcon />
-                      </IconButton>
-                    </Box>
-                    {isFilterVisible && (
-                        <TextField
-                            fullWidth
-                            size="small"
-                            value={searchText}
-                            onChange={handleSearchChange}
-                            placeholder="Filter by name..."
-                        />
-                    )}
-                  </TableCell>
-                  <TableCell align="left">Majors</TableCell>
-                  <TableCell align="left">Minors</TableCell>
-                  <TableCell align="left">
-                    Grade
-                    <IconButton onClick={toggleGradeSortOrder} style={{ color: getGradeSortIconColor() }}>
+    <TableContainer component={Paper}>
+      {isApplicantsListEmpty ? (
+        <Typography variant="h6" align="center" style={{ padding: 20 }}>
+          <Alert severity="info">
+            No student has applied yet.
+          </Alert>
+        </Typography>
+      ) : (
+        <>
+          <Button variant="outlined" color="success" sx={{ marginRight: "1rem" }}
+            onClick={handleAcceptAll}
+          >
+            Accept all
+          </Button>
+          <Button variant="outlined" color="error"
+            onClick={handleRejectAll}
+          >
+            Reject all
+          </Button>
+
+
+          <Table sx={{ minWidth: 600, marginTop: "1rem" }} aria-label="simple table">
+            <TableHead>
+              <TableRow sx={{ bgcolor: "#eeeeee" }}>
+                <TableCell align="left">
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Student Name
+                    <IconButton onClick={toggleSortOrder} style={{ color: getSortIconColor() }}>
                       <SwapVertTwoToneIcon />
                     </IconButton>
-                  </TableCell>
-                  <TableCell align="left" sx={{ width: "10rem" }}>Status</TableCell>
-                  <TableCell align="left">Details</TableCell>
-                  <TableCell align="left"></TableCell>
-                  <TableCell align="left"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredRows.map((row, index) => (
-                    <CustomRow
-                        appId={props.appId}
-                        row={row}
-                        courseCode={props.courseCode}
-                        index={index}
-                        questions={props.questions}
-                        key={index}
+                    <IconButton onClick={toggleFilterVisibility} style={{ color: isFilterVisible ? 'blue' : undefined }}>
+                      <FilterAltIcon />
+                    </IconButton>
+                  </Box>
+                  {isFilterVisible && (
+                    <TextField
+                      fullWidth
+                      size="small"
+                      value={searchText}
+                      onChange={handleSearchChange}
+                      placeholder="Filter by name..."
                     />
-                ))}
-              </TableBody>
-            
-              
-              <Button
-                    variant="outlined"
-                    endIcon={<SaveIcon />}
-                    sx={{ m: "10px", bgcolor: "green", color: "white", ":hover": { bgcolor: "black"}, float: "right", alignSelf: "center"}}
-                    onClick={() => {finalizeStatuss(props.appId)}}
-                  >
-                    Announce Final Results
-              </Button>
-              
-            </Table>
-        )}
-      </TableContainer>
+                  )}
+                </TableCell>
+                <TableCell align="left">Majors</TableCell>
+                <TableCell align="left">Minors</TableCell>
+                <TableCell align="left">
+                  Grade
+                  <IconButton onClick={toggleGradeSortOrder} style={{ color: getGradeSortIconColor() }}>
+                    <SwapVertTwoToneIcon />
+                  </IconButton>
+                </TableCell>
+                <TableCell align="left" sx={{ width: "10rem" }}>Status</TableCell>
+                <TableCell align="left">Details</TableCell>
+                <TableCell align="left"></TableCell>
+                <TableCell align="left"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredRows.map((row, index) => (
+                <CustomRow
+                  appId={props.appId}
+                  row={row}
+                  courseCode={props.courseCode}
+                  index={index}
+                  questions={props.questions}
+                  key={index}
+                />
+              ))}
+            </TableBody>
+
+
+            <Button
+              variant="outlined"
+              endIcon={<SaveIcon />}
+              sx={{ m: "10px", bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, float: "right", alignSelf: "center" }}
+              onClick={() => { finalizeStatuss(props.appId) }}
+            >
+              Announce Final Results
+            </Button>
+
+          </Table>
+        </>
+      )}
+    </TableContainer>
   );
 }
 

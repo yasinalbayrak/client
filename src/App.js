@@ -30,6 +30,7 @@ import { WebSocketProvider } from "./context/WebSocketContext";
 
 import { useWebSocket } from "./context/WebSocketContext";
 import webSocketService from "./components/service/WebSocketService";
+import LoadingPage from "./pages/LoadingPage/LoadingPage";
 function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
@@ -84,7 +85,7 @@ function App() {
           webSocketService.subscribe(topic, handleNotification);
 
 
-    
+
 
           urlParams.delete("ticket");
           const newPath = location.pathname + (urlParams.toString() ? `?${urlParams.toString()}` : '');
@@ -95,10 +96,13 @@ function App() {
         });
     };
 
+
+
     if (!isLoggedIn && !isLoading && url.includes("?ticket=")) {
       const ticket = urlParams.get("ticket");
       const baseUrl = url.split("?")[0];
       dispatch(startLoginProcess());
+
       handleLogin(baseUrl, ticket);
     }
 
@@ -109,39 +113,46 @@ function App() {
       }
     };
   }, [isLoggedIn, isLoading, url, dispatch, navigate, location.pathname, urlParams]);
+
+
+  if (isLoading) {
+    return <LoadingPage></LoadingPage>
+  }
   return (
     <>
-      <WebSocketProvider authToken={authToken}>
-        <ToastContainer position="top-right" autoClose={5000} />
-        <Routes>
-          {isLoggedIn ? (
-            <>
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/create-announcement" element={<CreateAnnouncement />} />
-              <Route path="/edit-announcement/:id" element={<EditAnnouncement />} />
-              <Route path="/apply/:id" element={<ApplyPage />} />
-              <Route path="/edit-apply/:id" element={<EditApplyPage />} />
-              <Route path="/applicants" element={<CourseApplicantsPage />} />
-              <Route path="/application-of/:appId" element={<ApplicantsPage />} />
-              <Route path="/success" element={<SuccessPage />} />
-              <Route path="/profile/:id" element={<ProfilePage />} />
-              <Route path="/edit-questionPage/:id" element={<EditQuestionPage />} />
-              <Route path="*" element={<MockCAS />} />
-              <Route path="/transcriptUploadPage/:id" element={<TranscriptPage></TranscriptPage>}></Route>
-              <Route path="transcriptInfoPage/:id" element={<TranscriptInfo></TranscriptInfo>}></Route>
-              <Route path="/questionPage/:id" element={<QuestionPage></QuestionPage>}></Route>
-              <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
+      <div className={`app-content ${isLoading ? 'is-loading' : ''}`}>
+        <WebSocketProvider authToken={authToken}>
+          <ToastContainer position="top-right" autoClose={5000} />
+          <Routes>
+            {isLoggedIn ? (
+              <>
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/create-announcement" element={<CreateAnnouncement />} />
+                <Route path="/edit-announcement/:id" element={<EditAnnouncement />} />
+                <Route path="/apply/:id" element={<ApplyPage />} />
+                <Route path="/edit-apply/:id" element={<EditApplyPage />} />
+                <Route path="/applicants" element={<CourseApplicantsPage />} />
+                <Route path="/application-of/:appId" element={<ApplicantsPage />} />
+                <Route path="/success" element={<SuccessPage />} />
+                <Route path="/profile/:id" element={<ProfilePage />} />
+                <Route path="/edit-questionPage/:id" element={<EditQuestionPage />} />
+                <Route path="*" element={<MockCAS />} />
+                <Route path="/transcriptUploadPage/:id" element={<TranscriptPage></TranscriptPage>}></Route>
+                <Route path="transcriptInfoPage/:id" element={<TranscriptInfo></TranscriptInfo>}></Route>
+                <Route path="/questionPage/:id" element={<QuestionPage></QuestionPage>}></Route>
+                <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
 
 
-            </>
-          ) : (
-            <>
-              <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
-              <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
-            </>
-          )}
-        </Routes>
-      </WebSocketProvider>
+              </>
+            ) : (
+              <>
+                <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
+                <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
+              </>
+            )}
+          </Routes>
+        </WebSocketProvider>
+      </div>
     </>
   );
 }

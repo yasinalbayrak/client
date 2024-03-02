@@ -12,13 +12,13 @@ import { styled } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import IconButton from '@mui/material/IconButton';
 import FilterDropdown from './FilterDropdown';
-function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, handleInstructorFilter, handleJobDetailsFilter, emptyFilter, handleSortLastDate, sortLastDate, filterEligibilityCallback }) {
+function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, handleInstructorFilter, handleJobDetailsFilter, emptyFilter, handleSortLastDate, sortLastDate, filterEligibilityCallback, filterActionCallback }) {
 
   const [courseSearch, setCourseSearch] = React.useState(false);
   const [instructorSearch, setInstructorSearch] = React.useState(false);
   const [jobDetailsSearch, setJobDetailsSearch] = React.useState(false);
-  const [eligibilityDropdownOpen,setEligibilityDropdownOpen ] = React.useState(false);
-  
+  const [eligibilityDropdownOpen, setEligibilityDropdownOpen] = React.useState(false);
+
   const [labels, setLabels] = React.useState([
     {
       id: 1,
@@ -36,10 +36,31 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
       checked: false
     }])
 
+  const [actionLabels, setActionLabels] = React.useState([
+    {
+      id: 1,
+      name: "Saved",
+      checked: false
+    },
+    {
+      id: 2,
+      name: "Not Saved",
+      checked: false
+    }
+  ])
+
   const checkLabel = (labelName) => {
     setLabels(prevLabels =>
       prevLabels.map(label =>
         label.name === labelName ? { ...label, checked: !label.checked } : label
+      )
+    );
+  };
+
+  const checkActionLabel = (actionLabelName) => {
+    setActionLabels(prevLabels =>
+      prevLabels.map(label =>
+        label.name === actionLabelName ? { ...label, checked: !label.checked } : label
       )
     );
   };
@@ -49,6 +70,12 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
       prevLabels.map(label => ({ ...label, checked: false }))
     );
   };
+  const clearActionLabels = () => {
+    setActionLabels(prevLabels =>
+      prevLabels.map(label => ({ ...label, checked: false }))
+    );
+  };
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       //backgroundColor: theme.palette.common.black,
@@ -122,19 +149,29 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
               </Popup>} </Box>
         </StyledTableCell>
 
-        {tabValue === 1 && !isInstructor && <StyledTableCell align="center">Application Status</StyledTableCell>}
-        <StyledTableCell align="center">Actions</StyledTableCell>
-        {(!isInstructor && tabValue === 0) && <StyledTableCell align="center" sx={{minWidth: "8rem"}}>
+        {tabValue === 1 && !isInstructor && <StyledTableCell align="center" >Application Status</StyledTableCell>}
+        <StyledTableCell align="center"
+        >Actions
+          <FilterDropdown
+            labels={actionLabels}
+            setLabels={setActionLabels}
+            checkLabelCallback={checkActionLabel}
+            searchCallback={filterActionCallback}
+            clearCallback={clearActionLabels}
+
+          />
+        </StyledTableCell>
+        {(!isInstructor && tabValue === 0) && <StyledTableCell align="center" sx={{ minWidth: "6rem" }}>
           Eligibility
-          <FilterDropdown 
-            labels={ labels}
+          <FilterDropdown
+            labels={labels}
             setLabels={setLabels}
             checkLabelCallback={checkLabel}
-            searchCallback={filterEligibilityCallback} 
+            searchCallback={filterEligibilityCallback}
             clearCallback={clearLabels}
 
-            />
-          
+          />
+
         </StyledTableCell>}
 
 
