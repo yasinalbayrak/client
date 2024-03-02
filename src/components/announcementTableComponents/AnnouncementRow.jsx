@@ -161,12 +161,11 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
               <Button
                 variant="contained"
+                color='success'
                 onClick={() => {
                   if (isTranscriptUploaded) {
-                    // Navigate to the apply page if the transcript is uploaded
                     navigate("/apply/" + applicationId, { replace: true });
                   } else {
-                    // Navigate to a different page (e.g., transcript upload page) if the transcript is not uploaded
                     navigate("/transcriptUploadPage/" + applicationId, { replace: true });
                   }
                 }}

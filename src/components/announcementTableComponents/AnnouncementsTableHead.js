@@ -152,14 +152,14 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
         {tabValue === 1 && !isInstructor && <StyledTableCell align="center" >Application Status</StyledTableCell>}
         <StyledTableCell align="center"
         >Actions
-          <FilterDropdown
+          {(!isInstructor && tabValue === 0 )&& <FilterDropdown
             labels={actionLabels}
             setLabels={setActionLabels}
             checkLabelCallback={checkActionLabel}
             searchCallback={filterActionCallback}
             clearCallback={clearActionLabels}
 
-          />
+          />}
         </StyledTableCell>
         {(!isInstructor && tabValue === 0) && <StyledTableCell align="center" sx={{ minWidth: "6rem" }}>
           Eligibility
