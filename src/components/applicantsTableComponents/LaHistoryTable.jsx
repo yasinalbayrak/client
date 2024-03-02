@@ -36,9 +36,6 @@ const LaHistoryTable = ({ LaHistory }) => {
             <TableCell colSpan={2} align="center">
               <Typography variant="h7"><strong>Status</strong></Typography>
             </TableCell>
-            <TableCell colSpan={2} align="center">
-              <Typography variant="h7"><strong>Reviews</strong></Typography>
-            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -68,13 +65,6 @@ const LaHistoryTable = ({ LaHistory }) => {
                 </Grid>
               </TableCell>
 
-              <TableCell colSpan={2}>
-                <Grid container direction="column" justifyContent="flex-start">
-                  <Typography>
-                    <StarRating />
-                  </Typography>
-                </Grid>
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>
