@@ -186,10 +186,10 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
     let statusColor;
     switch (applicationStatus) {
-      case 'ACCEPTED':
+      case 'Accepted':
         statusColor = 'green';
         break;
-      case 'REJECTED':
+      case 'Rejected':
         statusColor = 'red';
         break;
       default:
@@ -291,14 +291,18 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         </Box>
       </TableCell>
 
-      {!isInstructor && tabValue === 1 && applicationStatus !== "WITHDRAWN" && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
+      {applicationStatus!=="Withdrawn" ?(!isInstructor && tabValue === 1 && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
         <IconButton
           sx={{ color: "blue" }}
           onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}>
 
           <EditIcon />
         </IconButton>
-      </TableCell>}
+      </TableCell>):(<TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
+      <span style={{ color: "red" }}>
+        Withdrawn
+      </span>
+    </TableCell>)}
 
       {(!isInstructor && tabValue === 0) && <TableCell sx={{ width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
         <Box sx={{ width: "70%", marginLeft: "auto", marginRight: "auto" }} className={getClassByElibility(isStudentEligible)}>
