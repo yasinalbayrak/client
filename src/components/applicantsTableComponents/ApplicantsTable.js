@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import QuestionAnswer from "./QuestionsAndAnswers";
 import LaHistoryTable from "./LaHistoryTable";
 import TextField from '@mui/material/TextField';
+import Popup from "../../components/popup/Popup";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -229,9 +230,16 @@ function ApplicantsTable(props) {
   const [questions, setQuestions] = React.useState([]);
   const isApplicantsListEmpty = props.rows.length === 0;
 
+  const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
+
   const handleSearchChange = (event) => {
     setSearchText(event.target.value.toLowerCase());
   };
+
+  const flipPopup = () => {
+    setFinalizePopoUpOpened((prev) => !prev);
+  };
+
 
   const filteredRows = sortedRows.filter((row) => {
     const fullName = row.student.user.name.toLowerCase() + " " + row.student.user.surname.toLowerCase();
@@ -394,10 +402,19 @@ function ApplicantsTable(props) {
               variant="outlined"
               endIcon={<SaveIcon />}
               sx={{ m: "10px", bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, float: "right", alignSelf: "center" }}
-              onClick={() => { finalizeStatuss(props.appId) }}
+              onClick={flipPopup}
             >
               Announce Final Results
             </Button>
+            <Popup
+                  opened={finalizePopoUpOpened}
+                  flipPopup={flipPopup}
+                  title={"Confirm Announcing Final Status?"}
+                  text={"If there would be a final status announcement, all the students will be notified about their final status. Are you sure you want to announce the final status?\n Final status can be done again after this action."}
+                  posAction={() =>{finalizeStatuss(props.appId); flipPopup();}}
+                  negAction={flipPopup}
+                  posActionText={"Finalize"}
+                />
 
           </Table>
         </>
