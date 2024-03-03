@@ -10,6 +10,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ErrorIcon from '@mui/icons-material/Error';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
+import CampaignIcon from '@mui/icons-material/Campaign';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -40,11 +41,15 @@ export default function Popup({ opened, flipPopup, title, text, negAction, posAc
                 }}
             >
                 <ListItemIcon>
-                    <ErrorIcon fontSize="large" sx={{
+                    {posActionText === "Finalize" ? <CampaignIcon fontSize="large" sx={{
+                        width: "6rem",
+                        height: "6rem",
+                        color: "success.main"
+                    }} /> : <ErrorIcon fontSize="large" sx={{
                         width: "6rem",
                         height: "6rem",
                         color: "red"
-                    }} />
+                    }} />}
                 </ListItemIcon>
                 <Typography variant="h5">  {title} </Typography>
             </DialogTitle>
@@ -74,9 +79,9 @@ export default function Popup({ opened, flipPopup, title, text, negAction, posAc
                       },
                 }}>Cancel</Button>
                 <Button variant='contained' sx={{
-                    backgroundColor: "rgb(210,56,86)",
+                    backgroundColor: posActionText==="Finalize" ? "darkgreen": "rgb(210,56,86)",
                     '&:hover': {
-                        backgroundColor: "rgb(180,46,76)", // Hover color
+                        backgroundColor: posActionText==="Finalize" ? "green" : "rgb(180,46,76)", // Hover color
                       },
                 }}
                 
