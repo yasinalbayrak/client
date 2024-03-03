@@ -198,7 +198,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     }
 
     return (
-      <span style={{ color: statusColor }}>
+      <span className={getClassStatus(applicationStatus)}>
         {applicationStatus}
       </span>
     );
@@ -215,6 +215,23 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
       case "Deadline Passed":
         return classes.deadlinePassed;
+      default:
+        return;
+    }
+  }
+
+  const getClassStatus = (status) => {
+    switch (status) {
+      case "Accepted":
+        return classes.acceptedBox;
+      case "Rejected":
+        return classes.rejectedBox;
+      case "In Progress":
+        return classes.pendingBox;
+      case "Withdrawn":
+        return classes.withdrawnBox;
+      case "Added to Waiting List":
+        return classes.waitlistedBox;
       default:
         return;
     }
