@@ -167,7 +167,7 @@ export default function AnnouncementTable(props) {
     setRows(filter.length > 0 ? allRows.filter((row) => (filter.includes(row.isStudentEligible))) : allRows)
   }
   const statusFilter = (filter) => {
-    setUserApplications(filter.length>0 ? userApplications2.filter((row) => (filter.includes((row.status).toLowerCase()))) : userApplications2)
+    setUserApplications(filter.length>0 ? userApplications2.filter((row) => (filter.includes(row.status))) : userApplications2)
   }
   const filterActionCallback = (filter) => {
     console.log('filtterr :>> ', filter);

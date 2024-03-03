@@ -52,23 +52,29 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
   const [statusLabels, setStatusLabels] = React.useState([
     {
       id: 1,
-      name: "accepted",
+      name: "Accepted",
       checked: false
     },
     {
       id: 2,
-      name: "rejected",
+      name: "Rejected",
       checked: false
     },
     {
       label: 3,
-      name: "in_progress",
+      name: "In Progress",
       checked: false
     },
     {
       label: 4,
-      name: "withdrawn",
+      name: "Withdrawn",
       checked: false
+    },
+    {
+      label: 5,
+      name: "Added to Waiting List",
+      checked: false
+
     }])
 
   const checkStatusLabel = (labelName) => {
