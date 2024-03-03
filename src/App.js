@@ -141,8 +141,6 @@ function App() {
                 <Route path="transcriptInfoPage/:id?" element={<TranscriptInfo></TranscriptInfo>}></Route>
                 <Route path="/questionPage/:id" element={<QuestionPage></QuestionPage>}></Route>
                 <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
-
-
               </>
             ) : (
               <>

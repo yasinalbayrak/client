@@ -33,8 +33,8 @@ console.log("denemeee",props.rows)
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.rows &&
-              props.rows
+            {props.rows.content &&
+                props.rows.content
               .filter((row) => (row.term == term.term_desc))
               .map((row, index) => (
                 <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
