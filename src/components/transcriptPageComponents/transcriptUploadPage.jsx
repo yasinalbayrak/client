@@ -70,7 +70,13 @@ const TranscriptPage = (props) => {
       formData.append("file", transcript);
       console.log(filename);
       postTranscript(formData).then((res) => {
-        navigate("/transcriptInfoPage/"+id, { replace: true });
+        if(id === undefined){
+          navigate("/transcriptInfoPage", { replace: true });
+        }
+        else{
+          navigate("/transcriptInfoPage/"+id, { replace: true });
+        }
+          
           }
       ).catch((_) => {
         /* Error is already printed */

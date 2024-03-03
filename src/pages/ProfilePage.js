@@ -12,6 +12,7 @@ import {getAcceptedApplicationRequestsByStudent,updateApplicationRequestStatus, 
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import BackButton from "../components/buttons/BackButton";
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 
 
@@ -22,6 +23,7 @@ function ProfilePage(){
     const[user, setUser] = useState();
     const[showAll, setShowAll] = useState(false);
     const[courses, setCourses] = useState();
+    const navigate = useNavigate();
 
     const expandButton = () => {
         return (courses &&
@@ -72,11 +74,16 @@ function ProfilePage(){
             <>
             <Box sx={{ display: "flex" }}>
                 <Sidebar></Sidebar>
-                <Box component="main" sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Box sx={{ mt:40, textAlign: 'center' }}>
+                <Box component="main"  sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <BackButton to={"/home"}/>
+                    <Box direction="columns" sx={{ mt:40, textAlign: 'center' }}>
                         <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                          No Transcript Info For Current Student
                         </Typography>
+
+                        <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="primary" sx={{position:"relative", mt:"3rem"}}>
+                        Upload new transcript
+                        </Button>
                     </Box>
                 </Box>
             </Box>
@@ -92,7 +99,14 @@ return(
      <Box sx={{ display: "flex" }}>
   <Sidebar></Sidebar>
   <Box component="main" sx={{ flexGrow: 1, m:3 }}>
-  <BackButton to={"/home"}/>
+  <Grid item container direction="rows" alignItems="center" justifyContent="space-between" sx={{}}>
+  <Grid item><BackButton to={"/home"}/></Grid>
+      <Grid item>
+        <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="primary" sx={{position:"relative", mt:"3rem"}}>
+          Upload new transcript
+        </Button>
+      </Grid>
+    </Grid>
     <Box sx={{ p: 5 }}>
     <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>{user?.studentName}</Typography>
     <Typography variant="subtitle1" sx={{ mb: 0.5 }}>SU-ID: {user?.studentSuId}</Typography>

@@ -106,12 +106,16 @@ const TranscriptInfo=(props)=> {
               <br></br>
               <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                 <Grid item>
-                  <Button variant="contained" startIcon={<ArrowBackIcon />} onClick={() => navigate("/transcriptUploadPage/"+id, { replace: true })} color="error">
+                  <Button variant="contained" startIcon={<ArrowBackIcon />} onClick={() => {if(id){navigate("/transcriptUploadPage/"+id, { replace: true })}
+                else{
+                  navigate("/transcriptUploadPage", { replace: true })
+                
+                }}} color="error">
                     Upload new transcript
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="contained" startIcon={<ArrowForwardIcon />} onClick={() => navigate("/apply/"+id, {replace: true})} color="success" >
+                  <Button variant="contained" startIcon={<ArrowForwardIcon />} onClick={() => {if(id){navigate("/apply/"+id, {replace: true})}else{navigate("/profile/"+userID, { replace: true })}}} color="success" >
                   Continue with this information
                   </Button>
                 </Grid>

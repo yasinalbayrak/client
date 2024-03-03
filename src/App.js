@@ -137,8 +137,8 @@ function App() {
                 <Route path="/profile/:id" element={<ProfilePage />} />
                 <Route path="/edit-questionPage/:id" element={<EditQuestionPage />} />
                 <Route path="*" element={<MockCAS />} />
-                <Route path="/transcriptUploadPage/:id" element={<TranscriptPage></TranscriptPage>}></Route>
-                <Route path="transcriptInfoPage/:id" element={<TranscriptInfo></TranscriptInfo>}></Route>
+                <Route path="/transcriptUploadPage/:id?" element={<TranscriptPage></TranscriptPage>}></Route>
+                <Route path="transcriptInfoPage/:id?" element={<TranscriptInfo></TranscriptInfo>}></Route>
                 <Route path="/questionPage/:id" element={<QuestionPage></QuestionPage>}></Route>
                 <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
 
