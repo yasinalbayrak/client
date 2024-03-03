@@ -20,6 +20,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 function ProfilePage(){
     const {id} = useParams();
     const userID = useSelector((state) => state.user.id);
+    const isInstructor = useSelector((state) => state.user.isInstructor);
     const[user, setUser] = useState();
     const[showAll, setShowAll] = useState(false);
     const[courses, setCourses] = useState();
@@ -81,9 +82,9 @@ function ProfilePage(){
                          No Transcript Info For Current Student
                         </Typography>
 
-                        <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="primary" sx={{position:"relative", mt:"3rem"}}>
+                        {id !== undefined && id === userID && !isInstructor && <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="primary" sx={{position:"relative", mt:"3rem"}}>
                         Upload new transcript
-                        </Button>
+                        </Button>}
                     </Box>
                 </Box>
             </Box>
@@ -101,11 +102,11 @@ return(
   <Box component="main" sx={{ flexGrow: 1, m:3 }}>
   <Grid item container direction="rows" alignItems="center" justifyContent="space-between" sx={{}}>
   <Grid item><BackButton to={"/home"}/></Grid>
-      <Grid item>
+      {id !== undefined && id === userID && !isInstructor && <Grid item>
         <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="primary" sx={{position:"relative", mt:"3rem"}}>
           Upload new transcript
         </Button>
-      </Grid>
+      </Grid>}
     </Grid>
     <Box sx={{ p: 5 }}>
     <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>{user?.studentName}</Typography>
