@@ -11,6 +11,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {getAcceptedApplicationRequestsByStudent,updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements } from "../apiCalls";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import BackButton from "../components/buttons/BackButton";
 
 
 
@@ -90,7 +91,8 @@ return(
     <>
      <Box sx={{ display: "flex" }}>
   <Sidebar></Sidebar>
-  <Box component="main" sx={{ flexGrow: 1, pt: 5 }}>
+  <Box component="main" sx={{ flexGrow: 1, m:3 }}>
+  <BackButton to={"/home"}/>
     <Box sx={{ p: 5 }}>
     <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>{user?.studentName}</Typography>
     <Typography variant="subtitle1" sx={{ mb: 0.5 }}>SU-ID: {user?.studentSuId}</Typography>
