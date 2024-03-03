@@ -27,6 +27,7 @@ import { logout, setIsLoading, setTerm, switchIsInstructor } from "../redux/user
 import LogoutIcon from "@mui/icons-material/Logout";
 import { getTerms, logout as invalidateToken } from "../apiCalls";
 import NotificationButton from "./notificationComponents/notifications";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const drawerWidth = 210;
 
@@ -97,6 +98,7 @@ function Sidebar({ setTabInitial }) {
   const token = useSelector((state) => state.user.JwtToken);
   const showTerms = useSelector((state) => state.user.showTerms);
   const unreadCount = useSelector((state) => state.user.unreadNotifications);
+  const userID = useSelector((state) => state.user.id);
 
   const [termSelect, setTermSelect] = React.useState(term);
   const [allTerms, setAllTerms] = React.useState([]);
@@ -347,6 +349,20 @@ function Sidebar({ setTabInitial }) {
             </ListItemButton>
           </ListItem>
           <Divider sx={{ bgcolor: "#e0e0e0", margin: "3px" }} />
+
+          {!isInstructor && (<><ListItem sx={{ padding: "0px" }}>
+            <ListItemButton onClick={() => navigate("/profile/" + userID, { replace: false })} style={{ textDecoration: "none", color: "white" }}>
+              <ListItemIcon sx={{ minWidth: "30px" }}>
+                <AccountCircleIcon sx={{ color: "white" }} />
+              </ListItemIcon>
+              <ListItemText primary={"Profile"} sx={{ opacity: sidebarOpen ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+          <Divider sx={{ bgcolor: "#e0e0e0", margin: "3px" }} /> </>
+          )}
+
+
+
           <ListItem sx={{ padding: "0px" }}>
             <ListItemButton onClick={handleListClick}>
               <ListItemIcon sx={{ minWidth: "30px" }}>
