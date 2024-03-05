@@ -148,7 +148,7 @@ function Sidebar({ setTabInitial }) {
 
 
   const handleLogout = () => {
-    dispatch(setIsLoading({ isLoading: true}));
+    dispatch(setIsLoading({ isLoading: true }));
     token && invalidateToken(token)
       .then(result => {
         console.log("Logout successful");
@@ -159,13 +159,16 @@ function Sidebar({ setTabInitial }) {
 
 
 
-    //TODO
-    const homePageURL = "http://localhost:3000/build/ ";
+
+    var homePageURL = "http://pro2-dev.sabanciuniv.edu/build";
+    if (url.indexOf("pro2") === -1) {
+      homePageURL = "http://localhost:3000/build/"
+    }
     const logoutURL = `https://login.sabanciuniv.edu/cas/logout?service=${encodeURIComponent(homePageURL)}`;
 
 
     window.location.href = logoutURL;
-    
+
 
 
   }
@@ -253,10 +256,10 @@ function Sidebar({ setTabInitial }) {
           </Box>
 
           <Box
-           sx={{ display: "flex", marginLeft: "auto" }}
+            sx={{ display: "flex", marginLeft: "auto" }}
           >
             <NotificationButton unreadCount={unreadCount} />
-            
+
             <Button
               startIcon={<LogoutIcon />}
               variant="none"
@@ -358,7 +361,7 @@ function Sidebar({ setTabInitial }) {
               <ListItemText primary={"Profile"} sx={{ opacity: sidebarOpen ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
-          <Divider sx={{ bgcolor: "#e0e0e0", margin: "3px" }} /> </>
+            <Divider sx={{ bgcolor: "#e0e0e0", margin: "3px" }} /> </>
           )}
 
 
