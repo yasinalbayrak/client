@@ -158,8 +158,7 @@ function Sidebar({ setTabInitial }) {
       });
 
 
-
-
+    const url = window.location.href;
     var homePageURL = "http://pro2-dev.sabanciuniv.edu/build";
     if (url.indexOf("pro2") === -1) {
       homePageURL = "http://localhost:3000/build/"
