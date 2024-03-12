@@ -12,7 +12,7 @@ import { styled } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import IconButton from '@mui/material/IconButton';
 import FilterDropdown from './FilterDropdown';
-function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, handleInstructorFilter, handleJobDetailsFilter, emptyFilter, handleSortLastDate, sortLastDate, filterEligibilityCallback, filterActionCallback , statusFilterCallback}) {
+function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, handleInstructorFilter, handleJobDetailsFilter, emptyFilter, handleSortLastDate, sortLastDate, filterEligibilityCallback, filterActionCallback, statusFilterCallback }) {
 
   const [courseSearch, setCourseSearch] = React.useState(false);
   const [instructorSearch, setInstructorSearch] = React.useState(false);
@@ -191,27 +191,20 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
               </Popup>} </Box>
         </StyledTableCell>
 
-        
+
         {tabValue === 1 && !isInstructor && <StyledTableCell align="center">
-          Application Status 
-          <FilterDropdown 
-            labels={ statusLabels}
+          Application Status
+          <FilterDropdown
+            labels={statusLabels}
             setLabels={setStatusLabels}
             checkLabelCallback={checkStatusLabel}
-            searchCallback={statusFilterCallback} 
+            searchCallback={statusFilterCallback}
             clearCallback={clearStatusLabels}
 
-            /></StyledTableCell>}
+          /></StyledTableCell>}
         <StyledTableCell align="center"
         >Actions
-          {(!isInstructor && tabValue === 0 )&& <FilterDropdown
-            labels={actionLabels}
-            setLabels={setActionLabels}
-            checkLabelCallback={checkActionLabel}
-            searchCallback={filterActionCallback}
-            clearCallback={clearActionLabels}
 
-          />}
         </StyledTableCell>
         {(!isInstructor && tabValue === 0) && <StyledTableCell align="center" sx={{ minWidth: "6rem" }}>
           Eligibility
@@ -224,9 +217,23 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
 
           />
 
-        </StyledTableCell>}
+        </StyledTableCell>
 
+        }
 
+        {(!isInstructor && tabValue === 0) && <StyledTableCell align="center" sx={{ width: "10px" , padding:0}}>
+          <FilterDropdown
+            labels={actionLabels}
+            setLabels={setActionLabels}
+            checkLabelCallback={checkActionLabel}
+            searchCallback={filterActionCallback}
+            clearCallback={clearActionLabels}
+
+          />
+
+        </StyledTableCell>
+
+        }
 
 
       </TableRow>

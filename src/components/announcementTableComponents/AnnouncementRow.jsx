@@ -142,40 +142,27 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           );
         } else {
           return (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              gap={2}
-              maxWidth="fit-content"
-              minWidth="12rem"
-            >
 
-              <FollowButton
-                isInstructor={isInstructor}
-                isFollowing={isFollowing}
-                applicationId={applicationId}
-                addFollower={addFollower}
-                removeFollower={removeFollower}
-              />
 
-              <Button
-                variant="contained"
-                color='success'
-                onClick={() => {
-                  if (isTranscriptUploaded) {
-                    navigate("/apply/" + applicationId, { replace: true });
-                  } else {
-                    navigate("/transcriptUploadPage/" + applicationId, { replace: true });
-                  }
-                }}
-                sx={{
-                  height:"40px"
+
+
+            <Button
+              variant="contained"
+              color='success'
+              onClick={() => {
+                if (isTranscriptUploaded) {
+                  navigate("/apply/" + applicationId, { replace: true });
+                } else {
+                  navigate("/transcriptUploadPage/" + applicationId, { replace: true });
+                }
               }}
-              >
-                Apply
-              </Button>
-            </Box>
+              sx={{
+                height: "40px"
+              }}
+            >
+              Apply
+            </Button>
+
           );
         }
       }
@@ -308,24 +295,31 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         </Box>
       </TableCell>
 
-      {applicationStatus!=="Withdrawn" ?(!isInstructor && tabValue === 1 && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
-        <IconButton
+      { (!isInstructor && tabValue === 1 && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
+        {applicationStatus === "In Progress" && <IconButton
           sx={{ color: "blue" }}
           onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}>
 
           <EditIcon />
-        </IconButton>
-      </TableCell>):(<TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
-      <span style={{ color: "red" }}>
-        Withdrawn
-      </span>
-    </TableCell>)}
+        </IconButton>}
+      </TableCell>)}
 
       {(!isInstructor && tabValue === 0) && <TableCell sx={{ width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
         <Box sx={{ width: "70%", marginLeft: "auto", marginRight: "auto" }} className={getClassByElibility(isStudentEligible)}>
           {isStudentEligible}
         </Box>
       </TableCell>}
+
+      {(!isInstructor && tabValue === 0) && <TableCell align="center" component="th" scope="row" sx={{padding:0}}>
+        {<FollowButton
+          isInstructor={isInstructor}
+          isFollowing={isFollowing}
+          applicationId={applicationId}
+          addFollower={addFollower}
+          removeFollower={removeFollower}
+        />}
+      </TableCell>}
+
 
 
     </TableRow>

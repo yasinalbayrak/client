@@ -57,7 +57,7 @@ const InstructorList = ({ instructor_names, authorizedInstructors }) => {
                         variant="elevated"
                         title={instructor}
                         color="primary"
-                        clickable={true}
+                        clickable={false}
                         style={{
                             fontWeight: 'normal',
                             color: 'whitesmoke',

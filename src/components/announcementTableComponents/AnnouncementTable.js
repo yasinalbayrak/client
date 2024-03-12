@@ -215,17 +215,15 @@ export default function AnnouncementTable(props) {
               ? userApplications
               : rows
             )
-              .filter((rowData) => rowData.term === term.term_desc)
-              
               .filter((rowData) => {
                 const courseCode = rowData.application ? rowData.application.course.courseCode : rowData.course.courseCode;
-                return courseCode.toLowerCase().includes(courseFilterTerm?.toLowerCase());
-              })
-              .filter((rowData) => rowData.instructor_names.some((instructor) => instructor.toLowerCase().includes(instructorFilterTerm?.toLowerCase())))
-              .filter((rowData) => {
                 const jobDetails = rowData.application ? rowData.application.jobDetails : rowData.jobDetails;
-                return jobDetails.toLowerCase().includes(jobDetailsFilterTerm?.toLowerCase());
+                return rowData.term === term.term_desc &&  courseCode.toLowerCase().includes(courseFilterTerm?.toLowerCase())
+                && rowData.instructor_names.some((instructor) => instructor.toLowerCase().includes(instructorFilterTerm?.toLowerCase()))
+                && jobDetails.toLowerCase().includes(jobDetailsFilterTerm?.toLowerCase());
+              
               })
+          
               .sort((a, b) => {
                 if (!sortLastDate) return 0;
                 const dateA = new Date(a.application ? a.application.lastApplicationDate : a.lastApplicationDate);

@@ -51,6 +51,7 @@ const NotificationButton = ({ unreadCount }) => {
 
     const handleButtonClick = (event) => {
         event.stopPropagation();
+        
         setDropdownVisible(!dropdownVisible);
     };
 
@@ -355,7 +356,7 @@ const Settings = () => {
 
 
     /*
-    // very nice public subscription  feature but another design is applied :(
+    // very nice public subscription  feature but another design was applied :(
 
     useEffect(() => {
         console.log('reduxPreferences', reduxPreferences)
@@ -400,7 +401,7 @@ const Settings = () => {
                 <Switch
                     className='sw'
                     checked={reduxPreferences?.directEmail}
-                    onChange={handleChange('directEmail')}
+                    disabled
                 />
             </div>
 
