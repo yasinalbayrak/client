@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses }from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Typography, IconButton, Collapse, Snackbar, Grid, Button, Divider } from "@mui/material";
+import { Typography, IconButton, Collapse, Snackbar, Grid, Button, Divider, Tab } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -27,6 +27,7 @@ import TextField from '@mui/material/TextField';
 import Popup from "../../components/popup/Popup";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -44,6 +45,8 @@ function CustomRow(props) {
   const [laHistoryPage, setLaHistoryPage] = React.useState(0);
 
   console.log(row);
+
+  
 
 
   useEffect(() => {
@@ -198,17 +201,22 @@ function CustomRow(props) {
           </td>
         </TableCell>
 
+        
+
 
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
           <Collapse in={open} component="tr" style={{ display: "block" }}>
             <td style={{ width: "100%" }}>
+            <Stack spacing={0}>
               <LaHistoryTable
                 LaHistory={LaHistory}
               />
-              <Stack spacing={2}>
+              
                 <Pagination count={LaHistory.totalPages} page={laHistoryPage+1} onChange={handlePageChange} />
               </Stack>
-              <Box sx={{ minWidth: 120, mY: "15px", height: "100%" }} textAlign="center">
+              
+            </td>
+            <Box sx={{ height: "100%" }} textAlign="center">
 
                 <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
 
@@ -223,7 +231,6 @@ function CustomRow(props) {
                 </Box>
 
               </Box>
-            </td>
           </Collapse>
         </TableCell>
 
@@ -336,8 +343,20 @@ function ApplicantsTable(props) {
     })
   }
 
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      //backgroundColor: theme.palette.common.black,
+      //color: theme.palette.common.white,
+      backgroundColor: '#FAFAFA',
+      color: theme.palette.common.black,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
   return (
-    <TableContainer component={Paper}>
+    <Box>
       {isApplicantsListEmpty ? (
         <Typography variant="h6" align="center" style={{ padding: 20 }}>
           <Alert severity="info">
@@ -357,11 +376,12 @@ function ApplicantsTable(props) {
             Reject all
           </Button>
 
-
-          <Table sx={{ minWidth: 600, marginTop: "1rem" }} aria-label="simple table">
+          <TableContainer component={Paper} sx={{overflow: "auto",
+        scrollbarWidth: "none", '&::-webkit-scrollbar': { display: 'none' }, '&-ms-overflow-style:': { display: 'none' }}}>
+          <Table sx={{ minWidth: 600 }} stickyHeader aria-label="simple table" >
             <TableHead>
               <TableRow sx={{ bgcolor: "#eeeeee" }}>
-                <TableCell align="left">
+                <StyledTableCell align="left">
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Student Name
                     <IconButton onClick={toggleSortOrder} style={{ color: getSortIconColor() }}>
@@ -380,19 +400,18 @@ function ApplicantsTable(props) {
                       placeholder="Filter by name..."
                     />
                   )}
-                </TableCell>
-                <TableCell align="left">Majors</TableCell>
-                <TableCell align="left">Minors</TableCell>
-                <TableCell align="left">
+                </StyledTableCell>
+                <StyledTableCell align="left">Majors</StyledTableCell>
+                <StyledTableCell align="left">Minors</StyledTableCell>
+                <StyledTableCell align="left">
                   Grade
                   <IconButton onClick={toggleGradeSortOrder} style={{ color: getGradeSortIconColor() }}>
                     <SwapVertTwoToneIcon />
                   </IconButton>
-                </TableCell>
-                <TableCell align="left" sx={{ width: "10rem" }}>Status</TableCell>
-                <TableCell align="left">Details</TableCell>
-                <TableCell align="left"></TableCell>
-                <TableCell align="left"></TableCell>
+                </StyledTableCell>
+                <StyledTableCell align="left" sx={{ width: "10rem" }}>Status</StyledTableCell>
+                <StyledTableCell align="left">Details</StyledTableCell>
+                
               </TableRow>
             </TableHead>
             <TableBody>
@@ -409,7 +428,10 @@ function ApplicantsTable(props) {
             </TableBody>
 
 
-            <Button
+            
+          </Table>
+          </TableContainer>
+          <Button
               variant="outlined"
               endIcon={<SaveIcon />}
               sx={{ m: "10px", bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, float: "right", alignSelf: "center" }}
@@ -427,10 +449,11 @@ function ApplicantsTable(props) {
                   posActionText={"Finalize"}
                 />
 
-          </Table>
         </>
+        
       )}
-    </TableContainer>
+    </Box>
+    
   );
 }
 
