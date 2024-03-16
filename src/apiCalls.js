@@ -280,12 +280,12 @@ async function getApplicationByUsername(username) {
 
 }
 
-async function getApplicationRequestsByStudentId(studentId) {
+async function getApplicationRequestsByStudentId(studentId, page) {
   try {
     const token = getJwtFromCookie()
     
     const results = await axios.get(
-      apiEndpoint + "/applicationRequest/student/" + studentId, {
+      apiEndpoint + "/applicationRequest/student/" + studentId + "?page="+ page +"&size=5", {
       headers: { "Authorization": "Bearer " + token }
     }
     );

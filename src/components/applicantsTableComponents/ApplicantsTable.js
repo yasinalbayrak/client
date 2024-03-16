@@ -25,6 +25,8 @@ import QuestionAnswer from "./QuestionsAndAnswers";
 import LaHistoryTable from "./LaHistoryTable";
 import TextField from '@mui/material/TextField';
 import Popup from "../../components/popup/Popup";
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -39,6 +41,7 @@ function CustomRow(props) {
   const [userID, setUserID] = React.useState("");
   const navigate = useNavigate();
   const [studentDetails, setStudentDetails] = React.useState({});
+  const [laHistoryPage, setLaHistoryPage] = React.useState(0);
 
   console.log(row);
 
@@ -104,13 +107,18 @@ function CustomRow(props) {
 
 
   useEffect(() => {
-    getApplicationRequestsByStudentId(row.student.user.id)
+    getApplicationRequestsByStudentId(row.student.user.id, laHistoryPage)
       .then((res) => {
         setLaHistory(res);
       })
       .catch((_) => {
       });
-  }, [row.student.user.id, courseCode, row.status]);
+  }, [row.student.user.id, courseCode, row.status, laHistoryPage]);
+
+
+  const handlePageChange = (event, value) => {
+    setLaHistoryPage(value-1);
+  };
 
 
 
@@ -197,6 +205,9 @@ function CustomRow(props) {
               <LaHistoryTable
                 LaHistory={LaHistory}
               />
+              <Stack spacing={2}>
+                <Pagination count={LaHistory.totalPages} page={laHistoryPage+1} onChange={handlePageChange} />
+              </Stack>
               <Box sx={{ minWidth: 120, mY: "15px", height: "100%" }} textAlign="center">
 
                 <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
