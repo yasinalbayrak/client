@@ -145,7 +145,7 @@ const ProtectedRouteStu = ({ element}) => {
           <Routes>
             {isLoggedIn ? (
               <>
-                
+                {/* not authorized */}
                 <Route path="/home" element={<ProtectedRouteIns element={<HomePage />}/> } />
                 <Route path="*" element={<MockCAS />} />
                 <Route path="/success" element={<SuccessPage />} />
@@ -154,7 +154,7 @@ const ProtectedRouteStu = ({ element}) => {
                 <Route path="transcriptInfoPage/:id?" element={<TranscriptInfo></TranscriptInfo>}></Route>
                 <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
 
-
+                {/* Authorized for instructor */}
                 <Route path="/create-announcement" element={<ProtectedRouteIns element={<CreateAnnouncement />}/>} />
                 <Route path="/edit-announcement/:id" element={<ProtectedRouteIns element={<EditAnnouncement />}/>}  />
                 <Route path="/applicants" element={<ProtectedRouteIns element={<CourseApplicantsPage />}/> } />
@@ -162,7 +162,7 @@ const ProtectedRouteStu = ({ element}) => {
                 <Route path="/edit-questionPage/:id" element={<ProtectedRouteIns element={<EditQuestionPage />}/>} />
                 <Route path="/questionPage/:id" element={<ProtectedRouteIns element={<QuestionPage></QuestionPage>}/>}></Route>
 
-
+                {/* Authorized for Student */}
                 <Route path="/apply/:id" element={<ProtectedRouteStu element={<ApplyPage />} /> } />
                 <Route path="/edit-apply/:id" element={<ProtectedRouteStu element={<EditApplyPage />}/> } />
                 <Route path="/transcriptUploadPage/:id?" element={<ProtectedRouteStu element={<TranscriptPage></TranscriptPage>}/> }></Route>
