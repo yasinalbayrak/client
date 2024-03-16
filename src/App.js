@@ -31,6 +31,7 @@ import { WebSocketProvider } from "./context/WebSocketContext";
 import { useWebSocket } from "./context/WebSocketContext";
 import webSocketService from "./components/service/WebSocketService";
 import LoadingPage from "./pages/LoadingPage/LoadingPage";
+import Forbidden403 from "./403";
 function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
@@ -115,6 +116,24 @@ function App() {
   }, [isLoggedIn, isLoading, url, dispatch, navigate, location.pathname, urlParams]);
 
 
+const ProtectedRouteIns = ({ element}) => {
+  if(isInstructor){
+    return element;
+  }
+  return <Forbidden403 />;
+};
+
+const ProtectedRouteStu = ({ element}) => {
+  if(!isInstructor){
+    return element;
+  }
+  return <Forbidden403 />;
+};
+
+
+
+
+
   if (isLoading) {
     return <LoadingPage></LoadingPage>
   }
@@ -126,26 +145,35 @@ function App() {
           <Routes>
             {isLoggedIn ? (
               <>
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/create-announcement" element={<CreateAnnouncement />} />
-                <Route path="/edit-announcement/:id" element={<EditAnnouncement />} />
-                <Route path="/apply/:id" element={<ApplyPage />} />
-                <Route path="/edit-apply/:id" element={<EditApplyPage />} />
-                <Route path="/applicants" element={<CourseApplicantsPage />} />
-                <Route path="/application-of/:appId" element={<ApplicantsPage />} />
+                
+                <Route path="/home" element={<ProtectedRouteIns element={<HomePage />}/> } />
+                <Route path="*" element={<MockCAS />} />
                 <Route path="/success" element={<SuccessPage />} />
                 <Route path="/profile/:id" element={<ProfilePage />} />
-                <Route path="/edit-questionPage/:id" element={<EditQuestionPage />} />
-                <Route path="*" element={<MockCAS />} />
-                <Route path="/transcriptUploadPage/:id?" element={<TranscriptPage></TranscriptPage>}></Route>
+                <Route path="/403" element={<Forbidden403></Forbidden403>} />
                 <Route path="transcriptInfoPage/:id?" element={<TranscriptInfo></TranscriptInfo>}></Route>
-                <Route path="/questionPage/:id" element={<QuestionPage></QuestionPage>}></Route>
                 <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
+
+
+                <Route path="/create-announcement" element={<ProtectedRouteIns element={<CreateAnnouncement />}/>} />
+                <Route path="/edit-announcement/:id" element={<ProtectedRouteIns element={<EditAnnouncement />}/>}  />
+                <Route path="/applicants" element={<ProtectedRouteIns element={<CourseApplicantsPage />}/> } />
+                <Route path="/application-of/:appId" element={<ProtectedRouteIns element={<ApplicantsPage />}/>} />
+                <Route path="/edit-questionPage/:id" element={<ProtectedRouteIns element={<EditQuestionPage />}/>} />
+                <Route path="/questionPage/:id" element={<ProtectedRouteIns element={<QuestionPage></QuestionPage>}/>}></Route>
+
+
+                <Route path="/apply/:id" element={<ProtectedRouteStu element={<ApplyPage />} /> } />
+                <Route path="/edit-apply/:id" element={<ProtectedRouteStu element={<EditApplyPage />}/> } />
+                <Route path="/transcriptUploadPage/:id?" element={<ProtectedRouteStu element={<TranscriptPage></TranscriptPage>}/> }></Route>
+                
+                
               </>
             ) : (
               <>
                 <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
                 <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
+                <Route path="/403" element={<Forbidden403></Forbidden403>} />
               </>
             )}
           </Routes>
