@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses }from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Typography, IconButton, Collapse, Snackbar, Grid, Button, Divider, Tab } from "@mui/material";
+import { Typography, IconButton, Collapse, Snackbar, Grid, Button, Divider, Tab, Container } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -51,7 +51,7 @@ function CustomRow(props) {
   console.log(row);
   console.log(ann);
 
-  
+
 
   useEffect(() => {
     const prevCourseGrades = ann.previousCourseGrades;
@@ -68,17 +68,17 @@ function CustomRow(props) {
         {
           courseCode: req.course.courseCode,
           grade: course.grade
-          
+
         }
       ]);
     });
 
-  },[]);
+  }, []);
 
- console.log(requiredCourses);
+  console.log(requiredCourses);
 
 
-    
+
   useEffect(() => {
     setUserID(row.student.user.id);
   }, [row.student.user.id]);
@@ -150,7 +150,7 @@ function CustomRow(props) {
 
 
   const handlePageChange = (event, value) => {
-    setLaHistoryPage(value-1);
+    setLaHistoryPage(value - 1);
   };
 
 
@@ -189,8 +189,8 @@ function CustomRow(props) {
               Status is successfully changed
             </Alert>
           </Snackbar>
-          <FormControl fullWidth  color={row.statusIns!==row.status?"info":""} focused={row.statusIns!==row.status?"True":""}>
-            <InputLabel id="demo-simple-select-label">{row.statusIns!==row.status? "Status*":"Status"}</InputLabel>
+          <FormControl fullWidth color={row.statusIns !== row.status ? "info" : ""} focused={row.statusIns !== row.status ? "True" : ""}>
+            <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status*" : "Status"}</InputLabel>
             <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label="Status" onChange={handleChange}>
               <MenuItem value={"Accepted"}>Accepted</MenuItem>
               <MenuItem value={"Rejected"}>Rejected</MenuItem>
@@ -232,16 +232,16 @@ function CustomRow(props) {
           </td>
         </TableCell>
 
-        {requiredCourses.length > 0 && 
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} >
-          <Collapse in={open} component="tr" style={{ display: "block" }}>
-            <td style={{ width: "100%" }}>
-              <ReqCourseGrades
-                requiredCourses={requiredCourses}
-              />
-            </td>
-          </Collapse>
-        </TableCell>}
+        {requiredCourses.length > 0 &&
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} >
+            <Collapse in={open} component="tr" style={{ display: "block" }}>
+              <td style={{ width: "100%" }}>
+                <ReqCourseGrades
+                  requiredCourses={requiredCourses}
+                />
+              </td>
+            </Collapse>
+          </TableCell>}
 
 
 
@@ -249,30 +249,30 @@ function CustomRow(props) {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
           <Collapse in={open} component="tr" style={{ display: "block" }}>
             <td style={{ width: "100%" }}>
-            <Stack spacing={0}>
-              <LaHistoryTable
-                LaHistory={LaHistory}
-              />
-              
-                <Pagination count={LaHistory.totalPages} page={laHistoryPage+1} onChange={handlePageChange} />
+              <Stack spacing={0}>
+                <LaHistoryTable
+                  LaHistory={LaHistory}
+                />
+
+                <Pagination count={LaHistory.totalPages} page={laHistoryPage + 1} onChange={handlePageChange} />
               </Stack>
-              
+
             </td>
             <Box sx={{ height: "100%" }} textAlign="center">
 
-                <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+              <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
 
-                  <Button
-                    variant="outlined"
-                    endIcon={<AccountCircleIcon />}
-                    sx={{ m: "10px" }}
-                    onClick={() => navigate("/profile/" + userID, { replace: false })}
-                  >
-                    Student Profile
-                  </Button>
-                </Box>
-
+                <Button
+                  variant="outlined"
+                  endIcon={<AccountCircleIcon />}
+                  sx={{ m: "10px" }}
+                  onClick={() => navigate("/profile/" + userID, { replace: false })}
+                >
+                  Student Profile
+                </Button>
               </Box>
+
+            </Box>
           </Collapse>
         </TableCell>
 
@@ -370,21 +370,21 @@ function ApplicantsTable(props) {
   }
 
   const handleAcceptAll = () => {
-    acceptAllRequestByAppId(props.appId).then(()=>{
-      
-      setSortedRows((prev)=>prev.map(
-        (row)=>({...row, statusIns:"Accepted"})
+    acceptAllRequestByAppId(props.appId).then(() => {
+
+      setSortedRows((prev) => prev.map(
+        (row) => ({ ...row, statusIns: "Accepted" })
       ))
-    }).catch(_=>{
+    }).catch(_ => {
       console.error("Error");
     })
   }
   const handleRejectAll = () => {
-    rejectAllRequestByAppId(props.appId).then(()=>{
-      setSortedRows((prev)=>prev.map(
-        (row)=>({...row, statusIns:"Rejected"})
+    rejectAllRequestByAppId(props.appId).then(() => {
+      setSortedRows((prev) => prev.map(
+        (row) => ({ ...row, statusIns: "Rejected" })
       ))
-    }).catch(_=>{
+    }).catch(_ => {
       console.error("Error");
     })
   }
@@ -411,74 +411,84 @@ function ApplicantsTable(props) {
         </Typography>
       ) : (
         <>
-          <Button variant="outlined" color="success" sx={{ marginRight: "1rem" }}
-            onClick={handleAcceptAll}
-          >
-            Accept all
-          </Button>
-          <Button variant="outlined" color="error"
-            onClick={handleRejectAll}
-          >
-            Reject all
-          </Button>
 
-          <TableContainer component={Paper} sx={{overflow: "auto",
-            scrollbarWidth: "none", '&::-webkit-scrollbar': { display: 'none' }, '&-ms-overflow-style:': { display: 'none' }}}>
-          <Table sx={{ minWidth: 600 }} stickyHeader aria-label="simple table" >
-            <TableHead>
-              <TableRow sx={{ bgcolor: "#eeeeee" }}>
-                <StyledTableCell align="left">
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Student Name
-                    <IconButton onClick={toggleSortOrder} style={{ color: getSortIconColor() }}>
+
+          <TableContainer component={Paper} sx={{
+            overflow: "auto",
+            scrollbarWidth: "none", '&::-webkit-scrollbar': { display: 'none' }, '&-ms-overflow-style:': { display: 'none' }
+          }}>
+            <Table sx={{ minWidth: 600 }} stickyHeader aria-label="simple table" >
+              <TableHead>
+                <TableRow sx={{ bgcolor: "#eeeeee" }}>
+                  <StyledTableCell align="left">
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Student Name
+                      <IconButton onClick={toggleSortOrder} style={{ color: getSortIconColor() }}>
+                        <SwapVertTwoToneIcon />
+                      </IconButton>
+                      <IconButton onClick={toggleFilterVisibility} style={{ color: isFilterVisible ? 'blue' : undefined }}>
+                        <FilterAltIcon />
+                      </IconButton>
+                    </Box>
+                    {isFilterVisible && (
+                      <TextField
+                        fullWidth
+                        size="small"
+                        value={searchText}
+                        onChange={handleSearchChange}
+                        placeholder="Filter by name..."
+                      />
+                    )}
+                  </StyledTableCell>
+                  <StyledTableCell align="left">Majors</StyledTableCell>
+                  <StyledTableCell align="left">Minors</StyledTableCell>
+                  <StyledTableCell align="left">
+                    Grade
+                    <IconButton onClick={toggleGradeSortOrder} style={{ color: getGradeSortIconColor() }}>
                       <SwapVertTwoToneIcon />
                     </IconButton>
-                    <IconButton onClick={toggleFilterVisibility} style={{ color: isFilterVisible ? 'blue' : undefined }}>
-                      <FilterAltIcon />
-                    </IconButton>
-                  </Box>
-                  {isFilterVisible && (
-                    <TextField
-                      fullWidth
-                      size="small"
-                      value={searchText}
-                      onChange={handleSearchChange}
-                      placeholder="Filter by name..."
-                    />
-                  )}
-                </StyledTableCell>
-                <StyledTableCell align="left">Majors</StyledTableCell>
-                <StyledTableCell align="left">Minors</StyledTableCell>
-                <StyledTableCell align="left">
-                  Grade
-                  <IconButton onClick={toggleGradeSortOrder} style={{ color: getGradeSortIconColor() }}>
-                    <SwapVertTwoToneIcon />
-                  </IconButton>
-                </StyledTableCell>
-                <StyledTableCell align="left" sx={{ width: "10rem" }}>Status</StyledTableCell>
-                <StyledTableCell align="left">Details</StyledTableCell>
-                
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredRows.map((row, index) => (
-                <CustomRow
-                  appId={props.appId}
-                  row={row}
-                  courseCode={props.courseCode}
-                  index={index}
-                  questions={props.questions}
-                  key={index}
-                  ann={ann}
-                />
-              ))}
-            </TableBody>
+                  </StyledTableCell>
+                  <StyledTableCell align="left" sx={{ width: "10rem" }}>Status</StyledTableCell>
+                  <StyledTableCell align="left">Details</StyledTableCell>
+
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredRows.map((row, index) => (
+                  <CustomRow
+                    appId={props.appId}
+                    row={row}
+                    courseCode={props.courseCode}
+                    index={index}
+                    questions={props.questions}
+                    key={index}
+                    ann={ann}
+                  />
+                ))}
+              </TableBody>
 
 
-            
-          </Table>
+
+            </Table>
           </TableContainer>
-          <Button
+          <div
+          style={{
+            display: "flex",
+            justifyContent: "right",
+            alignItems: "center"
+          }}>
+            <Button variant="outlined" color="success" sx={{ marginRight: "1rem", marginTop: "0.5rem" }}
+              onClick={handleAcceptAll}
+            >
+              Accept all
+            </Button>
+            <Button variant="outlined" color="error"
+              onClick={handleRejectAll}
+              sx={{ marginTop: "0.5rem" }}
+            >
+              Reject all
+            </Button>
+            <Button
               variant="outlined"
               endIcon={<SaveIcon />}
               sx={{ m: "10px", bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, float: "right", alignSelf: "center" }}
@@ -486,21 +496,23 @@ function ApplicantsTable(props) {
             >
               Announce Final Results
             </Button>
-            <Popup
-                  opened={finalizePopoUpOpened}
-                  flipPopup={flipPopup}
-                  title={"Confirm Announcing Final Status?"}
-                  text={"If there would be a final status announcement, all the students will be notified about their final status. Are you sure you want to announce the final status?\n Final status can be done again after this action."}
-                  posAction={() =>{finalizeStatuss(props.appId); flipPopup(); props.setFinalize((prev) => !prev);}}
-                  negAction={flipPopup}
-                  posActionText={"Finalize"}
-                />
+          </div>
+
+          <Popup
+            opened={finalizePopoUpOpened}
+            flipPopup={flipPopup}
+            title={"Confirm Announcing Final Status?"}
+            text={"If there would be a final status announcement, all the students will be notified about their final status. Are you sure you want to announce the final status?\n Final status can be done again after this action."}
+            posAction={() => { finalizeStatuss(props.appId); flipPopup(); props.setFinalize((prev) => !prev); }}
+            negAction={flipPopup}
+            posActionText={"Finalize"}
+          />
 
         </>
-        
+
       )}
     </Box>
-    
+
   );
 }
 
