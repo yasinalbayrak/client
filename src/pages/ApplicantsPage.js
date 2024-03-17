@@ -14,6 +14,7 @@ function ApplicantsPage() {
   const [title, setTitle] = React.useState("");
   const { appId } = useParams();
   const [application, setApplication] = React.useState({});
+  const [finalize, setFinalize] = React.useState(false);
   
   useEffect(() => {
     
@@ -28,7 +29,7 @@ function ApplicantsPage() {
     );
     
   
-  }, []);
+  }, [finalize]);
 
   console.log("APPLICATION REQUESTS",rows);
   console.log("APPLICATION",application);
@@ -47,7 +48,7 @@ function ApplicantsPage() {
               </Typography>
             </Grid>
             <Grid item>
-              <ApplicantsTable rows={rows} courseCode={title} appId = {appId} announcement={application}></ApplicantsTable>
+              <ApplicantsTable rows={rows} courseCode={title} appId = {appId} announcement={application} setFinalize={setFinalize}></ApplicantsTable>
             </Grid>
           </Grid>
         </Box>

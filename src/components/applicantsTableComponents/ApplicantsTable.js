@@ -29,6 +29,8 @@ import Popup from "../../components/popup/Popup";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
+import { borders } from '@mui/system';
+
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -187,8 +189,8 @@ function CustomRow(props) {
               Status is successfully changed
             </Alert>
           </Snackbar>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Status</InputLabel>
+          <FormControl fullWidth  color={row.statusIns!==row.status?"info":""} focused={row.statusIns!==row.status?"True":""}>
+            <InputLabel id="demo-simple-select-label">{row.statusIns!==row.status? "Status*":"Status"}</InputLabel>
             <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label="Status" onChange={handleChange}>
               <MenuItem value={"Accepted"}>Accepted</MenuItem>
               <MenuItem value={"Rejected"}>Rejected</MenuItem>
@@ -489,7 +491,7 @@ function ApplicantsTable(props) {
                   flipPopup={flipPopup}
                   title={"Confirm Announcing Final Status?"}
                   text={"If there would be a final status announcement, all the students will be notified about their final status. Are you sure you want to announce the final status?\n Final status can be done again after this action."}
-                  posAction={() =>{finalizeStatuss(props.appId); flipPopup();}}
+                  posAction={() =>{finalizeStatuss(props.appId); flipPopup(); props.setFinalize((prev) => !prev);}}
                   negAction={flipPopup}
                   posActionText={"Finalize"}
                 />
