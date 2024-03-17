@@ -23,6 +23,7 @@ import TranscriptPage from "./components/transcriptPageComponents/transcriptUplo
 import TranscriptInfo from "./components/transcriptPageComponents/transcriptInfoPage";
 import QuestionPage from "./components/transcriptPageComponents/transcriptExtraFile";
 import EditQuestionPage from "./components/transcriptPageComponents/EditQuestionPage";
+import CommitPage from "./components/commitPage/CommitPage";
 import EligibilityPage from "./pages/EligibilityPage";
 import SockJS from "sockjs-client"
 import { Stomp } from "@stomp/stompjs"
@@ -146,7 +147,7 @@ const ProtectedRouteStu = ({ element}) => {
             {isLoggedIn ? (
               <>
                 {/* not authorized */}
-                <Route path="/home" element={<ProtectedRouteIns element={<HomePage />}/> } />
+                <Route path="/home" element={<HomePage />} />
                 <Route path="*" element={<MockCAS />} />
                 <Route path="/success" element={<SuccessPage />} />
                 <Route path="/profile/:id" element={<ProfilePage />} />
@@ -159,13 +160,16 @@ const ProtectedRouteStu = ({ element}) => {
                 <Route path="/edit-announcement/:id" element={<ProtectedRouteIns element={<EditAnnouncement />}/>}  />
                 <Route path="/applicants" element={<ProtectedRouteIns element={<CourseApplicantsPage />}/> } />
                 <Route path="/application-of/:appId" element={<ProtectedRouteIns element={<ApplicantsPage />}/>} />
-                <Route path="/edit-questionPage/:id" element={<ProtectedRouteIns element={<EditQuestionPage />}/>} />
-                <Route path="/questionPage/:id" element={<ProtectedRouteIns element={<QuestionPage></QuestionPage>}/>}></Route>
+                
+                
 
                 {/* Authorized for Student */}
                 <Route path="/apply/:id" element={<ProtectedRouteStu element={<ApplyPage />} /> } />
                 <Route path="/edit-apply/:id" element={<ProtectedRouteStu element={<EditApplyPage />}/> } />
                 <Route path="/transcriptUploadPage/:id?" element={<ProtectedRouteStu element={<TranscriptPage></TranscriptPage>}/> }></Route>
+                <Route path="/commit" element={<ProtectedRouteStu element={<CommitPage />} /> } />
+                <Route path="/questionPage/:id" element={<ProtectedRouteStu element={<QuestionPage></QuestionPage>}/>}></Route>
+                <Route path="/edit-questionPage/:id" element={<ProtectedRouteStu element={<EditQuestionPage />}/>} />
                 
                 
               </>
