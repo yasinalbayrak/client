@@ -230,6 +230,7 @@ function CustomRow(props) {
           </td>
         </TableCell>
 
+        {requiredCourses.length > 0 && 
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} >
           <Collapse in={open} component="tr" style={{ display: "block" }}>
             <td style={{ width: "100%" }}>
@@ -238,7 +239,7 @@ function CustomRow(props) {
               />
             </td>
           </Collapse>
-        </TableCell>
+        </TableCell>}
 
 
 
