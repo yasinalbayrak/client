@@ -23,6 +23,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
 import QuestionAnswer from "./QuestionsAndAnswers";
 import LaHistoryTable from "./LaHistoryTable";
+import ReqCourseGrades from "./ReqCourseGrades";
 import TextField from '@mui/material/TextField';
 import Popup from "../../components/popup/Popup";
 import Pagination from '@mui/material/Pagination';
@@ -34,7 +35,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 function CustomRow(props) {
-  const { row, index, questions, appId, courseCode } = props;
+  const { row, index, questions, appId, courseCode, ann } = props;
   const [open, setOpen] = React.useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [status, setStatus] = React.useState("");
@@ -43,12 +44,39 @@ function CustomRow(props) {
   const navigate = useNavigate();
   const [studentDetails, setStudentDetails] = React.useState({});
   const [laHistoryPage, setLaHistoryPage] = React.useState(0);
+  const [requiredCourses, setRequiredCourses] = React.useState([]);
 
   console.log(row);
+  console.log(ann);
 
   
 
+  useEffect(() => {
+    const prevCourseGrades = ann.previousCourseGrades;
+    const transcript = row.transcript;
 
+    console.log(prevCourseGrades);
+    console.log(transcript);
+
+    prevCourseGrades.map((req) => {
+      const course = transcript.course.find((course) => course.courseCode === req.course.courseCode);
+
+      setRequiredCourses((prev) => [
+        ...prev,
+        {
+          courseCode: req.course.courseCode,
+          grade: course.grade
+          
+        }
+      ]);
+    });
+
+  },[]);
+
+ console.log(requiredCourses);
+
+
+    
   useEffect(() => {
     setUserID(row.student.user.id);
   }, [row.student.user.id]);
@@ -122,6 +150,7 @@ function CustomRow(props) {
   const handlePageChange = (event, value) => {
     setLaHistoryPage(value-1);
   };
+
 
 
 
@@ -201,7 +230,17 @@ function CustomRow(props) {
           </td>
         </TableCell>
 
-        
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} >
+          <Collapse in={open} component="tr" style={{ display: "block" }}>
+            <td style={{ width: "100%" }}>
+              <ReqCourseGrades
+                requiredCourses={requiredCourses}
+              />
+            </td>
+          </Collapse>
+        </TableCell>
+
+
 
 
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
@@ -249,6 +288,10 @@ function ApplicantsTable(props) {
   const isApplicantsListEmpty = props.rows.length === 0;
 
   const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
+  const ann = props.announcement;
+
+  console.log(ann);
+  console.log(props.rows);
 
   const handleSearchChange = (event) => {
     setSearchText(event.target.value.toLowerCase());
@@ -377,7 +420,7 @@ function ApplicantsTable(props) {
           </Button>
 
           <TableContainer component={Paper} sx={{overflow: "auto",
-        scrollbarWidth: "none", '&::-webkit-scrollbar': { display: 'none' }, '&-ms-overflow-style:': { display: 'none' }}}>
+            scrollbarWidth: "none", '&::-webkit-scrollbar': { display: 'none' }, '&-ms-overflow-style:': { display: 'none' }}}>
           <Table sx={{ minWidth: 600 }} stickyHeader aria-label="simple table" >
             <TableHead>
               <TableRow sx={{ bgcolor: "#eeeeee" }}>
@@ -423,6 +466,7 @@ function ApplicantsTable(props) {
                   index={index}
                   questions={props.questions}
                   key={index}
+                  ann={ann}
                 />
               ))}
             </TableBody>

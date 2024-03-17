@@ -13,6 +13,7 @@ function ApplicantsPage() {
   const [rows, setRows] = React.useState([]);
   const [title, setTitle] = React.useState("");
   const { appId } = useParams();
+  const [application, setApplication] = React.useState({});
   
   useEffect(() => {
     
@@ -20,9 +21,17 @@ function ApplicantsPage() {
       setRows(results.applicationRequests);
       setTitle(results.course.courseCode);
     });
+
+    getAnnouncement(appId).then((result) => {
+      setApplication(result);
+    }
+    );
     
   
   }, []);
+
+  console.log("APPLICATION REQUESTS",rows);
+  console.log("APPLICATION",application);
 
   return (
     <>
@@ -38,7 +47,7 @@ function ApplicantsPage() {
               </Typography>
             </Grid>
             <Grid item>
-              <ApplicantsTable rows={rows} courseCode={title} appId = {appId}></ApplicantsTable>
+              <ApplicantsTable rows={rows} courseCode={title} appId = {appId} announcement={application}></ApplicantsTable>
             </Grid>
           </Grid>
         </Box>
