@@ -62,7 +62,12 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   const applicationRequestId = data.applicationRequestId ?? "";
 
   const [deletePopupOpened, setDeletePopupOpened] = useState(false);
-
+  
+  const now = new Date();
+  const deadline = new Date(lastApplicationDate);
+  console.log('now :>> ', now);
+  console.log('deadline :>> ', deadline);
+  console.log('javaDateTime < now', now < deadline);
   const flipPopup = () => {
     setDeletePopupOpened((prev) => !prev);
   };
@@ -296,7 +301,8 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       </TableCell>
 
       { (!isInstructor && tabValue === 1 && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
-        {applicationStatus === "In Progress" && <IconButton
+        {
+        (applicationStatus === "In Progress" && now < deadline) &&<IconButton
           sx={{ color: "blue" }}
           onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}>
 

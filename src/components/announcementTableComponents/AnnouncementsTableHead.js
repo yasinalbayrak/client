@@ -67,11 +67,6 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
     },
     {
       label: 4,
-      name: "Withdrawn",
-      checked: false
-    },
-    {
-      label: 5,
       name: "Added to Waiting List",
       checked: false
 

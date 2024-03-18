@@ -147,7 +147,7 @@ const ProtectedRouteStu = ({ element}) => {
             {isLoggedIn ? (
               <>
                 {/* not authorized */}
-                <Route path="/home" element={<HomePage />} />
+                <Route path="/home"  element={<HomePage />}  />
                 <Route path="*" element={<MockCAS />} />
                 <Route path="/success" element={<SuccessPage />} />
                 <Route path="/profile/:id" element={<ProfilePage />} />
