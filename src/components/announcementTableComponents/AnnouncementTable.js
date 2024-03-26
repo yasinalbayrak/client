@@ -233,9 +233,11 @@ export default function AnnouncementTable(props) {
 
               .map((rowData, index) => {
                 console.log("rowdata", rowData)
+                const isNotification = rowData.application ? rowData.application.applicationId === props.notificationAppId : rowData.applicationId === props.notificationAppId;
+                
                 return (
                   <AnnouncementRow
-                    key={index}
+                    key={rowData.application? rowData.application.applicationId: rowData.applicationId}
                     data={rowData}
                     tabValue={tabValue}
                     userName={userName}
@@ -245,6 +247,8 @@ export default function AnnouncementTable(props) {
                     isApplied2={isApplied2}
                     deleteCallBack={deleteApplication}
                     setFollowingCallback={setFollowingCallback}
+                    isNotification={isNotification}
+                    setNotificationAppId={props.setNotificationAppId}
                   />
                 )
               })}

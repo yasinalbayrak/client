@@ -6,10 +6,11 @@ import Sidebar from "../components/Sidebar";
 import AddIcon from "@mui/icons-material/Add";
 import { getAllAnnouncements, getApplicationRequestsByStudentId } from "../apiCalls";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 function HomePage() {
   const location = useLocation();
+  const { notificationAppId, notificationTitle } = location.state || {};
   const navigate = useNavigate();
   const [updated, setUpdated] = useState(false);
 
@@ -18,6 +19,7 @@ function HomePage() {
   const state = useSelector((state) => state);
   const isInstructor = useSelector((state) => state.user.isInstructor);
   const userID = useSelector((state) => state.user.id);
+  
   
 
   useEffect(() => {
@@ -52,8 +54,30 @@ function HomePage() {
   const setTabInitial = () => {
   }
 
+ 
+  useEffect(() => {
+    if(notificationAppId){
+      console.log("notificationAppId: ", notificationAppId);
+      console.log("notificationTitle: ", notificationTitle);
+      if(notificationTitle === "New Announcement" || notificationTitle === "Announcement Updated"){
+        setValue(0);
+      } else if(notificationTitle === "Application Status Updated"){
+        setValue(1);
+      }
+    }
+  }
+  , [notificationAppId]);
+
+  const setNotificationAppId = (id) => {
+    if(location.state.notificationAppId){
+      location.state.notificationAppId = id;
+    }
+    
+  }
+  
+
   return (
-    <Box sx={{ display: "flex" }}>
+     <Box sx={{ display: "flex" }}>
       <Sidebar
       setValue={setTabInitial}></Sidebar>
       <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
@@ -79,7 +103,7 @@ function HomePage() {
             </Grid>
           </Grid>
           <Grid item>
-            <AnnouncementTable rows={rows} tabValue={value}></AnnouncementTable>
+            <AnnouncementTable rows={rows} tabValue={value} notificationAppId={notificationAppId} setNotificationAppId={setNotificationAppId}></AnnouncementTable>
           </Grid>
         </Grid>
       </Box>

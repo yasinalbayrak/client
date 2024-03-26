@@ -28,6 +28,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { increaseUnreadNotificationCountByOne, setNotificationPreference, setPublicSubscription, setUnreadNotificationCount } from "../../redux/userSlice"
 import { handleInfo } from '../../errors/GlobalErrorHandler';
 import webSocketService from '../service/WebSocketService';
+import { useNavigate } from 'react-router';
+import { toHtml } from '@fortawesome/fontawesome-svg-core';
 
 const NotificationButton = ({ unreadCount }) => {
 
@@ -85,12 +87,12 @@ const NotificationIcon = ({ unreadCount, dropdownVisible, setDropdownVisible }) 
                 {unreadCount > 0 && <span className="notification-counter">{unreadCount}</span>}
             </div>
 
-            {dropdownVisible && <NotificationDropdown />}
+            {dropdownVisible && <NotificationDropdown dropdownVisible={dropdownVisible} setDropdownVisible={setDropdownVisible} />}
         </div>
     );
 }
 
-const NotificationDropdown = () => {
+const NotificationDropdown = (props) => {
     const [showAll, setShowAll] = useState(true);
     const [allNotifications, setAllNotifications] = useState(null);
     const [filteredNotifications, setFilteredNotifications] = useState(null);
@@ -98,8 +100,10 @@ const NotificationDropdown = () => {
     const [notificationPreferences, setNotificationPreferences] = useState(null);
     const unreadCount = useSelector((state) => state.user.unreadNotifications);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const {dropdownVisible, setDropdownVisible} = props;
 
-
+    
 
 
     const [followedApplications, setFollowedApplications] = useState([]);
@@ -189,6 +193,7 @@ const NotificationDropdown = () => {
                     filteredNotifications={filteredNotifications}
                     handleNotificationStatusChangeCallback={handleNotificationStatusChange}
                     relation="DIRECT"
+                    navigate={navigate}
                 />;
             case "two":
 
@@ -197,6 +202,10 @@ const NotificationDropdown = () => {
                 filteredNotifications={filteredNotifications}
                 handleNotificationStatusChangeCallback={handleNotificationStatusChange}
                 relation="FOLLOW"
+                navigate={navigate}
+                dropdownVisible={dropdownVisible}
+                setDropdownVisible={setDropdownVisible}
+
                 />;
 
             case "three":
@@ -275,7 +284,17 @@ const getIconForNotification = (type) => {
     }
 }
 
-const NotificationItem = ({ allNotifications, filteredNotifications, handleNotificationStatusChangeCallback, relation }) => filteredNotifications.filter((notification) => notification.relation==relation).length === 0 ? <>
+
+
+const goToApplication = (applicationId,title, navigate, dropdown, setDropdownVisible) => {
+    if (applicationId && navigate && typeof navigate === 'function'){
+        setDropdownVisible(!dropdown);
+        navigate("/Home", { replace: true, state: { notificationAppId: applicationId, notificationTitle:title } });
+    }
+    
+}
+
+const NotificationItem = ({ allNotifications, filteredNotifications, handleNotificationStatusChangeCallback, relation, navigate, dropdownVisible, setDropdownVisible }) => filteredNotifications.filter((notification) => notification.relation==relation).length === 0 ? <>
     <div className="no-data">
         {allNotifications.filter((notification) => notification.relation==relation).length === 0 ? <NotificationsOffIcon sx={{ color: "black", fontSize: "12rem" }} /> : <MarkChatReadSharpIcon sx={{ color: "green", fontSize: "12rem" }} />}
         <div className="no-not">{allNotifications.filter((notification) => notification.relation==relation).length === 0 ? "No notifications for the last 60 days." : "You have read all of your notifications."}</div>
@@ -284,7 +303,7 @@ const NotificationItem = ({ allNotifications, filteredNotifications, handleNotif
 </>
 
     : filteredNotifications.filter((notification)=> notification.relation==relation).map(notification => (
-        <div className='otr'>
+        <div className='otr' onClick={()=>goToApplication(notification.applicationId, notification.title, navigate, dropdownVisible, setDropdownVisible)}>
             <div className="ic">
                 {getIconForNotification(notification.notificationType)}
 

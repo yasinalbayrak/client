@@ -14,18 +14,38 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import IconButton from '@mui/material/IconButton';
 import { useStyles } from '../../pages/EligibilityTable';
-import { Box } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 import FollowButton from '../buttons/FollowButton';
+import { keyframes } from '@mui/system';
 
 
-export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, isApplied2, deleteCallBack, filterEligibilityCallback, setFollowingCallback }) {
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, isApplied2, deleteCallBack, filterEligibilityCallback, setFollowingCallback, isNotification, setNotificationAppId }) {
 
   const { instructor_names, weeklyWorkingTime, term, section, status: applicationStatus, isTimedOut, authorizedInstructors, isFollowing } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
 
 
+  // useEffect(() => {
+  //   if(isNotification){
+  //     setNotificationAppId({});
+  //   }
+  // }, []);
 
   const classes = useStyles();
+
+  const spin = keyframes`from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }`;
+
+  const pulse = keyframes`from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }`;
 
   useEffect(() => {
     if (isInstructor == false) {
@@ -41,9 +61,10 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     }
   }, []);
 
-  useEffect(() => {
-    console.log(isTranscriptUploaded);
-  }, [isTranscriptUploaded]);
+
+  // useEffect(() => {
+  //   console.log(isTranscriptUploaded);
+  // }, [isTranscriptUploaded]);
 
 
 
@@ -65,9 +86,9 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   
   const now = new Date();
   const deadline = new Date(lastApplicationDate);
-  console.log('now :>> ', now);
-  console.log('deadline :>> ', deadline);
-  console.log('javaDateTime < now', now < deadline);
+  // console.log('now :>> ', now);
+  // console.log('deadline :>> ', deadline);
+  // console.log('javaDateTime < now', now < deadline);
   const flipPopup = () => {
     setDeletePopupOpened((prev) => !prev);
   };
@@ -123,7 +144,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     // Conditions for non-instructor
     if (tabValue === 0) {
       // console.log(data)
-      console.log("isApplied", isApplied(data.applicationId));
+      //console.log("isApplied", isApplied(data.applicationId));
       // console.log("key", key);
       // console.log("indxx", indxx);
       //const applicationId = data.applicationId;
@@ -246,9 +267,12 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   }
 
 
-  return ((course.courseCode) &&
-    <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1 }}>
-      <TableCell sx={{ bgcolor: "#FAFAFA", width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
+  return (
+    (course.courseCode) &&
+    
+    <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1, animation: isNotification? `${pulse} 0.5s 3`:"none" ,
+}}>
+      <TableCell  sx={{ bgcolor: "#FAFAFA", width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
         {course.courseCode}
 
       </TableCell>
