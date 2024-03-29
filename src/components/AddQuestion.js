@@ -10,7 +10,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ControlPointDuplicateIcon from "@mui/icons-material/ControlPointDuplicate";
 import SendIcon from "@mui/icons-material/Send";
-import CloseIcon from "@mui/icons-material/Close";
+
 import { addAnnouncement } from "../apiCalls";
 import { useSelector } from "react-redux";
 import IconButton from '@mui/material/IconButton';
@@ -76,14 +76,10 @@ const suggestedQuestions = [
   },
 ];
 
-function AddQuestion(props) {
-  const [questions, setQuestions] = useState([
-    { questionNumber: 1, mQuestion: "", mValue: "Text Answer", mMultiple: ["", ""], allowMultipleAnswers: false }
-  ]);
-
-  const term = useSelector((state) => state.user.term);
+function AddQuestion({questions, setQuestions}) {
+  
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+
 
   function addNewQuestion() {
     const nextNum = questions.length + 1;
@@ -265,13 +261,13 @@ function AddQuestion(props) {
   return (
     <>
       <div>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} justifyContent="center">
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <Droppable droppableId="questions">
               {(provided) => (
-                <Grid item xs={8} {...provided.droppableProps} ref={provided.innerRef}>
+                <Grid item xs={4} {...provided.droppableProps} ref={provided.innerRef}>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <Typography variant="h5" sx={{ textDecoration: "underline", mt: 8, mb: 2, fontWeight: "bold" }}>
+                    <Typography variant="h5" sx={{ textDecoration: "underline", fontWeight: "bold" }}>
                       Additional Questions for Students:
                     </Typography>
                     <HtmlTooltip
@@ -300,7 +296,7 @@ function AddQuestion(props) {
                       </List>}
                       placement="right"
                     >
-                      <IconButton sx={{ marginLeft: '20px', marginTop: '40px' }}>
+                      <IconButton sx={{ marginLeft: '20px'}}>
                         <ErrorOutlinedIcon sx={{ fontSize: 35, color: "red" }} />
                       </IconButton>
                     </HtmlTooltip>
@@ -522,84 +518,7 @@ function AddQuestion(props) {
 
 
 
-        <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ p: 4 }}>
-          <Button
-            variant="contained"
-            startIcon={<SendIcon />}
-            color="success"
-            sx={{ m: 2, textDecoration: "none" }}
-            onClick={() => {
-              console.log("*******************************************************",props.AnnouncementDetails.lastApplicationDate)
-              console.log("*******************************************************",props.AnnouncementDetails.lastApplicationTime)
-              if (!props.AnnouncementDetails.lastApplicationDate || !props.AnnouncementDetails.lastApplicationTime) {
-                handleInfo("Please fill out the required fields.");
-                return;
-              }
 
-
-              const currentIstanbulTime = new Date(new Date().getTime() );
-
-              const combinedDateTime = props.AnnouncementDetails.lastApplicationDate + "T" + props.AnnouncementDetails.lastApplicationTime + ":00";
-              const selectedTime = new Date(combinedDateTime);
-              console.log("Selected time:",selectedTime)
-              console.log("current time:",currentIstanbulTime)
-              if (selectedTime < currentIstanbulTime) {
-                handleInfo("Selected last application date and time cannot be before the current Istanbul time.");
-                return;
-              }
-              if (
-                props.AnnouncementDetails.course_code &&
-                props.AnnouncementDetails.lastApplicationDate &&
-                props.AnnouncementDetails.lastApplicationTime &&
-                props.AnnouncementDetails.workHours &&
-                props.AnnouncementDetails.term &&
-                (!props.AnnouncementDetails.isDesiredLetterGradeEnabled || (props.AnnouncementDetails.letterGrade)) &&
-
-                (!props.AnnouncementDetails.isSectionEnabled || (props.AnnouncementDetails.section !== "" && props.AnnouncementDetails.section))
-
-              ) {
-                addAnnouncement(
-                  props.AnnouncementDetails.course_code,
-                  props.username,
-                  props.AnnouncementDetails.lastApplicationDate,
-                  props.AnnouncementDetails.lastApplicationTime,
-                  props.AnnouncementDetails.isDesiredLetterGradeEnabled ? props.AnnouncementDetails.letterGrade : null,
-                  props.AnnouncementDetails.workHours,
-                  props.AnnouncementDetails?.jobDetails ?? "",
-                  props.AnnouncementDetails.authInstructor,
-                  props.AnnouncementDetails.desiredCourses,
-                  questions,
-                  props.AnnouncementDetails.term,
-                  props.AnnouncementDetails.isDesiredLetterGradeEnabled ? props.AnnouncementDetails.isInprogressAllowed : null,
-                  props.AnnouncementDetails.section
-                ).then((data) => {
-                  dispatch(setTerm({ term: props.AnnouncementDetails.term }));
-                  navigate("/Home", {
-                    replace: true
-                  });
-                  toast.success("Your announcement has been successfully added.")
-
-                }).catch((_) => {
-                  /* Error is already printed */
-                });
-
-              } else {
-                handleInfo("Please fill out the required fields.")
-              }
-            }}
-          >
-            Submit
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<CloseIcon />}
-            color="error"
-            sx={{ mx: 2 }}
-            onClick={() => navigate("/home", { replace: true })}
-          >
-            Cancel
-          </Button>
-        </Grid>
       </div>
     </>);
 }

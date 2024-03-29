@@ -30,6 +30,8 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import { borders } from '@mui/system';
+import { toast } from "react-toastify";
+import { handleInfo } from "../../errors/GlobalErrorHandler";
 
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -362,6 +364,8 @@ function ApplicantsTable(props) {
     try {
       finalizeStatus(appId).then((res) => {
         console.log(res);
+        handleInfo("Changes are successfully finalized.")
+        props.setRows(res);
       });
     }
     catch (error) {

@@ -1,7 +1,11 @@
+:root {
+  --scale-factor: 0.7; /* Scaling factor for toggle bar */
+}
+
 .toggler {
-    width: 72px;
-    margin-left: 1rem;
-  }
+  width: calc(72px * var(--scale-factor)); 
+  margin-left: 1rem;
+}
   
   .toggler input {
     display: none;
@@ -10,10 +14,11 @@
   .toggler label {
     display: block;
     position: relative;
-    width: 72px;
-    height: 36px;
+    width: calc(72px * var(--scale-factor)); 
+    height: calc(36px * var(--scale-factor)); 
+    border-radius: calc(36px * var(--scale-factor));
     border: 1px solid #d6d6d6;
-    border-radius: 36px;
+  
     background: #e4e8e8;
     cursor: pointer;
   }
@@ -36,8 +41,8 @@
     position: absolute;
     top: 50%;
     left: 25%;
-    width: 26px;
-    height: 26px;
+    width: calc(26px * var(--scale-factor)); 
+    height: calc(26px * var(--scale-factor));
     transform: translateY(-50%) translateX(-50%);
     transition: left 0.15s ease-in-out, background-color 0.2s ease-out, width 0.15s ease-in-out, height 0.15s ease-in-out, opacity 0.15s ease-in-out;
   }
@@ -65,7 +70,7 @@
   .toggler .path {
     fill: none;
     stroke: #fefefe;
-    stroke-width: 7px;
+    stroke-width: calc(7px * var(--scale-factor));
     stroke-linecap: round;
     stroke-miterlimit: 10;
   }

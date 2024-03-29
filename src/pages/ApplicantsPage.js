@@ -48,7 +48,7 @@ function ApplicantsPage() {
               </Typography>
             </Grid>
             <Grid item>
-              <ApplicantsTable rows={rows} courseCode={title} appId = {appId} announcement={application} setFinalize={setFinalize}></ApplicantsTable>
+              <ApplicantsTable setRows={setRows} rows={rows} courseCode={title} appId = {appId} announcement={application} setFinalize={setFinalize}></ApplicantsTable>
             </Grid>
           </Grid>
         </Box>
