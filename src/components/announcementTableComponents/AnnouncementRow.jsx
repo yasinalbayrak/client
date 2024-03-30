@@ -19,17 +19,10 @@ import FollowButton from '../buttons/FollowButton';
 import { keyframes } from '@mui/system';
 
 
-export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, isApplied2, deleteCallBack, filterEligibilityCallback, setFollowingCallback, isNotification, setNotificationAppId }) {
+export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, isApplied2, deleteCallBack, filterEligibilityCallback, setFollowingCallback, isNotification }) {
 
   const { instructor_names, weeklyWorkingTime, term, section, status: applicationStatus, isTimedOut, authorizedInstructors, isFollowing } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
-
-
-  // useEffect(() => {
-  //   if(isNotification){
-  //     setNotificationAppId({});
-  //   }
-  // }, []);
 
   const classes = useStyles();
 
