@@ -303,7 +303,7 @@ const NotificationItem = ({ allNotifications, filteredNotifications, handleNotif
 </>
 
     : filteredNotifications.filter((notification)=> notification.relation==relation).map(notification => (
-        <div className='otr' onClick={()=>goToApplication(notification.applicationId, notification.title, navigate, dropdownVisible, setDropdownVisible)}>
+        <div className='otr' >
             <div className="ic">
                 {getIconForNotification(notification.notificationType)}
 
@@ -313,7 +313,7 @@ const NotificationItem = ({ allNotifications, filteredNotifications, handleNotif
                     {notification.title}
                     <Tooltip title={notification.read ? "Mark as unread" : "Mark as read"} placement="left" className='outer-circle' onClick={() => { handleNotificationStatusChangeCallback(!notification.read, notification.id) }}> {!notification.read && <span className="unread-indicator"></span>}</Tooltip>
                 </div>
-                <div className="notification-description">{notification.description}</div>
+                <div onClick={()=>goToApplication(notification.applicationId, notification.title, navigate, dropdownVisible, setDropdownVisible)} className="notification-description">{notification.description}</div>
                 <div className="notification-timestamp">{notification.timestamp.split("T")[0] + " " + notification.timestamp.split("T")[1].slice(0, 5)}</div>
             </div>
         </div>
