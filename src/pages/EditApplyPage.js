@@ -447,7 +447,7 @@ function EditApplyPage() {
                   opened={withdrawPopupOpened}
                   flipPopup={flipPopup}
                   title={"Confirm Withdrawal?"}
-                  text={"This action is irreversible, and the selected application will be permanently withdrawed."}
+                  text={"This action is irreversible, and the selected application will be permanently withdrawen."}
                   posAction={withdrawApplicationn}
                   negAction={flipPopup}
                   posActionText={"Withdraw"}
