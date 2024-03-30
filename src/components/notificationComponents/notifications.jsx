@@ -194,6 +194,8 @@ const NotificationDropdown = (props) => {
                     handleNotificationStatusChangeCallback={handleNotificationStatusChange}
                     relation="DIRECT"
                     navigate={navigate}
+                    dropdownVisible={dropdownVisible}
+                    setDropdownVisible={setDropdownVisible}
                 />;
             case "two":
 
