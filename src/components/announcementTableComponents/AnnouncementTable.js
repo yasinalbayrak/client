@@ -248,7 +248,6 @@ export default function AnnouncementTable(props) {
                     deleteCallBack={deleteApplication}
                     setFollowingCallback={setFollowingCallback}
                     isNotification={isNotification}
-                    setNotificationAppId={props.setNotificationAppId}
                   />
                 )
               })}

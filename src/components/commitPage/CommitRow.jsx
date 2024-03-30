@@ -92,7 +92,8 @@ export default function CommitRow(props) {
                     <Button 
                     variant="contained" 
                     color="success" 
-                    size='small' 
+                    size='medium'
+                    sx={{height: 30, fontSize:15}}
                     startIcon={<HandshakeIcon />}
                     onClick={()=>{setTypePopup(1); flipPopup(); }}>
                         Commitment
@@ -103,10 +104,11 @@ export default function CommitRow(props) {
                     <Button 
                     variant="outlined" 
                     color="info" 
-                    size='small' 
+                    size='small'
+                    sx={{fontSize: 11, width: 160}}
                     endIcon={<DirectionsRunIcon />}
                     onClick={()=>{setTypePopup(2); flipPopup()}}>
-                        Ask for Forgiveness
+                        Forgiveness
                     </Button>
                     </Grid>
                 </Grid> 

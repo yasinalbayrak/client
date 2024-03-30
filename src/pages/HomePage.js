@@ -67,13 +67,6 @@ function HomePage() {
     }
   }
   , [notificationAppId]);
-
-  const setNotificationAppId = (id) => {
-    if(location.state.notificationAppId){
-      location.state.notificationAppId = id;
-    }
-    
-  }
   
 
   return (
@@ -86,7 +79,7 @@ function HomePage() {
           <Grid item container direction="row" justifyContent="space-between">
             <Grid item></Grid>
             <Grid item>
-              <Tabs onChange={handleAnnouncementTableChange} value={value}>
+              <Tabs onChange={(e,newValue)=>{handleAnnouncementTableChange(e,newValue); if(notificationAppId){location.state.notificationAppId=null}; }} value={value}>
                 <Tab label="All Announcements" />
                 {!isInstructor && <Tab label="My Applications" />}
                 {isInstructor && <Tab label="My Announcements" />}
@@ -103,7 +96,7 @@ function HomePage() {
             </Grid>
           </Grid>
           <Grid item>
-            <AnnouncementTable rows={rows} tabValue={value} notificationAppId={notificationAppId} setNotificationAppId={setNotificationAppId}></AnnouncementTable>
+            <AnnouncementTable rows={rows} tabValue={value} notificationAppId={notificationAppId}></AnnouncementTable>
           </Grid>
         </Grid>
       </Box>
