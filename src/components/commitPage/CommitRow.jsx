@@ -10,6 +10,7 @@ import {
   import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
   import {commitAppReq, forgivenAppReq } from "../../apiCalls";
   import { useStyles } from '../../pages/EligibilityTable';
+  import Popup from "../../components/popup/Popup";
 
 
 
@@ -22,6 +23,12 @@ export default function CommitRow(props) {
     const instructor = application?.authorizedInstructors[0].user;
     const appReqId = row.applicationRequestId;
     const decided = row.committed || row.forgiven
+    const [popUpOpened, setPopoUpOpened] = useState(false);
+    const [typePopup, setTypePopup] = useState(0);
+
+    const commitText = "Are you sure you want to commit to this application? If you commit, you will be the LA of this course.";
+    const forgiveText = "Are you sure you want to ask for forgiveness for this application? If you ask for forgiveness, you will not be the LA of this course.";
+
 
     const getClassCommit = (commit) => {
         if(commit) 
@@ -57,6 +64,10 @@ export default function CommitRow(props) {
         })
     }
 
+    const flipPopup = () => {
+        setPopoUpOpened((prev) => !prev);
+      };
+
         
     
 
@@ -83,7 +94,7 @@ export default function CommitRow(props) {
                     color="success" 
                     size='small' 
                     startIcon={<HandshakeIcon />}
-                    onClick={handleCommit}>
+                    onClick={()=>{setTypePopup(1); flipPopup(); }}>
                         Commitment
                     </Button>
                     </Grid>
@@ -94,7 +105,7 @@ export default function CommitRow(props) {
                     color="info" 
                     size='small' 
                     endIcon={<DirectionsRunIcon />}
-                    onClick={handleForgive}>
+                    onClick={()=>{setTypePopup(2); flipPopup()}}>
                         Ask for Forgiveness
                     </Button>
                     </Grid>
@@ -106,6 +117,23 @@ export default function CommitRow(props) {
                 }
                 
             </TableCell>
+
+            <Popup
+            opened={popUpOpened}
+            flipPopup={flipPopup}
+            title={"LAship Decision"}
+            text={typePopup===1?commitText:forgiveText}
+            posAction={() => { 
+                if(typePopup===1){
+                handleCommit();
+            }
+            else{
+                handleForgive();
+            }
+            flipPopup();}}
+            negAction={flipPopup}
+            posActionText={typePopup===1?"Commit":"Forgive Me"}
+          />
             
         </TableRow>
     )

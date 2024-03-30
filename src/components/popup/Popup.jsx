@@ -11,12 +11,52 @@ import ErrorIcon from '@mui/icons-material/Error';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import HandshakeIcon from '@mui/icons-material/Handshake';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function Popup({ opened, flipPopup, title, text, negAction, posAction, posActionText }) {
+
+    const getIcon = (posActionText) => {
+
+        if (posActionText === "Finalize") {
+            return <CampaignIcon fontSize="large" sx={{
+                width: "6rem",
+                height: "6rem",
+                color: "success.main"
+            }} />
+        } 
+
+        if (posActionText === "Commit") {
+            return <HandshakeIcon fontSize="large"  sx={{
+                width: "6rem",
+                height: "6rem",
+                color: "success.main",
+            }} />
+        }
+
+        if (posActionText === "Forgive Me") {
+            return <DirectionsRunIcon fontSize="large" sx={{
+                width: "6rem",
+                height: "6rem",
+                color: "error.main"
+            }} />
+        }
+        
+        else {
+            return <ErrorIcon fontSize="large" sx={{
+                width: "6rem",
+                height: "6rem",
+                color: "error.main"
+            }} />
+        }
+        
+    }
+
+
     return (
         <Dialog
             open={opened}
@@ -41,15 +81,7 @@ export default function Popup({ opened, flipPopup, title, text, negAction, posAc
                 }}
             >
                 <ListItemIcon>
-                    {posActionText === "Finalize" ? <CampaignIcon fontSize="large" sx={{
-                        width: "6rem",
-                        height: "6rem",
-                        color: "success.main"
-                    }} /> : <ErrorIcon fontSize="large" sx={{
-                        width: "6rem",
-                        height: "6rem",
-                        color: "red"
-                    }} />}
+                    {getIcon(posActionText)}
                 </ListItemIcon>
                 <Typography variant="h5">  {title} </Typography>
             </DialogTitle>
@@ -79,9 +111,9 @@ export default function Popup({ opened, flipPopup, title, text, negAction, posAc
                       },
                 }}>Cancel</Button>
                 <Button variant='contained' sx={{
-                    backgroundColor: posActionText==="Finalize" ? "darkgreen": "rgb(210,56,86)",
+                    backgroundColor: posActionText==="Finalize" || posActionText==="Commit" ? "darkgreen": "rgb(210,56,86)",
                     '&:hover': {
-                        backgroundColor: posActionText==="Finalize" ? "green" : "rgb(180,46,76)", // Hover color
+                        backgroundColor: posActionText==="Finalize" || posActionText==="Commit" ? "green" : "rgb(180,46,76)", // Hover color
                       },
                 }}
                 
