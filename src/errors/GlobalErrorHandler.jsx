@@ -1,6 +1,10 @@
 import { toast } from 'react-toastify';
 
 export default function handleError(error) {
+  if(error.response.status === 401){
+    toast.error("Please login again.");
+    window.location.replace("*");
+  }
   if (error.response) {
     toast.error(`Error: ${error.response.status} - ${error.response.data.message}`);
   } else if (error.message) {
