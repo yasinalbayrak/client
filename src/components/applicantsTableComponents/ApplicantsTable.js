@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Typography, IconButton, Collapse, Snackbar, Grid, Button, Divider, Tab, Container } from "@mui/material";
+import { Typography, IconButton, Collapse, Snackbar, Grid, Button, Divider, Tab, Container, Tooltip } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -32,6 +32,7 @@ import { styled } from '@mui/material/styles';
 import { borders } from '@mui/system';
 import { toast } from "react-toastify";
 import { handleInfo } from "../../errors/GlobalErrorHandler";
+import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -192,8 +193,9 @@ function CustomRow(props) {
             </Alert>
           </Snackbar>
           <FormControl fullWidth color={row.statusIns !== row.status ? "info" : ""} focused={row.statusIns !== row.status ? "True" : ""}>
-            <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status*" : "Status"}</InputLabel>
-            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label="Status" onChange={handleChange}>
+            <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status (!!)" : "Status"}</InputLabel>
+            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(!!)" : "Status" } onChange={handleChange}>
+              
               <MenuItem value={"Accepted"}>Accepted</MenuItem>
               <MenuItem value={"Rejected"}>Rejected</MenuItem>
               <MenuItem value={"In Progress"}>In Progress</MenuItem>
@@ -479,7 +481,7 @@ function ApplicantsTable(props) {
           style={{
             display: "flex",
             justifyContent: "right",
-            alignItems: "center"
+            alignItems: "center",
           }}>
             <Button variant="outlined" color="success" sx={{ marginRight: "1rem", marginTop: "0.5rem" }}
               onClick={handleAcceptAll}
@@ -488,18 +490,38 @@ function ApplicantsTable(props) {
             </Button>
             <Button variant="outlined" color="error"
               onClick={handleRejectAll}
-              sx={{ marginTop: "0.5rem" }}
+              sx={{ marginTop: "0.5rem", marginRight: "1rem" }}
             >
               Reject all
             </Button>
-            <Button
-              variant="outlined"
-              endIcon={<SaveIcon />}
-              sx={{ m: "10px", bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, float: "right", alignSelf: "center" }}
-              onClick={flipPopup}
-            >
-              Announce Final Results
-            </Button>
+            
+            <div container style={{
+            display: "flex",
+            alignItems: "start",
+            marginTop: "0.5rem",
+            direction: "columns",
+            
+          }}>
+              <Button
+                variant="outlined"
+                endIcon={<SaveIcon />}
+                sx={{  bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, float: "right", alignSelf: "center" }}
+                onClick={flipPopup}
+              >
+                Announce Final Results
+              </Button>
+              <Tooltip
+                  title="(!!) stands for the students who have different status than the final status. (e.g. Accepted but not finalized yet.)"
+                  placement="right"
+                  sx={{ fontSize: 'small' }}
+                  arrow
+
+              >
+                  <HelpCenterIcon />
+            
+              </Tooltip>
+            </div>
+
           </div>
 
           <Popup
