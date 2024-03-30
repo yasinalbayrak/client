@@ -365,7 +365,7 @@ function ApplicantsTable(props) {
       finalizeStatus(appId).then((res) => {
         console.log(res);
         handleInfo("Changes are successfully finalized.")
-        props.setRows(res);
+        //props.setRows(res);
       });
     }
     catch (error) {

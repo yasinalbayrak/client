@@ -21,19 +21,20 @@ import CommitRow from "./CommitRow";
 
 function CommitPage() {
     const user = useSelector((state) => state.user);
+    const term = useSelector((state) => state.user.term);
     const userID = user.id;
     const [rows, setRows] = React.useState(null);
 
     useEffect(() => {
         try{getApplicationRequestsByStudentId(userID).then((results) =>{
             const rowss = results.content;
-            const acceptedRows = rowss.filter((row) => row.status === "Accepted");
+            const acceptedRows = rowss.filter((row) => row.status === "Accepted" && row.application.term === term.term_desc);
             setRows(acceptedRows);
             console.log(acceptedRows);
         });}catch(e){
             console.log(e);
         }
-    }, [userID]);
+    }, [userID,term]);
 
     console.log("APPLICATION REQUESTS",rows);
 
