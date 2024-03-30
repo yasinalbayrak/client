@@ -745,6 +745,42 @@ async function rejectAllRequestByAppId(applicationId){
     handleError(error)
   }
 }
+
+async function commitAppReq(appReqId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/" + appReqId + "/commit",
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+async function forgivenAppReq(appReqId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/" + appReqId + "/uncommit",
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+
 export {
   acceptAllRequestByAppId,
   rejectAllRequestByAppId,
@@ -783,6 +819,8 @@ export {
   addFollowerToApplication,
   removeFollowerFromApplication,
   getApplicationsByFollower,
-  withdrawApplication
+  withdrawApplication,
+  commitAppReq,
+  forgivenAppReq
 
 };

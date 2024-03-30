@@ -24,17 +24,20 @@ function CommitPage() {
     const term = useSelector((state) => state.user.term);
     const userID = user.id;
     const [rows, setRows] = React.useState(null);
+    const [refresh, setRefresh] = React.useState(false);
 
     useEffect(() => {
         try{getApplicationRequestsByStudentId(userID).then((results) =>{
             const rowss = results.content;
-            const acceptedRows = rowss.filter((row) => row.status === "Accepted" && row.application.term === term.term_desc);
+            console.log(rowss);
+            const acceptedRows = rowss.filter((row) => {
+              return row.status === "Accepted" && row.application.term === term.term_desc});
             setRows(acceptedRows);
             console.log(acceptedRows);
         });}catch(e){
             console.log(e);
         }
-    }, [userID,term]);
+    }, [userID,term,refresh]);
 
     console.log("APPLICATION REQUESTS",rows);
 
@@ -84,7 +87,7 @@ function CommitPage() {
                 
                 <TableBody>
                   {rows.map((row) => (
-                    <CommitRow key={row.applicationRequestId} row={row}></CommitRow>
+                    <CommitRow key={row.applicationRequestId} row={row} setRefresh={setRefresh}></CommitRow>
                   ))}
                 </TableBody>
 
