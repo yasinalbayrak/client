@@ -294,6 +294,24 @@ async function getApplicationRequestsByStudentId(studentId, page) {
 
 }
 
+async function getStudentLaHistory(studentId,applicationId, page) {
+  try {
+    const token = getJwtFromCookie()
+
+    const results = await axios.post(
+      apiEndpoint + "/applicationRequest/student/la_history" + "?page="+ page +"&size=5", {
+        studentId: studentId,
+        applicationId : parseInt(applicationId)
+      },{
+      headers: { "Authorization": "Bearer " + token }
+    }
+    );
+    return results.data;
+  } catch (error) { return handleError(error); }
+
+}
+
+
 async function getApplicationRequestsByApplicationId(applicationId) {
   try {
     const token = getJwtFromCookie()
@@ -821,6 +839,7 @@ export {
   getApplicationsByFollower,
   withdrawApplication,
   commitAppReq,
-  forgivenAppReq
+  forgivenAppReq,
+  getStudentLaHistory
 
 };

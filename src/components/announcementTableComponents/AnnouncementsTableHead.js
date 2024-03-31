@@ -41,11 +41,6 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
       id: 1,
       name: "Saved",
       checked: false
-    },
-    {
-      id: 2,
-      name: "Not Saved",
-      checked: false
     }
   ])
 
@@ -197,10 +192,10 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
             clearCallback={clearStatusLabels}
 
           /></StyledTableCell>}
-        <StyledTableCell align="center"
+        {!(!isInstructor && tabValue === 1) && <StyledTableCell align="center"
         >Actions
 
-        </StyledTableCell>
+        </StyledTableCell>}
         {(!isInstructor && tabValue === 0) && <StyledTableCell align="center" sx={{ minWidth: "6rem" }}>
           Eligibility
           <FilterDropdown

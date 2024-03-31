@@ -364,7 +364,7 @@ function Sidebar({ setTabInitial }) {
             <Divider sx={{ bgcolor: "#e0e0e0", margin: "3px" }} /> </>
           )}
 
-          {!isInstructor && (
+          {(
                 <><ListItem sx={{ padding: "0px" }}>
                   <ListItemButton as={Link} to="/commit" style={{ textDecoration: "none", color: "white" }}>
                     <ListItemIcon sx={{ minWidth: "30px" }}>

@@ -131,10 +131,6 @@ const ProtectedRouteStu = ({ element}) => {
   return <Forbidden403 />;
 };
 
-
-
-
-
   if (isLoading) {
     return <LoadingPage></LoadingPage>
   }
@@ -154,20 +150,19 @@ const ProtectedRouteStu = ({ element}) => {
                 <Route path="/403" element={<Forbidden403></Forbidden403>} />
                 <Route path="transcriptInfoPage/:id?" element={<TranscriptInfo></TranscriptInfo>}></Route>
                 <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
+                <Route path="/commit"  element={<CommitPage />} />
 
                 {/* Authorized for instructor */}
                 <Route path="/create-announcement" element={<ProtectedRouteIns element={<CreateAnnouncement />}/>} />
                 <Route path="/edit-announcement/:id" element={<ProtectedRouteIns element={<EditAnnouncement />}/>}  />
                 <Route path="/applicants" element={<ProtectedRouteIns element={<CourseApplicantsPage />}/> } />
                 <Route path="/application-of/:appId" element={<ProtectedRouteIns element={<ApplicantsPage />}/>} />
-                
-                
 
                 {/* Authorized for Student */}
                 <Route path="/apply/:id" element={<ProtectedRouteStu element={<ApplyPage />} /> } />
                 <Route path="/edit-apply/:id" element={<ProtectedRouteStu element={<EditApplyPage />}/> } />
                 <Route path="/transcriptUploadPage/:id?" element={<ProtectedRouteStu element={<TranscriptPage></TranscriptPage>}/> }></Route>
-                <Route path="/commit" element={<ProtectedRouteStu element={<CommitPage />} /> } />
+                
                 <Route path="/questionPage/:id" element={<ProtectedRouteStu element={<QuestionPage></QuestionPage>}/>}></Route>
                 <Route path="/edit-questionPage/:id" element={<ProtectedRouteStu element={<EditQuestionPage />}/>} />
                 

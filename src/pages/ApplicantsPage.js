@@ -7,6 +7,8 @@ import ApplicantsTable from "../components/applicantsTableComponents/ApplicantsT
 import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import BackButton from "../components/buttons/BackButton";
+import ViewSwitch from "../components/applicantsTableComponents/ViewSwitch";
+import DataGridView from "../components/excelView/DataGridView";
 
 function ApplicantsPage() {
   const term = useSelector((state) => state.user.term);
@@ -15,10 +17,10 @@ function ApplicantsPage() {
   const { appId } = useParams();
   const [application, setApplication] = React.useState({});
   const [finalize, setFinalize] = React.useState(false);
-  
+  const [viewMode, setViewMode] = React.useState(false);
   useEffect(() => {
-    
-    getApplicationRequestsByApplicationId(appId).then((results) =>{ 
+
+    getApplicationRequestsByApplicationId(appId).then((results) => {
       setRows(results.applicationRequests);
       setTitle(results.course.courseCode);
     });
@@ -27,29 +29,44 @@ function ApplicantsPage() {
       setApplication(result);
     }
     );
-    
-  
-  }, [finalize]);
 
-  console.log("APPLICATION REQUESTS",rows);
-  console.log("APPLICATION",application);
+
+  }, [finalize]);
 
   return (
     <>
       <Box sx={{ display: "flex" }}>
         <Sidebar></Sidebar>
         <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
-          <BackButton to={"/applicants"}/>
+          <Grid container>
+          <BackButton to={"/applicants"} />,
+          <ViewSwitch viewMode={viewMode} setViewMode={setViewMode} />
+          </Grid>
+
           <AppBarHeader />
           <Grid container direction="column" justifyContent="center" alignItems="center">
-            <Grid item>
+            <Grid item mb={12}>
               <Typography variant="h4" marginBottom={2} marginRight={1}>
                 {title} Applicants
               </Typography>
+              
             </Grid>
-            <Grid item>
-              <ApplicantsTable setRows={setRows} rows={rows} courseCode={title} appId = {appId} announcement={application} setFinalize={setFinalize}></ApplicantsTable>
-            </Grid>
+            {
+              viewMode === true ?
+                <DataGridView 
+                applicationRequests={rows}
+                setApplicationRequests={setRows}
+                courseCode={title}
+                appId={appId}
+                announcement={application}
+                />
+                :
+                <Grid item>
+                  <ApplicantsTable setRows={setRows} rows={rows} courseCode={title} appId={appId} announcement={application} setFinalize={setFinalize}></ApplicantsTable>
+                </Grid>
+            }
+
+
           </Grid>
         </Box>
       </Box>

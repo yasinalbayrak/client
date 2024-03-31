@@ -171,7 +171,7 @@ export default function AnnouncementTable(props) {
   }
   const filterActionCallback = (filter) => {
     console.log('filtterr :>> ', filter);
-    setRows(filter.length == 1 ? allRows.filter((row) => (filter.includes("Saved") ? row.isFollowing : !row.isFollowing)) : allRows)
+    setRows(filter.length === 1 ? allRows.filter((row) => (filter.includes("Saved") ? row.isFollowing : !row.isFollowing)) : allRows)
   }
   const setFollowingCallback = (applicationId, isFollowing) => {
     setAllRows(prev => prev.map(
@@ -232,7 +232,7 @@ export default function AnnouncementTable(props) {
               })
 
               .map((rowData, index) => {
-                console.log("rowdata", rowData)
+                
                 const isNotification = rowData.application ? rowData.application.applicationId === props.notificationAppId : rowData.applicationId === props.notificationAppId;
                 
                 return (

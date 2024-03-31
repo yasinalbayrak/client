@@ -17,7 +17,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId } from "../../apiCalls";
+import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory } from "../../apiCalls";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
@@ -143,13 +143,13 @@ function CustomRow(props) {
 
 
   useEffect(() => {
-    getApplicationRequestsByStudentId(row.student.user.id, laHistoryPage)
+    getStudentLaHistory(row.student.user.id,props.appId, laHistoryPage)
       .then((res) => {
         setLaHistory(res);
       })
       .catch((_) => {
       });
-  }, [row.student.user.id, courseCode, row.status, laHistoryPage]);
+  }, [row.student.user.id, props.appId, row.status, laHistoryPage]);
 
 
   const handlePageChange = (event, value) => {

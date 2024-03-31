@@ -14,7 +14,7 @@ export default function FilterDropdown({ labels, setLabels, searchCallback, chec
 
 
     useEffect(() => {
-
+        console.log('labelsss :>> ', labels);
         setLocal(labels)
     }, [labels])
 
@@ -24,7 +24,7 @@ export default function FilterDropdown({ labels, setLabels, searchCallback, chec
 
     const handleClear = () => {
         clearCallback()
-        searchCallback(local.map(label=>label.name));
+        searchCallback([]);
         handleClose()
     }
 

@@ -14,7 +14,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import IconButton from '@mui/material/IconButton';
 import { useStyles } from '../../pages/EligibilityTable';
-import { Box, Skeleton } from '@mui/material';
+import { Box, Skeleton, Tooltip } from '@mui/material';
 import FollowButton from '../buttons/FollowButton';
 import { keyframes } from '@mui/system';
 
@@ -76,7 +76,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   const applicationRequestId = data.applicationRequestId ?? "";
 
   const [deletePopupOpened, setDeletePopupOpened] = useState(false);
-  
+
   const now = new Date();
   const deadline = new Date(lastApplicationDate);
   // console.log('now :>> ', now);
@@ -242,6 +242,15 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         return;
     }
   }
+  function getEditButtonTooltip(applicationStatus, now, deadline) {
+    if (applicationStatus !== "In Progress") {
+      return `You can not edit your application, it has been already ${applicationStatus.toLowerCase()}`
+    } else if (now > deadline) {
+      return `You can not edit your application, the deadline is passed.}`
+    } else {
+      return "Edit your application"
+    }
+  }
 
   const addFollower = (applicationId) => {
     addFollowerToApplication(applicationId).then((res) => {
@@ -262,10 +271,11 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
   return (
     (course.courseCode) &&
-    
-    <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1, animation: isNotification? `${pulse} 0.5s 3`:"none" ,
-}}>
-      <TableCell  sx={{ bgcolor: "#FAFAFA", width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
+
+    <TableRow sx={{
+      "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1, animation: isNotification ? `${pulse} 0.5s 3` : "none",
+    }}>
+      <TableCell sx={{ bgcolor: "#FAFAFA", width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
         {course.courseCode}
 
       </TableCell>
@@ -312,20 +322,44 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       </TableCell>
 
       <TableCell sx={{ bgcolor: "#FAFAFA", width: "4rem", minWidth: "5rem", padding: 0 }} align="center" component="th" scope="row">
-        <Box width="100%" display="flex" justifyContent="center">
+        <Box width="100%" display="flex" justifyContent="center" >
           {renderButtons()}
+          {!(applicationStatus === "In Progress" && now < deadline) ? (
+            <Tooltip
+              title={getEditButtonTooltip(applicationStatus, now, deadline)}
+              placement="bottom"
+            >
+              <span>
+                <IconButton
+                  sx={{ color: "blue", ml: 1 }}
+                  onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}
+                  disabled={!(applicationStatus === "In Progress" && now < deadline)}
+                >
+                  <EditIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+          ) : (
+            <Tooltip
+              title={getEditButtonTooltip(applicationStatus, now, deadline)}
+              placement="bottom"
+            >
+              <IconButton
+                sx={{ color: "blue", ml: 1 }}
+                onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}
+                disabled={!(applicationStatus === "In Progress" && now < deadline)}
+              >
+                <EditIcon />
+
+              </IconButton>
+            </Tooltip>
+          )}
+
         </Box>
+
       </TableCell>
 
-      { (!isInstructor && tabValue === 1 && <TableCell sx={{ width: "4rem" }} align="center" component="th" scope="row">
-        {
-        (applicationStatus === "In Progress" && now < deadline) &&<IconButton
-          sx={{ color: "blue" }}
-          onClick={() => navigate("/edit-apply/" + applicationRequestId, { replace: true })}>
 
-          <EditIcon />
-        </IconButton>}
-      </TableCell>)}
 
       {(!isInstructor && tabValue === 0) && <TableCell sx={{ width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
         <Box sx={{ width: "70%", marginLeft: "auto", marginRight: "auto" }} className={getClassByElibility(isStudentEligible)}>
@@ -333,7 +367,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         </Box>
       </TableCell>}
 
-      {(!isInstructor && tabValue === 0) && <TableCell align="center" component="th" scope="row" sx={{padding:0}}>
+      {(!isInstructor && tabValue === 0) && <TableCell align="center" component="th" scope="row" sx={{ padding: 0 }}>
         {<FollowButton
           isInstructor={isInstructor}
           isFollowing={isFollowing}
