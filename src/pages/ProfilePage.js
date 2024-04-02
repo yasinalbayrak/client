@@ -1,6 +1,7 @@
 
 import { Typography, IconButton, Collapse, Snackbar, Grid, Button, Divider, Box, TableContainer,
 TableCell, Paper, Table, TableHead, TableBody, TableRow } from "@mui/material";
+import { Gauge, gaugeClasses } from '@mui/x-charts';
 import React, { useEffect, useState } from "react";
 import AnnouncementTable from "../components/announcementTableComponents/AnnouncementTable";
 import AppBarHeader from "../components/AppBarHeader";
@@ -26,6 +27,19 @@ function ProfilePage(){
     const[courses, setCourses] = useState();
     const navigate = useNavigate();
 
+    const getGPAColor = (gpa) => {
+        if(gpa >= 3.5){
+            return "#4caf50";
+        }else if(gpa >= 3.0){
+            return "#ffeb3b";
+        }else if(gpa >= 2.5){
+            return "#ff9800";
+        }else{
+            return "#f44336";
+        }
+        //"#3f51b5"
+    }
+
     const expandButton = () => {
         return (courses &&
         courses.length > 7 && (
@@ -49,6 +63,7 @@ function ProfilePage(){
         const fetchData = async () => {
           try {
             const currentTranscript = await getCurrentTranscript(id);
+            console.log(currentTranscript);
             setUser(currentTranscript);
           } catch (error) {
             // Centralized error handling or log the error
@@ -60,7 +75,7 @@ function ProfilePage(){
         fetchData();
       }, [id]);
 
-    console.log(user);
+  
 
     useEffect(() => {
         setCourses(user?.course);
@@ -109,12 +124,46 @@ return(
       </Grid>}
     </Grid>
     <Box sx={{ p: 5 }}>
-    <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>{user?.studentName}</Typography>
-    <Typography variant="subtitle1" sx={{ mb: 0.5 }}>SU-ID: {user?.studentSuId}</Typography>
-    <Typography variant="subtitle1" sx={{ mb: 0.5 }}>GPA: {user?.cumulativeGPA}</Typography>
-    <Typography variant="subtitle1" sx={{ mb: 0.5 }}>Total Credit: {user?.cumulativeCredits}</Typography>
-    <Typography variant="subtitle1" sx={{ mb: 0.5 }}>Class: {user?.year}</Typography>
-    <Typography variant="subtitle1" sx={{ mb: 0.5 }}>Last Transcript Term: {user?.term}</Typography>
+      <Grid container direction="row" alignItems="center" justifyContent="space-between">
+        <Grid item>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>{user?.studentName}</Typography>
+          <Typography variant="subtitle1" sx={{ mb: 0.5 }}>SU-ID: {user?.studentSuId}</Typography>
+          <Typography variant="subtitle1" sx={{ mb: 0.5 }}>Faculty: {user?.faculty}</Typography>
+          <Typography variant="subtitle1" sx={{ mb: 0.5 }}>Major: {`${user?.program?.majors}`}</Typography>
+          {user?.program?.minors && <Typography variant="subtitle1" sx={{ mb: 0.5 }}>Minor: {`${user?.program?.minors}`}</Typography>}
+        </Grid>
+        <Grid item>
+          <Typography variant="subtitle1" sx={{ mb: 0.5 }}>Total Credit: {user?.cumulativeCredits}</Typography>
+          <Typography variant="subtitle1" sx={{ mb: 0.5 }}>Class: {user?.year}</Typography>
+          <Typography variant="subtitle1" sx={{ mb: 0.5 }}>Last Transcript Term: {user?.term}</Typography>
+        </Grid>
+        <Grid item>
+          <Gauge
+            value={user?.cumulativeGPA}
+            valueMax={4}
+            height={200}
+            width={400}
+            label="GPA"
+            valueLabel="GPA"
+            startAngle={-110} 
+            endAngle={110}
+            sx={{
+              [`& .${gaugeClasses.valueText}`]: {
+                fontSize: 20,
+                transform: 'translate(0px, 0px)',
+              },
+              [`& .${gaugeClasses.valueArc}`]: {
+                fill: getGPAColor(user?.cumulativeGPA),
+              }
+            }}
+            text={
+               ({ value, valueMax }) => `GPA: ${value} / ${valueMax}`
+            }
+
+          />
+          
+        </Grid>
+      </Grid>
     
     </Box>
 
