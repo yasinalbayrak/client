@@ -6,7 +6,8 @@ export default function handleError(error) {
     window.location.replace("*");
   }
   if (error.response) {
-    toast.error(`Error: ${error.response.status} - ${error.response.data.message}`);
+    //console.log(error.response);
+    toast.error(`Error: ${error.response.status} - ${error.response.data.message?? error.response.data.detail}`);
   } else if (error.message) {
     toast.error(`Network Error: ${error.message}`);
   } else {
