@@ -246,7 +246,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     if (applicationStatus !== "In Progress") {
       return `You can not edit your application, it has been already ${applicationStatus.toLowerCase()}`
     } else if (now > deadline) {
-      return `You can not edit your application, the deadline is passed.}`
+      return `You can not edit your application, the deadline is passed.`
     } else {
       return "Edit your application"
     }
@@ -307,16 +307,10 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         )}
       </TableCell>
 
-
       <TableCell sx={{ bgcolor: "#FAFAFA", width: "7rem", maxWidth: "7rem", minWidth: "7rem" }} align="center" component="th" scope="row">
         {weeklyWorkingTime + " Hours"}
       </TableCell>
 
-      {/*
-      <TableCell sx={{ width: "7rem" }} align="center" component="th" scope="row">
-        <DesiredCourseGradesPopup isInprogressAllowed={isInprogressAllowed} courseCode={course.courseCode} grade ={minimumRequiredGrade} previousCourseGrades={previousCourseGrades}/>
-      </TableCell>
-      */}
       <TableCell sx={{ maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left" component="th" scope="row">
         {jobDetails}
       </TableCell>
@@ -324,7 +318,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       <TableCell sx={{ bgcolor: "#FAFAFA", width: "4rem", minWidth: "5rem", padding: 0 }} align="center" component="th" scope="row">
         <Box width="100%" display="flex" justifyContent="center" >
           {renderButtons()}
-          {!(applicationStatus === "In Progress" && now < deadline) ? (
+          {(!isInstructor && tabValue === 1) && (( !(applicationStatus === "In Progress" && now < deadline)) ? (
             <Tooltip
               title={getEditButtonTooltip(applicationStatus, now, deadline)}
               placement="bottom"
@@ -353,7 +347,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
               </IconButton>
             </Tooltip>
-          )}
+          ))}
 
         </Box>
 

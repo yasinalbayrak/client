@@ -22,7 +22,7 @@ import CommitRow from "./CommitRow";
 function CommitPage() {
     const user = useSelector((state) => state.user);
     const term = useSelector((state) => state.user.term);
-    const {userID, isInstructor} = user;
+    const {id: userID, isInstructor} = user;
     const [rows, setRows] = React.useState(null);
     const [refresh, setRefresh] = React.useState(false);
 
