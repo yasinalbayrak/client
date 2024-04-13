@@ -195,7 +195,7 @@ function CustomRow(props) {
           <FormControl fullWidth color={row.statusIns !== row.status ? "info" : ""} focused={row.statusIns !== row.status ? "True" : ""}>
             <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status (!!)" : "Status"}</InputLabel>
             <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(!!)" : "Status" } onChange={handleChange}>
-              
+
               <MenuItem value={"Accepted"}>Accepted</MenuItem>
               <MenuItem value={"Rejected"}>Rejected</MenuItem>
               <MenuItem value={"In Progress"}>In Progress</MenuItem>
@@ -250,9 +250,9 @@ function CustomRow(props) {
 
 
 
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={8}>
           <Collapse in={open} component="tr" style={{ display: "block" }}>
-            <td style={{ width: "100%" }}>
+            <td style={{ width: "100%",paddingLeft: "4rem" }}>
               <Stack spacing={0}>
                 <LaHistoryTable
                   LaHistory={LaHistory}
@@ -494,13 +494,13 @@ function ApplicantsTable(props) {
             >
               Reject all
             </Button>
-            
+
             <div container style={{
             display: "flex",
             alignItems: "start",
             marginTop: "0.5rem",
             direction: "columns",
-            
+
           }}>
               <Button
                 variant="outlined"
@@ -518,7 +518,7 @@ function ApplicantsTable(props) {
 
               >
                   <HelpCenterIcon />
-            
+
               </Tooltip>
             </div>
 
