@@ -19,6 +19,14 @@ function CustomColumnMenu(props) {
   }
 
 const defaultColumns = [
+    {
+        field: 'status',
+        headerName: 'Status',
+        width: 150,
+        type: 'singleSelect',
+        valueOptions: STATUS_OPTIONS,
+        editable: true,
+    },
     { field: 'id', headerName: 'ID', width: 90, type: "string" },
     {
         field: 'firstName',
@@ -66,14 +74,7 @@ const defaultColumns = [
         type: 'singleSelect',
         valueOptions: LETTER_GRADES
     },
-    {
-        field: 'status',
-        headerName: 'Status',
-        width: 150,
-        type: 'singleSelect',
-        valueOptions: STATUS_OPTIONS,
-        editable: true,
-    },
+
 
 ];
 
@@ -225,13 +226,14 @@ export default function DataGridView({ applicationRequests, announcement }) {
             }), {})
 
             return {
+                status: appReq.status,
                 id: appReq.transcript.studentSuId,
                 firstName: fname,
                 lastName: lname,
                 majors: appReq.transcript.program.majors,
                 minors: appReq.transcript.program.minors,
                 mainCourseGrade: "A", // TODO
-                status: appReq.status,
+
                 ...courseAndGrades,
                 ...QA,
             };
