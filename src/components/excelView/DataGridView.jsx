@@ -27,6 +27,13 @@ const defaultColumns = [
         valueOptions: STATUS_OPTIONS,
         editable: true,
     },
+    {
+        field: 'commitstatus',
+        headerName: 'Commitment Status',
+        width: 160,
+        type: 'string',
+        editable: false,
+    },
     { field: 'id', headerName: 'ID', width: 90, type: "string" },
     {
         field: 'firstName',
@@ -62,6 +69,13 @@ const defaultColumns = [
     {
         field: 'minors',
         headerName: 'Minors',
+        width: 150,
+        editable: false,
+        type: 'string'
+    },
+    {
+        field: 'gpa',
+        headerName: 'GPA',
         width: 150,
         editable: false,
         type: 'string'
@@ -211,6 +225,7 @@ export default function DataGridView({ applicationRequests, announcement }) {
         setColumns([...defaultColumns, ...dynamicColsCourseAndGrades, ...dynamicColsQAndA]);
 
         const updatedRows = applicationRequests.map((appReq) => {
+            console.log("deneemeee",appReq);
             const [fname, lname] = appReq.transcript.studentName.split(/\s+/);
             const QA = appReq.qandA.reduce((acc, qa, idx) => ({
                 ...acc,
@@ -223,17 +238,30 @@ export default function DataGridView({ applicationRequests, announcement }) {
             const courseAndGrades = announcement.previousCourseGrades.reduce((acc, cg) => ({
                 ...acc,
                 [`${cg.course.courseCode} Grade`]: cg.grade // TODO
-            }), {})
+            }), {});
+
+            let commitStatus;
+            if (appReq.committed && appReq.forgiven) {
+                commitStatus = 'Error';
+            } else if (appReq.committed && !appReq.forgiven) {
+                commitStatus = 'Committed';
+            } else if (!appReq.committed && appReq.forgiven) {
+                commitStatus = 'Forgiven';
+            } else {
+                commitStatus = 'Not Committed';
+            }
+
 
             return {
                 status: appReq.status,
+                commitstatus: commitStatus,
                 id: appReq.transcript.studentSuId,
                 firstName: fname,
                 lastName: lname,
                 majors: appReq.transcript.program.majors,
                 minors: appReq.transcript.program.minors,
                 mainCourseGrade: "A", // TODO
-
+                gpa: appReq.transcript.cumulativeGPA,
                 ...courseAndGrades,
                 ...QA,
             };
