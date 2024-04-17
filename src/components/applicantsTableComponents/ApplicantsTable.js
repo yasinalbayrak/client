@@ -269,9 +269,9 @@ function CustomRow(props) {
 
 
 
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={8}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0, allign: "right"}} colSpan={8}>
           <Collapse in={open} component="tr" style={{ display: "block" }}>
-            <td style={{ width: "100%",paddingLeft: "2rem"}}>
+            <td style={{ width: "100%",paddingLeft: "16rem"}}>
               <Stack spacing={0}>
                 <LaHistoryTable
                   LaHistory={LaHistory}
