@@ -225,7 +225,7 @@ export default function DataGridView({ applicationRequests, announcement }) {
         setColumns([...defaultColumns, ...dynamicColsCourseAndGrades, ...dynamicColsQAndA]);
 
         const updatedRows = applicationRequests.map((appReq) => {
-            console.log("deneemeee",appReq);
+            console.log("deneemeee",appReq);//delete
             const [fname, lname] = appReq.transcript.studentName.split(/\s+/);
             const QA = appReq.qandA.reduce((acc, qa, idx) => ({
                 ...acc,

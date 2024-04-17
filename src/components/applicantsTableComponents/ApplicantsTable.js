@@ -10,8 +10,10 @@ import { Typography, IconButton, Collapse, Snackbar, Grid, Button, Divider, Tab,
 import MuiAlert from "@mui/material/Alert";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import SwapVertTwoToneIcon from '@mui/icons-material/SwapVertTwoTone';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import SearchIcon from '@mui/icons-material/Search';
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -55,6 +57,17 @@ function CustomRow(props) {
   console.log(ann);
 
 
+  const determineCommitmentStatus = () => {
+    if (row.committed && row.forgiven) {
+      return 'Error';  // Both true
+    } else if (row.committed && !row.forgiven) {
+      return 'Committed';  // Committed true, forgiven false
+    } else if (!row.committed && row.forgiven) {
+      return 'Forgiven';  // Committed false, forgiven true
+    } else {
+      return 'Not Committed';  // Both false
+    }
+  };
 
   useEffect(() => {
     const prevCourseGrades = ann.previousCourseGrades;
@@ -177,7 +190,10 @@ function CustomRow(props) {
             <div key={index}>{minor}</div>
           ))}
         </TableCell>
-        <TableCell sx={{ borderBottom: "none" }} align="left">
+        <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
+          {studentDetails?.cumulativeGPA }
+        </TableCell>
+        <TableCell sx={{bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
           {studentDetails?.course && studentDetails.course.grade}
         </TableCell>
 
@@ -203,6 +219,9 @@ function CustomRow(props) {
             </Select>
           </FormControl>
 
+        </TableCell>
+        <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
+          {determineCommitmentStatus()}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} align="right">
           <IconButton
@@ -252,7 +271,7 @@ function CustomRow(props) {
 
         <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={8}>
           <Collapse in={open} component="tr" style={{ display: "block" }}>
-            <td style={{ width: "100%",paddingLeft: "4rem" }}>
+            <td style={{ width: "100%",paddingLeft: "2rem"}}>
               <Stack spacing={0}>
                 <LaHistoryTable
                   LaHistory={LaHistory}
@@ -354,13 +373,6 @@ function ApplicantsTable(props) {
     setIsFilterVisible(!isFilterVisible);
   };
 
-  const getSortIconColor = () => {
-    return sortOrder ? (sortOrder === "asc" ? "blue" : "red") : "grey";
-  };
-
-  const getGradeSortIconColor = () => {
-    return gradeSortOrder ? (gradeSortOrder === "asc" ? "blue" : "red") : "grey";
-  };
 
   const finalizeStatuss = (appId) => {
     try {
@@ -429,32 +441,46 @@ function ApplicantsTable(props) {
                   <StyledTableCell align="left">
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       Student Name
-                      <IconButton onClick={toggleSortOrder} style={{ color: getSortIconColor() }}>
-                        <SwapVertTwoToneIcon />
-                      </IconButton>
-                      <IconButton onClick={toggleFilterVisibility} style={{ color: isFilterVisible ? 'blue' : undefined }}>
-                        <FilterAltIcon />
+                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <IconButton onClick={toggleSortOrder} style={{ marginBottom: '-10px' }}>
+                          <ArrowDropUpIcon />
+                        </IconButton>
+                        <IconButton onClick={toggleSortOrder} style={{ marginTop: '-8px' }}>
+                          <ArrowDropDownIcon />
+                        </IconButton>
+                      </Box>
+                      <IconButton onClick={toggleFilterVisibility} style={{ color: isFilterVisible ? 'blue' : undefined , marginLeft:'-10px'}}>
+                        <SearchIcon />
                       </IconButton>
                     </Box>
                     {isFilterVisible && (
-                      <TextField
-                        fullWidth
-                        size="small"
-                        value={searchText}
-                        onChange={handleSearchChange}
-                        placeholder="Filter by name..."
-                      />
+                        <TextField
+                            fullWidth
+                            size="small"
+                            value={searchText}
+                            onChange={handleSearchChange}
+                            placeholder="Search by name..."
+                        />
                     )}
                   </StyledTableCell>
                   <StyledTableCell align="left">Majors</StyledTableCell>
                   <StyledTableCell align="left">Minors</StyledTableCell>
+                  <StyledTableCell align="left">GPA</StyledTableCell>
                   <StyledTableCell align="left">
-                    Grade
-                    <IconButton onClick={toggleGradeSortOrder} style={{ color: getGradeSortIconColor() }}>
-                      <SwapVertTwoToneIcon />
-                    </IconButton>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Grade
+                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <IconButton onClick={toggleGradeSortOrder} style={{ marginBottom: '-10px' }}>  {/* Decrease marginBottom here */}
+                          <ArrowDropUpIcon />
+                        </IconButton>
+                        <IconButton onClick={toggleGradeSortOrder} style={{ marginTop: '-8px' }}>
+                          <ArrowDropDownIcon />
+                        </IconButton>
+                      </Box>
+                    </Box>
                   </StyledTableCell>
                   <StyledTableCell align="left" sx={{ width: "10rem" }}>Status</StyledTableCell>
+                  <StyledTableCell align="left" sx={{ width: "10rem" }}>Commitment Status</StyledTableCell>
                   <StyledTableCell align="left">Details</StyledTableCell>
 
                 </TableRow>
