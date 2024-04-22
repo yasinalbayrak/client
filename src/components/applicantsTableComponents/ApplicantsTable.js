@@ -35,7 +35,7 @@ import { borders } from '@mui/system';
 import { toast } from "react-toastify";
 import { handleInfo } from "../../errors/GlobalErrorHandler";
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
-
+import Avatar from '@mui/material/Avatar';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -156,7 +156,7 @@ function CustomRow(props) {
 
 
   useEffect(() => {
-    getStudentLaHistory(row.student.user.id,props.appId, laHistoryPage)
+    getStudentLaHistory(row.student.user.id, props.appId, laHistoryPage)
       .then((res) => {
         setLaHistory(res);
       })
@@ -176,6 +176,24 @@ function CustomRow(props) {
   return (
     <>
       <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+        <TableCell sx={{  borderBottom: "none" }} align="left">
+          <Avatar
+            src={row.student.user.photoUrl}
+            alt="Student Photo"
+            sx={{ width: 64, height: 64 }}
+            slotProps={{
+              img: {
+                style: {
+                  padding: "0px",
+                  height: '100%',
+                  width: '100%',
+                  objectFit: 'fill',
+                  
+                }
+              }
+            }}
+          />
+        </TableCell>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
           {row.student.user.name + " " + row.student.user.surname}
         </TableCell>
@@ -191,9 +209,9 @@ function CustomRow(props) {
           ))}
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
-          {studentDetails?.cumulativeGPA }
+          {studentDetails?.cumulativeGPA}
         </TableCell>
-        <TableCell sx={{bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
+        <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
           {studentDetails?.course && studentDetails.course.grade}
         </TableCell>
 
@@ -210,7 +228,7 @@ function CustomRow(props) {
           </Snackbar>
           <FormControl fullWidth color={row.statusIns !== row.status ? "info" : ""} focused={row.statusIns !== row.status ? "True" : ""}>
             <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status (!!)" : "Status"}</InputLabel>
-            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(!!)" : "Status" } onChange={handleChange}>
+            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(!!)" : "Status"} onChange={handleChange}>
 
               <MenuItem value={"Accepted"}>Accepted</MenuItem>
               <MenuItem value={"Rejected"}>Rejected</MenuItem>
@@ -269,9 +287,9 @@ function CustomRow(props) {
 
 
 
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0, allign: "right"}} colSpan={8}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0, allign: "right" }} colSpan={8}>
           <Collapse in={open} component="tr" style={{ display: "block" }}>
-            <td style={{ width: "100%",paddingLeft: "16rem"}}>
+            <td style={{ width: "100%", paddingLeft: "16rem" }}>
               <Stack spacing={0}>
                 <LaHistoryTable
                   LaHistory={LaHistory}
@@ -439,6 +457,9 @@ function ApplicantsTable(props) {
               <TableHead>
                 <TableRow sx={{ bgcolor: "#eeeeee" }}>
                   <StyledTableCell align="left">
+
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       Student Name
                       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -449,18 +470,18 @@ function ApplicantsTable(props) {
                           <ArrowDropDownIcon />
                         </IconButton>
                       </Box>
-                      <IconButton onClick={toggleFilterVisibility} style={{ color: isFilterVisible ? 'blue' : undefined , marginLeft:'-10px'}}>
+                      <IconButton onClick={toggleFilterVisibility} style={{ color: isFilterVisible ? 'blue' : undefined, marginLeft: '-10px' }}>
                         <SearchIcon />
                       </IconButton>
                     </Box>
                     {isFilterVisible && (
-                        <TextField
-                            fullWidth
-                            size="small"
-                            value={searchText}
-                            onChange={handleSearchChange}
-                            placeholder="Search by name..."
-                        />
+                      <TextField
+                        fullWidth
+                        size="small"
+                        value={searchText}
+                        onChange={handleSearchChange}
+                        placeholder="Search by name..."
+                      />
                     )}
                   </StyledTableCell>
                   <StyledTableCell align="left">Majors</StyledTableCell>
@@ -504,11 +525,11 @@ function ApplicantsTable(props) {
             </Table>
           </TableContainer>
           <div
-          style={{
-            display: "flex",
-            justifyContent: "right",
-            alignItems: "center",
-          }}>
+            style={{
+              display: "flex",
+              justifyContent: "right",
+              alignItems: "center",
+            }}>
             <Button variant="outlined" color="success" sx={{ marginRight: "1rem", marginTop: "0.5rem" }}
               onClick={handleAcceptAll}
             >
@@ -522,28 +543,28 @@ function ApplicantsTable(props) {
             </Button>
 
             <div container style={{
-            display: "flex",
-            alignItems: "start",
-            marginTop: "0.5rem",
-            direction: "columns",
+              display: "flex",
+              alignItems: "start",
+              marginTop: "0.5rem",
+              direction: "columns",
 
-          }}>
+            }}>
               <Button
                 variant="outlined"
                 endIcon={<SaveIcon />}
-                sx={{  bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, float: "right", alignSelf: "center" }}
+                sx={{ bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, float: "right", alignSelf: "center" }}
                 onClick={flipPopup}
               >
                 Announce Final Results
               </Button>
               <Tooltip
-                  title="(!!) stands for the students who have different status than the final status. (e.g. Accepted but not finalized yet.)"
-                  placement="right"
-                  sx={{ fontSize: 'small' }}
-                  arrow
+                title="(!!) stands for the students who have different status than the final status. (e.g. Accepted but not finalized yet.)"
+                placement="right"
+                sx={{ fontSize: 'small' }}
+                arrow
 
               >
-                  <HelpCenterIcon />
+                <HelpCenterIcon />
 
               </Tooltip>
             </div>
