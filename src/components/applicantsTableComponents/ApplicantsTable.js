@@ -180,7 +180,7 @@ function CustomRow(props) {
           <Avatar
             src={row.student.user.photoUrl}
             alt="Student Photo"
-            sx={{ width: 64, height: 64 }}
+            sx={{ width: 50, height: 50 }}
             slotProps={{
               img: {
                 style: {
@@ -188,7 +188,6 @@ function CustomRow(props) {
                   height: '100%',
                   width: '100%',
                   objectFit: 'fill',
-                  
                 }
               }
             }}
