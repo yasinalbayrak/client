@@ -170,13 +170,10 @@ function CustomRow(props) {
   };
 
 
-
-
-
   return (
     <>
       <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-        <TableCell sx={{  borderBottom: "none" }} align="left">
+        <TableCell sx={{bgcolor: "#FAFAFA",  borderBottom: "none" }} align="left">
           <Avatar
             src={row.student.user.photoUrl}
             alt="Student Photo"
@@ -192,6 +189,9 @@ function CustomRow(props) {
               }
             }}
           />
+        </TableCell>
+        <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
+          {row.transcript.studentSuId }
         </TableCell>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
           {row.student.user.name + " " + row.student.user.surname}
@@ -458,6 +458,7 @@ function ApplicantsTable(props) {
                   <StyledTableCell align="left">
 
                   </StyledTableCell>
+                  <StyledTableCell align="left">ID</StyledTableCell>
                   <StyledTableCell align="left">
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       Student Name
