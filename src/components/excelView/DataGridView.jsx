@@ -1,22 +1,71 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridToolbar, GridToolbarExportContainer, GridToolbarContainer, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarDensitySelector, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarQuickFilter, useGridApiContext, GridColumnMenu } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar, GridToolbarExportContainer, GridToolbarContainer, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarDensitySelector, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarQuickFilter, useGridApiContext, GridColumnMenu, GridFooter, GridFooterContainer, gridFilterActiveItemsSelector, gridFilterModelSelector } from '@mui/x-data-grid';
 import CustomNoRowsOverlay from './CustomNoRowsOverlay';
-import { Button, MenuItem } from '@mui/material';
+import { Button, Chip, MenuItem } from '@mui/material';
 import * as XLSX from 'xlsx';
 import { LETTER_GRADES, STATUS_OPTIONS } from '../../constants/appConstants';
 import { CustomFilterPanel } from './CustomFilterPanel';
+import ChangeStatusButton from './ChangeStatusButton';
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
+import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import InfoIcon from '@mui/icons-material/Info';
+import { updateApplicationRequestStatus, updateApplicationRequestStatusMultiple } from '../../apiCalls';
 
 function CustomColumnMenu(props) {
     return (
-      <GridColumnMenu
-        {...props}
-        slots={{
-            columnMenuFilterItem: null,
-        }}
-      />
+        <GridColumnMenu
+            {...props}
+            slots={{
+                columnMenuFilterItem: null,
+            }}
+        />
     );
-  }
+}
+export const renderStatusIcon = (status) => {
+    const green = "#2e7d32"
+    const red = "#c62828"
+    const blue = "#0288d1"
+    const orange = "#ff9800"
+    switch (status) {
+        case STATUS_OPTIONS[0]:
+            return {
+                icon: <CheckOutlinedIcon
+                    color={green}
+                />,
+                color: green
+            }
+        case STATUS_OPTIONS[1]:
+            return {
+                icon: <ReportProblemOutlinedIcon
+                    color={red}
+                />,
+                color: red
+            }
+        case STATUS_OPTIONS[2]:
+            return {
+                icon: <AutorenewOutlinedIcon
+                    color={orange}
+                />,
+                color: orange
+            }
+        case STATUS_OPTIONS[3]:
+            return {
+                icon: <InfoIcon
+                    color={blue}
+                />,
+                color: blue
+            }
+        default:
+            return {
+                icon: <InfoIcon
+                    color={blue}
+                />,
+                color: blue
+            }
+    }
+}
 
 const defaultColumns = [
     {
@@ -26,6 +75,21 @@ const defaultColumns = [
         type: 'singleSelect',
         valueOptions: STATUS_OPTIONS,
         editable: true,
+        sortable: false,
+        renderCell: (params) => (
+            <Chip
+                variant="outlined"
+                size="small"
+                icon={renderStatusIcon(params.value).icon}
+                label={params.value}
+                sx={{
+                    borderColor: renderStatusIcon(params.value).color,
+                    color: renderStatusIcon(params.value).color
+                }}
+
+            />
+        )
+
     },
     {
         field: 'commitstatus',
@@ -96,10 +160,10 @@ const defaultColumns = [
 function CustomToolbar(props) {
     return (
         <GridToolbarContainer {...props}>
-            <CustomFilterPanel 
-            columns={props.columns}
-            setRows= {props.setRows} 
-            allRows= {props.allRows}
+            <CustomFilterPanel
+                columns={props.columns}
+                setRows={props.setRows}
+                allRows={props.allRows}
             />
             <GridToolbarColumnsButton />
             <GridToolbarDensitySelector />
@@ -109,6 +173,48 @@ function CustomToolbar(props) {
     );
 }
 
+function CustomFooter(props) {
+    const apiRef = useGridApiContext();
+
+    const selectedRowData = apiRef.current.getAllRowIds()
+        .filter(id => props.selectionModel.includes(id))
+        .map(id => apiRef.current.getRow(id))
+
+    const handleChange = (status) => {
+        console.log('selectedRowData :>> ', selectedRowData);
+        const statusList = selectedRowData.map((row) => ({
+            appReqId: row.appReqId,
+            status: status
+        }))
+
+        updateApplicationRequestStatusMultiple(statusList).then((res) => {
+            console.log('response :>> ', res);
+            props.setAllRows(prev => prev.map(row => (
+                props.selectionModel.includes(row.id) ? { ...row, status } : row
+            )));
+            props.setRows(prev => prev.map(row => (
+                props.selectionModel.includes(row.id) ? { ...row, status } : row
+            )));
+
+        }).catch((e) => {
+            /* Already Handled */
+        })
+
+
+        props.setSelectionModel([]);
+    };
+
+    return (
+        <GridFooterContainer {...props}>
+            {props.selectionModel.length > 0 && (
+                <ChangeStatusButton
+                    handleChange={handleChange}
+                />
+            )}
+            <GridFooter sx={{ border: 'none' }} />
+        </GridFooterContainer>
+    );
+}
 function ExcelExportMenuItem(props) {
     const apiRef = useGridApiContext();
     const { hideMenu } = props;
@@ -180,7 +286,13 @@ export default function DataGridView({ applicationRequests, announcement }) {
     const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({});
 
     const [isFilterPanelOpen, setFilterPanelOpen] = React.useState(false);
+    const [selectionModel, setSelectionModel] = React.useState([]);
 
+    const handleSelectionChange = (newSelectionModel) => {
+        setSelectionModel(newSelectionModel);
+        // Here you can handle selected rows, for example, log them
+        console.log('newSelectionModel :>> ', newSelectionModel);
+    };
 
 
 
@@ -193,23 +305,23 @@ export default function DataGridView({ applicationRequests, announcement }) {
     React.useEffect(() => {
 
         const dynamicColsQAndA = applicationRequests[0]?.qandA.map((qa, idx) => {
-            
+
             const obj = {
                 field: `q${idx + 1}`,
                 headerName: `Q${idx + 1}: ${qa.question.question}`,
                 width: calculateWidth(qa.question.question),
                 editable: false,
                 sortable: qa.question.type === "NUMERIC",
-                type: qa.question.type === "NUMERIC" ? 'number' 
+                type: qa.question.type === "NUMERIC" ? 'number'
                     : qa.question.type !== "MULTIPLE_CHOICE" ? 'string'
-                    : 'singleSelect',
+                        : 'singleSelect',
             };
-        
-            
+
+
             if (qa.question.type === "MULTIPLE_CHOICE") {
                 obj.valueOptions = qa.question.choices;
             }
-        
+
             return obj;
         }) || [];
 
@@ -219,13 +331,13 @@ export default function DataGridView({ applicationRequests, announcement }) {
             width: calculateWidth(cg.course.courseCode),
             editable: false,
             sortable: true,
-            type:'singleSelect',
+            type: 'singleSelect',
             valueOptions: LETTER_GRADES
         }))
         setColumns([...defaultColumns, ...dynamicColsCourseAndGrades, ...dynamicColsQAndA]);
 
         const updatedRows = applicationRequests.map((appReq) => {
-            console.log("deneemeee",appReq);//delete
+            console.log("deneemeee", appReq);//delete
             const [fname, lname] = appReq.transcript.studentName.split(/\s+/);
             const QA = appReq.qandA.reduce((acc, qa, idx) => ({
                 ...acc,
@@ -253,7 +365,7 @@ export default function DataGridView({ applicationRequests, announcement }) {
 
 
             return {
-                status: appReq.status,
+                status: appReq.statusIns,
                 commitstatus: commitStatus,
                 id: appReq.transcript.studentSuId,
                 firstName: fname,
@@ -264,37 +376,65 @@ export default function DataGridView({ applicationRequests, announcement }) {
                 gpa: appReq.transcript.cumulativeGPA,
                 ...courseAndGrades,
                 ...QA,
+                appReqId: appReq.applicationRequestId,
             };
         });
         setAllRows(updatedRows);
         setRows(updatedRows);
     }, [applicationRequests]);
 
+
+    const handleProcessRowUpdate = React.useCallback(async (newRow, oldRow) => {
+        console.log('newRow :>> ', newRow);
+        console.log('oldRow :>> ', oldRow);
+        if (newRow.status !== oldRow.status) {
+            // Call to backend API to update the status
+            try {
+                
+                await updateApplicationRequestStatus(newRow.appReqId, newRow.status);
+                console.log("Status updated successfully");
+            } catch (error) {
+                console.error("Failed to update status:", error);
+                throw new Error("Update failed. Reverting changes on the frontend.");
+            }
+        }
+        return newRow;
+    }, []);
+
     return (
         <Box sx={{ height: "auto", width: 'fit-content' }}>
-            
-           
+
+
             <DataGrid
                 columns={columns}
                 rows={rows}
-                autoHeight   
+                autoHeight
                 checkboxSelection
                 slots={{
                     toolbar: CustomToolbar,
                     noRowsOverlay: CustomNoRowsOverlay,
                     noResultsOverlay: CustomNoRowsOverlay,
-                    columnMenu: CustomColumnMenu
+                    columnMenu: CustomColumnMenu,
+                    footer: CustomFooter
                 }}
                 slotProps={{
-                    toolbar: {columns: columns, setRows: setRows, allRows: allRows}
+                    toolbar: { columns: columns, setRows: setRows, allRows: allRows },
+                    footer: { selectionModel: selectionModel, setSelectionModel: setSelectionModel, setAllRows: setAllRows, setRows: setRows }
+                }}
+                processRowUpdate={handleProcessRowUpdate}
+                rowSelectionModel={selectionModel}
+                onRowSelectionModelChange={(ids) => {
+
+                    setSelectionModel(ids);
                 }}
                 filterModel={filterModel}
                 onFilterModelChange={(newModel) => setFilterModel(newModel)}
-                
+
                 columnVisibilityModel={columnVisibilityModel}
                 onColumnVisibilityModelChange={(newModel) =>
                     setColumnVisibilityModel(newModel)
                 }
+                disableRowSelectionOnClick
                 sx={{
                     '& .MuiDataGrid-overlayWrapperInner': {},
                     '& .MuiDataGrid-footerContainer': { justifyContent: 'flex-start' },
@@ -303,6 +443,7 @@ export default function DataGridView({ applicationRequests, announcement }) {
 
                     '& .MuiBox-root': { flex: 1 },
                 }}
+
             />
         </Box>
     );

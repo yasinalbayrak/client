@@ -174,11 +174,11 @@ function CustomRow(props) {
   return (
     <>
       <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-        <TableCell sx={{bgcolor: "#FAFAFA",  borderBottom: "none" }} align="left">
+        <TableCell sx={{bgcolor: "#FAFAFA",  borderBottom: "none" }} align="right">
           <Avatar
             src={row.student.user.photoUrl}
             alt="Student Photo"
-            sx={{ width: 50, height: 50 }}
+            sx={{ width: 64, height: 64 }}
             slotProps={{
               img: {
                 style: {
@@ -456,8 +456,8 @@ function ApplicantsTable(props) {
             <Table sx={{ minWidth: 600 }} stickyHeader aria-label="simple table" >
               <TableHead>
                 <TableRow sx={{ bgcolor: "#eeeeee" }}>
-                  <StyledTableCell align="left">
-
+                  <StyledTableCell align="center" width={10}>
+                  
                   </StyledTableCell>
                   <StyledTableCell align="left">ID</StyledTableCell>
                   <StyledTableCell align="left">

@@ -17,13 +17,15 @@ import { useStyles } from '../../pages/EligibilityTable';
 import { Box, Skeleton, Tooltip } from '@mui/material';
 import FollowButton from '../buttons/FollowButton';
 import { keyframes } from '@mui/system';
+import { useDispatch } from 'react-redux';
+import { setPhotoUrl } from '../../redux/userSlice';
 
 
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, isApplied2, deleteCallBack, filterEligibilityCallback, setFollowingCallback, isNotification }) {
 
   const { instructor_names, weeklyWorkingTime, term, section, status: applicationStatus, isTimedOut, authorizedInstructors, isFollowing } = data;
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
-
+  const dispatch = useDispatch();
   const classes = useStyles();
 
   const spin = keyframes`from {
@@ -41,10 +43,13 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   }`;
 
   useEffect(() => {
+    
     if (isInstructor == false) {
       getTranscriptInfo().then((res) => {
         if (res.isUploadedAnyTranscript !== undefined) {
           setIsTranscriptUploaded(res.isUploadedAnyTranscript);
+          console.log('res askdadk:>> ', res);
+          dispatch(setPhotoUrl({photoUrl: res.photoUrl}))
         } else {
           console.log('isUploadedAnyTranscript not found in the response');
         }

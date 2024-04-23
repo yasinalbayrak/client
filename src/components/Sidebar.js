@@ -100,7 +100,7 @@ function Sidebar({ setTabInitial }) {
   const showTerms = useSelector((state) => state.user.showTerms);
   const unreadCount = useSelector((state) => state.user.unreadNotifications);
   const userID = useSelector((state) => state.user.id);
-
+  const photoUrl = useSelector((state) => state.user.photoUrl);
   const [termSelect, setTermSelect] = React.useState(term);
   const [allTerms, setAllTerms] = React.useState([]);
 
@@ -315,9 +315,7 @@ function Sidebar({ setTabInitial }) {
                     height: 70,
                     ...(!sidebarOpen && { width: 38, height: 38 }),
                   }}
-                  src={
-                    "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fillustrations%2Fplaceholder-image&psig=AOvVaw2wfM2StbhQiMuN3S_8-PLK&ust=1672766858605000&source=images&cd=vfe&ved=0CA8QjRxqFwoTCKiuraS0qfwCFQAAAAAdAAAAABAJ"
-                  }
+                  src={photoUrl}
                 ></Avatar>
               </Box>
               <Typography
@@ -365,14 +363,14 @@ function Sidebar({ setTabInitial }) {
           )}
 
           {(
-                <><ListItem sx={{ padding: "0px" }}>
-                  <ListItemButton as={Link} to="/commit" style={{ textDecoration: "none", color: "white" }}>
-                    <ListItemIcon sx={{ minWidth: "30px" }}>
-                      <HandshakeIcon sx={{ color: "white" }} />
-                    </ListItemIcon>
-                    <ListItemText primary={"Commitments"} sx={{ opacity: sidebarOpen ? 1 : 0}} />
-                  </ListItemButton>
-                </ListItem>
+            <><ListItem sx={{ padding: "0px" }}>
+              <ListItemButton as={Link} to="/commit" style={{ textDecoration: "none", color: "white" }}>
+                <ListItemIcon sx={{ minWidth: "30px" }}>
+                  <HandshakeIcon sx={{ color: "white" }} />
+                </ListItemIcon>
+                <ListItemText primary={"Commitments"} sx={{ opacity: sidebarOpen ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
               <Divider sx={{ bgcolor: "#e0e0e0", margin: "3px" }} /> </>
           )}
 
@@ -388,7 +386,7 @@ function Sidebar({ setTabInitial }) {
             </ListItemButton>
           </ListItem>
 
-          
+
           <Collapse in={listOpen} timeout="auto">
             <List>
               <ListItem sx={{ padding: "0px" }}>

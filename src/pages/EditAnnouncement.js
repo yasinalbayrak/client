@@ -1198,7 +1198,7 @@ function EditAnnouncement() {
               <Typography sx={{ my: 2 }}>Desired Course Grade(s):</Typography>
               <Grid
                 item
-                xs={6}
+                xs={6} 
                 direction="column"
                 justifyContent="center"
                 alignItems="center"

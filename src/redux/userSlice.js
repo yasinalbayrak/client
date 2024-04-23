@@ -18,6 +18,7 @@ const initialState = {
   connectToPublicTopic: false,
   publicSubscription: false,
   isToastsPaused: false,
+  photoUrl: false
 };
 
 
@@ -96,12 +97,16 @@ const userSlice = createSlice({
     resumeToasts: (state) => {
       state.isToastsPaused = false;
     },
+    setPhotoUrl: (state, action)=> {
+      state.photoUrl = action.payload.photoUrl
+    }
   },
 });
 
 console.log(userSlice);
 
 export const {
+  setPhotoUrl,
   pauseToasts, 
   resumeToasts,
   setIsLoading,

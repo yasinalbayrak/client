@@ -522,6 +522,25 @@ async function updateApplicationRequestStatus(applicationRequestId, status) {
 
 }
 
+async function updateApplicationRequestStatusMultiple(statusList) {
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/status",
+      statusList ,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        }
+      }
+    );
+
+    return result.data;
+  } catch (error) { handleError(error) }
+
+}
+
 async function getApplicationRequestById(applicationRequestId) {
   try {
     const token = getJwtFromCookie()
@@ -800,6 +819,7 @@ async function forgivenAppReq(appReqId){
 
 
 export {
+  updateApplicationRequestStatusMultiple,
   acceptAllRequestByAppId,
   rejectAllRequestByAppId,
   getUnreadNotificationCount,
