@@ -29,6 +29,8 @@ import { CheckBox } from "@mui/icons-material";
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { useEffect } from "react";
+import HelpCenterIcon from "@mui/icons-material/HelpCenter";
+import Tooltip from "@mui/material/Tooltip";
 
 const questionType = [
   { value: "Text Answer", label: "Text Answer" },
@@ -282,7 +284,7 @@ function AddQuestion({questions, setQuestions}) {
                           <ListItemText secondary="ID" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
                         </ListItem>
                         <ListItem>
-                          <ListItemText secondary="Faculty" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
+                          <ListItemText secondary="Major-Minor" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
                         </ListItem>
                         <ListItem>
                           <ListItemText secondary="Previous Grade" secondaryTypographyProps={{ component: "span", variant: "body2", sx: { pl: "24px", color: "white" } }} />
@@ -296,10 +298,11 @@ function AddQuestion({questions, setQuestions}) {
                       </List>}
                       placement="right"
                     >
-                      <IconButton sx={{ marginLeft: '20px'}}>
-                        <ErrorOutlinedIcon sx={{ fontSize: 35, color: "red" }} />
+                      <IconButton>
+                        <HelpCenterIcon />
                       </IconButton>
                     </HtmlTooltip>
+
                   </div>
                   {questions.map((question, index) => {
                     return (
