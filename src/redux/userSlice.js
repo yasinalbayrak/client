@@ -16,7 +16,8 @@ const initialState = {
   unreadNotifications: 0,
   stompClient: null,
   connectToPublicTopic: false,
-  publicSubscription: false
+  publicSubscription: false,
+  isToastsPaused: false,
 };
 
 
@@ -88,13 +89,21 @@ const userSlice = createSlice({
     },
     setPublicSubscription: (state, action) => {
       state.publicSubscription = action.payload.publicSubscription
-    }
+    },
+    pauseToasts: (state) => {
+      state.isToastsPaused = true;
+    },
+    resumeToasts: (state) => {
+      state.isToastsPaused = false;
+    },
   },
 });
 
 console.log(userSlice);
 
 export const {
+  pauseToasts, 
+  resumeToasts,
   setIsLoading,
   setPublicSubscription,
   setConnectToPublicTopic,

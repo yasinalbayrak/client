@@ -4,7 +4,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Fade from '@mui/material/Fade';
 import FilterRow from './FilterRow';
-import { LOGIC_OPS, STR_OPERATORS } from '../../constants/appConstants';
+import { LOGIC_OPS, SELECT_OPERATORS, STR_OPERATORS } from '../../constants/appConstants';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { Badge, Box, IconButton, Typography } from '@mui/material';
 
@@ -17,7 +17,7 @@ export function CustomFilterPanel(props) {
       id: 0,
       logicOpAllowed: false,
       logicOp: LOGIC_OPS[0],
-      column: props.columns[0],
+      column: props.columns[2],
       operator: STR_OPERATORS[0],
       filterValue: "",
     },

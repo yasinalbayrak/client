@@ -21,11 +21,6 @@ import ListItemText from "@mui/material/ListItemText";
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import { toast } from 'react-toastify';
-import { handleInfo } from "../errors/GlobalErrorHandler"
-import { useDispatch } from "react-redux";
-import { setTerm } from "../redux/userSlice";
-import { CheckBox } from "@mui/icons-material";
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { useEffect } from "react";

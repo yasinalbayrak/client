@@ -8,14 +8,14 @@ import ApplyPage from "./pages/ApplyPage";
 import ApplicantsPage from "./pages/ApplicantsPage";
 import { useDispatch, useSelector } from "react-redux";
 import LoginCAS from "./pages/LoginCAS";
-import { useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { startLoginProcess, successLogin, logout, failLogin, setUnreadNotificationCount, increaseUnreadNotificationCountByOne, setStompClient, setPublicSubscription } from "./redux/userSlice";
 import { getUnreadNotificationCount, validateLogin } from "./apiCalls";
 import CourseApplicantsPage from "./pages/CourseApplicantsPage";
 import EditApplyPage from "./pages/EditApplyPage";
 import SuccessPage from "./pages/SuccessPage";
 import ProfilePage from "./pages/ProfilePage";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import handleError, { handleInfo, handleServerDownError } from "./errors/GlobalErrorHandler";
 
@@ -33,6 +33,21 @@ import { useWebSocket } from "./context/WebSocketContext";
 import webSocketService from "./components/service/WebSocketService";
 import LoadingPage from "./pages/LoadingPage/LoadingPage";
 import Forbidden403 from "./403";
+
+
+
+
+const PauseContext = createContext(null);
+
+export function usePause() {
+  return useContext(PauseContext);
+}
+
+
+
+
+
+
 function App() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isLoading = useSelector((state) => state.user.isLoading);
@@ -46,8 +61,11 @@ function App() {
   const urlParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
   const webSocketContext = useWebSocket();
-
   const { subscribe, unsubscribe } = webSocketContext;
+
+  const [paused, setPaused] = useState(false);
+
+
   useEffect(() => {
     var stompClient = null;
 
@@ -79,7 +97,7 @@ function App() {
 
           const handleNotification = (notification) => {
             dispatch(increaseUnreadNotificationCountByOne());
-            handleInfo(notification.description);
+            handleInfo(notification.description, dispatch);
           };
           const topic = `/user/${result.user.id}/notifications`;
 
@@ -117,66 +135,74 @@ function App() {
   }, [isLoggedIn, isLoading, url, dispatch, navigate, location.pathname, urlParams]);
 
 
-const ProtectedRouteIns = ({ element}) => {
-  if(isInstructor){
-    return element;
-  }
-  return <Forbidden403 />;
-};
+  const ProtectedRouteIns = ({ element }) => {
+    if (isInstructor) {
+      return element;
+    }
+    return <Forbidden403 />;
+  };
 
-const ProtectedRouteStu = ({ element}) => {
-  if(!isInstructor){
-    return element;
-  }
-  return <Forbidden403 />;
-};
+  const ProtectedRouteStu = ({ element }) => {
+    if (!isInstructor) {
+      return element;
+    }
+    return <Forbidden403 />;
+  };
 
   if (isLoading) {
     return <LoadingPage></LoadingPage>
   }
+
   return (
+
+
     <>
       <div className={`app-content ${isLoading ? 'is-loading' : ''}`}>
-        <WebSocketProvider authToken={authToken}>
-          <ToastContainer position="top-right" autoClose={5000} />
-          <Routes>
-            {isLoggedIn ? (
-              <>
-                {/* not authorized */}
-                <Route path="/home"  element={<HomePage />}  />
-                <Route path="*" element={<MockCAS />} />
-                <Route path="/success" element={<SuccessPage />} />
-                <Route path="/profile/:id" element={<ProfilePage />} />
-                <Route path="/403" element={<Forbidden403></Forbidden403>} />
-                <Route path="transcriptInfoPage/:id?" element={<TranscriptInfo></TranscriptInfo>}></Route>
-                <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
-                <Route path="/commit"  element={<CommitPage />} />
 
-                {/* Authorized for instructor */}
-                <Route path="/create-announcement" element={<ProtectedRouteIns element={<CreateAnnouncement />}/>} />
-                <Route path="/edit-announcement/:id" element={<ProtectedRouteIns element={<EditAnnouncement />}/>}  />
-                <Route path="/applicants" element={<ProtectedRouteIns element={<CourseApplicantsPage />}/> } />
-                <Route path="/application-of/:appId" element={<ProtectedRouteIns element={<ApplicantsPage />}/>} />
 
-                {/* Authorized for Student */}
-                <Route path="/apply/:id" element={<ProtectedRouteStu element={<ApplyPage />} /> } />
-                <Route path="/edit-apply/:id" element={<ProtectedRouteStu element={<EditApplyPage />}/> } />
-                <Route path="/transcriptUploadPage/:id?" element={<ProtectedRouteStu element={<TranscriptPage></TranscriptPage>}/> }></Route>
-                
-                <Route path="/questionPage/:id" element={<ProtectedRouteStu element={<QuestionPage></QuestionPage>}/>}></Route>
-                <Route path="/edit-questionPage/:id" element={<ProtectedRouteStu element={<EditQuestionPage />}/>} />
-                
-                
-              </>
-            ) : (
-              <>
-                <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
-                <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
-                <Route path="/403" element={<Forbidden403></Forbidden403>} />
-              </>
-            )}
-          </Routes>
-        </WebSocketProvider>
+          <WebSocketProvider authToken={authToken}>
+
+            <ToastContainer 
+              containerId="1618"
+            />
+            <Routes>
+              {isLoggedIn ? (
+                <>
+                  {/* not authorized */}
+                  <Route path="/home" element={<HomePage />} />
+                  <Route path="*" element={<MockCAS />} />
+                  <Route path="/success" element={<SuccessPage />} />
+                  <Route path="/profile/:id" element={<ProfilePage />} />
+                  <Route path="/403" element={<Forbidden403></Forbidden403>} />
+                  <Route path="transcriptInfoPage/:id?" element={<TranscriptInfo></TranscriptInfo>}></Route>
+                  <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
+                  <Route path="/commit" element={<CommitPage />} />
+
+                  {/* Authorized for instructor */}
+                  <Route path="/create-announcement" element={<ProtectedRouteIns element={<CreateAnnouncement />} />} />
+                  <Route path="/edit-announcement/:id" element={<ProtectedRouteIns element={<EditAnnouncement />} />} />
+                  <Route path="/applicants" element={<ProtectedRouteIns element={<CourseApplicantsPage />} />} />
+                  <Route path="/application-of/:appId" element={<ProtectedRouteIns element={<ApplicantsPage />} />} />
+
+                  {/* Authorized for Student */}
+                  <Route path="/apply/:id" element={<ProtectedRouteStu element={<ApplyPage />} />} />
+                  <Route path="/edit-apply/:id" element={<ProtectedRouteStu element={<EditApplyPage />} />} />
+                  <Route path="/transcriptUploadPage/:id?" element={<ProtectedRouteStu element={<TranscriptPage></TranscriptPage>} />}></Route>
+
+                  <Route path="/questionPage/:id" element={<ProtectedRouteStu element={<QuestionPage></QuestionPage>} />}></Route>
+                  <Route path="/edit-questionPage/:id" element={<ProtectedRouteStu element={<EditQuestionPage />} />} />
+
+
+                </>
+              ) : (
+                <>
+                  <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
+                  <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
+                  <Route path="/403" element={<Forbidden403></Forbidden403>} />
+                </>
+              )}
+            </Routes>
+          </WebSocketProvider>
       </div>
     </>
   );

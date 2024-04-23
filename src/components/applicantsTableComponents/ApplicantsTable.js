@@ -36,6 +36,7 @@ import { toast } from "react-toastify";
 import { handleInfo } from "../../errors/GlobalErrorHandler";
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import Avatar from '@mui/material/Avatar';
+import { useDispatch } from "react-redux";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -329,7 +330,7 @@ function ApplicantsTable(props) {
   const [isFilterVisible, setIsFilterVisible] = React.useState(false);
   const [questions, setQuestions] = React.useState([]);
   const isApplicantsListEmpty = props.rows.length === 0;
-
+  const dispatch = useDispatch();
   const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
   const ann = props.announcement;
 
@@ -394,9 +395,9 @@ function ApplicantsTable(props) {
   const finalizeStatuss = (appId) => {
     try {
       finalizeStatus(appId).then((res) => {
-        console.log(res);
+        
         handleInfo("Changes are successfully finalized.")
-        props.setRows(res);
+        
       });
     }
     catch (error) {

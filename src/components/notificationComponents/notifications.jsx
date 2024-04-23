@@ -26,8 +26,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { useDispatch, useSelector } from "react-redux";
 import { increaseUnreadNotificationCountByOne, setNotificationPreference, setPublicSubscription, setUnreadNotificationCount } from "../../redux/userSlice"
-import { handleInfo } from '../../errors/GlobalErrorHandler';
-import webSocketService from '../service/WebSocketService';
 import { useNavigate } from 'react-router';
 import { toHtml } from '@fortawesome/fontawesome-svg-core';
 
