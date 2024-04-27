@@ -171,13 +171,13 @@ function CustomRow(props) {
     setLaHistoryPage(value - 1);
   };
 
-
+  console.log('row :>> ', row);
   return (
     <>
       <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
         <TableCell sx={{bgcolor: "#FAFAFA",  borderBottom: "none" }} align="right">
           <Avatar
-            src={photoUrl}
+            src={row.student.user.photoUrl}
             alt="Student Photo"
             sx={{ width: 64, height: 64 }}
             slotProps={{
@@ -234,7 +234,7 @@ function CustomRow(props) {
               <MenuItem value={"Accepted"}>Accepted</MenuItem>
               <MenuItem value={"Rejected"}>Rejected</MenuItem>
               <MenuItem value={"In Progress"}>In Progress</MenuItem>
-              <MenuItem value={"Added to Waiting List"}>Wait Listed</MenuItem>
+              <MenuItem value={"Waiting List"}>Waiting List</MenuItem>
             </Select>
           </FormControl>
 

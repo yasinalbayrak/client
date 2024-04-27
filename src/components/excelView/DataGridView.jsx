@@ -11,7 +11,10 @@ import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import InfoIcon from '@mui/icons-material/Info';
-import { updateApplicationRequestStatus, updateApplicationRequestStatusMultiple } from '../../apiCalls';
+import SaveIcon from '@mui/icons-material/Save';
+import { finalizeStatus, updateApplicationRequestStatus, updateApplicationRequestStatusMultiple } from '../../apiCalls';
+import Popup from '../popup/Popup';
+import { handleInfo } from '../../errors/GlobalErrorHandler';
 
 function CustomColumnMenu(props) {
     return (
@@ -181,20 +184,28 @@ function CustomFooter(props) {
         .map(id => apiRef.current.getRow(id))
 
     const handleChange = (status) => {
-        console.log('selectedRowData :>> ', selectedRowData);
         const statusList = selectedRowData.map((row) => ({
             appReqId: row.appReqId,
             status: status
         }))
 
         updateApplicationRequestStatusMultiple(statusList).then((res) => {
-            console.log('response :>> ', res);
+
             props.setAllRows(prev => prev.map(row => (
                 props.selectionModel.includes(row.id) ? { ...row, status } : row
             )));
             props.setRows(prev => prev.map(row => (
                 props.selectionModel.includes(row.id) ? { ...row, status } : row
             )));
+            console.log('selectionModel :>> ', props.selectionModel);
+
+            props.setApplicationRequests(prev => prev.map(appReq => {
+                console.log('appReq.student.user.universityId :>> ', appReq.student.user.universityId);
+                console.log('status :>> ', status);
+                return (
+                    props.selectionModel.includes(appReq.student.user.universityId) ? { ...appReq, statusIns: status } : appReq
+                )
+            }));
 
         }).catch((e) => {
             /* Already Handled */
@@ -212,6 +223,19 @@ function CustomFooter(props) {
                 />
             )}
             <GridFooter sx={{ border: 'none' }} />
+            <Button
+                color='success'
+                variant="contained"
+                disableElevation
+                endIcon={<SaveIcon />}
+                onClick={props.flipPopup}
+                sx={{
+                    ml: 2,
+                    fontSize: "small"
+                }}
+            >
+                Announce Final Results
+            </Button>
         </GridFooterContainer>
     );
 }
@@ -273,7 +297,7 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
     </GridToolbarExportContainer>
 );
 
-export default function DataGridView({ applicationRequests, announcement }) {
+export default function DataGridView({ applicationRequests, announcement, setApplicationRequests }) {
     const [allRows, setAllRows] = React.useState([]);
     const [rows, setRows] = React.useState([]);
     const [columns, setColumns] = React.useState([...defaultColumns]);
@@ -284,6 +308,7 @@ export default function DataGridView({ applicationRequests, announcement }) {
         logic: 'AND'
     });
     const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({});
+    const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
 
     const [isFilterPanelOpen, setFilterPanelOpen] = React.useState(false);
     const [selectionModel, setSelectionModel] = React.useState([]);
@@ -294,13 +319,15 @@ export default function DataGridView({ applicationRequests, announcement }) {
         console.log('newSelectionModel :>> ', newSelectionModel);
     };
 
-
+    console.log('applicationRequests :>> ', applicationRequests);
 
     const calculateWidth = (text) => {
         const baseWidth = 10;
         const padding = 0;
         return Math.max(0, 150);
     };
+
+    console.log('announcement :>> ', announcement);
 
     React.useEffect(() => {
 
@@ -367,7 +394,7 @@ export default function DataGridView({ applicationRequests, announcement }) {
             return {
                 status: appReq.statusIns,
                 commitstatus: commitStatus,
-                id: appReq.transcript.studentSuId,
+                id: appReq.student.user.universityId,
                 firstName: fname,
                 lastName: lname,
                 majors: appReq.transcript.program.majors,
@@ -390,8 +417,13 @@ export default function DataGridView({ applicationRequests, announcement }) {
         if (newRow.status !== oldRow.status) {
             // Call to backend API to update the status
             try {
-                
+
                 await updateApplicationRequestStatus(newRow.appReqId, newRow.status);
+
+                setApplicationRequests(prev => {
+                    return prev ? prev.map(appReq => newRow.appReqId === appReq.applicationRequestId ? { ...appReq, statusIns: newRow.status } : appReq) : [];
+                });
+
                 console.log("Status updated successfully");
             } catch (error) {
                 console.error("Failed to update status:", error);
@@ -400,9 +432,12 @@ export default function DataGridView({ applicationRequests, announcement }) {
         }
         return newRow;
     }, []);
+    const flipPopup = () => {
+        setFinalizePopoUpOpened((prev) => !prev);
+    };
 
     return (
-        <Box sx={{ height: "auto", width: 'fit-content' }}>
+        <Box sx={{ height: "auto", width: '90%' }}>
 
 
             <DataGrid
@@ -419,7 +454,7 @@ export default function DataGridView({ applicationRequests, announcement }) {
                 }}
                 slotProps={{
                     toolbar: { columns: columns, setRows: setRows, allRows: allRows },
-                    footer: { selectionModel: selectionModel, setSelectionModel: setSelectionModel, setAllRows: setAllRows, setRows: setRows }
+                    footer: { selectionModel: selectionModel, setSelectionModel: setSelectionModel, setAllRows: setAllRows, setRows: setRows, flipPopup: flipPopup, setApplicationRequests: setApplicationRequests }
                 }}
                 processRowUpdate={handleProcessRowUpdate}
                 rowSelectionModel={selectionModel}
@@ -444,6 +479,22 @@ export default function DataGridView({ applicationRequests, announcement }) {
                     '& .MuiBox-root': { flex: 1 },
                 }}
 
+            />
+            <Popup
+                opened={finalizePopoUpOpened}
+                flipPopup={flipPopup}
+                title={"Confirm Announcing Final Status?"}
+                text={"If there would be a final status announcement, all the students will be notified about their final status. Are you sure you want to announce the final status?\n Final status can be done again after this action."}
+                posAction={() => {
+                    finalizeStatus(announcement.applicationId); 
+                    flipPopup(); 
+                    setApplicationRequests((prev) => {
+                        console.log('prev Yasin:>> ', prev);
+                        return prev.map((appReq) => ({...appReq, status: appReq.statusIns }))})
+                    handleInfo("Successfully finalized the results.");
+                }}
+                negAction={flipPopup}
+                posActionText={"Finalize"}
             />
         </Box>
     );

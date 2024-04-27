@@ -2,7 +2,7 @@ export const STATUS_OPTIONS = [
     "Accepted",
     "Rejected",
     "In Progress",
-    "Wait Listed"
+    "Waiting List"
 ];
 
 export const STR_OPERATORS = [
