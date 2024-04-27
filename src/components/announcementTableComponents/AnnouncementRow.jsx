@@ -18,7 +18,6 @@ import { Box, Skeleton, Tooltip } from '@mui/material';
 import FollowButton from '../buttons/FollowButton';
 import { keyframes } from '@mui/system';
 import { useDispatch } from 'react-redux';
-import { setPhotoUrl } from '../../redux/userSlice';
 
 
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, isApplied2, deleteCallBack, filterEligibilityCallback, setFollowingCallback, isNotification }) {
@@ -48,8 +47,6 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
       getTranscriptInfo().then((res) => {
         if (res.isUploadedAnyTranscript !== undefined) {
           setIsTranscriptUploaded(res.isUploadedAnyTranscript);
-          console.log('res askdadk:>> ', res);
-          dispatch(setPhotoUrl({photoUrl: res.photoUrl}))
         } else {
           console.log('isUploadedAnyTranscript not found in the response');
         }

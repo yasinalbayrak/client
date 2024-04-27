@@ -101,6 +101,7 @@ function Sidebar({ setTabInitial }) {
   const unreadCount = useSelector((state) => state.user.unreadNotifications);
   const userID = useSelector((state) => state.user.id);
   const photoUrl = useSelector((state) => state.user.photoUrl);
+  console.log('photoUrl :>> ', photoUrl);
   const [termSelect, setTermSelect] = React.useState(term);
   const [allTerms, setAllTerms] = React.useState([]);
 

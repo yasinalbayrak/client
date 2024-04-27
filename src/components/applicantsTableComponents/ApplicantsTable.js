@@ -37,6 +37,7 @@ import { handleInfo } from "../../errors/GlobalErrorHandler";
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import Avatar from '@mui/material/Avatar';
 import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -53,7 +54,7 @@ function CustomRow(props) {
   const [studentDetails, setStudentDetails] = React.useState({});
   const [laHistoryPage, setLaHistoryPage] = React.useState(0);
   const [requiredCourses, setRequiredCourses] = React.useState([]);
-
+  const photoUrl = useSelector((state) => state.user.photoUrl);
   console.log(row);
   console.log(ann);
 
@@ -176,7 +177,7 @@ function CustomRow(props) {
       <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
         <TableCell sx={{bgcolor: "#FAFAFA",  borderBottom: "none" }} align="right">
           <Avatar
-            src={row.student.user.photoUrl}
+            src={photoUrl}
             alt="Student Photo"
             sx={{ width: 64, height: 64 }}
             slotProps={{

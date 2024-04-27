@@ -18,7 +18,8 @@ const initialState = {
   connectToPublicTopic: false,
   publicSubscription: false,
   isToastsPaused: false,
-  photoUrl: false
+  photoUrl: "",
+  universityId: ""
 };
 
 
@@ -41,6 +42,8 @@ const userSlice = createSlice({
       state.isInstructor = action.payload.isInstructor;
       state.JwtToken = action.payload.jwtToken;
       state.notificationPreference = action.payload.notificationPreference
+      state.photoUrl = action.payload.photoUrl
+      state.universityId = action.payload.universityId
     },
     failLogin: (state) => {
       state.isFailed = true;
@@ -60,6 +63,8 @@ const userSlice = createSlice({
       state.isFailed = false;
       state.isLoggedIn = false;
       state.notificationPreference = null
+      state.photoUrl = ""
+      state.universityId = ""
     },
     setIsLoading: (state, action) => {
       state.isLoading = action.payload.isLoading;
@@ -96,17 +101,12 @@ const userSlice = createSlice({
     },
     resumeToasts: (state) => {
       state.isToastsPaused = false;
-    },
-    setPhotoUrl: (state, action)=> {
-      state.photoUrl = action.payload.photoUrl
     }
   },
 });
 
-console.log(userSlice);
 
 export const {
-  setPhotoUrl,
   pauseToasts, 
   resumeToasts,
   setIsLoading,

@@ -80,7 +80,9 @@ function App() {
               name: result.user.name,
               surname: result.user.surname,
               isInstructor: result.user.role === "INSTRUCTOR",
-              notificationPreference: result.user.notificationPreference
+              notificationPreference: result.user.notificationPreference,
+              photoUrl: result.user.photoUrl,
+              universityId: result.user.universityId
             })
           );
 
