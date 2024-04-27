@@ -29,7 +29,8 @@ import { getTerms, logout as invalidateToken } from "../apiCalls";
 import NotificationButton from "./notificationComponents/notifications";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HandshakeIcon from '@mui/icons-material/Handshake';
-
+import { DriveFileRenameOutlineRounded } from "@mui/icons-material";
+import apps from "../assets/apps.png"
 const drawerWidth = 210;
 
 const openedMixin = (theme) => ({
@@ -363,7 +364,7 @@ function Sidebar({ setTabInitial }) {
             <Divider sx={{ bgcolor: "#e0e0e0", margin: "3px" }} /> </>
           )}
 
-          {(
+          {!isInstructor && (
             <><ListItem sx={{ padding: "0px" }}>
               <ListItemButton as={Link} to="/commit" style={{ textDecoration: "none", color: "white" }}>
                 <ListItemIcon sx={{ minWidth: "30px" }}>
@@ -378,32 +379,32 @@ function Sidebar({ setTabInitial }) {
 
 
           <ListItem sx={{ padding: "0px" }}>
-            <ListItemButton onClick={handleListClick}>
+            <ListItemButton onClick={() => navigate("/home", { replace: true })} >
               <ListItemIcon sx={{ minWidth: "30px" }}>
                 <CampaignIcon sx={{ color: "white" }} />
               </ListItemIcon>
               <ListItemText primary={"Announcements"} sx={{ opacity: sidebarOpen ? 1 : 0 }} />
-              {sidebarOpen && (listOpen ? <ExpandLess /> : <ExpandMore />)}
+
             </ListItemButton>
+
           </ListItem>
 
+          {isInstructor && (<>
+            <Divider sx={{ bgcolor: "#e0e0e0", margin: "3px" }} />
+            <ListItem sx={{ padding: "0px" }}>
+              <ListItemButton as={Link} to="/applicants" >
+                <ListItemIcon sx={{ minWidth: "30px" }}>
+                  
+                  <img src={apps} style={{height: 25, width: 25, color: "white"}}></img>
+                </ListItemIcon>
+                <ListItemText primary={"Applications"} sx={{ opacity: sidebarOpen ? 1 : 0 }} />
 
-          <Collapse in={listOpen} timeout="auto">
-            <List>
-              <ListItem sx={{ padding: "0px" }}>
-                <ListItemButton /*as={Link} to="/home"*/ onClick={() => navigate("/home", { replace: true })} style={{ textDecoration: "none", color: "white" }}>
-                  <ListItemText primary={"- All Announcements"} sx={{ textAlign: "center" }} />
-                </ListItemButton>
-              </ListItem>
-              {isInstructor && (
-                <ListItem sx={{ padding: "0px" }}>
-                  <ListItemButton as={Link} to="/applicants" style={{ textDecoration: "none", color: "white" }}>
-                    <ListItemText primary={"- Check Applications"} sx={{ textAlign: "center" }} />
-                  </ListItemButton>
-                </ListItem>
-              )}
-            </List>
-          </Collapse>
+              </ListItemButton>
+
+            </ListItem></>)}
+
+
+
         </List>
       </Drawer>
     </Box>

@@ -162,49 +162,50 @@ function App() {
       <div className={`app-content ${isLoading ? 'is-loading' : ''}`}>
 
 
-          <WebSocketProvider authToken={authToken}>
+        <WebSocketProvider authToken={authToken}>
 
-            <ToastContainer 
-              containerId="1618"
-            />
-            <Routes>
-              {isLoggedIn ? (
-                <>
-                  {/* not authorized */}
-                  <Route path="/home" element={<HomePage />} />
-                  <Route path="*" element={<MockCAS />} />
-                  <Route path="/success" element={<SuccessPage />} />
-                  <Route path="/profile/:id" element={<ProfilePage />} />
-                  <Route path="/403" element={<Forbidden403></Forbidden403>} />
-                  <Route path="transcriptInfoPage/:id?" element={<TranscriptInfo></TranscriptInfo>}></Route>
-                  <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
-                  <Route path="/commit" element={<CommitPage />} />
-
-                  {/* Authorized for instructor */}
-                  <Route path="/create-announcement" element={<ProtectedRouteIns element={<CreateAnnouncement />} />} />
-                  <Route path="/edit-announcement/:id" element={<ProtectedRouteIns element={<EditAnnouncement />} />} />
-                  <Route path="/applicants" element={<ProtectedRouteIns element={<CourseApplicantsPage />} />} />
-                  <Route path="/application-of/:appId" element={<ProtectedRouteIns element={<ApplicantsPage />} />} />
-
-                  {/* Authorized for Student */}
-                  <Route path="/apply/:id" element={<ProtectedRouteStu element={<ApplyPage />} />} />
-                  <Route path="/edit-apply/:id" element={<ProtectedRouteStu element={<EditApplyPage />} />} />
-                  <Route path="/transcriptUploadPage/:id?" element={<ProtectedRouteStu element={<TranscriptPage></TranscriptPage>} />}></Route>
-
-                  <Route path="/questionPage/:id" element={<ProtectedRouteStu element={<QuestionPage></QuestionPage>} />}></Route>
-                  <Route path="/edit-questionPage/:id" element={<ProtectedRouteStu element={<EditQuestionPage />} />} />
+          <ToastContainer
+            containerId="1618"
+          />
+          <Routes>
+            {isLoggedIn ? (
+              <>
+                {/* not authorized */}
+                <Route path="/home" element={<HomePage />} />
+                <Route path="*" element={<MockCAS />} />
+                <Route path="/success" element={<SuccessPage />} />
+                <Route path="/profile/:id" element={<ProfilePage />} />
+                <Route path="/403" element={<Forbidden403></Forbidden403>} />
+                <Route path="transcriptInfoPage/:id?" element={<TranscriptInfo></TranscriptInfo>}></Route>
+                <Route path="/eligibilityPage/:id" element={<EligibilityPage></EligibilityPage>}></Route>
 
 
-                </>
-              ) : (
-                <>
-                  <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
-                  <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
-                  <Route path="/403" element={<Forbidden403></Forbidden403>} />
-                </>
-              )}
-            </Routes>
-          </WebSocketProvider>
+                {/* Authorized for instructor */}
+                <Route path="/create-announcement" element={<ProtectedRouteIns element={<CreateAnnouncement />} />} />
+                <Route path="/edit-announcement/:id" element={<ProtectedRouteIns element={<EditAnnouncement />} />} />
+                <Route path="/applicants" element={<ProtectedRouteIns element={<CourseApplicantsPage />} />} />
+                <Route path="/application-of/:appId" element={<ProtectedRouteIns element={<ApplicantsPage />} />} />
+
+                {/* Authorized for Student */}
+                <Route path="/commit" element={<ProtectedRouteStu element={<CommitPage />} />} />
+                <Route path="/apply/:id" element={<ProtectedRouteStu element={<ApplyPage />} />} />
+                <Route path="/edit-apply/:id" element={<ProtectedRouteStu element={<EditApplyPage />} />} />
+                <Route path="/transcriptUploadPage/:id?" element={<ProtectedRouteStu element={<TranscriptPage></TranscriptPage>} />}></Route>
+
+                <Route path="/questionPage/:id" element={<ProtectedRouteStu element={<QuestionPage></QuestionPage>} />}></Route>
+                <Route path="/edit-questionPage/:id" element={<ProtectedRouteStu element={<EditQuestionPage />} />} />
+
+
+              </>
+            ) : (
+              <>
+                <Route exact path="/" element={<MockCAS></MockCAS>}></Route>
+                <Route path="*" element={<LoginCAS></LoginCAS>}></Route>
+                <Route path="/403" element={<Forbidden403></Forbidden403>} />
+              </>
+            )}
+          </Routes>
+        </WebSocketProvider>
       </div>
     </>
   );
