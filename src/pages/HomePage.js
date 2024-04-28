@@ -1,21 +1,25 @@
 import { Box, Button, Grid, Tab, Tabs } from "@mui/material";
 import React, { useEffect, useState } from "react";
+
 import AnnouncementTable from "../components/announcementTableComponents/AnnouncementTable";
 import AppBarHeader from "../components/AppBarHeader";
 import Sidebar from "../components/Sidebar";
 import AddIcon from "@mui/icons-material/Add";
-import { getAllAnnouncements, getApplicationRequestsByStudentId } from "../apiCalls";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { getAllAnnouncements, getApplicationRequestsByStudentId, getAnnouncement, getTerms } from "../apiCalls";
+import { useSelector,useDispatch } from "react-redux";
+import { useLocation, useNavigate, useParams} from "react-router-dom";
+import {  setTerm } from "../redux/userSlice";
 
 function HomePage() {
   const location = useLocation();
   const { notificationAppId, notificationTitle } = location.state || {};
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [updated, setUpdated] = useState(false);
-
+  const [notyTerm, setNotyTerm] = useState(null);
   const [value, setValue] = useState(0);
   const [rows, setRows] = useState([]);
+  const [terms, setTerms] = useState(null);
   const state = useSelector((state) => state);
   const isInstructor = useSelector((state) => state.user.isInstructor);
   const userID = useSelector((state) => state.user.id);
@@ -54,6 +58,21 @@ function HomePage() {
   const setTabInitial = () => {
   }
 
+  useEffect(() => {
+    const fetchTerms = async () => {
+      try {
+        const terms = await getTerms();
+        setTerms(terms);
+      } catch (error) {
+        console.error("Failed to fetch terms:", error);
+      }
+    };
+
+    if(notificationAppId){
+      fetchTerms();
+    }
+      
+  }, [notificationAppId]);
  
   useEffect(() => {
     if(notificationAppId){
@@ -67,6 +86,22 @@ function HomePage() {
     }
   }
   , [notificationAppId]);
+
+  useEffect(() => {
+    if(terms && notificationAppId){
+      const notificationAppIdInt = parseInt(notificationAppId);
+      const notyAnn = rows.find((row) => row.applicationId === notificationAppIdInt);
+      const termm = terms.find((term) => term.term_desc === notyAnn.term);
+      setNotyTerm(termm);
+      dispatch(setTerm({term: termm}));
+    }
+  }
+  , [terms,notificationAppId]);
+
+  useEffect(() => {
+    console.log("notyTerm: ", notyTerm);
+  }
+  , [notyTerm]);
   
 
   return (
