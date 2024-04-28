@@ -12,12 +12,17 @@ import { styled } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import IconButton from '@mui/material/IconButton';
 import FilterDropdown from './FilterDropdown';
-function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, handleInstructorFilter, handleJobDetailsFilter, emptyFilter, handleSortLastDate, sortLastDate, filterEligibilityCallback, filterActionCallback, statusFilterCallback }) {
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-  const [courseSearch, setCourseSearch] = React.useState(false);
-  const [instructorSearch, setInstructorSearch] = React.useState(false);
-  const [jobDetailsSearch, setJobDetailsSearch] = React.useState(false);
+
+function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, handleInstructorFilter, handleJobDetailsFilter, filterEligibilityCallback, filterActionCallback, statusFilterCallback, courseFilterTerm, instructorFilterTerm, jobDetailsFilterTerm,handleSortDateAsc,handleSortDateDesc,sortDateAsc,sortDateDesc }) {
+
+ 
   const [eligibilityDropdownOpen, setEligibilityDropdownOpen] = React.useState(false);
+  const [courseSearchOpen, setCourseSearchOpen] = React.useState(false);
+  const [instructorSearchOpen, setInstructorSearchOpen] = React.useState(false);
+  const [jobDetailsSearchOpen, setJobDetailsSearchOpen] = React.useState(false);
 
   const [labels, setLabels] = React.useState([
     {
@@ -120,65 +125,100 @@ function AnnouncementsTableHead({ tabValue, isInstructor, handleCourseFilter, ha
     },
   }));
 
+  const handleCourseSearch = () => {
+    setCourseSearchOpen(!courseSearchOpen);
+  }
+
+  const handleInstructorSearch = () => {
+    setInstructorSearchOpen(!instructorSearchOpen);
+  }
+
+  const handleJobDetailsSearch = () => {
+    setJobDetailsSearchOpen(!jobDetailsSearchOpen);
+  }
+
+
 
 
   return (
     <TableHead>
       <TableRow sx={{ borderBottom: 0, borderColor: '#FAFAFA' }}>
-        <StyledTableCell >
-          <Box sx={{ display: 'flex', justifyContent: courseSearch ? 'flex-start' : 'center', alignItems: courseSearch ? 'left' : 'center', flexDirection: courseSearch ? 'column' : '' }}>
+  <StyledTableCell >
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             Course Code
-            <Popup trigger={<SearchIcon sx={{ paddingInline: 0.5, "&:hover": { color: "green", cursor: "pointer" } }} />} position="right">
-              <SearchBar handleSearch={handleCourseFilter} empty={emptyFilter} />
-            </Popup>
+            <SearchIcon onClick={handleCourseSearch} sx={{ paddingInline: 0.5, "&:hover": { color: "green", cursor: "pointer" } }} />
+            
           </Box>
-        </StyledTableCell>
+          {courseSearchOpen && 
+          <TextField
+                id="outlined-basic"
+                autoFocus={true}
+                label="Search"
+                variant="outlined"
+                value={courseFilterTerm}
+                onChange={handleCourseFilter}
+                sx={{ paddingInline: 0.5 }}
+                size="small"
+            />}
+  </StyledTableCell>
 
 
         <StyledTableCell align="left">Course Section</StyledTableCell>
 
         <StyledTableCell>
-          <Box sx={{ width: 1, height: 1, display: 'flex', justifyContent: instructorSearch ? 'flex-start' : 'center', alignItems: instructorSearch ? 'left' : 'center', flexDirection: instructorSearch ? 'column' : '' }}>
+          <Box sx={{ width: 1, height: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: instructorSearchOpen ? 'column' : '' }}>
+            <Box>
             Instructors
-            <Popup trigger={<SearchIcon sx={{ paddingInline: 0.5, "&:hover": { color: "green", cursor: "pointer" } }} />} position="right">
-              <SearchBar handleSearch={handleInstructorFilter} empty={emptyFilter} />
-            </Popup>
+            <SearchIcon onClick={handleInstructorSearch} sx={{ paddingInline: 0.5, "&:hover": { color: "green", cursor: "pointer" } }} /></Box>
+            {instructorSearchOpen &&
+            <TextField
+              id="outlined-basic"
+              autoFocus={true}
+              label="Search"
+              variant="outlined"
+              value={instructorFilterTerm}
+              onChange={handleInstructorFilter}
+              sx={{ paddingInline: 0.5 }}
+              size="small"
+            />}
           </Box>
+          
         </StyledTableCell>
 
         <StyledTableCell>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', flexDirection: 'row' }}>
             Deadline
-            <SortIcon
-
-              onClick={handleSortLastDate}
-              sx={{ color: sortLastDate ? '#ffffff' : "text.disabled", paddingInline: 0.5, "&:hover": { color: sortLastDate ? "" : "green", cursor: "pointer" }, bgcolor: sortLastDate ? "info.main" : "", borderRadius: '50%' }} />
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <IconButton onClick={handleSortDateAsc} style={{ marginBottom: '-10px', fontSize:'xs' }}>  {/* Decrease marginBottom here */}
+                <ArrowDropUpIcon sx={{ paddingInline: 0.3, color: sortDateAsc? "green":"" , "&:hover": { color: "green", cursor: "pointer" } }} />
+              </IconButton>
+              <IconButton onClick={handleSortDateDesc} style={{ marginTop: '-8px', fontSize:'s' }}>
+                <ArrowDropDownIcon sx={{ paddingInline: 0.3, color: sortDateDesc? "green":"" , "&:hover": { color: "green", cursor: "pointer" } }} />
+              </IconButton>
+            </Box>
           </Box>
         </StyledTableCell>
         <StyledTableCell align="center">Weekly Work Hours</StyledTableCell>
 
         <StyledTableCell >
 
-          <Box sx={{ width: 1, height: 1, display: 'flex', justifyContent: jobDetailsSearch ? 'flex-start' : 'center', alignItems: jobDetailsSearch ? 'left' : 'center', flexDirection: jobDetailsSearch ? 'column' : '' }}>
-            Details
-            {jobDetailsSearch ? <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '90%', flexDirection: 'row' }}>
-              <TextField
-                id="outlined-basic"
-                label="Search"
-                variant="outlined"
-                size="small"
-                onChange={handleJobDetailsFilter}
-              />
-              <CancelIcon
-                variant='outlined'
-                fontSize='small'
-                color='disabled'
-                sx={{ "&:hover": { color: "red", cursor: "pointer" } }}
-                onClick={() => { setJobDetailsSearch(false); emptyFilter() }} />
+          <Box sx={{ width: 1, height: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: jobDetailsSearchOpen ? 'column' : '' }}>
+            <Box>Details
+            <SearchIcon onClick={handleJobDetailsSearch} sx={{ paddingInline: 0.5, "&:hover": { color: "green", cursor: "pointer" } }} />   </Box>   
+
+            {jobDetailsSearchOpen &&
+            <TextField
+            id="outlined-basic"
+            autoFocus={true}
+            label="Search"
+            variant="outlined"
+            value={jobDetailsFilterTerm}
+            onChange={handleJobDetailsFilter}
+            sx={{ paddingInline: 0.5 }}
+            size="small"
+          /> }      
             </Box>
-              : <Popup trigger={<SearchIcon sx={{ paddingInline: 0.5, "&:hover": { color: "green", cursor: "pointer" } }} />} position="left">
-                <SearchBar handleSearch={handleJobDetailsFilter} empty={emptyFilter} />
-              </Popup>} </Box>
+            
         </StyledTableCell>
 
 

@@ -27,7 +27,8 @@ export default function AnnouncementTable(props) {
   const [courseFilterTerm, setCourseFilterTerm] = useState("");
   const [instructorFilterTerm, setInstructorFilterTerm] = useState("");
   const [jobDetailsFilterTerm, setJobDetailsFilterTerm] = useState("");
-  const [sortLastDate, setSortLastDate] = useState(false);
+  const [sortDateAsc, setSortDateAsc] = useState(false);
+  const [sortDateDesc, setSortDateDesc] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,29 +133,29 @@ export default function AnnouncementTable(props) {
     setUserApplications((prev) => prev.filter((app) => (app?.application?.applicationId || app?.applicationId) !== id));
     setRows((prev) => prev.filter((app) => app?.applicationId !== id));
   };
-  const handleCourseFilter = (event, term) => {
-    setCourseFilterTerm(term);
+  const handleCourseFilter = (event) => {
+    setCourseFilterTerm(event.target.value);
   };
 
-  const emptyFilter = (event) => {
-    setCourseFilterTerm("");
-    setInstructorFilterTerm("");
-    setJobDetailsFilterTerm("");
-  }
 
-
-  const handleInstructorFilter = (event, term) => {
+  const handleInstructorFilter = (event) => {
     const value = event.target.value;
-    setInstructorFilterTerm(term);
+    setInstructorFilterTerm(value);
   }
 
-  const handleJobDetailsFilter = (event, term) => {
+  const handleJobDetailsFilter = (event) => {
     const value = event.target.value;
-    setJobDetailsFilterTerm(term);
+    setJobDetailsFilterTerm(value);
   }
 
-  const handleSortLastDate = () => {
-    setSortLastDate((prev) => !prev);
+  const handleSortDateAsc = () => {
+    setSortDateDesc(false);
+    setSortDateAsc((prev) => !prev);
+  }
+
+  const handleSortDateDesc = () => {
+    setSortDateAsc(false);
+    setSortDateDesc((prev) => !prev);
   }
 
   useEffect(() => {
@@ -186,6 +187,9 @@ export default function AnnouncementTable(props) {
     ));
   };
   
+
+
+  
   return (
 
     <Box sx={{ width: '100%' }}>
@@ -200,12 +204,16 @@ export default function AnnouncementTable(props) {
           <AnnouncementsTableHead
             isInstructor={isInstructor} 
             tabValue={tabValue} 
-            handleCourseFilter={handleCourseFilter} 
+            handleCourseFilter={handleCourseFilter}
+            courseFilterTerm={courseFilterTerm}
             handleInstructorFilter={handleInstructorFilter} 
+            instructorFilterTerm={instructorFilterTerm}
             handleJobDetailsFilter={handleJobDetailsFilter} 
-            emptyFilter={emptyFilter} 
-            handleSortLastDate={handleSortLastDate} 
-            sortLastDate={sortLastDate} 
+            jobDetailsFilterTerm={jobDetailsFilterTerm}
+            handleSortDateAsc={handleSortDateAsc}
+            sortDateAsc={sortDateAsc}
+            handleSortDateDesc={handleSortDateDesc}
+            sortDateDesc={sortDateDesc}
             filterEligibilityCallback = {filterEligibility}
             filterActionCallback= {filterActionCallback}
             statusFilterCallback = {statusFilter}
@@ -225,9 +233,11 @@ export default function AnnouncementTable(props) {
               })
           
               .sort((a, b) => {
-                if (!sortLastDate) return 0;
+                if (!sortDateAsc && !sortDateDesc) return 0;
                 const dateA = new Date(a.application ? a.application.lastApplicationDate : a.lastApplicationDate);
                 const dateB = new Date(b.application ? b.application.lastApplicationDate : b.lastApplicationDate);
+                if (sortDateDesc) return dateB - dateA;
+                else
                 return dateA - dateB;
               })
 
