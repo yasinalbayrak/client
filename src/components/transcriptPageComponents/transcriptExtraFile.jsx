@@ -51,9 +51,9 @@ const QuestionPage = (props) => {
       const modifiedAnswers = answers.map((answer, idx) => {
         validator++
         const qType = questions[idx].type;
-        console.log('log1', !answer )
+        console.log('log1', !answer)
         console.log('log2', (typeof answer === 'string' && answer.trim() === ""))
-      
+
         if (answer == null || (typeof answer === 'string' && answer.trim() === "")) {
           throw new Error(`Answer for question ${idx + 1} is missing`);
         }
@@ -87,7 +87,10 @@ const QuestionPage = (props) => {
       console.log('modifiedAnswers:>> ', modifiedAnswers);
       if (await applyToPost(id, state.user.id, modifiedAnswers)) {
         navigate("/Home", { replace: true });
-        toast.success("Your application has been received successfully.");
+        toast.success("Your application has been received successfully.", {
+          containerId: "1618",
+          closeOnClick: true,
+        });
       }
 
 

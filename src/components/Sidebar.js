@@ -31,6 +31,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import { DriveFileRenameOutlineRounded } from "@mui/icons-material";
 import apps from "../assets/apps.png"
+import resumeIcon from "../assets/resumeIcon.png"
 const drawerWidth = 210;
 
 const openedMixin = (theme) => ({
@@ -395,9 +396,9 @@ function Sidebar({ setTabInitial }) {
               <ListItemButton as={Link} to="/applicants" >
                 <ListItemIcon sx={{ minWidth: "30px" }}>
                   
-                  <img src={apps} style={{height: 25, width: 25, color: "white"}}></img>
+                  <img src={resumeIcon} style={{height: 25, width: 25, color: "white"}}></img>
                 </ListItemIcon>
-                <ListItemText primary={"Applications"} sx={{ opacity: sidebarOpen ? 1 : 0 }} />
+                <ListItemText primary={"Applications"} />
 
               </ListItemButton>
 

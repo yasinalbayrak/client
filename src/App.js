@@ -17,6 +17,7 @@ import SuccessPage from "./pages/SuccessPage";
 import ProfilePage from "./pages/ProfilePage";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import handleError, { handleInfo, handleServerDownError } from "./errors/GlobalErrorHandler";
 
 import TranscriptPage from "./components/transcriptPageComponents/transcriptUploadPage";
