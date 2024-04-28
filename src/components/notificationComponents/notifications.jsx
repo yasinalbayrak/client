@@ -190,25 +190,12 @@ const NotificationDropdown = (props) => {
                     allNotifications={allNotifications}
                     filteredNotifications={filteredNotifications}
                     handleNotificationStatusChangeCallback={handleNotificationStatusChange}
-                    relation="DIRECT"
                     navigate={navigate}
                     dropdownVisible={dropdownVisible}
                     setDropdownVisible={setDropdownVisible}
                 />;
+
             case "two":
-
-                return <NotificationItem
-                allNotifications={allNotifications}
-                filteredNotifications={filteredNotifications}
-                handleNotificationStatusChangeCallback={handleNotificationStatusChange}
-                relation="FOLLOW"
-                navigate={navigate}
-                dropdownVisible={dropdownVisible}
-                setDropdownVisible={setDropdownVisible}
-
-                />;
-
-            case "three":
                 return <Settings />;
                 
             default:
@@ -242,9 +229,8 @@ const NotificationDropdown = (props) => {
                     indicatorColor="primary"
                     aria-label="secondary tabs example"
                 >
-                    <Tab sx={{ textTransform: 'none' }} value="one" label="Direct" />
-                    <Tab sx={{ textTransform: 'none' }} value="two" label="Following" />
-                    <Tab sx={{ textTransform: 'none' }} value="three" label="Settings" />
+                    <Tab sx={{ textTransform: 'none' }} value="one" label="Notifications" />
+                    <Tab sx={{ textTransform: 'none' }} value="two" label="Settings" />
                 </Tabs>
             </Box>
 
@@ -290,15 +276,15 @@ const goToApplication = (applicationId,title, navigate, dropdown, setDropdownVis
     
 }
 
-const NotificationItem = ({ allNotifications, filteredNotifications, handleNotificationStatusChangeCallback, relation, navigate, dropdownVisible, setDropdownVisible }) => filteredNotifications.filter((notification) => notification.relation==relation).length === 0 ? <>
+const NotificationItem = ({ allNotifications, filteredNotifications, handleNotificationStatusChangeCallback, navigate, dropdownVisible, setDropdownVisible }) => filteredNotifications.length === 0 ? <>
     <div className="no-data">
-        {allNotifications.filter((notification) => notification.relation==relation).length === 0 ? <NotificationsOffIcon sx={{ color: "black", fontSize: "12rem" }} /> : <MarkChatReadSharpIcon sx={{ color: "green", fontSize: "12rem" }} />}
-        <div className="no-not">{allNotifications.filter((notification) => notification.relation==relation).length === 0 ? "No notifications for the last 60 days." : "You have read all of your notifications."}</div>
+        {allNotifications.length === 0 ? <NotificationsOffIcon sx={{ color: "black", fontSize: "12rem" }} /> : <MarkChatReadSharpIcon sx={{ color: "green", fontSize: "12rem" }} />}
+        <div className="no-not">{allNotifications.length === 0 ? "No notifications for the last 60 days." : "You have read all of your notifications."}</div>
 
     </div>
 </>
 
-    : filteredNotifications.filter((notification)=> notification.relation==relation).map(notification => (
+    : filteredNotifications.map(notification => (
         <div className='otr' >
             <div className="ic">
                 {getIconForNotification(notification.notificationType)}
