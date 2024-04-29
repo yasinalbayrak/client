@@ -28,6 +28,10 @@ function ProfilePage(){
     const[courses, setCourses] = useState();
     const navigate = useNavigate();
 
+
+    console.log("user", id);
+    console.log("userID", userID);
+
     const getGPAColor = (gpa) => {
         if(gpa >= 3.5){
             return "#4caf50";
@@ -98,7 +102,7 @@ function ProfilePage(){
                          No Transcript Info For Current Student
                         </Typography>
 
-                        {id !== undefined && id === userID && !isInstructor && <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="primary" sx={{position:"relative", mt:"3rem"}}>
+                        {id !== undefined && id == userID && !isInstructor && <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="primary" sx={{position:"relative", mt:"3rem"}}>
                         Upload new transcript
                         </Button>}
                     </Box>
@@ -118,7 +122,7 @@ return(
   <Box component="main" sx={{ flexGrow: 1, m:3 }}>
   <Grid item container direction="rows" alignItems="center" justifyContent="space-between" sx={{}}>
   <Grid item><BackButton to={"/home"}/></Grid>
-      {id !== undefined && id === userID && !isInstructor && <Grid item>
+      {id !== undefined && id == userID && !isInstructor && <Grid item>
         <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage", { replace: true })} color="primary" sx={{position:"relative", mt:"3rem"}}>
           Upload new transcript
         </Button>
