@@ -1,6 +1,6 @@
 
 import { Typography, IconButton, Collapse, Snackbar, Grid, Button, Divider, Box, TableContainer,
-TableCell, Paper, Table, TableHead, TableBody, TableRow } from "@mui/material";
+TableCell, Paper, Table, TableHead, TableBody, TableRow ,Avatar} from "@mui/material";
 import { Gauge, gaugeClasses } from '@mui/x-charts';
 import React, { useEffect, useState } from "react";
 import AnnouncementTable from "../components/announcementTableComponents/AnnouncementTable";
@@ -22,6 +22,7 @@ function ProfilePage(){
     const {id} = useParams();
     const userID = useSelector((state) => state.user.id);
     const isInstructor = useSelector((state) => state.user.isInstructor);
+    const photoUrl = useSelector((state) => state.user.photoUrl);
     const[user, setUser] = useState();
     const[showAll, setShowAll] = useState(false);
     const[courses, setCourses] = useState();
@@ -124,6 +125,22 @@ return(
       </Grid>}
     </Grid>
     <Box sx={{ p: 5 }}>
+    <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                }}
+              >
+                <Avatar
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    
+                  }}
+                  src={photoUrl}
+                ></Avatar>
+              </Box>
       <Grid container direction="row" alignItems="center" justifyContent="space-between">
         <Grid item>
           <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>{user?.studentName}</Typography>
