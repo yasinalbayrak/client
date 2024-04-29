@@ -149,43 +149,31 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
             sx={{ color: "blue" }}
             onClick={() => navigate("/edit-apply/" + appliedAppReqId, { replace: true })}
           >
-
             <EditIcon />
           </IconButton>
         );
       }
       else {
-        if (isTimedOut) {
-          return (
-            <span style={{ color: 'red' }}>
-              Timed Out
-            </span>
-          );
-        } else {
-          return (
-
-
-
-
+        return(
             <Button
-              variant="contained"
-              color='success'
-              onClick={() => {
-                if (isTranscriptUploaded) {
-                  navigate("/apply/" + applicationId, { replace: true });
-                } else {
-                  navigate("/transcriptUploadPage/" + applicationId, { replace: true });
-                }
-              }}
-              sx={{
-                height: "40px"
-              }}
+                variant="contained"
+                color='success'
+                onClick={() => {
+                  if (isTranscriptUploaded) {
+                    navigate("/apply/" + applicationId, { replace: true });
+                  } else {
+                    navigate("/transcriptUploadPage/" + applicationId, { replace: true });
+                  }
+                }}
+                sx={{
+                  height: "40px"
+                }}
+                disabled={isTimedOut}
             >
               Apply
             </Button>
 
-          );
-        }
+        )
       }
     }
 
