@@ -3,7 +3,7 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import AppBarHeader from "../AppBarHeader";
 import Sidebar from "../Sidebar";
 import {
@@ -23,6 +23,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { getCurrentTranscript } from "../../apiCalls";
 
 const TranscriptInfo=(props)=> {
+  const location = useLocation();
+  const {edit} = location.state || {};
   const navigate = useNavigate();
   const userID = useSelector((state) => state.user.id);
   const { id } = useParams();
@@ -42,6 +44,22 @@ const TranscriptInfo=(props)=> {
 
     fetchData();
   }, [userID]);
+
+
+  const handleSubmit = () => {
+    if(id){
+      if(edit){
+        navigate("/edit-apply/"+id, {replace: true})
+      }
+      else{
+        navigate("/apply/"+id, {replace: true})
+      }
+      
+    }
+    else{
+      navigate("/profile/"+userID, { replace: true })
+    }
+  }
 
 
   const rows = [
@@ -115,7 +133,7 @@ const TranscriptInfo=(props)=> {
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="contained" startIcon={<ArrowForwardIcon />} onClick={() => {if(id){navigate("/apply/"+id, {replace: true})}else{navigate("/profile/"+userID, { replace: true })}}} color="success" >
+                  <Button variant="contained" startIcon={<ArrowForwardIcon />} onClick={handleSubmit} color="success" >
                   Continue with this information
                   </Button>
                 </Grid>

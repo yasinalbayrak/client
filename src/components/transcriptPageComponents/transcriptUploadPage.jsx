@@ -9,7 +9,7 @@ import {
     Grid,
     Divider,
   } from "@mui/material";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams, useLocation } from "react-router-dom";
 import { postTranscript } from "../../apiCalls";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from '@mui/icons-material/Done';
@@ -25,13 +25,15 @@ import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 
 const TranscriptPage = (props) => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const { edit } = location.state || {};
   const navigate = useNavigate();
   const username = useSelector((state) => state.user.username);
   const state = useSelector((state) => state);
   const name = useSelector((state) => state.user.name);
   const surname = useSelector((state) => state.user.surname);
   const userId = useSelector((state) => state.user.id)
-  const { id } = useParams();
+  const { id } = useParams(); //application request ID
   const [transcript, setTranscript] = useState(null);
   const [consentChecked, setConsentChecked] = useState(false);
   const [fileUrl, setFileUrl] = useState("");
@@ -74,7 +76,7 @@ const TranscriptPage = (props) => {
           navigate("/transcriptInfoPage", { replace: true });
         }
         else{
-          navigate("/transcriptInfoPage/"+id, { replace: true });
+          navigate("/transcriptInfoPage/"+id, { replace: true, state: {edit: edit}});
         }
           
           }

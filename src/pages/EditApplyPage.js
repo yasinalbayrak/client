@@ -421,7 +421,7 @@ function EditApplyPage() {
             <Grid direction="column" alignItems="center" display="flex">
               <Grid item container direction="rows" alignItems="center" justifyContent="center" spacing={12}>
                 <Grid item>
-                  <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage/"+id, { replace: true })} color="primary">
+                  <Button variant="contained" startIcon={<UploadFileIcon />} onClick={() => navigate("/transcriptUploadPage/"+id, { replace: true, state:{edit:true} })} color="primary">
                     Upload new transcript
                   </Button>
                 </Grid>
