@@ -51,8 +51,8 @@ function MailingPage(props) {
     
             getAnnouncement(appId).then((result) => {
                 setApplication(result);
-                setAccMail(result.acceptEmail);
-                setRejMail(result.rejectEmail);
+                setAccMail(result.acceptEmail??"");
+                setRejMail(result.rejectEmail??"");
             }
             );
 
