@@ -333,11 +333,8 @@ function ApplicantsTable(props) {
   const isApplicantsListEmpty = props.rows.length === 0;
   const dispatch = useDispatch();
   const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
-  const ann = props.announcement;
+  const ann = props.announcement; 
   const navigate = useNavigate();
-
-  console.log(ann);
-  console.log(props.rows);
 
   const handleSearchChange = (event) => {
     setSearchText(event.target.value.toLowerCase());

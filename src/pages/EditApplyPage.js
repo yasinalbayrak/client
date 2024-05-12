@@ -100,7 +100,10 @@ function EditApplyPage() {
     flipPopup()
     withdrawApplication(id).then((_) => {
       navigate("/home", { replace: true });
-      toast.success("Your application has been withdrawn successfully.")
+      toast.success("Your application has been withdrawn successfully.", {
+        containerId: "1618",
+        closeOnClick: true,
+      })
     }).catch((_) => (null))
 
     

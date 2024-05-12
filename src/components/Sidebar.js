@@ -32,6 +32,7 @@ import HandshakeIcon from '@mui/icons-material/Handshake';
 import { DriveFileRenameOutlineRounded } from "@mui/icons-material";
 import apps from "../assets/apps.png"
 import resumeIcon from "../assets/resumeIcon.png"
+import S from "../assets/sula.png"
 const drawerWidth = 210;
 
 const openedMixin = (theme) => ({
@@ -290,7 +291,7 @@ function Sidebar({ setTabInitial }) {
                 ...(!sidebarOpen && { display: "none" }),
               }}
               //src={`${process.env.PUBLIC_URL}/build/sula.png`}
-              src={"/build/sula.png"}
+              src={S}
             />
             {!sidebarOpen ? <Box sx={{ height: 50 }}></Box> : <div></div>}
           </ListItem>

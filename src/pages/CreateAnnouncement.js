@@ -614,7 +614,10 @@ function CreateAnnouncement() {
             replace: true
           });
 
-          toast.success("Your announcement has been successfully added.")
+          toast.success("Your announcement has been successfully added.", {
+            containerId: "1618",
+            closeOnClick: true,
+          })
 
         }).catch((_) => {
           /* Error is already printed */

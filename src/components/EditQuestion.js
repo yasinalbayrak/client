@@ -448,7 +448,10 @@ function EditQuestion(props) {
                 navigate("/Home", {
                   replace: true
                 });
-                toast.success("Your announcement has been successfully updated.")
+                toast.success("Your announcement has been successfully updated.", {
+                  containerId: "1618",
+                  closeOnClick: true,
+                })
               }).catch((_) => {
                 /* Error is already printed */
               });

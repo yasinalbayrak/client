@@ -87,7 +87,10 @@ const EditQuestionPage = (props) => {
           console.log('modifiedAnswers:>> ', modifiedAnswers);
           if(await updateApplicationRequest(id, appReqInfo.application.applicationId , state.user.id, modifiedAnswers)){
             navigate("/Home", { replace: true });
-            toast.success("Your application has been edited successfully.")
+            toast.success("Your application has been edited successfully.", {
+              containerId: "1618",
+              closeOnClick: true,
+            })
           }
     
           

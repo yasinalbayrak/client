@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import TableHead from "@mui/material/TableHead";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
-import { useSelector } from "react-redux";
 import Button from "@mui/material/Button";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Popup from '../popup/Popup';
 import { deleteApplicationById, getTranscriptInfo, addFollowerToApplication, removeFollowerFromApplication, getApplicationsByFollower } from "../../apiCalls"
 import InstructorList from './InstructorList';
-import DesiredCourseGradesPopup from './DesiredCourseGradesPopup';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import IconButton from '@mui/material/IconButton';
 import { useStyles } from '../../pages/EligibilityTable';
-import { Box, Skeleton, Tooltip } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 import FollowButton from '../buttons/FollowButton';
 import { keyframes } from '@mui/system';
 import { useDispatch } from 'react-redux';
@@ -160,9 +155,9 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
                 color='success'
                 onClick={() => {
                   if (isTranscriptUploaded) {
-                    navigate("/apply/" + applicationId, { replace: true });
+                    navigate("/apply/" + applicationId);
                   } else {
-                    navigate("/transcriptUploadPage/" + applicationId, { replace: true });
+                    navigate("/transcriptUploadPage/" + applicationId);
                   }
                 }}
                 sx={{

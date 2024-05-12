@@ -40,7 +40,10 @@ export default function EligibilityPage() {
 
         applyToPost(ApplicationId, userID, []).then(_ => {
             navigate("/home", { replace: true });
-            toast.success("Your application has been received successfully.");
+            toast.success("Your application has been received successfully.", {
+                containerId: "1618",
+                closeOnClick: true,
+              });
         }).catch((_) => {
             /* Already handled */
         });
