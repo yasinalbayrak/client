@@ -334,6 +334,7 @@ function ApplicantsTable(props) {
   const dispatch = useDispatch();
   const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
   const ann = props.announcement;
+  const navigate = useNavigate();
 
   console.log(ann);
   console.log(props.rows);
@@ -391,20 +392,6 @@ function ApplicantsTable(props) {
   const toggleFilterVisibility = () => {
     setIsFilterVisible(!isFilterVisible);
   };
-
-
-  const finalizeStatuss = (appId) => {
-    try {
-      finalizeStatus(appId).then((res) => {
-        
-        handleInfo("Changes are successfully finalized.")
-        
-      });
-    }
-    catch (error) {
-      console.log(error);
-    }
-  }
 
   const handleAcceptAll = () => {
     acceptAllRequestByAppId(props.appId).then(() => {
@@ -572,7 +559,7 @@ function ApplicantsTable(props) {
             </div>
 
           </div>
-
+        {/*
           <Popup
             opened={finalizePopoUpOpened}
             flipPopup={flipPopup}
@@ -581,6 +568,17 @@ function ApplicantsTable(props) {
             posAction={() => { finalizeStatuss(props.appId); flipPopup(); props.setFinalize((prev) => !prev); }}
             negAction={flipPopup}
             posActionText={"Finalize"}
+          />
+          */}
+
+          <Popup
+            opened={finalizePopoUpOpened}
+            flipPopup={flipPopup}
+            title={"Confirm Announcing Final Status?"}
+            text={"You will be directed to the Finalization page "}
+            posAction={() => { flipPopup(); navigate("/mails/" + ann.applicationId) }}
+            negAction={flipPopup}
+            posActionText={"Go to Page"}
           />
 
         </>

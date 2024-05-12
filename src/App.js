@@ -34,6 +34,7 @@ import { useWebSocket } from "./context/WebSocketContext";
 import webSocketService from "./components/service/WebSocketService";
 import LoadingPage from "./pages/LoadingPage/LoadingPage";
 import Forbidden403 from "./403";
+import MailingPage from "./components/applicantsTableComponents/MailingPage";
 
 
 
@@ -186,6 +187,7 @@ function App() {
                 <Route path="/edit-announcement/:id" element={<ProtectedRouteIns element={<EditAnnouncement />} />} />
                 <Route path="/applicants" element={<ProtectedRouteIns element={<CourseApplicantsPage />} />} />
                 <Route path="/application-of/:appId" element={<ProtectedRouteIns element={<ApplicantsPage />} />} />
+                <Route path="/mails/:appId" element={<ProtectedRouteIns element={<MailingPage />} />} />
 
                 {/* Authorized for Student */}
                 <Route path="/commit" element={<ProtectedRouteStu element={<CommitPage />} />} />

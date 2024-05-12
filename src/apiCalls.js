@@ -817,6 +817,23 @@ async function forgivenAppReq(appReqId){
   }
 }
 
+async function updateAppEmail(appId, data){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applications/" + appId + "/mailUpdate",
+      { acceptMail: data.acceptEmail, rejectMail: data.rejectEmail },
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
 
 export {
   updateApplicationRequestStatusMultiple,
@@ -860,6 +877,7 @@ export {
   withdrawApplication,
   commitAppReq,
   forgivenAppReq,
-  getStudentLaHistory
+  getStudentLaHistory,
+  updateAppEmail
 
 };
