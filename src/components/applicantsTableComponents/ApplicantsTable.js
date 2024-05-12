@@ -290,19 +290,25 @@ function CustomRow(props) {
 
         <TableCell style={{ paddingBottom: 0, paddingTop: 0, allign: "right" }} colSpan={8}>
           <Collapse in={open} component="tr" style={{ display: "block" }}>
-            <td style={{ width: "100%", paddingLeft: "16rem" }}>
-              <Stack spacing={0}>
+            <td style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+              paddingRight: "20px"
+            }}>
+              <Stack spacing={0} justifyContent="flex-end">
                 <LaHistoryTable
-                  LaHistory={LaHistory}
+                    LaHistory={LaHistory}
                 />
+                <Pagination count={LaHistory.totalPages} page={laHistoryPage + 1} onChange={handlePageChange}/>
 
-                <Pagination count={LaHistory.totalPages} page={laHistoryPage + 1} onChange={handlePageChange} />
               </Stack>
 
             </td>
-            <Box sx={{ height: "100%" }} textAlign="center">
+            <Box sx={{height: "100%"}} textAlign="center">
 
-              <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+              <Box sx={{display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
 
                 <Button
                   variant="outlined"
