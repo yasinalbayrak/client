@@ -12,14 +12,20 @@ import DataGridView from "../components/excelView/DataGridView";
 
 function ApplicantsPage() {
   const term = useSelector((state) => state.user.term);
-  const [rows, setRows] = React.useState([]);
+  const [rows, setRows] = React.useState(null);
   const [title, setTitle] = React.useState("");
   const { appId } = useParams();
   const [application, setApplication] = React.useState({});
   const [finalize, setFinalize] = React.useState(false);
   const [viewMode, setViewMode] = React.useState(false);
+  const [refreshKey, setRefreshKey] = React.useState(0);
+
+  const refresh = () => {
+    setRefreshKey(oldKey => oldKey + 1);
+  }
   useEffect(() => {
 
+    console.log("REREENDERING APPLICANTS PAGE");
     getApplicationRequestsByApplicationId(appId).then((results) => {
       setRows(results.applicationRequests);
       setTitle(results.course.courseCode);
@@ -31,10 +37,10 @@ function ApplicantsPage() {
     );
 
 
-  }, [finalize]);
+  }, [finalize, appId, refreshKey]);
 
   return (
-    <>
+    rows &&<>
       <Box sx={{ display: "flex" }}>
         <Sidebar></Sidebar>
         <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
@@ -62,7 +68,7 @@ function ApplicantsPage() {
                 />
                 :
                 <Grid item>
-                  <ApplicantsTable setRows={setRows} rows={rows} courseCode={title} appId={appId} announcement={application} setFinalize={setFinalize}></ApplicantsTable>
+                  <ApplicantsTable setRows={setRows} rows={rows} courseCode={title} appId={appId} announcement={application} setFinalize={setFinalize} refresh= {() => refresh()}></ApplicantsTable>
                 </Grid>
             }
 

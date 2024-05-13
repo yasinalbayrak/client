@@ -331,6 +331,7 @@ function CustomRow(props) {
 
 function ApplicantsTable(props) {
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [finalizeee, setFinalizeee] = React.useState(false);
   const [sortedRows, setSortedRows] = React.useState([]);
   const [gradeSortOrder, setGradeSortOrder] = React.useState(null);
   const [searchText, setSearchText] = React.useState('');
@@ -356,7 +357,7 @@ function ApplicantsTable(props) {
   };
 
 
-  const filteredRows = sortedRows.filter((row) => {
+  const filteredRows = sortedRows?.filter((row) => {
     const fullName = row.student.user.name.toLowerCase() + " " + row.student.user.surname.toLowerCase();
     return fullName.includes(searchText);
   });
@@ -386,7 +387,8 @@ function ApplicantsTable(props) {
 
   useEffect(() => {
     setSortedRows(sortRows([...props.rows]));
-  }, [props.rows, sortOrder, gradeSortOrder]);
+  }, [props.rows, sortOrder, gradeSortOrder, finalizeee]);
+  
   console.log(props.rows)
 
   const toggleSortOrder = () => {
@@ -458,7 +460,13 @@ function ApplicantsTable(props) {
   const finalizeStatuss = (appId) => {
     try {
       finalizeStatus(appId).then((res) => {
-        
+        props.setFinalize((prev) => !prev);
+        // refresh the page
+        //window.location.reload();
+        props.refresh();
+        setFinalizeee((prev) => !prev);
+        //setSortedRows(null);
+        flipPopupOrdinary();
         handleInfo("Changes are successfully finalized.")
         
       });
@@ -470,7 +478,7 @@ function ApplicantsTable(props) {
 
 
   return (
-    <Box>
+    sortedRows&&<Box>
       {isApplicantsListEmpty ? (
         <Typography variant="h6" align="center" style={{ padding: 20 }}>
           <Alert severity="info">
@@ -609,7 +617,7 @@ function ApplicantsTable(props) {
             flipPopup={flipPopupOrdinary}
             title={"Confirm Announcing Final Status?"}
             text={"If there would be a final status announcement, all the students will be notified about their final status. Are you sure you want to announce the final status?\n Final status can be done again after this action."}
-            posAction={() => { finalizeStatuss(props.appId); flipPopupOrdinary(); props.setFinalize((prev) => !prev); }}
+            posAction={() => { finalizeStatuss(props.appId); }}
             negAction={flipPopupOrdinary}
             posActionText={"Finalize"}
           />
