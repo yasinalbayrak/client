@@ -118,15 +118,6 @@ const defaultColumns = [
         type: 'string'
     },
     {
-        field: 'fullName',
-        headerName: 'Full name',
-        description: 'This column is not sortable.',
-        sortable: false,
-        width: 160,
-        type: 'string',
-        valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
-    },
-    {
         field: 'majors',
         headerName: 'Majors',
         width: 150,
@@ -253,14 +244,7 @@ function ExcelExportMenuItem(props) {
         rows.forEach(row => {
             const rowData = columnsToExport.map(col => {
 
-                if (col.field === 'fullName') {
 
-                    const firstNameColumn = 'B';
-                    const lastNameColumn = 'C';
-
-                    const excelRowNumber = aoa.length + 1;
-                    return { f: `=${firstNameColumn}${excelRowNumber} & " " & ${lastNameColumn}${excelRowNumber}` };
-                }
 
 
                 if (Array.isArray(row[col.field])) {
