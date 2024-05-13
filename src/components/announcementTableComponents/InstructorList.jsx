@@ -48,7 +48,7 @@ const InstructorList = ({ instructor_names, authorizedInstructors }) => {
                                 <div style={{ ...iconStyle, marginLeft: 4,marginRight: -4, padding: 1.5, lineHeight: 'normal' }}>
                                     <a href={`mailto:${authorizedInstructors?.[index]?.user?.email || ''}`}
                                        style={{ display: 'inline-block' }}>
-                                        <MailIcon fontSize="small" style={{ color: '#2c457a', padding: 1.1,marginBottom:-1 }}/>
+                                        <MailIcon fontSize="small" style={{ color: 'rgba(44,69,122,0.82)', padding: 1.1,marginBottom:-1 }}/>
                                     </a>
                                 </div>
                             </Tooltip>
@@ -61,7 +61,7 @@ const InstructorList = ({ instructor_names, authorizedInstructors }) => {
                         style={{
                             fontWeight: 'normal',
                             color: 'whitesmoke',
-                            backgroundColor: theme.palette.primary.main,
+                            backgroundColor: 'rgba(44,69,122,0.57)',
                             minWidth: '3rem',
                             maxWidth: '13.5rem',
                             height: chipHeights[index],
