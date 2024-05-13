@@ -306,7 +306,7 @@ function CustomRow(props) {
               </Stack>
 
             </td>
-            <Box sx={{height: "100%"}} textAlign="center">
+
 
               <Box sx={{display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
 
@@ -320,7 +320,7 @@ function CustomRow(props) {
                 </Button>
               </Box>
 
-            </Box>
+
           </Collapse>
         </TableCell>
 
