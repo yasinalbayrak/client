@@ -19,7 +19,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory } from "../../apiCalls";
+import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory, getApplicationRequestsByApplicationId } from "../../apiCalls";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
@@ -339,6 +339,7 @@ function ApplicantsTable(props) {
   const isApplicantsListEmpty = props.rows.length === 0;
   const dispatch = useDispatch();
   const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
+  const [finalizePopupOrdinaryOpened, setFinalizePopupOrdinaryOpened] = React.useState(false);
   const ann = props.announcement; 
   const navigate = useNavigate();
 
@@ -348,6 +349,10 @@ function ApplicantsTable(props) {
 
   const flipPopup = () => {
     setFinalizePopoUpOpened((prev) => !prev);
+  };
+
+  const flipPopupOrdinary = () => {
+    setFinalizePopupOrdinaryOpened((prev) => !prev);
   };
 
 
@@ -427,6 +432,42 @@ function ApplicantsTable(props) {
       fontSize: 14,
     },
   }));
+
+  const isThereAnyAcceptedOrRejected = () => {
+    try {
+      getApplicationRequestsByApplicationId(ann.applicationId).then((results) => {
+        console.log(results.applicationRequests);
+        const res = results.applicationRequests.some((row) => (row.statusIns === "Accepted" && row.status !== "Accepted") || (row.statusIns === "Rejected" && row.status !== "Rejected"));
+
+        if (res) {
+          flipPopup();
+
+        }
+        else {
+          flipPopupOrdinary();
+        }
+      });
+
+      
+    }
+    catch (error) {
+      handleInfo("Error while checking the status of the students");
+    }
+  }
+
+  const finalizeStatuss = (appId) => {
+    try {
+      finalizeStatus(appId).then((res) => {
+        
+        handleInfo("Changes are successfully finalized.")
+        
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
 
   return (
     <Box>
@@ -545,7 +586,7 @@ function ApplicantsTable(props) {
                 variant="outlined"
                 endIcon={<SaveIcon />}
                 sx={{ bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, float: "right", alignSelf: "center" }}
-                onClick={flipPopup}
+                onClick={isThereAnyAcceptedOrRejected}
               >
                 Announce Final Results
               </Button>
@@ -562,17 +603,17 @@ function ApplicantsTable(props) {
             </div>
 
           </div>
-        {/*
+        
           <Popup
-            opened={finalizePopoUpOpened}
-            flipPopup={flipPopup}
+            opened={finalizePopupOrdinaryOpened}
+            flipPopup={flipPopupOrdinary}
             title={"Confirm Announcing Final Status?"}
             text={"If there would be a final status announcement, all the students will be notified about their final status. Are you sure you want to announce the final status?\n Final status can be done again after this action."}
-            posAction={() => { finalizeStatuss(props.appId); flipPopup(); props.setFinalize((prev) => !prev); }}
-            negAction={flipPopup}
+            posAction={() => { finalizeStatuss(props.appId); flipPopupOrdinary(); props.setFinalize((prev) => !prev); }}
+            negAction={flipPopupOrdinary}
             posActionText={"Finalize"}
           />
-          */}
+          
 
           <Popup
             opened={finalizePopoUpOpened}

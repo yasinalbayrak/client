@@ -23,6 +23,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import Popup from "../../components/popup/Popup";
 import { handleInfo } from "../../errors/GlobalErrorHandler";
 import Avatar from '@mui/material/Avatar';
+import { useNavigate } from "react-router";
 
 
 
@@ -41,6 +42,7 @@ function MailingPage(props) {
     const [rejMail, setRejMail] = React.useState("");
     const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
     const [finalized, setFinalized] = React.useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
             
@@ -132,7 +134,7 @@ function MailingPage(props) {
     rows &&<Box sx={{ display: "flex" }}>
   <Sidebar></Sidebar>
   <Box component="main" sx={{ flexGrow: 1, m:3 }}>
-    <Grid item><BackButton to={"/home"}/></Grid>
+    <Grid item><BackButton to={"/application-of/" + appId}/></Grid>
     
     <Box sx={{ p: 5, mx:20 , maxHeight:300}}>
 
@@ -344,7 +346,7 @@ function MailingPage(props) {
             flipPopup={flipPopup}
             title={"Confirm Announcing Final Status?"}
             text={"If you confirm, the final status will be announced to accepted and rejected students with these email bodies.\n\n Do you want to continue?"}
-            posAction={() => { finalizeStatuss(application.applicationId); flipPopup();}}
+            posAction={() => { finalizeStatuss(application.applicationId); flipPopup(); navigate("/application-of/" + appId);}}
             negAction={flipPopup}
             posActionText={"Finalize"}
           />
