@@ -117,7 +117,7 @@ function MailingPage(props) {
 
     const finalizeStatuss = (appId) => {
         try {
-            finalizeStatus(appId).then((res) => {
+            finalizeStatus(appId,accMail,rejMail).then((res) => {
             
             handleInfo("Changes are successfully finalized and announced to accepted and rejected students.")
             setFinalized(prev => !prev);
