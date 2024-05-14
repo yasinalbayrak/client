@@ -45,6 +45,14 @@ export default function Popup({ opened, flipPopup, title, text, negAction, posAc
                 color: "error.main"
             }} />
         }
+
+        if (posActionText === "Continue") {
+            return <CampaignIcon fontSize="large" sx={{
+                width: "6rem",
+                height: "6rem",
+                color: "success.main"
+            }} />;
+        }
         
         else {
             return <ErrorIcon fontSize="large" sx={{
@@ -107,13 +115,13 @@ export default function Popup({ opened, flipPopup, title, text, negAction, posAc
                 <Button variant='contained' onClick={negAction} sx={{
                     backgroundColor: "#B4B4B3",
                     '&:hover': {
-                        backgroundColor: "#B4B4B3", // Hover color
+                        backgroundColor: "#B4B4B3",
                       },
                 }}>Cancel</Button>
                 <Button variant='contained' sx={{
-                    backgroundColor: posActionText==="Finalize" || posActionText==="Commit" ? "darkgreen": "rgb(210,56,86)",
+                    backgroundColor: ["Commit", "Finalize", "Continue"].includes(posActionText)? "darkgreen": "rgb(210,56,86)",
                     '&:hover': {
-                        backgroundColor: posActionText==="Finalize" || posActionText==="Commit" ? "green" : "rgb(180,46,76)", // Hover color
+                        backgroundColor: ["Commit", "Finalize", "Continue"].includes(posActionText)? "green" : "rgb(180,46,76)", // Hover color
                       },
                 }}
                 
