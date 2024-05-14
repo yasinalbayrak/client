@@ -256,7 +256,7 @@ function CustomRow(props) {
         </TableCell>
       </TableRow>
       <TableRow style={{ alignItems: "start", verticalAlign: "top" }}>
-        <TableCell style={{ paddingBottom: 0, paddingTop: "1rem", }} colSpan={2}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: "1rem", }} colSpan={3}>
           <td>
             <Collapse in={open} align="top" component="tr" style={{ padding: 0, display: "block", }}>
               <Grid container direction="column" alignItems="flex-start" justifyContent="flex-start" style={{ width: "20rem" }}>
@@ -275,7 +275,7 @@ function CustomRow(props) {
         </TableCell>
 
         {requiredCourses.length > 0 &&
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} >
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2}>
             <Collapse in={open} component="tr" style={{ display: "block" }}>
               <td style={{ width: "100%" }}>
                 <ReqCourseGrades
