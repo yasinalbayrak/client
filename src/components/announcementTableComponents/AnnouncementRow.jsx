@@ -9,8 +9,9 @@ import { deleteApplicationById, getTranscriptInfo, addFollowerToApplication, rem
 import InstructorList from './InstructorList';
 import IconButton from '@mui/material/IconButton';
 import { useStyles } from '../../pages/EligibilityTable';
-import { Box, Tooltip } from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip } from '@mui/material';
 import FollowButton from '../buttons/FollowButton';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { keyframes } from '@mui/system';
 import { useDispatch } from 'react-redux';
 
@@ -21,6 +22,9 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   const [isTranscriptUploaded, setIsTranscriptUploaded] = useState(null); // Or false, depending on your data
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
+  const [popOpen, setPopOpen] = useState(false);
+  
 
   const spin = keyframes`from {
     transform: rotate(0deg);
@@ -37,13 +41,11 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   }`;
 
   useEffect(() => {
-    
+
     if (isInstructor == false) {
       getTranscriptInfo().then((res) => {
         if (res.isUploadedAnyTranscript !== undefined) {
           setIsTranscriptUploaded(res.isUploadedAnyTranscript);
-        } else {
-          console.log('isUploadedAnyTranscript not found in the response');
         }
       }).catch(_ => {
         // Error handling
@@ -56,6 +58,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   //   console.log(isTranscriptUploaded);
   // }, [isTranscriptUploaded]);
 
+  
 
 
 
@@ -91,6 +94,9 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
   }
 
 
+  const handleCreateCopy = () => {
+    navigate("/create-announcement?app="+ applicationId);
+  }
 
   const renderButtons = () => {
     if (isInstructor) {
@@ -113,6 +119,12 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           >
             <DeleteForeverIcon />
           </IconButton>
+          <IconButton
+            color='gray'
+            onClick={() => setPopOpen(true)}
+          >
+            <ContentCopyIcon />
+          </IconButton>
 
           <Popup
             opened={deletePopupOpened}
@@ -122,6 +134,15 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
             posAction={deleteApplication}
             negAction={flipPopup}
             posActionText={"Delete"}
+          />
+          <Popup
+            opened={popOpen}
+            flipPopup={()=>setPopOpen(prev=>!prev)}
+            title={`Create Copy of ${course.courseCode}`}
+            text={"You will be redirected to copied application for further modifications."}
+            posAction={handleCreateCopy}
+            negAction={()=>setPopOpen(prev=>!prev)}
+            posActionText={"Continue"}
           />
 
         </>
@@ -149,24 +170,25 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         );
       }
       else {
-        return(
-            <Button
-                variant="contained"
-                color='success'
-                onClick={() => {
-                  if (isTranscriptUploaded) {
-                    navigate("/apply/" + applicationId);
-                  } else {
-                    navigate("/transcriptUploadPage/" + applicationId);
-                  }
-                }}
-                sx={{
-                  height: "40px"
-                }}
-                disabled={isTimedOut}
-            >
-              Apply
-            </Button>
+
+        return (
+          <Button
+            variant="outlined"
+            color='success'
+            onClick={() => {
+              if (isTranscriptUploaded) {
+                navigate("/apply/" + applicationId);
+              } else {
+                navigate("/transcriptUploadPage/" + applicationId);
+              }
+            }}
+            sx={{
+              height: "30px"
+            }}
+            disabled={isTimedOut || isStudentEligible === "Not Eligible"}
+          >
+            Apply
+          </Button>
 
         )
       }
@@ -253,12 +275,21 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
   }
 
+  const handleNavigateEligibility = () => {
+    if (isStudentEligible !== "Eligible" && isStudentEligible !== "Not Eligible") {
+      return;
+    }
 
+    navigate("/eligibilityPage/" + applicationId);
+  }
   return (
     (course.courseCode) &&
 
     <TableRow sx={{
-      "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1, animation: isNotification ? `${pulse} 0.5s 3` : "none",
+      "&:last-child td, &:last-child th": { border: 0 }, borderBottom: 1, animation: isNotification ? `${pulse} 0.5s 3` : "none", height: "fit-content",
+      "& > *": {
+        maxHeight: "1rem"
+      }
     }}>
       <TableCell sx={{ bgcolor: "#FAFAFA", width: "6rem", minWidth: "6rem", maxWidth: "6rem" }} component="th" scope="row">
         {course.courseCode}
@@ -296,14 +327,40 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
         {weeklyWorkingTime + " Hours"}
       </TableCell>
 
-      <TableCell sx={{ maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word" }} align="left" component="th" scope="row">
-        {jobDetails}
+      <TableCell sx={{ maxWidth: "10rem", width: "10rem", whiteSpace: "normal", wordWrap: "break-word", maxHeight: "10rem" }} align="left" component="th" scope="row">
+        <Box sx={{ maxHeight: "6rem", width: '100%', padding: 0 }}>
+          {jobDetails.length > 50 ? (
+            <>
+              {jobDetails.slice(0, 100) + '... '}
+              <span style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline', fontSize: "12px" }} onClick={() => setOpen(true)}>
+                See Full
+              </span>
+            </>
+          ) : (
+            jobDetails
+          )}
+        </Box>
+        <Dialog open={open} onClose={() => setOpen(false)} maxWidth="lg" fullWidth>
+          <DialogTitle>
+            {course.courseCode + " Job Details"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText sx={{ wordWrap: "break-word" }}>
+              {jobDetails}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpen(false)} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
       </TableCell>
 
       <TableCell sx={{ bgcolor: "#FAFAFA", width: "4rem", minWidth: "5rem", padding: 0 }} align="center" component="th" scope="row">
         <Box width="100%" display="flex" justifyContent="center" >
           {renderButtons()}
-          {(!isInstructor && tabValue === 1) && (( !(applicationStatus === "In Progress" && now < deadline)) ? (
+          {(!isInstructor && tabValue === 1) && ((!(applicationStatus === "In Progress" && now < deadline)) ? (
             <Tooltip
               title={getEditButtonTooltip(applicationStatus, now, deadline)}
               placement="bottom"
@@ -341,9 +398,19 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
 
       {(!isInstructor && tabValue === 0) && <TableCell sx={{ width: "4rem", minWidth: "4rem" }} align="center" component="th" scope="row">
-        <Box sx={{ width: "70%", marginLeft: "auto", marginRight: "auto" }} className={getClassByElibility(isStudentEligible)}>
+        <Box
+          onClick={handleNavigateEligibility}
+          sx={{
+            width: "70%",
+            marginLeft: "auto",
+            marginRight: "auto",
+            cursor: isStudentEligible === "Eligible" || isStudentEligible === "Not Eligible" ? "pointer" : "default"
+          }}
+          className={getClassByElibility(isStudentEligible)}
+        >
           {isStudentEligible}
         </Box>
+
       </TableCell>}
 
       {(!isInstructor && tabValue === 0) && <TableCell align="center" component="th" scope="row" sx={{ padding: 0 }}>

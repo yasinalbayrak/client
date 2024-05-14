@@ -16,7 +16,7 @@ import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { getTerms, getAllInstructors, getAllCourses, addAnnouncement } from "../apiCalls";
+import { getTerms, getAllInstructors, getAllCourses, addAnnouncement, getAnnouncement } from "../apiCalls";
 import { makeStyles } from "@mui/styles";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -53,15 +53,21 @@ import HorizontalLinearAlternativeLabelStepper from "../components/stepper/stepp
 import { toast } from "react-toastify";
 import { handleInfo } from "../errors/GlobalErrorHandler";
 import { useNavigate } from "react-router";
+import { useLocation } from 'react-router-dom';
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 
 const useStyles = makeStyles((theme) => ({
   activeItem: {
     color: "orange",
     textDecoration: "underline",
     '&:hover': {
-      
+
       textDecoration: "underline",
-      
+
     },
   },
   focusedSelect: {
@@ -127,6 +133,8 @@ function CreateAnnouncement() {
         return 'default';
     }
   };
+  const query = useQuery();
+  const copyFromAppId = query.get('app');
 
   const MAX_WORD_COUNT = 2048;
 
@@ -373,16 +381,73 @@ function CreateAnnouncement() {
     isSectionEnabled: false,
     isDesiredLetterGradeEnabled: false
   });
+  const [isDataFetched, setIsDataFetched] = useState(false);
+  useEffect(() => {
+    // DUPLICATE
+    // const [authPeople, setAuthPeople] = useState([
+    //   {
+    //     display_name: name + " " + surname,
+    //     username: username,
+    //     authOptionValue: name + " " + surname + " (" + username + ")",
+    //     id: userId
+    //   }
+    // ]);
+    if (copyFromAppId && allTerms.length > 0 && !isDataFetched) {
+      getAnnouncement(copyFromAppId).then(res => {
+        setAnnouncementDetails(prev => ({
+          ...prev,
+          term: allTerms.find((term) => term.term_desc === res.term),
+          course_code: res.course.courseCode,
+          lastApplicationDate: "",
+          lastApplicationTime: "",
+          workHours: res.weeklyWorkHours,
+          jobDetails: res.jobDetails,
+          isInprogressAllowed: res.isInprogressAllowed === true,
+          section: res.section,
+          isSectionEnabled: res.section != null,
+          isDesiredLetterGradeEnabled: res.minimumRequiredGrade != null,
+          letterGrade: res.minimumRequiredGrade
+        }));
+
+        handleChange(null, res.course.courseCode);
+        setSelectedCourses(res.previousCourseGrades.map((e) => ({
+          courseCode: e.course.courseCode,
+          grade: e.grade,
+          isInprogressAllowed: e.isInprogressAllowed
+        })))
+        console.log('object :>> ', res.authorizedInstructors.map((ins) => ({
+          display_name: ins.user.name + " " + ins.user.surname,
+          username: ins.user.email,
+          authOptionValue: ins.user.name + " " + ins.user.surname + " (" + ins.user.email + ")",
+          id: ins.user.id
+
+        })));
+        setAuthPeople((prev) => ([
+          ...res.authorizedInstructors.map((ins) => ({
+            display_name: ins.user.name + " " + ins.user.surname,
+            username: ins.user.email,
+            authOptionValue: ins.user.name + " " + ins.user.surname + " (" + ins.user.email + ")",
+            id: ins.user.id
+
+          }))]))
+        setQuestions(res.questions);
+        setIsDataFetched(true);
+      }).catch((error) => {
+        console.log('error :>> ', error);
+      });
+    }
+  }, [copyFromAppId, allTerms, isDataFetched]);
 
   useEffect(() => {
-    
-    setAnnouncementDetails((prevDetails) => ({
-      ...prevDetails,
-      course_code: courseCode,
-      authInstructor: authPeople,
-      desiredCourses: selectedCourses,
-    }));
-  }, [courseCode, authPeople, selectedCourses]);
+    if (!copyFromAppId) {
+      setAnnouncementDetails((prevDetails) => ({
+        ...prevDetails,
+        course_code: courseCode,
+        authInstructor: authPeople,
+        desiredCourses: selectedCourses,
+      }));
+    }
+  }, [courseCode, authPeople, selectedCourses, copyFromAppId]);
 
   function handleInput(event) {
     const { name, value } = event.target;
@@ -568,32 +633,38 @@ function CreateAnnouncement() {
   const handleStep = (step) => () => {
     setActiveStep(step);
   };
-  useEffect(()=>{
+  useEffect(() => {
     console.log('announcementDetails?.authInstructor :>> ', announcementDetails?.authInstructor);
-  },[announcementDetails?.authInstructor])
+  }, [announcementDetails?.authInstructor])
   const handleComplete = () => {
+
     if (activeStep === steps.length - 1) {
 
       const currentIstanbulTime = new Date(new Date().getTime());
       const combinedDateTime = announcementDetails.lastApplicationDate + "T" + announcementDetails.lastApplicationTime + ":00";
       const selectedTime = new Date(combinedDateTime);
       if (selectedTime < currentIstanbulTime) {
-        handleInfo("Selected last application date and time cannot be before the current Istanbul time.");
+        alert("hi2")
+        handleInfo("Selected last application date and time cannot be before the current Istanbul time.", {
+          containerId: "1618",
+          closeOnClick: true,
+        });
         return;
       }
+
       if (
         announcementDetails.course_code &&
         announcementDetails.lastApplicationDate &&
         announcementDetails.lastApplicationTime &&
         announcementDetails.workHours &&
         announcementDetails.term &&
-        announcementDetails.authInstructor &&
+        authPeople &&
         (!announcementDetails.isDesiredLetterGradeEnabled || (announcementDetails.letterGrade)) &&
 
         (!announcementDetails.isSectionEnabled || (announcementDetails.section !== "" && announcementDetails.section))
 
       ) {
-        
+        console.log('announcementDetails :>> ', announcementDetails);
         addAnnouncement(
           announcementDetails.course_code,
           username,
@@ -602,8 +673,8 @@ function CreateAnnouncement() {
           announcementDetails.isDesiredLetterGradeEnabled ? announcementDetails.letterGrade : null,
           announcementDetails.workHours,
           announcementDetails?.jobDetails ?? "",
-          announcementDetails.authInstructor,
-          announcementDetails.desiredCourses,
+          authPeople,
+          selectedCourses,
           questions,
           announcementDetails.term,
           announcementDetails.isDesiredLetterGradeEnabled ? announcementDetails.isInprogressAllowed : null,
@@ -624,6 +695,8 @@ function CreateAnnouncement() {
         });
 
       } else {
+        alert("hi")
+        console.log('announcementDetails :>> ', announcementDetails);
         handleInfo("Please fill out the required fields.")
       }
     } else {
@@ -865,7 +938,7 @@ function CreateAnnouncement() {
                         }));
                       }}
                       sx={{ minWidth: "fit-content" }}
-                      control={<Checkbox />}
+                      control={<Checkbox checked={announcementDetails.isSectionEnabled} />}
                       label="Add Section"
                     />
                     <TextField
@@ -888,12 +961,12 @@ function CreateAnnouncement() {
 
                         },
                         "& .MuiInputLabel-outlined": {
-                          transform: "translate(14px, 10px) scale(1)", 
+                          transform: "translate(14px, 10px) scale(1)",
                         },
                         "& .MuiInputLabel-shrink": {
                           transform: "translate(14px, -6px) scale(0.75)", // Adjust label position for shrunk state
                         },
-                        
+
                       }}
                       disabled={!announcementDetails.isSectionEnabled}
                     />
@@ -1170,7 +1243,9 @@ function CreateAnnouncement() {
                       }));
                     }}
                     control={<Checkbox
-                      color="success" />}
+                      color="success"
+                      checked={announcementDetails.isInprogressAllowed}
+                    />}
                     label="Allow In Progress Applicants"
                     labelPlacement="start"
                     sx={{ m: 0 }}
@@ -1312,7 +1387,7 @@ function CreateAnnouncement() {
                     {authPeople &&
                       authPeople.map((authPerson, index) => {
 
-
+                        console.log('authPerson :>> ', authPerson);
                         return (
                           <Grid item xs={6} key={index}>
                             <Chip
@@ -1668,39 +1743,39 @@ function CreateAnnouncement() {
 
         {(activeStep === 2 && questions) && <AddQuestion questions={questions} setQuestions={setQuestions} username={username} />}
 
-       
-
-        <Grid container xs={6} sx={{ backgroundColor: "none", mt:2}}>
-
-            <Box  sx={{width: "100%", display: 'flex', flexDirection: 'row', pt: 2 }}>
-              <Box sx={{ flex: '1 1 auto' }} />
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
 
 
+        <Grid container xs={6} sx={{ backgroundColor: "none", mt: 2 }}>
+
+          <Box sx={{ width: "100%", display: 'flex', flexDirection: 'row', pt: 2 }}>
+            <Box sx={{ flex: '1 1 auto' }} />
+            <Button
+              color="inherit"
+              disabled={activeStep === 0}
+              onClick={handleBack}
+              sx={{ mr: 1 }}
+            >
+              Back
+            </Button>
 
 
-              <Button
-                onClick={handleComplete}
-                disabled={activeStep === 0 && (
-                  (Object.keys(announcementDetails.term).length < 0) || (courseCode ?? "").trim() === "" || !(announcementDetails.workHours) || !(announcementDetails.lastApplicationDate && announcementDetails.lastApplicationTime)
-                )
-                }>
-                {activeStep === steps.length - 1
-                  ? 'Create Application'
-                  : 'Continue'}
-              </Button>
 
-            </Box>
-          </Grid>
 
-        
+            <Button
+              onClick={handleComplete}
+              disabled={activeStep === 0 && (
+                (Object.keys(announcementDetails.term).length < 0) || (courseCode ?? "").trim() === "" || !(announcementDetails.workHours) || !(announcementDetails.lastApplicationDate && announcementDetails.lastApplicationTime)
+              )
+              }>
+              {activeStep === steps.length - 1
+                ? 'Create Application'
+                : 'Continue'}
+            </Button>
+
+          </Box>
+        </Grid>
+
+
       </Box>
     </Box >
   );

@@ -104,7 +104,6 @@ function Sidebar({ setTabInitial }) {
   const unreadCount = useSelector((state) => state.user.unreadNotifications);
   const userID = useSelector((state) => state.user.id);
   const photoUrl = useSelector((state) => state.user.photoUrl);
-  console.log('photoUrl :>> ', photoUrl);
   const [termSelect, setTermSelect] = React.useState(term);
   const [allTerms, setAllTerms] = React.useState([]);
 
@@ -399,7 +398,7 @@ function Sidebar({ setTabInitial }) {
                   
                   <img src={resumeIcon} style={{height: 25, width: 25, color: "white"}}></img>
                 </ListItemIcon>
-                <ListItemText primary={"Applications"} />
+                <ListItemText primary={"Applications"} sx={{opacity: sidebarOpen ? 1 : 0 }}/>
 
               </ListItemButton>
 

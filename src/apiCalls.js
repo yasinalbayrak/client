@@ -146,32 +146,7 @@ async function addAnnouncement(
   const token = getJwtFromCookie()
   const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
 
-  const transformedQuestions = questions
-    .filter((question) => question.mQuestion.trim() !== "")
-    .map((question) => {
-      let type;
 
-      switch (question.mValue) {
-        case "Text Answer":
-          type = "TEXT";
-          break;
-        case "Numeric Answer":
-          type = "NUMERIC";
-          break;
-        case "Multiple Choice":
-          type = "MULTIPLE_CHOICE";
-          break;
-        default:
-          type = "TEXT";
-      }
-
-      return {
-        question: question.mQuestion,
-        type: type,
-        choices: question.mMultiple,
-        allowMultipleAnswers: question.allowMultipleAnswers
-      };
-    });
 
   console.log(letterGrade);
   const authInstructor_ids = auth_instructors.map(
@@ -191,7 +166,7 @@ async function addAnnouncement(
       authorizedInstructors: authInstructor_ids,
       minimumRequiredGrade: letterGrade,
       desiredCourseGrade: letterGrade,
-      questions: transformedQuestions,
+      questions: questions,
       isInprogressAllowed: isInprogressAllowed,
       section: section?.trim()
     }, {
