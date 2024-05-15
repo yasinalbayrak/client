@@ -333,7 +333,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
             <>
               {jobDetails.slice(0, 100) + '... '}
               <span style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline', fontSize: "12px" }} onClick={() => setOpen(true)}>
-                See Full
+                read more
               </span>
             </>
           ) : (
