@@ -296,7 +296,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
 
       </TableCell>
       <TableCell sx={{ width: "4rem", minWidth: "4rem", maxWidth: "4rem" }} align="left" component="th" scope="row">
-        {(!isInstructor && tabValue === 1 ? data.application?.section : section) || "Not Specified"}
+        {(!isInstructor && tabValue === 1 ? data.application?.section : section) || "All Sections"}
       </TableCell>
       <TableCell sx={{ bgcolor: "#FAFAFA", minWidth: "14rem", maxWidth: "14rem", width: "14rem" }} align="left" component="th" scope="row">
         <InstructorList
