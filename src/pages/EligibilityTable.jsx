@@ -54,10 +54,10 @@ export const useStyles = makeStyles({
     },
     pendingBox: {
         // a box for pending applications, it has a yellow border and a dark yellow background
-        border: "2px solid rgba(210, 233, 20, 1)",
+        border: "2px solid rgba(255,174,0, 0.8)",
         padding: "2px 4px",
-        backgroundColor: "rgba(210, 210, 197, 1)",
-        color: "rgba(255, 255, 0, 1)",
+        backgroundColor: "rgba(250,195,1,0.16)",
+        color: "rgb(255,174,0)",
         minWidth: "90px"
     },
     acceptedBox: {
