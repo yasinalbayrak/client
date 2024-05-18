@@ -59,7 +59,6 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-
 const useStyles = makeStyles((theme) => ({
   activeItem: {
     color: "orange",
@@ -396,7 +395,7 @@ function CreateAnnouncement() {
       getAnnouncement(copyFromAppId).then(res => {
         setAnnouncementDetails(prev => ({
           ...prev,
-          term: allTerms.find((term) => term.term_desc === res.term),
+          
           course_code: res.course.courseCode,
           lastApplicationDate: "",
           lastApplicationTime: "",
