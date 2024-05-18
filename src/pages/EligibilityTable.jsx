@@ -53,33 +53,48 @@ export const useStyles = makeStyles({
 
     },
     pendingBox: {
-        // a box for pending applications, it has a yellow border and a dark yellow background
         border: "2px solid rgba(255,174,0, 0.8)",
         padding: "2px 4px",
         backgroundColor: "rgba(250,195,1,0.13)",
         color: "rgb(255,174,0)",
-        minWidth: "90px"
+        minWidth: "90px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
     },
     acceptedBox: {
         border: "2px solid rgba(194,233,153,1)",
         padding: "2px 4px",
         backgroundColor: "rgba(248,255,238,1)",
         color: "rgba(86,156,48,1)",
-        minWidth: "90px"
+        minWidth: "90px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
     },
     rejectedBox: {
         border: "2px solid rgba(245,190,156,1)",
         padding: "2px 4px",
         backgroundColor: "rgba(253,242,233,1)",
         color: "rgba(195,69,36,1)",
-        minWidth: "90px"
+        minWidth: "90px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
     },
     withdrawnBox: {
         border: "2px solid rgba(137, 137, 137, 1)",
         padding: "2px 4px",
         backgroundColor: "rgba(214, 214, 212, 1)",
         color: "rgba(137, 137, 137, 1)",
-        minWidth: "90px"
+        minWidth: "90px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
     },
     waitlistedBox: {
         border: "2px solid  rgba(157, 158, 157, 1)",
@@ -87,7 +102,11 @@ export const useStyles = makeStyles({
         backgroundColor: " rgba(245, 245, 245, 1)",
         color: " rgba(135, 136, 135, 1)",
         flexWrap: "wrap",
-        maxWidth: "90px"
+        minWidth: "90px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
     }
 
 });
