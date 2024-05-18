@@ -1288,7 +1288,7 @@ function CreateAnnouncement() {
                     placeholder="Enter job details..."
                     onChange={handleInput}
                     style={{
-                      minWidth: '400px',
+                      minWidth: '670px',
                       border: '1px solid #c1c4bc',
                       borderRadius: '5px',
                       padding: '12px',
