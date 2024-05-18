@@ -36,6 +36,7 @@ const TranscriptPage = (props) => {
   const { id } = useParams(); //application request ID
   const [transcript, setTranscript] = useState(null);
   const [consentChecked, setConsentChecked] = useState(false);
+  const [secondconsentChecked, setsecondConsentChecked] = useState(false);
   const [fileUrl, setFileUrl] = useState("");
   const [filename, setFilename] = useState(() => {
     const initialFileName = "No File Uploaded";
@@ -44,6 +45,10 @@ const TranscriptPage = (props) => {
   
   const onCheckboxChange = (e) => {
     setConsentChecked(e.target.checked);
+  };
+
+  const onsecondCheckboxChange = (e) => {
+    setsecondConsentChecked(e.target.checked);
   };
 
 
@@ -62,7 +67,7 @@ const TranscriptPage = (props) => {
   const onSubmit = () => {
     if (!transcript)
       handleInfo("You should upload your transcript to continue.")
-    else if (!consentChecked) {
+    else if (!consentChecked || !secondconsentChecked) {
       // Display an error or prevent submission
       handleInfo("Please consent to the terms before submitting.");
       return;
@@ -200,9 +205,16 @@ const TranscriptPage = (props) => {
 
                   <Grid item>
                     <FormControlLabel
-                        required
+
                         control={<Checkbox onChange={onCheckboxChange}/>}
                         label="By uploading my transcript, I consent to the collection and use of this personal data for the purpose of LA application."
+                    />
+                  </Grid>
+                  <Grid item>
+                    <FormControlLabel
+
+                        control={<Checkbox onChange={onsecondCheckboxChange}/>}
+                        label="I consent to my transcript being visible to the project team as this site is in its demo stage."
                     />
                   </Grid>
 
