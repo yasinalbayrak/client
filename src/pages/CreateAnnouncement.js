@@ -1287,7 +1287,7 @@ function CreateAnnouncement() {
                     placeholder="Enter job details..."
                     onChange={handleInput}
                     style={{
-                      minWidth: '400px',
+                      minWidth: '670px',
                       border: '1px solid #c1c4bc',
                       borderRadius: '5px',
                       padding: '12px',
@@ -1627,6 +1627,15 @@ function CreateAnnouncement() {
                                 />}
                                 label="Allow In Progress Applicants"
                               />
+                              <Tooltip
+                                  title="Selecting this option enables currently enrolled students to submit applications for Learning Assistantship."
+                                  placement="right"
+
+                              >
+                                <IconButton>
+                                  <HelpCenterIcon />
+                                </IconButton>
+                              </Tooltip>
                             </Grid>
                             {error && <Alert severity="error">{error}</Alert>}
                           </FormControl>
@@ -1714,9 +1723,9 @@ function CreateAnnouncement() {
                                   }}
                                 />
                                 {/* TODO do not enter static values */}
-                                <Typography width={`${"In Progress Not Allowed".length * 8}px`} variant="body2"
+                                <Typography width={`${"Allowed In Progress Applicants".length * 8}px`} variant="body2"
                                   color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
-                                  {"In Progress " + (courseSelected.isInprogressAllowed ? 'Allowed' : 'Not Allowed')}
+                                  {(courseSelected.isInprogressAllowed ? 'Allowed In Progress Applicants' : 'Not Allowed In Progress Applicants')}
                                 </Typography>
                               </div>
                             </TableCell>

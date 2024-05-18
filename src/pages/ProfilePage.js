@@ -14,6 +14,10 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import BackButton from "../components/buttons/BackButton";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import FilterDropdown from '../components/announcementTableComponents/FilterDropdown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import SearchIcon from '@mui/icons-material/Search';
 
 
 
@@ -24,27 +28,56 @@ function ProfilePage(){
     const isInstructor = useSelector((state) => state.user.isInstructor);
     const photoUrl = useSelector((state) => state.user.photoUrl);
     const[user, setUser] = useState();
+    const [courseSearchOpen, setCourseSearchOpen] = React.useState(false);
     const[showAll, setShowAll] = useState(false);
     const[courses, setCourses] = useState();
     const navigate = useNavigate();
+    const [gradeFilter, setGradeFilter] = useState([]);
+    const gradeOptions = [
+        { name: 'A', checked: false },
+        { name: 'A-', checked: false },
+        { name: 'B+', checked: false },
+        { name: 'B', checked: false },
+        { name: 'B-', checked: false },
+        { name: 'C+', checked: false },
+        { name: 'C', checked: false },
+        { name: 'C-', checked: false },
+        { name: 'D+', checked: false },
+        { name: 'D', checked: false },
+        { name: 'F', checked: false },
+        { name: 'S', checked: false },
+        { name: 'W', checked: false },
+        { name: 'I.P.', checked: false }
+    ];
 
 
     console.log("user", id);
     console.log("userID", userID);
 
     const getGPAColor = (gpa) => {
-        if(gpa >= 3.5){
-            return "#4caf50";
+        if(gpa >= 3.7){
+            return "#0ea915";
+        }else if(gpa >= 3.3){
+            return "#51b655";
         }else if(gpa >= 3.0){
-            return "#ffeb3b";
-        }else if(gpa >= 2.5){
+            return "#f6cb03";
+        }else if(gpa >= 2.7){
+            return "#f1ab09";
+        }else if(gpa >= 2.3){
             return "#ff9800";
+        }else if(gpa >= 2.0){
+            return "#ff4d00";
         }else{
-            return "#f44336";
+            return "#ff0f00";
         }
         //"#3f51b5"
     }
 
+    useEffect(() => {
+        if (!user?.course) return;
+        const filteredCourses = user.course.filter(course => gradeFilter.includes(course.grade) || gradeFilter.length === 0);
+        setCourses(filteredCourses);
+    }, [user, gradeFilter]);
     const expandButton = () => {
         return (courses &&
         courses.length > 7 && (
@@ -89,6 +122,20 @@ function ProfilePage(){
 
     const displayedCourses = showAll ? courses : courses?.slice(courses?.length-6, courses?.length);
 
+
+    const handleCourseSearch = () => {
+        setCourseSearchOpen(!courseSearchOpen);
+    }
+    const handleGradeFilterChange = (gradeName) => {
+        setGradeFilter(prev => {
+            const isGradeSelected = prev.includes(gradeName);
+            if (isGradeSelected) {
+                return prev.filter(g => g !== gradeName); // Remove grade from filter
+            } else {
+                return [...prev, gradeName]; // Add grade to filter
+            }
+        });
+    };
 
     if(!user){
         return (
@@ -198,9 +245,40 @@ return(
       <Table aria-label="simple table">
         <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
           <TableRow>
-            <TableCell sx={{ fontWeight: 'bold' }}>Course Name</TableCell>
-            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Grade</TableCell>
-            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Term</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}>Course Name
+                <IconButton onClick={handleCourseSearch} style={{  marginLeft:'0px'}}>
+                    <SearchIcon  sx={{ paddingInline: 0.5, "&:hover": { color: "green", cursor: "pointer" } }} />
+                </IconButton></TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Grade
+                      <Box sx={{ display: 'flex', flexDirection: 'column', marginRight: '-7px' }}>
+                          <IconButton onClick={1} style={{ marginBottom: '-10px' }}>
+                              <ArrowDropUpIcon />
+                          </IconButton>
+                          <IconButton onClick={1} style={{ marginTop: '-8px' }}>
+                              <ArrowDropDownIcon />
+                          </IconButton>
+                      </Box>
+                      <Box > {/* Adjust minWidth to manage space between elements */}
+                          <FilterDropdown
+                              labels={gradeOptions}
+                              setLabels={(updatedLabels) => {
+                                  const selectedGrades = updatedLabels.filter(label => label.checked).map(label => label.name);
+                                  setGradeFilter(selectedGrades); // This updates the gradeFilter based on selections
+                              }} />
+                      </Box>
+                  </Box>
+              </TableCell>
+            <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                Term
+                <FilterDropdown
+                    labels={gradeOptions}
+                    setLabels={(updatedLabels) => {
+                        const selectedGrades = updatedLabels.filter(label => label.checked).map(label => label.name);
+                        setGradeFilter(selectedGrades); // This updates the gradeFilter based on selections
+                    }} />
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
