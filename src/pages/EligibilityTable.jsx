@@ -56,7 +56,7 @@ export const useStyles = makeStyles({
         // a box for pending applications, it has a yellow border and a dark yellow background
         border: "2px solid rgba(255,174,0, 0.8)",
         padding: "2px 4px",
-        backgroundColor: "rgba(250,195,1,0.16)",
+        backgroundColor: "rgba(250,195,1,0.13)",
         color: "rgb(255,174,0)",
         minWidth: "90px"
     },
