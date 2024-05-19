@@ -14,6 +14,8 @@ import FollowButton from '../buttons/FollowButton';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { keyframes } from '@mui/system';
 import { useDispatch } from 'react-redux';
+import resumeIcon from "../../assets/resumeIcon.png"
+import {Link} from "react-router-dom";
 
 
 export default function AnnouncementRow({ key, data, tabValue, userName, navigate, isInstructor, isApplied, isApplied2, deleteCallBack, filterEligibilityCallback, setFollowingCallback, isNotification }) {
@@ -124,6 +126,9 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
             onClick={() => setPopOpen(true)}
           >
             <ContentCopyIcon />
+          </IconButton>
+          <IconButton onClick={() => navigate(`/application-of/${applicationId}`)}>
+            <img src={resumeIcon} alt="Resume Icon" style={{ height: 22, width: 22 }} />
           </IconButton>
 
           <Popup
