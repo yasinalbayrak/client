@@ -1097,14 +1097,6 @@ function CreateAnnouncement() {
                     </LocalizationProvider>
                   </Grid>
 
-                  {/* Tooltip Icon
-              <Grid item>
-                <Tooltip title="The time you select is adjusted to Istanbul local time." placement="right">
-                  <IconButton>
-                    <HelpCenterIcon />
-                  </IconButton>
-                </Tooltip>
-              </Grid>*/}
 
                 </Box>
               </Grid>
@@ -1251,9 +1243,18 @@ function CreateAnnouncement() {
                   />
 
                   <Tooltip
-                    title="Selecting this option enables currently enrolled students to submit applications for Learning Assistantship to this course."
-                    placement="right"
+                      title="Selecting this option enables currently enrolled students to submit applications for Learning Assistantship to this course."
+                      placement="right"
+                      componentsProps={{
+                        tooltip: {
+                          sx: {
+                            backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                            color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 
+                          },
+                        },
+                      }}
                   >
                     <IconButton>
                       <HelpCenterIcon />
@@ -1630,6 +1631,16 @@ function CreateAnnouncement() {
                               <Tooltip
                                   title="Selecting this option enables currently enrolled students to submit applications for Learning Assistantship."
                                   placement="right"
+                                  componentsProps={{
+                                    tooltip: {
+                                      sx: {
+                                        backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                                        color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+
+                                      },
+                                    },
+                                  }}
 
                               >
                                 <IconButton>
