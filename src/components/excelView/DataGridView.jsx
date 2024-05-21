@@ -349,7 +349,10 @@ export default function DataGridView({ applicationRequests, announcement, setApp
 
         const updatedRows = applicationRequests.map((appReq) => {
             console.log("deneemeee", appReq);//delete
-            const [fname, lname] = appReq.transcript.studentName.split(/\s+/);
+            const nameParts = appReq.transcript.studentName.split(/\s+/);
+            const lname = nameParts.pop();
+            const fname = nameParts.join(' '); 
+
             const QA = appReq.qandA.reduce((acc, qa, idx) => ({
                 ...acc,
                 [`q${idx + 1}`]: qa.question.type === "MULTIPLE_CHOICE" ?
@@ -470,11 +473,12 @@ export default function DataGridView({ applicationRequests, announcement, setApp
                 title={"Confirm Announcing Final Status?"}
                 text={"If there would be a final status announcement, all the students will be notified about their final status. Are you sure you want to announce the final status?\n Final status can be done again after this action."}
                 posAction={() => {
-                    finalizeStatus(announcement.applicationId); 
-                    flipPopup(); 
+                    finalizeStatus(announcement.applicationId);
+                    flipPopup();
                     setApplicationRequests((prev) => {
                         console.log('prev Yasin:>> ', prev);
-                        return prev.map((appReq) => ({...appReq, status: appReq.statusIns }))})
+                        return prev.map((appReq) => ({ ...appReq, status: appReq.statusIns }))
+                    })
                     handleInfo("Successfully finalized the results.");
                 }}
                 negAction={flipPopup}
