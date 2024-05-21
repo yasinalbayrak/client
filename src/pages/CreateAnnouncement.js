@@ -1769,28 +1769,48 @@ function CreateAnnouncement() {
           <Box sx={{ width: "100%", display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
             <Button
-              color="inherit"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              sx={{ mr: 1 }}
+                color="inherit"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                sx={(theme) => ({
+                  mr: 1,
+                  border: '1px solid',
+                  borderColor: activeStep === 0 ? '#d3d3d3' : 'black', // Lighter gray when disabled, black when not
+                  borderRadius: '4px',
+                })}
             >
               Back
             </Button>
 
-
-
-
             <Button
-              onClick={handleComplete}
-              disabled={activeStep === 0 && (
-                (Object.keys(announcementDetails.term).length < 0) || (courseCode ?? "").trim() === "" || !(announcementDetails.workHours) || !(announcementDetails.lastApplicationDate && announcementDetails.lastApplicationTime)
-              )
-              }>
+                onClick={handleComplete}
+                disabled={
+                    activeStep === 0 &&
+                    (
+                        (Object.keys(announcementDetails.term).length < 0) ||
+                        (courseCode ?? "").trim() === "" ||
+                        !announcementDetails.workHours ||
+                        !(announcementDetails.lastApplicationDate && announcementDetails.lastApplicationTime)
+                    )
+                }
+                sx={(theme) => ({
+                  border: '1px solid',
+                  borderColor: (
+                      activeStep === 0 &&
+                      (
+                          (Object.keys(announcementDetails.term).length < 0) ||
+                          (courseCode ?? "").trim() === "" ||
+                          !announcementDetails.workHours ||
+                          !(announcementDetails.lastApplicationDate && announcementDetails.lastApplicationTime)
+                      )
+                  ) ? '#d3d3d3' : 'black', // Lighter gray when disabled, black when not
+                  borderRadius: '4px',
+                })}
+            >
               {activeStep === steps.length - 1
-                ? 'Create Application'
-                : 'Continue'}
+                  ? 'Create Application'
+                  : 'Continue'}
             </Button>
-
           </Box>
         </Grid>
 
