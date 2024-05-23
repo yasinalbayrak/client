@@ -18,6 +18,7 @@ import FilterDropdown from '../components/announcementTableComponents/FilterDrop
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import SearchIcon from '@mui/icons-material/Search';
+import WaitingPage from "./WaitingPage/WaitingPage";
 
 
 
@@ -27,12 +28,13 @@ function ProfilePage(){
     const userID = useSelector((state) => state.user.id);
     const isInstructor = useSelector((state) => state.user.isInstructor);
     const photoUrl = useSelector((state) => state.user.photoUrl);
-    const[user, setUser] = useState();
+    const[user, setUser] = useState(null);
     const [courseSearchOpen, setCourseSearchOpen] = React.useState(false);
     const[showAll, setShowAll] = useState(false);
     const[courses, setCourses] = useState();
     const navigate = useNavigate();
     const [gradeFilter, setGradeFilter] = useState([]);
+    const [loading, setLoading]=useState(true);
     const gradeOptions = [
         { name: 'A', checked: false },
         { name: 'A-', checked: false },
@@ -98,6 +100,7 @@ function ProfilePage(){
 
 
     useEffect(() => {
+        setLoading(true);
         const fetchData = async () => {
           try {
             const currentTranscript = await getCurrentTranscript(id);
@@ -108,8 +111,9 @@ function ProfilePage(){
             console.error("Error fetching data:", error);
             setUser(null);
           }
+            setLoading(false);
         };
-    
+
         fetchData();
       }, [id]);
 
@@ -136,10 +140,17 @@ function ProfilePage(){
             }
         });
     };
+    if(loading){
+        return(
+            <WaitingPage />
+        );
+    }
 
-    if(!user){
+    if(user == null && !loading) {
         return (
             <>
+            {alert(user)}
+            {console.log("deneme",user)}
             <Box sx={{ display: "flex" }}>
                 <Sidebar></Sidebar>
                 <Box component="main"  sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -160,6 +171,7 @@ function ProfilePage(){
         )
         
     }
+
 
 
 return(
