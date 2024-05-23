@@ -149,8 +149,6 @@ function ProfilePage(){
     if(user == null && !loading) {
         return (
             <>
-            {alert(user)}
-            {console.log("deneme",user)}
             <Box sx={{ display: "flex" }}>
                 <Sidebar></Sidebar>
                 <Box component="main"  sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
