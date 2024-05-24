@@ -107,6 +107,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
           <IconButton
             onClick={() => navigate(`/edit-announcement/${applicationId}`, { replace: true })}
             sx={{ color: "blue" }}
+            title = "Edit Announcement"
           >
             <EditIcon />
           </IconButton>
@@ -118,16 +119,23 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
               marginLeft: '0rem',
               color: "red"
             }}
+            title='Delete Announcement'
           >
             <DeleteForeverIcon />
           </IconButton>
           <IconButton
             color='gray'
             onClick={() => setPopOpen(true)}
+            label = "Create Copy of Announcement"
+            title='Create Copy of Announcement'
           >
             <ContentCopyIcon />
           </IconButton>
-          <IconButton onClick={() => navigate(`/application-of/${applicationId}`)}>
+          <IconButton 
+          onClick={() => navigate(`/application-of/${applicationId}`)}
+          label = "View Applications"
+          title='View Applications'
+          >
             <img src={resumeIcon} alt="Resume Icon" style={{ height: 22, width: 22 }} />
           </IconButton>
 
