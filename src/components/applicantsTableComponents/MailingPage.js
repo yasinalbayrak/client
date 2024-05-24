@@ -123,6 +123,10 @@ function MailingPage(props) {
 
                 handleInfo("Changes are successfully finalized and announced to accepted and rejected students.")
                 setFinalized(prev => !prev);
+                flipPopup(); 
+                navigate("/application-of/" + appId); 
+                saveEmails();
+
                 
             });
         }
@@ -345,9 +349,7 @@ function MailingPage(props) {
                         </Grid>
                     </Grid>
 
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
-                        <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={saveEmails}>Save Emails</Button>
-                    </Box>
+                    
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
                         <Button
                             variant="outlined"
@@ -370,7 +372,7 @@ function MailingPage(props) {
                 flipPopup={flipPopup}
                 title={"Confirm Announcing Final Status?"}
                 text={"If you confirm, the final status will be announced to accepted and rejected students with these email bodies.\n\n Do you want to continue?"}
-                posAction={() => { finalizeStatuss(application.applicationId); flipPopup(); navigate("/application-of/" + appId); }}
+                posAction={() => { finalizeStatuss(application.applicationId); }}
                 negAction={flipPopup}
                 posActionText={"Finalize"}
             />
