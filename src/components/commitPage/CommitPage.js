@@ -191,7 +191,7 @@ function CommitPage() {
   const [typePopup, setTypePopup] = useState(0);
   const [decisionAppReqId, setDecisionAppReqId] = useState(null);
   const [committmentCount, setCommitmentCount] = useState(0);
-  const commitText = "Are you sure you want to commit to this application? If you commit, instructor(s) of the course will be notified, and you will be the LA of the course.";
+  const commitText = "Are you sure you want to commit to this application? Commitment action is irreversible, and if you commit, instructor(s) of the course will be notified, and you will be LA candidate of the course.";
   const forgiveText = "Are you sure you want to ask for forgiveness for this application? If you ask for forgiveness, you will not be the LA of this course.";
 
   const flipPopup = () => {
