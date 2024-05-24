@@ -812,6 +812,23 @@ async function updateAppEmail(appId, data){
   }
 }
 
+async function resetCommitmentofAppReq(appReqId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/instructor/resetCommitment/" + appReqId,
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
 
 export {
   updateApplicationRequestStatusMultiple,
@@ -856,6 +873,7 @@ export {
   commitAppReq,
   forgivenAppReq,
   getStudentLaHistory,
-  updateAppEmail
+  updateAppEmail,
+  resetCommitmentofAppReq
 
 };

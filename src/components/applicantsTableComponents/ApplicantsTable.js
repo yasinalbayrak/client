@@ -19,7 +19,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory, getApplicationRequestsByApplicationId } from "../../apiCalls";
+import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory, getApplicationRequestsByApplicationId,resetCommitmentofAppReq } from "../../apiCalls";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
@@ -38,6 +38,7 @@ import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import Avatar from '@mui/material/Avatar';
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -170,6 +171,16 @@ function CustomRow(props) {
   const handlePageChange = (event, value) => {
     setLaHistoryPage(value - 1);
   };
+
+  const resetCommitment = () => {
+    resetCommitmentofAppReq(row.applicationRequestId).then(() => {
+      row.committed = false;
+      row.forgiven = false;
+      setSnackOpen(true);
+    }).catch((_) => {
+    });
+  }
+
 
   console.log('row :>> ', row);
   return (
@@ -338,6 +349,15 @@ function CustomRow(props) {
                   onClick={() => navigate("/profile/" + userID, { replace: false })}
                 >
                   Student Profile
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  endIcon={<RestartAltIcon />}
+                  sx={{ m: "10px" }}
+                  onClick={() => resetCommitment()}
+                >
+                  Reset Commitment
                 </Button>
               </Box>
 
