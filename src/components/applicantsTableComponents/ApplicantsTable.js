@@ -227,9 +227,10 @@ function CustomRow(props) {
               Status is successfully changed
             </Alert>
           </Snackbar>
+          <Box sx={{display:"flex", justifyContent:"center", alignItems:"center"}}>
           <FormControl fullWidth color={row.statusIns !== row.status ? "info" : ""} focused={row.statusIns !== row.status ? "True" : ""}>
-            <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status (!!)" : "Status"}</InputLabel>
-            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(!!)" : "Status"} onChange={handleChange}>
+            <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status (*)" : "Status"}</InputLabel>
+            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(*)" : "Status"} onChange={handleChange}>
 
               <MenuItem value={"Accepted"}>Accepted</MenuItem>
               <MenuItem value={"Rejected"}>Rejected</MenuItem>
@@ -237,7 +238,27 @@ function CustomRow(props) {
               <MenuItem value={"Waiting List"}>Waiting List</MenuItem>
             </Select>
           </FormControl>
+          {row.statusIns !== row.status ? <Tooltip
+                title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
+                placement="right"
+                sx={{ fontSize: 'small' }}
+                arrow
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                      color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 
+                    },
+                  },
+                }}
+
+              >
+                <HelpCenterIcon />
+
+              </Tooltip>: null}
+              </Box>
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
           {determineCommitmentStatus()}
@@ -599,7 +620,7 @@ function ApplicantsTable(props) {
                 Announce Final Results
               </Button>
               <Tooltip
-                title="(!!) stands for the students who have different status than the final status. (e.g. Accepted but not finalized yet.)"
+                title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
                 placement="right"
                 sx={{ fontSize: 'small' }}
                 arrow

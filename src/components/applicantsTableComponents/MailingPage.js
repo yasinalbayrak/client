@@ -24,6 +24,8 @@ import Popup from "../../components/popup/Popup";
 import { handleInfo } from "../../errors/GlobalErrorHandler";
 import Avatar from '@mui/material/Avatar';
 import { useNavigate } from "react-router";
+import Chip from '@mui/material/Chip';
+import { renderStatusIcon } from "../../components/excelView/DataGridView";
 
 
 
@@ -178,7 +180,18 @@ function MailingPage(props) {
                                                         {row.student.user.universityId}
                                                     </TableCell>
                                                     <TableCell>{row.student.user.name + " " + row.student.user.surname}</TableCell>
-                                                    <TableCell align="center">{row.status}</TableCell>
+                                                    <TableCell align="center">
+                                                        <Chip
+                                                            variant="outlined"
+                                                            size="small"
+                                                            icon={renderStatusIcon(row.status).icon}
+                                                            label={row.status}
+                                                            sx={{
+                                                                borderColor: renderStatusIcon(row.status).color,
+                                                                color: renderStatusIcon(row.status).color
+                                                            }}
+                                                        />
+                                                    </TableCell>
                                                 </TableRow>
                                             ))}
 
@@ -227,7 +240,18 @@ function MailingPage(props) {
                                                         {row.student.user.universityId}
                                                     </TableCell>
                                                     <TableCell>{row.student.user.name + " " + row.student.user.surname}</TableCell>
-                                                    <TableCell align="center">{row.status}</TableCell>
+                                                    <TableCell align="center">
+                                                        <Chip
+                                                            variant="outlined"
+                                                            size="small"
+                                                            icon={renderStatusIcon(row.status).icon}
+                                                            label={row.status}
+                                                            sx={{
+                                                                borderColor: renderStatusIcon(row.status).color,
+                                                                color: renderStatusIcon(row.status).color
+                                                            }}
+                                                        />
+                                                    </TableCell>
                                                 </TableRow>
                                             ))}
 
