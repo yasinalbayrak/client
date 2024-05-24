@@ -441,6 +441,7 @@ function EditQuestion(props) {
                 questions,
                 props.AnnouncementDetails.term,
                 props.AnnouncementDetails.isInprogressAllowed,
+                props.AnnouncementDetails.isNotTakenAllowed,
                 props.AnnouncementDetails.section
                 
               ).then((data) => {

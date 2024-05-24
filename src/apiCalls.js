@@ -140,6 +140,7 @@ async function addAnnouncement(
   questions,
   term,
   isInprogressAllowed,
+  isNotTakenAllowed,
   section
 ) {
 
@@ -168,6 +169,7 @@ async function addAnnouncement(
       desiredCourseGrade: letterGrade,
       questions: questions,
       isInprogressAllowed: isInprogressAllowed,
+      isNotTakenAllowed: isNotTakenAllowed,
       section: section?.trim()
     }, {
       headers: { "Authorization": "Bearer " + token }
@@ -196,6 +198,7 @@ async function updateAnnouncement(
   questions,
   term,
   isInprogressAllowed,
+  isNotTakenAllowed,
   section
 ) {
   const token = getJwtFromCookie();
@@ -203,6 +206,7 @@ async function updateAnnouncement(
   // const term = "Fall 2022";
   const title = "title update test";
   console.log('isInprogressAllowed :>> ', isInprogressAllowed);
+  console.log('isNotTakenAllowed :>> ', isNotTakenAllowed);
   const deadline = formatDate(lastApplicationDate) + " " + lastApplicationTime;
   console.log(letterGrade);
   const authInstructor_ids = auth_instructors.map(
@@ -224,6 +228,7 @@ async function updateAnnouncement(
       desiredCourseGrade: letterGrade,
       questions: questions,
       isInprogressAllowed: isInprogressAllowed,
+      isNotTakenAllowed: isNotTakenAllowed,
       section: section?.trim()
     }, {
       headers: { "Authorization": "Bearer " + token }

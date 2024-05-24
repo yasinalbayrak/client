@@ -70,6 +70,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
     applicationId,
     previousCourseGrades,
     isInprogressAllowed,
+    isNotTakenAllowed,
     course,
     isStudentEligible
   } = data.application ?? data;

@@ -33,7 +33,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-export default function DesiredCourseGradesPopup({ previousCourseGrades, courseCode, grade, isInprogressAllowed }) {
+export default function DesiredCourseGradesPopup({ previousCourseGrades, courseCode, grade, isInprogressAllowed, isNotTakenAllowed }) {
     const [open, setOpen] = React.useState(false);
     const [eligibilityChecked, setEligibilityChecked] = React.useState(false);
     const [studentCourseAndGrades, setStudentCourseAndGrades] = React.useState([]);
@@ -44,13 +44,15 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
         console.log('course :>> ', courseCode);
         console.log('grade :>> ', grade);
         console.log('isInProgressAllowed :>> ', isInprogressAllowed);
+        console.log('isNotTakenAllowed :>> ', isNotTakenAllowed);
         console.log('previousCourseGrades :>> ', previousCourseGrades);
         setCourseGrades(
             [
                 {
                     course: { courseCode: courseCode },
                     grade: grade,
-                    isInprogressAllowed: isInprogressAllowed
+                    isInprogressAllowed: isInprogressAllowed,
+                    isNotTakenAllowed: isNotTakenAllowed,
                 },
                 ...previousCourseGrades
             ]
@@ -117,9 +119,10 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
                     if (studentGrade) {
                         const { grade: studentGradeValue } = studentGrade;
                         const isInProgressAllowed = studentGradeValue === "IP" && courseAndGrade.isInprogressAllowed;
+                        const isNotTakenAllowed = studentGradeValue === null && courseAndGrade.isNotTakenAllowed;
                         const isGradeEligible = studentGradeValue !== "IP" && (grades[studentGradeValue] <= grades[courseAndGrade.grade]);
 
-                        isEligible = isInProgressAllowed || isGradeEligible;
+                        isEligible = isInProgressAllowed || isGradeEligible || isNotTakenAllowed;
                     }
                     console.log('isEligible :>> ', isEligible);
                     return { ...courseAndGrade, studentGrade: studentGrade?.grade ?? null, isEligible: isEligible };
@@ -169,6 +172,22 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
                                         <span style={{ marginRight: '0.5em' }}>In Progress Applicants</span>
                                         <Tooltip
                                             title="In progress applicants stands for students who are currently enrolled to this course."
+                                            placement="right"
+                                            sx={{ fontSize: 'smaller', marginLeft: '-1em' }}
+                                            arrow
+                                        >
+                                            <IconButton>
+                                                <HelpCenterIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </div>
+                                </TableCell>
+
+                                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginRight: '-1em' }}>
+                                        <span style={{ marginRight: '0.5em' }}>Not Taken Applicants</span>
+                                        <Tooltip
+                                            title="Not Taken applicants stands for students who do not take this course yet."
                                             placement="right"
                                             sx={{ fontSize: 'smaller', marginLeft: '-1em' }}
                                             arrow
@@ -255,6 +274,43 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
                                             clickable={true}
                                             style={{
                                                 backgroundColor: `${prevGrades.isInprogressAllowed ? (
+                                                    '#F4F27E'
+                                                ) : (
+                                                    '#F4BF96'
+                                                )}`, fontWeight: 'normal', color: 'black'
+                                            }}
+
+                                            sx={{
+                                                width: 'fit-content',
+                                                minHeight: '3rem',
+                                                height: 'auto',
+                                                '& .MuiChip-label': {
+                                                    display: 'block',
+                                                    whiteSpace: 'normal',
+                                                },
+                                                fontSize: `12px`
+                                            }}
+                                        />
+
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+
+                                        <Chip
+                                            label={prevGrades.isNotTakenAllowed ? (
+                                                'Allowed'
+                                            ) : (
+                                                'Not Allowed'
+                                            )}
+                                            variant="filled"
+                                            title={prevGrades.isNotTakenAllowed ? (
+                                                'Allowed'
+                                            ) : (
+                                                'Not Allowed'
+                                            )}
+                                            color="primary"
+                                            clickable={true}
+                                            style={{
+                                                backgroundColor: `${prevGrades.isNotTakenAllowed ? (
                                                     '#F4F27E'
                                                 ) : (
                                                     '#F4BF96'

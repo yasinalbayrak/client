@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box } from '@mui/material';
+import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Tab } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 import "../pages/font-file.css"
@@ -127,6 +127,7 @@ export default function EligibilityTable({eligibility}) {
                                     <TableCell className={classes.headerCell}>Course Code</TableCell>
                                     <TableCell className={classes.headerCell}>Minimum Required Grade</TableCell>
                                     <TableCell className={classes.headerCell}>In Progress Applicants</TableCell>
+                                    <TableCell className={classes.headerCell}>Not Taken Applicants</TableCell>
                                     <TableCell className={classes.headerCell}>Your grade</TableCell>
                                     <TableCell className={classes.headerCell}>Eligibility</TableCell>
                                     <TableCell className={classes.headerCell}>Eligibility info</TableCell>
@@ -140,6 +141,7 @@ export default function EligibilityTable({eligibility}) {
                                         </TableCell>
                                         <TableCell className={classes.tableCell}>{row.requiredLetterGrade ?? "-"}</TableCell>
                                         <TableCell className={classes.tableCell}>{row.isInProgressAllowed ? "Allowed" : "Not Allowed"}</TableCell>
+                                        <TableCell className={classes.tableCell}>{row.isNotTakenAllowed ? "Allowed" : "Not Allowed"}</TableCell>
                                         <TableCell className={classes.tableCell}>{row.studentGrade ?? "NA"}</TableCell>
                                         <TableCell className={classes.tableCell}>
                                             <Box align="center" className={row.isEligible ? classes.eligibleBox : classes.notEligibleBox}>
