@@ -682,8 +682,8 @@ function CreateAnnouncement() {
           selectedCourses,
           questions,
           announcementDetails.term,
-          announcementDetails.isDesiredLetterGradeEnabled ? announcementDetails.isInprogressAllowed : null,
-          announcementDetails.isDesiredLetterGradeEnabled ? announcementDetails.isNotTakenAllowed : null,
+          announcementDetails.isInprogressAllowed,
+          announcementDetails.isNotTakenAllowed,
           announcementDetails.section
         ).then((data) => {
           dispatch(setTerm({ term: announcementDetails.term }));
