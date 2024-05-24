@@ -140,7 +140,7 @@ export default function EligibilityTable({eligibility}) {
                                         </TableCell>
                                         <TableCell className={classes.tableCell}>{row.requiredLetterGrade ?? "-"}</TableCell>
                                         <TableCell className={classes.tableCell}>{row.isInProgressAllowed ? "Allowed" : "Not Allowed"}</TableCell>
-                                        <TableCell className={classes.tableCell}>{row.studentGrade ?? "-"}</TableCell>
+                                        <TableCell className={classes.tableCell}>{row.studentGrade ?? "NA"}</TableCell>
                                         <TableCell className={classes.tableCell}>
                                             <Box align="center" className={row.isEligible ? classes.eligibleBox : classes.notEligibleBox}>
                                                 {row.isEligible ? "Eligible" : "Not Eligible"}
