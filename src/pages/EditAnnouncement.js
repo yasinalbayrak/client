@@ -147,6 +147,7 @@ function EditAnnouncement() {
   const [open, setOpen] = React.useState(false);
   const [desiredLetterGrade, setDesiredLetterGrade] = useState({});
   const [isInprogressAllowed, setIsInprogressAllowed] = useState(false);
+  const [isNotTakenAllowed, setIsNotTakenAllowed] = useState(false);
   const [desiredCourseCode, setDesiredCourseCode] = useState("");
   const [desiredCourseList, setDesiredCourseList] = useState([]); //get courses from database
   const [desiredCourseCodeValue, setDesiredCourseCodeValue] = useState(""); // for autocomplete
@@ -233,6 +234,7 @@ function EditAnnouncement() {
       setOpen(false);
     }
     setIsInprogressAllowed(false);
+    setIsNotTakenAllowed(false);
   };
 
   function handleDesiredCourseCodeDelete() { //change here
@@ -296,7 +298,8 @@ function EditAnnouncement() {
         {
           courseCode: desiredCourseCode,
           grade: desiredLetterGrade,
-          isInprogressAllowed: isInprogressAllowed
+          isInprogressAllowed: isInprogressAllowed,
+          isNotTakenAllowed: isNotTakenAllowed
         }
       ]))
       handleClose();
@@ -571,6 +574,7 @@ function EditAnnouncement() {
             courseCode: desiredCourse.course.courseCode,
             grade: desiredCourse.grade,
             isInprogressAllowed: desiredCourse.isInprogressAllowed,
+            isNotTakenAllowed: desiredCourse.isNotTakenAllowed,
           });
           return courses;
         }, []);
@@ -589,6 +593,7 @@ function EditAnnouncement() {
           term: findTermObject,
           questions: results.questions,
           isInprogressAllowed: results.isInprogressAllowed,
+          isNotTakenAllowed: results.isNotTakenAllowed,
           isSectionEnabled: results.section != null,
           section: results.section
         };
@@ -1062,6 +1067,22 @@ function EditAnnouncement() {
                   sx={{ mt: 2, ml: 2 }}
                   disabled
                 />
+                <FormControlLabel
+
+                  value={announcementDetails.isNotTakenAllowed}
+                  onChange={(event) => {
+                    setAnnouncementDetails((prevDetails) => ({
+                      ...prevDetails,
+                      isNotTakenAllowed: event.target.checked,
+                    }));
+                  }}
+                  control={<Checkbox
+                    checked={announcementDetails.isNotTakenAllowed} />}
+
+                  label="Allow Not Taken Applicants"
+                  sx={{ mt: 2, ml: 2 }}
+                  disabled
+                  />
               </Box>
             </Grid>
             {<Grid container direction="row" justifyContent="start" alignItems="flex-start">
@@ -1388,6 +1409,27 @@ function EditAnnouncement() {
                         </Grid>
                         {error && <Alert severity="error">{error}</Alert>}
                       </FormControl>
+
+                      <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="start"
+                          alignItems="center"
+                        >
+                          <FormControlLabel
+                            value={isNotTakenAllowed}
+                            onChange={(_) => {
+                              setIsNotTakenAllowed((prev) => !prev)
+                            }}
+
+
+                            control={<Checkbox />}
+                            label="Allow Not Taken Applicants"
+                          />
+                        </Grid>
+                        {error && <Alert severity="error">{error}</Alert>}
+                      </FormControl>
                     </Box>
                   </DialogContent>
                   <DialogActions>
@@ -1455,6 +1497,21 @@ function EditAnnouncement() {
                               {"IP " + (courseSelected.isInprogressAllowed ? 'Allowed' : 'Not Allowed')}
                             </Typography>
                           </div>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <FiberManualRecordIcon
+
+                              sx={{
+
+                                color: courseSelected.isNotTakenAllowed ? 'green' : 'red',
+                                marginRight: 1,
+                              }}
+                            />
+                            {/* TODO do not enter static values */}
+                            <Typography width={`${"NT Not Allowed".length * 8}px`} variant="body2" color={courseSelected.isNotTakenAllowed ? 'textPrimary' : 'error'}>
+                              {"NT " + (courseSelected.isNotTakenAllowed ? 'Allowed' : 'Not Allowed')}
+                            </Typography>
+                          </div>
+
                         </TableCell>
                         <TableCell>
 

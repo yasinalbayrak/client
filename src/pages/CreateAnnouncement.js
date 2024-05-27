@@ -160,6 +160,7 @@ function CreateAnnouncement() {
   const [desiredCourseCodeValue, setDesiredCourseCodeValue] = useState(""); // for autocomplete
 
   const [isInprogressAllowed, setIsInprogressAllowed] = useState(false);
+  const [isNotTakenAllowed, setIsNotTakenAllowed] = useState(false);
 
   const [courseList, setcourseList] = useState([]); //get courses from database
   const [courseCode, setCourseCode] = useState(""); //used for send request as selected from list to course code
@@ -376,6 +377,7 @@ function CreateAnnouncement() {
     authInstructor: authPeople,
     desiredCourses: selectedCourses,
     isInprogressAllowed: false,
+    isNotTakenAllowed: false,
     section: null,
     isSectionEnabled: false,
     isDesiredLetterGradeEnabled: false
@@ -402,6 +404,7 @@ function CreateAnnouncement() {
           workHours: res.weeklyWorkHours,
           jobDetails: res.jobDetails,
           isInprogressAllowed: res.isInprogressAllowed === true,
+          isNotTakenAllowed: res.isNotTakenAllowed === true,
           section: res.section,
           isSectionEnabled: res.section != null,
           isDesiredLetterGradeEnabled: res.minimumRequiredGrade != null,
@@ -412,7 +415,8 @@ function CreateAnnouncement() {
         setSelectedCourses(res.previousCourseGrades.map((e) => ({
           courseCode: e.course.courseCode,
           grade: e.grade,
-          isInprogressAllowed: e.isInprogressAllowed
+          isInprogressAllowed: e.isInprogressAllowed,
+          isNotTakenAllowed: e.isNotTakenAllowed
         })))
         console.log('object :>> ', res.authorizedInstructors.map((ins) => ({
           display_name: ins.user.name + " " + ins.user.surname,
@@ -472,6 +476,7 @@ function CreateAnnouncement() {
       setOpen(false);
     }
     setIsInprogressAllowed(false);
+    setIsNotTakenAllowed(false);
   };
 
   String.prototype.removeSpaces = function () {
@@ -555,7 +560,8 @@ function CreateAnnouncement() {
         {
           courseCode: desiredCourseCode,
           grade: desiredLetterGrade,
-          isInprogressAllowed: isInprogressAllowed
+          isInprogressAllowed: isInprogressAllowed,
+          isNotTakenAllowed: isNotTakenAllowed
         }
       ]))
       handleClose();
@@ -676,7 +682,8 @@ function CreateAnnouncement() {
           selectedCourses,
           questions,
           announcementDetails.term,
-          announcementDetails.isDesiredLetterGradeEnabled ? announcementDetails.isInprogressAllowed : null,
+          announcementDetails.isInprogressAllowed,
+          announcementDetails.isNotTakenAllowed,
           announcementDetails.section
         ).then((data) => {
           dispatch(setTerm({ term: announcementDetails.term }));
@@ -1221,6 +1228,7 @@ function CreateAnnouncement() {
                   mt: 2
                 }}
               >
+                <Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150, gap: 1 }}>
                   <AutorenewIcon />
                   <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 2 }} />
@@ -1260,6 +1268,47 @@ function CreateAnnouncement() {
                       <HelpCenterIcon />
                     </IconButton>
                   </Tooltip>
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150, gap: 1 }}>
+                <AutorenewIcon />
+                <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 2 }} />
+                <FormControlLabel
+                    value={announcementDetails.isNotTakenAllowed}
+                    onChange={(event) => {
+                      setAnnouncementDetails((prevDetails) => ({
+                        ...prevDetails,
+                        isNotTakenAllowed: event.target.checked,
+                      }));
+                    }}
+                    control={<Checkbox
+                      color="success"
+                      checked={announcementDetails.isNotTakenAllowed}
+                    />}
+                    label="Allow Not Taken Applicants"
+                    labelPlacement="start"
+                    sx={{ m: 0 }}
+                  />
+
+                  <Tooltip
+                      title="Selecting this option enables not taken students to submit applications for Learning Assistantship to this course."
+                      placement="right"
+                      componentsProps={{
+                        tooltip: {
+                          sx: {
+                            backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                            color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+
+                          },
+                        },
+                      }}
+                  >
+                    <IconButton>
+                      <HelpCenterIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
                 </Box>
               </Grid>
 
@@ -1650,6 +1699,48 @@ function CreateAnnouncement() {
                             </Grid>
                             {error && <Alert severity="error">{error}</Alert>}
                           </FormControl>
+
+                          <FormControl sx={{ m: 1, minWidth: 120 }}>
+                            <Grid
+                              container
+                              direction="row"
+                              justifyContent="start"
+                              alignItems="center"
+                            >
+                              <FormControlLabel
+                                value={isNotTakenAllowed}
+                                onChange={(_) => {
+                                  setIsNotTakenAllowed((prev) => !prev)
+                                }}
+
+
+                                control={<Checkbox
+
+                                />}
+                                label="Allow Not taken Applicants"
+                              />
+                              <Tooltip
+                                  title="Selecting this option enables not taken students to submit applications for Learning Assistantship."
+                                  placement="right"
+                                  componentsProps={{
+                                    tooltip: {
+                                      sx: {
+                                        backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                                        color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+
+                                      },
+                                    },
+                                  }}
+
+                              >
+                                <IconButton>
+                                  <HelpCenterIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </Grid>
+                            {error && <Alert severity="error">{error}</Alert>}
+                          </FormControl>
                         </Box>
                       </DialogContent>
                       <DialogActions>
@@ -1737,6 +1828,38 @@ function CreateAnnouncement() {
                                 <Typography width={`${"Allowed In Progress Applicants".length * 8}px`} variant="body2"
                                   color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
                                   {(courseSelected.isInprogressAllowed ? 'Allowed In Progress Applicants' : 'Not Allowed In Progress Applicants')}
+                                </Typography>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <FiberManualRecordIcon
+                                  onClick={() => {
+
+
+                                    setSelectedCourses((prev) => {
+                                      return prev.map((course) => {
+
+                                        if (course.courseCode === courseSelected.courseCode) {
+
+                                          return {
+                                            ...course,
+                                            isNotTakenAllowed: !courseSelected.isNotTakenAllowed,
+                                          };
+                                        }
+                                        return course;
+                                      });
+                                    });
+
+                                  }}
+                                  sx={{
+                                    cursor: "pointer",
+                                    color: courseSelected.isNotTakenAllowed ? 'green' : 'red',
+                                    marginRight: 1,
+                                  }}
+                                />
+                                {/* TODO do not enter static values */}
+                                <Typography width={`${"Allowed Not Taken Applicants".length * 8}px`} variant="body2"
+                                  color={courseSelected.isNotTakenAllowed ? 'textPrimary' : 'error'}>
+                                  {(courseSelected.isNotTakenAllowed ? 'Allowed Not Taken Applicants' : 'Not Allowed Not Taken Applicants')}
                                 </Typography>
                               </div>
                             </TableCell>

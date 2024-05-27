@@ -24,6 +24,8 @@ import Popup from "../../components/popup/Popup";
 import { handleInfo } from "../../errors/GlobalErrorHandler";
 import Avatar from '@mui/material/Avatar';
 import { useNavigate } from "react-router";
+import Chip from '@mui/material/Chip';
+import { renderStatusIcon } from "../../components/excelView/DataGridView";
 
 
 
@@ -121,6 +123,10 @@ function MailingPage(props) {
 
                 handleInfo("Changes are successfully finalized and announced to accepted and rejected students.")
                 setFinalized(prev => !prev);
+                flipPopup(); 
+                navigate("/application-of/" + appId); 
+                saveEmails();
+
                 
             });
         }
@@ -178,7 +184,18 @@ function MailingPage(props) {
                                                         {row.student.user.universityId}
                                                     </TableCell>
                                                     <TableCell>{row.student.user.name + " " + row.student.user.surname}</TableCell>
-                                                    <TableCell align="center">{row.status}</TableCell>
+                                                    <TableCell align="center">
+                                                        <Chip
+                                                            variant="outlined"
+                                                            size="small"
+                                                            icon={renderStatusIcon(row.status).icon}
+                                                            label={row.status}
+                                                            sx={{
+                                                                borderColor: renderStatusIcon(row.status).color,
+                                                                color: renderStatusIcon(row.status).color
+                                                            }}
+                                                        />
+                                                    </TableCell>
                                                 </TableRow>
                                             ))}
 
@@ -227,7 +244,18 @@ function MailingPage(props) {
                                                         {row.student.user.universityId}
                                                     </TableCell>
                                                     <TableCell>{row.student.user.name + " " + row.student.user.surname}</TableCell>
-                                                    <TableCell align="center">{row.status}</TableCell>
+                                                    <TableCell align="center">
+                                                        <Chip
+                                                            variant="outlined"
+                                                            size="small"
+                                                            icon={renderStatusIcon(row.status).icon}
+                                                            label={row.status}
+                                                            sx={{
+                                                                borderColor: renderStatusIcon(row.status).color,
+                                                                color: renderStatusIcon(row.status).color
+                                                            }}
+                                                        />
+                                                    </TableCell>
                                                 </TableRow>
                                             ))}
 
@@ -321,9 +349,7 @@ function MailingPage(props) {
                         </Grid>
                     </Grid>
 
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
-                        <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={saveEmails}>Save Emails</Button>
-                    </Box>
+                    
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
                         <Button
                             variant="outlined"
@@ -346,7 +372,7 @@ function MailingPage(props) {
                 flipPopup={flipPopup}
                 title={"Confirm Announcing Final Status?"}
                 text={"If you confirm, the final status will be announced to accepted and rejected students with these email bodies.\n\n Do you want to continue?"}
-                posAction={() => { finalizeStatuss(application.applicationId); flipPopup(); navigate("/application-of/" + appId); }}
+                posAction={() => { finalizeStatuss(application.applicationId); }}
                 negAction={flipPopup}
                 posActionText={"Finalize"}
             />

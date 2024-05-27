@@ -19,7 +19,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory, getApplicationRequestsByApplicationId } from "../../apiCalls";
+import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory, getApplicationRequestsByApplicationId,resetCommitmentofAppReq } from "../../apiCalls";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
@@ -38,6 +38,7 @@ import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import Avatar from '@mui/material/Avatar';
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -171,6 +172,16 @@ function CustomRow(props) {
     setLaHistoryPage(value - 1);
   };
 
+  const resetCommitment = () => {
+    resetCommitmentofAppReq(row.applicationRequestId).then(() => {
+      row.committed = false;
+      row.forgiven = false;
+      setSnackOpen(true);
+    }).catch((_) => {
+    });
+  }
+
+
   console.log('row :>> ', row);
   return (
     <>
@@ -227,9 +238,10 @@ function CustomRow(props) {
               Status is successfully changed
             </Alert>
           </Snackbar>
+          <Box sx={{display:"flex", justifyContent:"center", alignItems:"center"}}>
           <FormControl fullWidth color={row.statusIns !== row.status ? "info" : ""} focused={row.statusIns !== row.status ? "True" : ""}>
-            <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status (!!)" : "Status"}</InputLabel>
-            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(!!)" : "Status"} onChange={handleChange}>
+            <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status (*)" : "Status"}</InputLabel>
+            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(*)" : "Status"} onChange={handleChange}>
 
               <MenuItem value={"Accepted"}>Accepted</MenuItem>
               <MenuItem value={"Rejected"}>Rejected</MenuItem>
@@ -237,7 +249,27 @@ function CustomRow(props) {
               <MenuItem value={"Waiting List"}>Waiting List</MenuItem>
             </Select>
           </FormControl>
+          {row.statusIns !== row.status ? <Tooltip
+                title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
+                placement="right"
+                sx={{ fontSize: 'small' }}
+                arrow
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                      color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 
+                    },
+                  },
+                }}
+
+              >
+                <HelpCenterIcon />
+
+              </Tooltip>: null}
+              </Box>
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
           {determineCommitmentStatus()}
@@ -317,6 +349,15 @@ function CustomRow(props) {
                   onClick={() => navigate("/profile/" + userID, { replace: false })}
                 >
                   Student Profile
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  endIcon={<RestartAltIcon />}
+                  sx={{ m: "10px" }}
+                  onClick={() => resetCommitment()}
+                >
+                  Reset Commitment
                 </Button>
               </Box>
 
@@ -599,7 +640,7 @@ function ApplicantsTable(props) {
                 Announce Final Results
               </Button>
               <Tooltip
-                title="(!!) stands for the students who have different status than the final status. (e.g. Accepted but not finalized yet.)"
+                title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
                 placement="right"
                 sx={{ fontSize: 'small' }}
                 arrow

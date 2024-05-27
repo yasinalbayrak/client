@@ -78,7 +78,7 @@ const ApplyPage = (props) => {
     { name: "Major:", val: studentInfo?.program?.majors },
     { name: "Minor:", val: studentInfo?.program?.minors },
     { name: "Year:", val: studentInfo?.year },
-    { name: `${announcementInfo?.course.courseCode} Grade:`, val: courseGrade?? "" },
+    { name: `${announcementInfo?.course.courseCode} Grade:`, val: courseGrade?? "NA" },
 
   ];
 
