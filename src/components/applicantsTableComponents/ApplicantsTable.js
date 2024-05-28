@@ -19,7 +19,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory, getApplicationRequestsByApplicationId,resetCommitmentofAppReq } from "../../apiCalls";
+import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory, getApplicationRequestsByApplicationId, resetCommitmentofAppReq, updateWorkHour } from "../../apiCalls";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
@@ -39,6 +39,7 @@ import Avatar from '@mui/material/Avatar';
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import { WorkHour } from "../../pages/CreateAnnouncement";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -113,13 +114,23 @@ function CustomRow(props) {
   const handleChange = (event) => {
     const toStatus = event.target.value
     updateApplicationRequestStatus(row.applicationRequestId, toStatus).then((res) => {
-      row.statusIns = toStatus;
+
+      props.setRows((prev)=>prev.map((each)=>{
+        if (each.applicationRequestId === row.applicationRequestId){
+          return ({
+            ...each,
+            statusIns: toStatus
+          })
+        }
+
+        return ({...each})
+      }))
       setSnackOpen(true);
       console.log(res);
     });
   };
 
-  console.log(row.applicationRequestId);
+
 
 
 
@@ -181,12 +192,30 @@ function CustomRow(props) {
     });
   }
 
+  const handleWorkHourUpdate = (e) => {
+    console.log('e.target.value :>> ', e.target.value);
+    updateWorkHour(row.applicationRequestId, e.target.value)
+      .then(()=>{
+        
+        handleInfo("Successfully updated the work hour.")
+        props.setRows((prev)=>prev.map((each)=>{
+          if (each.applicationRequestId === row.applicationRequestId){
+            return ({
+              ...each,
+              weeklyWorkHours: e.target.value
+            })
+          }
+
+          return ({...each})
+        }))
+    }).catch((_)=>{})
+  }
 
   console.log('row :>> ', row);
   return (
     <>
       <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-        <TableCell sx={{bgcolor: "#FAFAFA",  borderBottom: "none" }} align="right">
+        <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="right">
           <Avatar
             src={row.student.user.photoUrl}
             alt="Student Photo"
@@ -204,7 +233,7 @@ function CustomRow(props) {
           />
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
-          {row.transcript.studentSuId }
+          {row.transcript.studentSuId}
         </TableCell>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
           {row.student.user.name + " " + row.student.user.surname}
@@ -238,38 +267,56 @@ function CustomRow(props) {
               Status is successfully changed
             </Alert>
           </Snackbar>
-          <Box sx={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-          <FormControl fullWidth color={row.statusIns !== row.status ? "info" : ""} focused={row.statusIns !== row.status ? "True" : ""}>
-            <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status (*)" : "Status"}</InputLabel>
-            <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(*)" : "Status"} onChange={handleChange}>
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <FormControl fullWidth color={row.statusIns !== row.status ? "info" : ""} focused={row.statusIns !== row.status ? "True" : ""}>
+              <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status (*)" : "Status"}</InputLabel>
+              <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(*)" : "Status"} onChange={handleChange}>
 
-              <MenuItem value={"Accepted"}>Accepted</MenuItem>
-              <MenuItem value={"Rejected"}>Rejected</MenuItem>
-              <MenuItem value={"In Progress"}>In Progress</MenuItem>
-              <MenuItem value={"Waiting List"}>Waiting List</MenuItem>
-            </Select>
-          </FormControl>
-          {row.statusIns !== row.status ? <Tooltip
-                title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
-                placement="right"
-                sx={{ fontSize: 'small' }}
-                arrow
-                componentsProps={{
-                  tooltip: {
-                    sx: {
-                      backgroundColor: '#a4a2a2', // Change to your desired lighter color
-                      color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
-                      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                <MenuItem value={"Accepted"}>Accepted</MenuItem>
+                <MenuItem value={"Rejected"}>Rejected</MenuItem>
+                <MenuItem value={"In Progress"}>In Progress</MenuItem>
+                <MenuItem value={"Waiting List"}>Waiting List</MenuItem>
+              </Select>
+            </FormControl>
+            {row.statusIns !== row.status ? <Tooltip
+              title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
+              placement="right"
+              sx={{ fontSize: 'small' }}
+              arrow
+              componentsProps={{
+                tooltip: {
+                  sx: {
+                    backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                    color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 
-                    },
                   },
-                }}
+                },
+              }}
 
-              >
-                <HelpCenterIcon />
+            >
+              <HelpCenterIcon />
 
-              </Tooltip>: null}
-              </Box>
+            </Tooltip> : null}
+          </Box>
+        </TableCell>
+        <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} component="th" scope="row">
+          
+          <TextField
+            id="outlined-select-currency"
+            name="workHours"
+            select
+            value={row.weeklyWorkHours}
+            size="small"
+            sx={{ width: 120 }}
+            onChange={handleWorkHourUpdate}
+          >
+            {WorkHour && WorkHour.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
           {determineCommitmentStatus()}
@@ -331,35 +378,35 @@ function CustomRow(props) {
             }}>
               <Stack spacing={0} justifyContent="flex-end">
                 <LaHistoryTable
-                    LaHistory={LaHistory}
+                  LaHistory={LaHistory}
                 />
-                <Pagination count={LaHistory.totalPages} page={laHistoryPage + 1} onChange={handlePageChange}/>
+                <Pagination count={LaHistory.totalPages} page={laHistoryPage + 1} onChange={handlePageChange} />
 
               </Stack>
 
             </td>
 
 
-              <Box sx={{display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+            <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
 
-                <Button
-                  variant="outlined"
-                  endIcon={<AccountCircleIcon />}
-                  sx={{ m: "10px" }}
-                  onClick={() => navigate("/profile/" + userID, { replace: false })}
-                >
-                  Student Profile
-                </Button>
+              <Button
+                variant="outlined"
+                endIcon={<AccountCircleIcon />}
+                sx={{ m: "10px" }}
+                onClick={() => navigate("/profile/" + userID, { replace: false })}
+              >
+                Student Profile
+              </Button>
 
-                <Button
-                  variant="outlined"
-                  endIcon={<RestartAltIcon />}
-                  sx={{ m: "10px" }}
-                  onClick={() => resetCommitment()}
-                >
-                  Reset Commitment
-                </Button>
-              </Box>
+              <Button
+                variant="outlined"
+                endIcon={<RestartAltIcon />}
+                sx={{ m: "10px" }}
+                onClick={() => resetCommitment()}
+              >
+                Reset Commitment
+              </Button>
+            </Box>
 
 
           </Collapse>
@@ -382,7 +429,7 @@ function ApplicantsTable(props) {
   const dispatch = useDispatch();
   const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
   const [finalizePopupOrdinaryOpened, setFinalizePopupOrdinaryOpened] = React.useState(false);
-  const ann = props.announcement; 
+  const ann = props.announcement;
   const navigate = useNavigate();
 
   const handleSearchChange = (event) => {
@@ -429,7 +476,7 @@ function ApplicantsTable(props) {
   useEffect(() => {
     setSortedRows(sortRows([...props.rows]));
   }, [props.rows, sortOrder, gradeSortOrder, finalizeee]);
-  
+
   console.log(props.rows)
 
   const toggleSortOrder = () => {
@@ -491,7 +538,7 @@ function ApplicantsTable(props) {
         }
       });
 
-      
+
     }
     catch (error) {
       handleInfo("Error while checking the status of the students");
@@ -509,7 +556,7 @@ function ApplicantsTable(props) {
         //setSortedRows(null);
         flipPopupOrdinary();
         handleInfo("Changes are successfully finalized.")
-        
+
       });
     }
     catch (error) {
@@ -519,7 +566,7 @@ function ApplicantsTable(props) {
 
 
   return (
-    sortedRows&&<Box>
+    sortedRows && <Box>
       {isApplicantsListEmpty ? (
         <Typography variant="h6" align="center" style={{ padding: 20 }}>
           <Alert severity="info">
@@ -538,7 +585,7 @@ function ApplicantsTable(props) {
               <TableHead>
                 <TableRow sx={{ bgcolor: "#eeeeee" }}>
                   <StyledTableCell align="center" width={10}>
-                  
+
                   </StyledTableCell>
                   <StyledTableCell align="left">ID</StyledTableCell>
                   <StyledTableCell align="left">
@@ -583,6 +630,7 @@ function ApplicantsTable(props) {
                     </Box>
                   </StyledTableCell>
                   <StyledTableCell align="left" sx={{ width: "10rem" }}>Status</StyledTableCell>
+                  <StyledTableCell align="left" sx={{ width: "8rem" }}>Work Hours</StyledTableCell>
                   <StyledTableCell align="left" sx={{ width: "10rem" }}>Commitment Status</StyledTableCell>
                   <StyledTableCell align="left">Details</StyledTableCell>
 
@@ -593,6 +641,7 @@ function ApplicantsTable(props) {
                   <CustomRow
                     appId={props.appId}
                     row={row}
+                    setRows={props.setRows}
                     courseCode={props.courseCode}
                     index={index}
                     questions={props.questions}
@@ -662,7 +711,7 @@ function ApplicantsTable(props) {
             </div>
 
           </div>
-        
+
           <Popup
             opened={finalizePopupOrdinaryOpened}
             flipPopup={flipPopupOrdinary}
@@ -672,7 +721,7 @@ function ApplicantsTable(props) {
             negAction={flipPopupOrdinary}
             posActionText={"Finalize"}
           />
-          
+
 
           <Popup
             opened={finalizePopoUpOpened}

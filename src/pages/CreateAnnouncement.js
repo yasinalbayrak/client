@@ -81,6 +81,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+export  const WorkHour = [
+  { value: "PT1H", label: "1 Hour" },
+  { value: "PT2H", label: "2 Hours" },
+  { value: "PT3H", label: "3 Hours" },
+  { value: "PT4H", label: "4 Hours" },
+  { value: "PT5H", label: "5 Hours" },
+  { value: "PT6H", label: "6 Hours" },
+  { value: "PT7H", label: "7 Hours" },
+  { value: "PT8H", label: "8 Hours" },
+  { value: "PT9H", label: "9 Hours" },
+  { value: "PT10H", label: "10 Hours" },
+];
 function CreateAnnouncement() {
 
   const grades = [
@@ -97,18 +110,7 @@ function CreateAnnouncement() {
     { value: "S", label: "S" },
     { value: "W", label: "W" },
   ];
-  const WorkHour = [
-    { value: "PT1H", label: "1 Hour" },
-    { value: "PT2H", label: "2 Hours" },
-    { value: "PT3H", label: "3 Hours" },
-    { value: "PT4H", label: "4 Hours" },
-    { value: "PT5H", label: "5 Hours" },
-    { value: "PT6H", label: "6 Hours" },
-    { value: "PT7H", label: "7 Hours" },
-    { value: "PT8H", label: "8 Hours" },
-    { value: "PT9H", label: "9 Hours" },
-    { value: "PT10H", label: "10 Hours" },
-  ];
+
 
   const getColorForGrade = (grade) => {
     switch (grade) {
