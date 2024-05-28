@@ -1493,8 +1493,8 @@ function EditAnnouncement() {
                               }}
                             />
                             {/* TODO do not enter static values */}
-                            <Typography width={`${"IP Not Allowed".length * 8}px`} variant="body2" color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
-                              {"IP " + (courseSelected.isInprogressAllowed ? 'Allowed' : 'Not Allowed')}
+                            <Typography width={`${"Allowed In Progress Applicants".length * 8}px`} variant="body2" color={courseSelected.isInprogressAllowed ? 'textPrimary' : 'error'}>
+                              {(courseSelected.isInprogressAllowed ? 'Allowed In Progress Applicants' : 'Not Allowed In Progress Applicants')}
                             </Typography>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -1507,8 +1507,8 @@ function EditAnnouncement() {
                               }}
                             />
                             {/* TODO do not enter static values */}
-                            <Typography width={`${"NT Not Allowed".length * 8}px`} variant="body2" color={courseSelected.isNotTakenAllowed ? 'textPrimary' : 'error'}>
-                              {"NT " + (courseSelected.isNotTakenAllowed ? 'Allowed' : 'Not Allowed')}
+                            <Typography width={`${"Allowed Not Taken Applicants".length * 8}px`} variant="body2" color={courseSelected.isNotTakenAllowed ? 'textPrimary' : 'error'}>
+                              {(courseSelected.isNotTakenAllowed ? 'Allowed Not Taken Applicants' : 'Not Allowed Not Taken Applicants')}
                             </Typography>
                           </div>
 
