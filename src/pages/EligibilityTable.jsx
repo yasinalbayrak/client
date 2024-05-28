@@ -107,7 +107,52 @@ export const useStyles = makeStyles({
         justifyContent: "center",
         alignItems: "center",
         textAlign: "center",
-    }
+    },
+    committedBox: {
+        border: "2px solid rgba(194,233,153,1)",
+        padding: "2px 4px",
+        backgroundColor: "rgba(248,255,238,1)",
+        color: "rgba(86,156,48,1)",
+        minWidth: "90px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+    },
+    declinedBox: {
+        border: "2px solid rgba(245,190,156,1)",
+        padding: "2px 4px",
+        backgroundColor: "rgba(253,242,233,1)",
+        color: "rgba(195,69,36,1)",
+        minWidth: "90px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+    },
+    notCommittedBox: {
+        border: "2px solid rgba(255,174,0, 0.8)",
+        padding: "2px 4px",
+        backgroundColor: "rgba(250,195,1,0.13)",
+        color: "rgb(255,174,0)",
+        minWidth: "90px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+    },
+    ErrorBox: {
+        border: "2px solid rgba(255,174,0, 0.8)",
+        padding: "2px 4px",
+        backgroundColor: "rgba(245,241,241,0.59)",
+        color: "rgb(91,90,86)",
+        minWidth: "90px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+    },
+
 
 });
 

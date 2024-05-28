@@ -40,6 +40,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { WorkHour } from "../../pages/CreateAnnouncement";
+import { useStyles } from '../../pages/EligibilityTable';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -57,17 +58,32 @@ function CustomRow(props) {
   const [laHistoryPage, setLaHistoryPage] = React.useState(0);
   const [requiredCourses, setRequiredCourses] = React.useState([]);
   const photoUrl = useSelector((state) => state.user.photoUrl);
+  const classes = useStyles();
   console.log(row);
   console.log(ann);
 
 
+  const getCommitStatus = (status) => {
+    switch (status) {
+      case "Committed":
+        return classes.committedBox;
+      case "Declined":
+        return classes.declinedBox;
+      case "Not Committed":
+        return classes.notCommittedBox;
+      case "Error":
+        return classes.errorBox;
+      default:
+        return;
+    }
+  };
   const determineCommitmentStatus = () => {
     if (row.committed && row.forgiven) {
       return 'Error';  // Both true
     } else if (row.committed && !row.forgiven) {
       return 'Committed';  // Committed true, forgiven false
     } else if (!row.committed && row.forgiven) {
-      return 'Forgiven';  // Committed false, forgiven true
+      return 'Declined';  // Committed false, forgiven true
     } else {
       return 'Not Committed';  // Both false
     }
@@ -319,7 +335,9 @@ function CustomRow(props) {
           </TextField>
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} component="th" scope="row">
-          {determineCommitmentStatus()}
+          <span className={getCommitStatus(determineCommitmentStatus())}>
+            {determineCommitmentStatus()}
+          </span>
         </TableCell>
         <TableCell sx={{ borderBottom: "none" }} align="right">
           <IconButton
