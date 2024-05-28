@@ -4,7 +4,7 @@ import { DataGrid, GridToolbar, GridToolbarExportContainer, GridToolbarContainer
 import CustomNoRowsOverlay from './CustomNoRowsOverlay';
 import { Button, Chip, MenuItem } from '@mui/material';
 import * as XLSX from 'xlsx';
-import { LETTER_GRADES, STATUS_OPTIONS } from '../../constants/appConstants';
+import { LETTER_GRADES, STATUS_OPTIONS,COMMITSTAT_OPTIONS } from '../../constants/appConstants';
 import { CustomFilterPanel } from './CustomFilterPanel';
 import ChangeStatusButton from './ChangeStatusButton';
 import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
@@ -12,6 +12,10 @@ import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import InfoIcon from '@mui/icons-material/Info';
 import SaveIcon from '@mui/icons-material/Save';
+import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
+import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined';
+import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
+import ReportGmailerrorredOutlinedIcon from '@mui/icons-material/ReportGmailerrorredOutlined';
 import { finalizeStatus, updateApplicationRequestStatus, updateApplicationRequestStatusMultiple } from '../../apiCalls';
 import Popup from '../popup/Popup';
 import { handleInfo } from '../../errors/GlobalErrorHandler';
@@ -69,6 +73,49 @@ export const renderStatusIcon = (status) => {
             }
     }
 }
+export const renderCommitStatusIcon = (c_status) => {
+    const green = "#2e7d32"
+    const red = "#c62828"
+    const blue = "#0288d1"
+    const gray = "#545252"
+    switch (c_status) {
+        case COMMITSTAT_OPTIONS[0]:
+            return {
+                icon: <HandshakeOutlinedIcon
+                    color={green}
+                />,
+                color: green
+            }
+        case COMMITSTAT_OPTIONS[1]:
+            return {
+                icon: <ThumbDownAltOutlinedIcon
+                    color={red}
+                />,
+                color: red
+            }
+        case COMMITSTAT_OPTIONS[2]:
+            return {
+                icon: <ReportGmailerrorredOutlinedIcon
+                    color={gray}
+                />,
+                color: gray
+            }
+        case COMMITSTAT_OPTIONS[3]:
+            return {
+                icon: <HourglassEmptyOutlinedIcon
+                    color={blue}
+                />,
+                color: blue
+            }
+        default:
+            return {
+                icon: <InfoIcon
+                    color={blue}
+                />,
+                color: blue
+            }
+    }
+}
 
 const defaultColumns = [
     {
@@ -100,6 +147,19 @@ const defaultColumns = [
         width: 160,
         type: 'string',
         editable: false,
+        renderCell: (params) => (
+            <Chip
+                variant="outlined"
+                size="small"
+                icon={renderCommitStatusIcon(params.value).icon}
+                label={params.value}
+                sx={{
+                    borderColor: renderCommitStatusIcon(params.value).color,
+                    color: renderCommitStatusIcon(params.value).color
+                }}
+
+            />
+        )
     },
     { field: 'id', headerName: 'ID', width: 90, type: "string" },
     {
@@ -378,7 +438,7 @@ export default function DataGridView({ applicationRequests, announcement, setApp
             } else if (appReq.committed && !appReq.forgiven) {
                 commitStatus = 'Committed';
             } else if (!appReq.committed && appReq.forgiven) {
-                commitStatus = 'Forgiven';
+                commitStatus = 'Declined';
             } else {
                 commitStatus = 'Not Committed';
             }

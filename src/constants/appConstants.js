@@ -5,6 +5,13 @@ export const STATUS_OPTIONS = [
     "Waiting List"
 ];
 
+export const COMMITSTAT_OPTIONS=[
+    "Committed",
+    "Declined",
+    "Error",
+    "Not Committed",
+
+];
 export const STR_OPERATORS = [
     "Contains",
     "Equals",
