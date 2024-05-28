@@ -731,6 +731,23 @@ async function withdrawApplication(applicationReqId){
   }
 }
 
+async function updateWorkHour(applicationReqId, duration){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/updateWorkHour/" + applicationReqId + "?duration=" + duration,
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
 
 async function acceptAllRequestByAppId(applicationId){
   try {
@@ -879,6 +896,6 @@ export {
   forgivenAppReq,
   getStudentLaHistory,
   updateAppEmail,
-  resetCommitmentofAppReq
-
+  resetCommitmentofAppReq,
+  updateWorkHour
 };

@@ -12,9 +12,10 @@ import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import InfoIcon from '@mui/icons-material/Info';
 import SaveIcon from '@mui/icons-material/Save';
-import { finalizeStatus, updateApplicationRequestStatus, updateApplicationRequestStatusMultiple } from '../../apiCalls';
+import { finalizeStatus, updateApplicationRequestStatus, updateApplicationRequestStatusMultiple, updateWorkHour } from '../../apiCalls';
 import Popup from '../popup/Popup';
 import { handleInfo } from '../../errors/GlobalErrorHandler';
+import { WorkHour } from '../../pages/CreateAnnouncement';
 
 function CustomColumnMenu(props) {
     return (
@@ -116,6 +117,14 @@ const defaultColumns = [
         width: 150,
         editable: false,
         type: 'string'
+    },
+    {
+        field: 'workHours',
+        headerName: 'Work Hours',
+        width: 150,
+        editable: true,
+        type: 'singleSelect',
+        valueOptions: WorkHour
     },
     {
         field: 'majors',
@@ -275,7 +284,7 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
 );
 
 export default function DataGridView({ applicationRequests, announcement, setApplicationRequests }) {
-    console.log("announcement: ",announcement)
+    console.log("announcement: ", announcement)
     const [allRows, setAllRows] = React.useState([]);
     const [rows, setRows] = React.useState([]);
     const [columns, setColumns] = React.useState([...defaultColumns]);
@@ -357,7 +366,7 @@ export default function DataGridView({ applicationRequests, announcement, setApp
             console.log("deneemeee", appReq);//delete
             const nameParts = appReq.transcript.studentName.split(/\s+/);
             const lname = nameParts.pop();
-            const fname = nameParts.join(' '); 
+            const fname = nameParts.join(' ');
 
             const QA = appReq.qandA.reduce((acc, qa, idx) => ({
                 ...acc,
@@ -369,7 +378,7 @@ export default function DataGridView({ applicationRequests, announcement, setApp
 
             const courseAndGrades = announcement.previousCourseGrades.reduce((acc, cg) => ({
                 ...acc,
-                [`${cg.course.courseCode} Grade`]: appReq.transcript.course.find((coursefind)=>cg.course.courseCode===coursefind.courseCode).grade,
+                [`${cg.course.courseCode} Grade`]: appReq.transcript.course.find((coursefind) => cg.course.courseCode === coursefind.courseCode).grade,
             }), {});
 
             let commitStatus;
@@ -390,9 +399,10 @@ export default function DataGridView({ applicationRequests, announcement, setApp
                 id: appReq.student.user.universityId,
                 firstName: fname,
                 lastName: lname,
+                workHours: appReq.weeklyWorkHours,
                 majors: appReq.transcript.program.majors,
                 minors: appReq.transcript.program.minors,
-                mainCourseGrade: appReq.transcript.course.find((coursefind)=>announcement.course.courseCode===coursefind.courseCode).grade,
+                mainCourseGrade: appReq.transcript.course.find((coursefind) => announcement.course.courseCode === coursefind.courseCode).grade,
                 gpa: appReq.transcript.cumulativeGPA,
                 ...courseAndGrades,
                 ...QA,
@@ -422,6 +432,26 @@ export default function DataGridView({ applicationRequests, announcement, setApp
                 console.error("Failed to update status:", error);
                 throw new Error("Update failed. Reverting changes on the frontend.");
             }
+        }
+
+        if (newRow.workHours !== oldRow.workHours) {
+
+            updateWorkHour(newRow.appReqId, newRow.workHours)
+                .then(() => {
+
+                    handleInfo("Successfully updated the work hour.")
+                    setApplicationRequests((prev) => prev.map((each) => {
+                        if (each.applicationRequestId === newRow.appReqId) {
+                            return ({
+                                ...each,
+                                weeklyWorkHours: newRow.workHours
+                            })
+                        }
+
+                        return ({ ...each })
+                    }))
+                }).catch((_) => { })
+
         }
         return newRow;
     }, []);
