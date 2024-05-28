@@ -137,15 +137,8 @@ const defaultColumns = [
         width: 150,
         editable: false,
         type: 'string'
-    },
-    {
-        field: 'mainCourseGrade',
-        headerName: 'CS 305 Grade',
-        width: 150,
-        editable: false,
-        type: 'singleSelect',
-        valueOptions: LETTER_GRADES
-    },
+    }
+
 
 
 ];
@@ -282,6 +275,7 @@ const GridToolbarExport = ({ csvOptions, printOptions, ...other }) => (
 );
 
 export default function DataGridView({ applicationRequests, announcement, setApplicationRequests }) {
+    console.log("announcement: ",announcement)
     const [allRows, setAllRows] = React.useState([]);
     const [rows, setRows] = React.useState([]);
     const [columns, setColumns] = React.useState([...defaultColumns]);
@@ -345,7 +339,19 @@ export default function DataGridView({ applicationRequests, announcement, setApp
             type: 'singleSelect',
             valueOptions: LETTER_GRADES
         }))
-        setColumns([...defaultColumns, ...dynamicColsCourseAndGrades, ...dynamicColsQAndA]);
+        setColumns([
+
+            ...defaultColumns,
+            ...dynamicColsCourseAndGrades,
+            {
+                field: 'mainCourseGrade',
+                headerName: `${announcement.course.courseCode} Grade`,
+                width: 150,
+                editable: false,
+                type: 'singleSelect',
+                valueOptions: LETTER_GRADES
+            },
+            ...dynamicColsQAndA]);
 
         const updatedRows = applicationRequests.map((appReq) => {
             console.log("deneemeee", appReq);//delete
@@ -363,7 +369,7 @@ export default function DataGridView({ applicationRequests, announcement, setApp
 
             const courseAndGrades = announcement.previousCourseGrades.reduce((acc, cg) => ({
                 ...acc,
-                [`${cg.course.courseCode} Grade`]: cg.grade // TODO
+                [`${cg.course.courseCode} Grade`]: appReq.transcript.course.find((coursefind)=>cg.course.courseCode===coursefind.courseCode).grade,
             }), {});
 
             let commitStatus;
@@ -386,7 +392,7 @@ export default function DataGridView({ applicationRequests, announcement, setApp
                 lastName: lname,
                 majors: appReq.transcript.program.majors,
                 minors: appReq.transcript.program.minors,
-                mainCourseGrade: "A", // TODO
+                mainCourseGrade: appReq.transcript.course.find((coursefind)=>announcement.course.courseCode===coursefind.courseCode).grade,
                 gpa: appReq.transcript.cumulativeGPA,
                 ...courseAndGrades,
                 ...QA,
