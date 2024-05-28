@@ -16,7 +16,6 @@ import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
 import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined';
 import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
 import ReportGmailerrorredOutlinedIcon from '@mui/icons-material/ReportGmailerrorredOutlined';
-import { finalizeStatus, updateApplicationRequestStatus, updateApplicationRequestStatusMultiple } from '../../apiCalls';
 import { finalizeStatus, updateApplicationRequestStatus, updateApplicationRequestStatusMultiple, updateWorkHour } from '../../apiCalls';
 import Popup from '../popup/Popup';
 import { handleInfo } from '../../errors/GlobalErrorHandler';
