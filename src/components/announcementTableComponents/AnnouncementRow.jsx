@@ -359,7 +359,7 @@ export default function AnnouncementRow({ key, data, tabValue, userName, navigat
             {course.courseCode + " Job Details"}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText sx={{ wordWrap: "break-word" }}>
+            <DialogContentText sx={{ whiteSpace: 'pre-wrap', wordWrap: "break-word" }}>
               {jobDetails}
             </DialogContentText>
           </DialogContent>
