@@ -59,6 +59,7 @@ function CustomRow(props) {
   const [requiredCourses, setRequiredCourses] = React.useState([]);
   const photoUrl = useSelector((state) => state.user.photoUrl);
   const classes = useStyles();
+  const [resetOpened, setResetOpened] = React.useState(false);
   console.log(row);
   console.log(ann);
 
@@ -226,6 +227,10 @@ function CustomRow(props) {
         }))
     }).catch((_)=>{})
   }
+
+  const flipPopupReset = () => {
+    setResetOpened((prev) => !prev);
+  };
 
   console.log('row :>> ', row);
   return (
@@ -420,12 +425,22 @@ function CustomRow(props) {
                 variant="outlined"
                 endIcon={<RestartAltIcon />}
                 sx={{ m: "10px" }}
-                onClick={() => resetCommitment()}
+                onClick={() => flipPopupReset()}
                 disabled={determineCommitmentStatus() === "Not Committed"}
               >
                 Reset Commitment
               </Button>
             </Box>
+
+            <Popup
+            opened={resetOpened}
+            flipPopup={flipPopupReset}
+            title={"Confirm Resetting the Commitment?"}
+            text={"Resetting the commitment will make the student's commitment status as 'Not Committed'. Are you sure you want to reset the commitment?"}
+            posAction={() => { resetCommitment(); flipPopupReset(); }}
+            negAction={flipPopupReset}
+            posActionText={"Reset Commitment"}
+          />
 
 
           </Collapse>
