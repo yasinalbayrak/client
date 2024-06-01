@@ -1351,30 +1351,7 @@ function CreateAnnouncement() {
                       boxSizing: 'border-box',
                     }}
                   />
-                  {/* <TextareaAutosize
-                  rows={1}
-                  size="small"
-                  name="jobDetails"
-                  multiline
-                  value={announcementDetails.jobDetails}
-                  onChange={handleInput}
-                  placeholder="Enter the job details..."
-                  style={{
-                    width: "100%",
-                    border: "1px solid #c1c4bc",
-                    borderRadius: "5px",
-                    padding: "12px",
-                    outline: "none",
-                    fontFamily: "Arial, sans-serif",
-                    fontSize: "15px",
-                    resize: "vertical",
-                    minHeight: "40px",
-                    maxHeight: "900px",
-                    boxSizing: "border-box",
-                    minWidth: "450px"
 
-                  }}
-                /> */}
                   <Typography variant="body2" style={{ width: '100%', fontSize: '11px' }}>
                     Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
                     <br />
