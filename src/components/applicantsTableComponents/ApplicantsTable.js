@@ -421,6 +421,7 @@ function CustomRow(props) {
                 endIcon={<RestartAltIcon />}
                 sx={{ m: "10px" }}
                 onClick={() => resetCommitment()}
+                disabled={determineCommitmentStatus() === "Not Committed"}
               >
                 Reset Commitment
               </Button>
