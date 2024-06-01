@@ -635,8 +635,8 @@ export default function DataGridView({ applicationRequests, announcement, setApp
             <Popup
                 opened={resetCommitPopoUpOpened}
                 flipPopup={flipResetCommitPopup}
-                title={"Confirm Announcing Final Status?"}
-                text={"If there would be a final status announcement, all the students will be notified about their final status. Are you sure you want to announce the final status?\n Final status can be done again after this action."}
+                title={"Confirm Resetting Commitment Status?"}
+                text={"If you reset the commitment status, the student will be able to commit again. Are you sure you want to reset the commitment status?"}
                 posAction={() => {
                     console.log("resetCommit");
                     resetCommitment();
