@@ -1261,6 +1261,7 @@ function CreateAnnouncement() {
                             backgroundColor: '#a4a2a2', // Change to your desired lighter color
                             color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
                             boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                            fontSize: '14px'
 
                           },
                         },
@@ -1301,6 +1302,7 @@ function CreateAnnouncement() {
                             backgroundColor: '#a4a2a2', // Change to your desired lighter color
                             color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
                             boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                            fontSize: '14px'
 
                           },
                         },
@@ -1688,6 +1690,7 @@ function CreateAnnouncement() {
                                         backgroundColor: '#a4a2a2', // Change to your desired lighter color
                                         color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
                                         boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                        fontSize: '14px'
 
                                       },
                                     },
@@ -1730,6 +1733,7 @@ function CreateAnnouncement() {
                                         backgroundColor: '#a4a2a2', // Change to your desired lighter color
                                         color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
                                         boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                        fontSize: '14px'
 
                                       },
                                     },
