@@ -12,6 +12,11 @@ export const COMMITSTAT_OPTIONS=[
     "Not Committed",
 
 ];
+
+export const RESET_COMMIT =[
+    "Reset Commitment Status"
+];
+
 export const STR_OPERATORS = [
     "Contains",
     "Equals",

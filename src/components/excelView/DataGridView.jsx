@@ -2,9 +2,9 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar, GridToolbarExportContainer, GridToolbarContainer, GridCsvExportMenuItem, GridPrintExportMenuItem, GridToolbarDensitySelector, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarQuickFilter, useGridApiContext, GridColumnMenu, GridFooter, GridFooterContainer, gridFilterActiveItemsSelector, gridFilterModelSelector } from '@mui/x-data-grid';
 import CustomNoRowsOverlay from './CustomNoRowsOverlay';
-import { Button, Chip, MenuItem } from '@mui/material';
+import { Button, Chip, IconButton, MenuItem } from '@mui/material';
 import * as XLSX from 'xlsx';
-import { LETTER_GRADES, STATUS_OPTIONS,COMMITSTAT_OPTIONS } from '../../constants/appConstants';
+import { LETTER_GRADES, STATUS_OPTIONS,COMMITSTAT_OPTIONS, RESET_COMMIT } from '../../constants/appConstants';
 import { CustomFilterPanel } from './CustomFilterPanel';
 import ChangeStatusButton from './ChangeStatusButton';
 import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
@@ -16,7 +16,7 @@ import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
 import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined';
 import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
 import ReportGmailerrorredOutlinedIcon from '@mui/icons-material/ReportGmailerrorredOutlined';
-import { finalizeStatus, updateApplicationRequestStatus, updateApplicationRequestStatusMultiple, updateWorkHour } from '../../apiCalls';
+import { finalizeStatus, updateApplicationRequestStatus, updateApplicationRequestStatusMultiple, updateWorkHour, resetCommitmentofAppReq } from '../../apiCalls';
 import Popup from '../popup/Popup';
 import { handleInfo } from '../../errors/GlobalErrorHandler';
 import { WorkHour } from '../../pages/CreateAnnouncement';
@@ -146,8 +146,9 @@ const defaultColumns = [
         field: 'commitstatus',
         headerName: 'Commitment Status',
         width: 160,
-        type: 'string',
-        editable: false,
+        type: 'singleSelect',
+        valueOptions: RESET_COMMIT,
+        editable: true,
         renderCell: (params) => (
             <Chip
                 variant="outlined"
@@ -356,6 +357,10 @@ export default function DataGridView({ applicationRequests, announcement, setApp
     });
     const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({});
     const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
+    const [resetCommitPopoUpOpened, setResetCommitPopoUpOpened] = React.useState(false);
+    const [appReqId, setAppReqId] = React.useState(null);
+    const [oldCommit, setOldCommit] = React.useState(null);
+    const [oldForgive, setOldForgive] = React.useState(null);
 
     const [isFilterPanelOpen, setFilterPanelOpen] = React.useState(false);
     const [selectionModel, setSelectionModel] = React.useState([]);
@@ -373,6 +378,37 @@ export default function DataGridView({ applicationRequests, announcement, setApp
         const padding = 0;
         return Math.max(0, 150);
     };
+
+    const resetCommitment = () => {
+        resetCommitmentofAppReq(appReqId).then(() => {
+            setApplicationRequests((prev) => prev.map((each) => {
+                if (each.applicationRequestId === appReqId) {
+                    return ({
+                        ...each,
+                        committed: false,
+                        forgiven: false
+                    })
+                }
+                return ({ ...each })
+            }))
+        }).catch((_) => {
+        });
+      }
+
+     const takeActionBack = () => {
+        setApplicationRequests((prev) => prev.map((each) => {
+            if (each.applicationRequestId === appReqId) {
+                return ({
+                    ...each,
+                    commitstatus: oldCommit,
+                    forgiven: oldForgive
+                })
+            }
+            return ({ ...each })
+        })
+        )
+    }
+
 
     console.log('announcement :>> ', announcement);
 
@@ -467,6 +503,8 @@ export default function DataGridView({ applicationRequests, announcement, setApp
                 ...courseAndGrades,
                 ...QA,
                 appReqId: appReq.applicationRequestId,
+                committed: appReq.committed,
+                forgiven: appReq.forgiven
             };
         });
         setAllRows(updatedRows);
@@ -513,11 +551,24 @@ export default function DataGridView({ applicationRequests, announcement, setApp
                 }).catch((_) => { })
 
         }
+
+        if (newRow.commitstatus !== oldRow.commitstatus) {
+            if (newRow.commitstatus === "Reset Commitment Status") {
+                setOldCommit(oldRow.committed);
+                setOldForgive(oldRow.forgiven);
+                setResetCommitPopoUpOpened(true);
+                setAppReqId(newRow.appReqId);
+            }
+        }
         return newRow;
     }, []);
     const flipPopup = () => {
         setFinalizePopoUpOpened((prev) => !prev);
     };
+
+    const flipResetCommitPopup = () => {
+        setResetCommitPopoUpOpened((prev) => !prev);
+    }
 
     return (
         <Box sx={{ height: "auto", width: '90%' }}>
@@ -579,6 +630,24 @@ export default function DataGridView({ applicationRequests, announcement, setApp
                 }}
                 negAction={flipPopup}
                 posActionText={"Finalize"}
+            />
+
+            <Popup
+                opened={resetCommitPopoUpOpened}
+                flipPopup={flipResetCommitPopup}
+                title={"Confirm Announcing Final Status?"}
+                text={"If there would be a final status announcement, all the students will be notified about their final status. Are you sure you want to announce the final status?\n Final status can be done again after this action."}
+                posAction={() => {
+                    console.log("resetCommit");
+                    resetCommitment();
+                    flipResetCommitPopup();
+
+                }}
+                negAction={() => {
+                    takeActionBack();
+                    flipResetCommitPopup();
+                }}
+                posActionText={"Reset the commitment status"}
             />
         </Box>
     );
