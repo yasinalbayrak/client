@@ -9,8 +9,10 @@ import { getAllAnnouncementsOfInstructor, getApplicationRequestsByStudentId, get
 import AnnouncementsTableHead from "./AnnouncementsTableHead"
 import AnnouncementRow from "./AnnouncementRow"
 import { WidthFull } from "@mui/icons-material";
-import { Box } from "@mui/material";
+import {Box, Divider, Grid, Typography} from "@mui/material";
 import { TextField, Input } from '@mui/material';
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
 
 export default function AnnouncementTable(props) {
   const [rows, setRows] = useState([]);
@@ -71,7 +73,7 @@ export default function AnnouncementTable(props) {
             ...(isInstructor ? { application: app } : {})
           };
         });
-        console.log(modifiedUserApplications)
+        console.log("deneme",modifiedUserApplications)
         setUserApplications(modifiedUserApplications);
         setUserApplications2(modifiedUserApplications);
       } catch (error) {
@@ -186,13 +188,38 @@ export default function AnnouncementTable(props) {
         : item
     ));
   };
-  
 
+
+  const uncommittedAcceptedCount = userApplications.filter(
+      (app) => !app.committed &&!app.forgiven && app.status === "Accepted"
+  ).length;
 
   
   return (
 
     <Box sx={{ width: '100%' }}>
+      {!isInstructor && uncommittedAcceptedCount!==0 && (
+          <Grid item>
+            <Divider />
+            <br />
+            <Stack sx={{ width: '56%' }} spacing={2}>
+              <Alert severity="warning">
+                You have {uncommittedAcceptedCount} application(s) that have been accepted for Learning Assistantship. You need to decide them on the{' '}
+                <Typography
+                    component="span"
+                    variant="body2"
+                    color="primary"
+                    onClick={() => navigate('/commit')}
+                    sx={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue' }}
+                >
+                  Commitments page
+                </Typography>.
+              </Alert>
+            </Stack>
+            <br />
+          </Grid>
+      )}
+
       <TableContainer component={Paper} sx={{
         maxHeight: '75vh', overflow: "auto",
         scrollbarWidth: "none", '&::-webkit-scrollbar': { display: 'none' }, '&-ms-overflow-style:': { display: 'none' }
