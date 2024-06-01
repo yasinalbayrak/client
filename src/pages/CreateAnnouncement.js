@@ -747,19 +747,7 @@ function CreateAnnouncement() {
           <Grid item xs={8}
             sx={{ backgroundColor: "none" }}
           >
-            {/* <Typography
-              variant="h5"
-              sx={{
-                textDecoration: "underline",
-                marginY: 2,
-                fontWeight: "bold",
-              }}
-            >
-              Announcement Details:
-            </Typography> */}
 
-
-            {/*             TERM INPUT          */}
             {activeStep === 0 && (<>
               <Grid
                 container
