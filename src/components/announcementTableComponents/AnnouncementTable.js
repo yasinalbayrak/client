@@ -202,7 +202,7 @@ export default function AnnouncementTable(props) {
           <Grid item>
             <Divider />
             <br />
-            <Stack sx={{ width: '56%' }} spacing={2}>
+            <Stack sx={{ width: '72%' }} spacing={2}>
               <Alert severity="warning">
                 You have {uncommittedAcceptedCount} application(s) that have been accepted for Learning Assistantship. You need to decide them on the{' '}
                 <Typography
