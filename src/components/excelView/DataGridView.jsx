@@ -16,10 +16,12 @@ import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
 import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined';
 import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
 import ReportGmailerrorredOutlinedIcon from '@mui/icons-material/ReportGmailerrorredOutlined';
-import { finalizeStatus, updateApplicationRequestStatus, updateApplicationRequestStatusMultiple, updateWorkHour, resetCommitmentofAppReq } from '../../apiCalls';
+import { finalizeStatus, updateApplicationRequestStatus, updateApplicationRequestStatusMultiple, updateWorkHour, resetCommitmentofAppReq, getApplicationRequestsByApplicationId } from '../../apiCalls';
 import Popup from '../popup/Popup';
 import { handleInfo } from '../../errors/GlobalErrorHandler';
 import { WorkHour } from '../../pages/CreateAnnouncement';
+import { useParams } from 'react-router';
+import { useNavigate } from "react-router-dom";
 
 function CustomColumnMenu(props) {
     return (
@@ -282,7 +284,7 @@ function CustomFooter(props) {
                 variant="contained"
                 disableElevation
                 endIcon={<SaveIcon />}
-                onClick={props.flipPopup}
+                onClick={props.isThereAnyAcceptedOrRejected}
                 sx={{
                     ml: 2,
                     fontSize: "small"
@@ -358,12 +360,17 @@ export default function DataGridView({ applicationRequests, announcement, setApp
     const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({});
     const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
     const [resetCommitPopoUpOpened, setResetCommitPopoUpOpened] = React.useState(false);
+    const [mailingPopoUpOpened, setMailingPopoUpOpened] = React.useState(false);
     const [appReqId, setAppReqId] = React.useState(null);
     const [oldCommit, setOldCommit] = React.useState(null);
     const [oldForgive, setOldForgive] = React.useState(null);
 
     const [isFilterPanelOpen, setFilterPanelOpen] = React.useState(false);
     const [selectionModel, setSelectionModel] = React.useState([]);
+
+    const {appId} = useParams();
+
+    const navigate = useNavigate();
 
     const handleSelectionChange = (newSelectionModel) => {
         setSelectionModel(newSelectionModel);
@@ -570,6 +577,32 @@ export default function DataGridView({ applicationRequests, announcement, setApp
         setResetCommitPopoUpOpened((prev) => !prev);
     }
 
+    const flipMailingPopup = () => {
+        setMailingPopoUpOpened((prev) => !prev);
+    }
+
+    const isThereAnyAcceptedOrRejected = () => {
+        try {
+          getApplicationRequestsByApplicationId(appId).then((results) => {
+            console.log(results.applicationRequests);
+            const res = results.applicationRequests.some((row) => (row.statusIns === "Accepted" && row.status !== "Accepted") || (row.statusIns === "Rejected" && row.status !== "Rejected"));
+    
+            if (res) {
+              flipMailingPopup();
+    
+            }
+            else {
+              flipPopup();
+            }
+          });
+    
+    
+        }
+        catch (error) {
+          handleInfo("Error while checking the status of the students");
+        }
+      }
+
     return (
         <Box sx={{ height: "auto", width: '90%' }}>
 
@@ -588,7 +621,7 @@ export default function DataGridView({ applicationRequests, announcement, setApp
                 }}
                 slotProps={{
                     toolbar: { columns: columns, setRows: setRows, allRows: allRows },
-                    footer: { selectionModel: selectionModel, setSelectionModel: setSelectionModel, setAllRows: setAllRows, setRows: setRows, flipPopup: flipPopup, setApplicationRequests: setApplicationRequests }
+                    footer: { selectionModel: selectionModel, setSelectionModel: setSelectionModel, setAllRows: setAllRows, setRows: setRows, flipPopup: flipPopup, setApplicationRequests: setApplicationRequests, isThereAnyAcceptedOrRejected: isThereAnyAcceptedOrRejected },
                 }}
                 processRowUpdate={handleProcessRowUpdate}
                 rowSelectionModel={selectionModel}
@@ -630,6 +663,16 @@ export default function DataGridView({ applicationRequests, announcement, setApp
                 }}
                 negAction={flipPopup}
                 posActionText={"Finalize"}
+            />
+
+            <Popup
+                opened={mailingPopoUpOpened}
+                flipPopup={flipMailingPopup}
+                title={"Confirm Announcing Final Status?"}
+                text={"You will be directed to the Finalization page "}
+                posAction={() => { flipMailingPopup(); navigate("/mails/" + appId) }}
+                negAction={flipMailingPopup}
+                posActionText={"Go to Page"}
             />
 
             <Popup
