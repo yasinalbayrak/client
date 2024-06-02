@@ -40,25 +40,63 @@ const EditQuestionPage = (props) => {
         return ans;
       });
     }
-
+    function checkDisplay3(question) {
+      console.log('checking question :>> ', question);
+      if ((question.depends.length === 0)) {
+          return true;
+      }
+  
+      // Conditional Question
+      if (answers.length <= 0) {
+          return false;
+      }
+  
+      let index = questions.findIndex((q) => q.questionId === question.depends[0].dependsOnQuestion);
+      console.log('index :>> ', index);
+      if (index === -1) {
+          return false; 
+      }
+  
+      const allowsMultipleAnswers = questions[index].allowMultipleAnswers;
+      console.log('allowsMultipleAnswers :>> ', allowsMultipleAnswers);
+      if (allowsMultipleAnswers) {
+          return question.depends.map(c => c.dependsOnChoice).some(element => {
+              return answers[index].includes(element)
+          });
+      } else {
+          console.log('answers[index] :>> ', answers[index]);
+          return question.depends.map(c => c.dependsOnChoice).some(element => {
+              return  answers[index] === element;
+          })
+      }
+  }
 
       const onSubmit = async () => {
         try {
           console.log('answers :>> ', answers);
-          if (answers.length !== questions.length) {
+          if (answers.length !== questions.filter(e=> checkDisplay3(e)).length) {
             throw new Error("Not all questions have answers");
           }
           
           var validator = 0;
+
+          let updQuestions = Array.from(questions);
+          console.log('updQuestions :>> ', updQuestions);
+          
+    
+          updQuestions.map((eachQ, idx) => !checkDisplay3(eachQ) && answers.splice(idx, 1))
+          updQuestions = updQuestions.filter(e=> checkDisplay3(e));
+          console.log('updQuestions :>> ', updQuestions);
+          console.log('answersss :>> ', answers);
           const modifiedAnswers = answers.map((answer, idx) => {
             validator++
-            const qType = questions[idx].type;
-      
-            if (!answer || (typeof answer === 'string' && answer.trim() === "")) {
+            const qType = updQuestions[idx].type;
+            console.log('answer DEBUGG :>> ', answer);
+            if ((answer == null)|| (typeof answer === 'string' && answer.trim() === "")) {
               throw new Error(`Answer for question ${idx + 1} is missing`);
             }
       
-            console.log('answer :>> ', answer);
+            
       
             switch (qType) {
               case "MULTIPLE_CHOICE":
@@ -66,7 +104,7 @@ const EditQuestionPage = (props) => {
                   throw new Error(`Multiple choice answer for question ${idx + 1} is empty`);
                 }
       
-                return questions[idx].allowMultipleAnswers ? 
+                return updQuestions[idx].allowMultipleAnswers ? 
                        answer.reduce((accumulator, currentValue) => accumulator + currentValue.toString(), "") : 
                        answer.toString();
       
@@ -80,7 +118,7 @@ const EditQuestionPage = (props) => {
             
           });
     
-          if(validator !== questions.length){
+          if(validator !== updQuestions.length){
             throw new Error("Not all questions have answers");
           }
       
@@ -96,7 +134,10 @@ const EditQuestionPage = (props) => {
           
         } catch (error) {
           console.error("Submission error:", error.message);
-          toast.info("Complete all the questions before completing the application.");
+          toast.info("Complete all the questions before completing the application.", {
+            containerId: "1618",
+            closeOnClick: true,
+          });
         }
       };
     

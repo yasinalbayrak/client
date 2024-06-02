@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export  const WorkHour = [
+export const WorkHour = [
   { value: "PT1H", label: "1 Hour" },
   { value: "PT2H", label: "2 Hours" },
   { value: "PT3H", label: "3 Hours" },
@@ -366,7 +366,6 @@ function CreateAnnouncement() {
   const timeZoneOffset = 3 * 60 * 60 * 1000;
   const adjustedDate = new Date(currentDate.getTime() + timeZoneOffset);
   const formattedDate = adjustedDate.toISOString().split('T')[0];
-  console.log(formattedDate)
 
   const [announcementDetails, setAnnouncementDetails] = useState({
     term: {},
@@ -399,7 +398,7 @@ function CreateAnnouncement() {
       getAnnouncement(copyFromAppId).then(res => {
         setAnnouncementDetails(prev => ({
           ...prev,
-          
+
           course_code: res.course.courseCode,
           lastApplicationDate: "",
           lastApplicationTime: "",
@@ -640,9 +639,7 @@ function CreateAnnouncement() {
   const handleStep = (step) => () => {
     setActiveStep(step);
   };
-  useEffect(() => {
-    console.log('announcementDetails?.authInstructor :>> ', announcementDetails?.authInstructor);
-  }, [announcementDetails?.authInstructor])
+
   const handleComplete = () => {
 
     if (activeStep === steps.length - 1) {
@@ -658,6 +655,30 @@ function CreateAnnouncement() {
         });
         return;
       }
+      if (questions.find(q => !q.question || q.question.trim() === "")) {
+        handleInfo("Please ensure all questions are completed or remove any that are not in use.");
+        return;
+      }
+      if (questions.map(q => q.choices).find(ch => ch.type === "MULTIPLE_CHOICE" && (!ch.choice || ch.choice.trim() === ""))) {
+        handleInfo("Please ensure all choices are completed or remove any that are not in use.");
+        return;
+      }
+      let dupFound = false;
+
+      for (let q of questions) {
+        let choices = q.choices.map(ch => ch.choice);
+        if (choices.length !== new Set(choices).size) {
+          dupFound = true;
+          break;
+        }
+      }
+
+      if (dupFound) {
+        handleInfo("Please ensure all choices are unique for each question.");
+        return;
+      }
+
+
 
       if (
         announcementDetails.course_code &&
@@ -1231,28 +1252,28 @@ function CreateAnnouncement() {
                 }}
               >
                 <Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150, gap: 1 }}>
-                  <AutorenewIcon />
-                  <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 2 }} />
+                  <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150, gap: 1 }}>
+                    <AutorenewIcon />
+                    <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 2 }} />
 
-                  <FormControlLabel
-                    value={announcementDetails.isInprogressAllowed}
-                    onChange={(event) => {
-                      setAnnouncementDetails((prevDetails) => ({
-                        ...prevDetails,
-                        isInprogressAllowed: event.target.checked,
-                      }));
-                    }}
-                    control={<Checkbox
-                      color="success"
-                      checked={announcementDetails.isInprogressAllowed}
-                    />}
-                    label="Allow In Progress Applicants"
-                    labelPlacement="start"
-                    sx={{ m: 0 }}
-                  />
+                    <FormControlLabel
+                      value={announcementDetails.isInprogressAllowed}
+                      onChange={(event) => {
+                        setAnnouncementDetails((prevDetails) => ({
+                          ...prevDetails,
+                          isInprogressAllowed: event.target.checked,
+                        }));
+                      }}
+                      control={<Checkbox
+                        color="success"
+                        checked={announcementDetails.isInprogressAllowed}
+                      />}
+                      label="Allow In Progress Applicants"
+                      labelPlacement="start"
+                      sx={{ m: 0 }}
+                    />
 
-                  <Tooltip
+                    <Tooltip
                       title="Selecting this option enables currently enrolled students to submit applications for Learning Assistantship to this course."
                       placement="right"
                       componentsProps={{
@@ -1265,34 +1286,34 @@ function CreateAnnouncement() {
                           },
                         },
                       }}
-                  >
-                    <IconButton>
-                      <HelpCenterIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
+                    >
+                      <IconButton>
+                        <HelpCenterIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150, gap: 1 }}>
-                <AutorenewIcon />
-                <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 2 }} />
-                <FormControlLabel
-                    value={announcementDetails.isNotTakenAllowed}
-                    onChange={(event) => {
-                      setAnnouncementDetails((prevDetails) => ({
-                        ...prevDetails,
-                        isNotTakenAllowed: event.target.checked,
-                      }));
-                    }}
-                    control={<Checkbox
-                      color="success"
-                      checked={announcementDetails.isNotTakenAllowed}
-                    />}
-                    label="Allow Not Taken Applicants"
-                    labelPlacement="start"
-                    sx={{ m: 0 }}
-                  />
+                  <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150, gap: 1 }}>
+                    <AutorenewIcon />
+                    <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 2 }} />
+                    <FormControlLabel
+                      value={announcementDetails.isNotTakenAllowed}
+                      onChange={(event) => {
+                        setAnnouncementDetails((prevDetails) => ({
+                          ...prevDetails,
+                          isNotTakenAllowed: event.target.checked,
+                        }));
+                      }}
+                      control={<Checkbox
+                        color="success"
+                        checked={announcementDetails.isNotTakenAllowed}
+                      />}
+                      label="Allow Not Taken Applicants"
+                      labelPlacement="start"
+                      sx={{ m: 0 }}
+                    />
 
-                  <Tooltip
+                    <Tooltip
                       title="Selecting this option enables not taken students to submit applications for Learning Assistantship to this course."
                       placement="right"
                       componentsProps={{
@@ -1305,12 +1326,12 @@ function CreateAnnouncement() {
                           },
                         },
                       }}
-                  >
-                    <IconButton>
-                      <HelpCenterIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
+                    >
+                      <IconButton>
+                        <HelpCenterIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </Box>
               </Grid>
 
@@ -1680,18 +1701,18 @@ function CreateAnnouncement() {
                                 label="Allow In Progress Applicants"
                               />
                               <Tooltip
-                                  title="Selecting this option enables currently enrolled students to submit applications for Learning Assistantship."
-                                  placement="right"
-                                  componentsProps={{
-                                    tooltip: {
-                                      sx: {
-                                        backgroundColor: '#a4a2a2', // Change to your desired lighter color
-                                        color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
-                                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                title="Selecting this option enables currently enrolled students to submit applications for Learning Assistantship."
+                                placement="right"
+                                componentsProps={{
+                                  tooltip: {
+                                    sx: {
+                                      backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                                      color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                                      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 
-                                      },
                                     },
-                                  }}
+                                  },
+                                }}
 
                               >
                                 <IconButton>
@@ -1722,18 +1743,18 @@ function CreateAnnouncement() {
                                 label="Allow Not taken Applicants"
                               />
                               <Tooltip
-                                  title="Selecting this option enables not taken students to submit applications for Learning Assistantship."
-                                  placement="right"
-                                  componentsProps={{
-                                    tooltip: {
-                                      sx: {
-                                        backgroundColor: '#a4a2a2', // Change to your desired lighter color
-                                        color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
-                                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                title="Selecting this option enables not taken students to submit applications for Learning Assistantship."
+                                placement="right"
+                                componentsProps={{
+                                  tooltip: {
+                                    sx: {
+                                      backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                                      color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                                      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 
-                                      },
                                     },
-                                  }}
+                                  },
+                                }}
 
                               >
                                 <IconButton>
@@ -1894,47 +1915,47 @@ function CreateAnnouncement() {
           <Box sx={{ width: "100%", display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
             <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={(theme) => ({
-                  mr: 1,
-                  border: '1px solid',
-                  borderColor: activeStep === 0 ? '#d3d3d3' : 'black', // Lighter gray when disabled, black when not
-                  borderRadius: '4px',
-                })}
+              color="inherit"
+              disabled={activeStep === 0}
+              onClick={handleBack}
+              sx={(theme) => ({
+                mr: 1,
+                border: '1px solid',
+                borderColor: activeStep === 0 ? '#d3d3d3' : 'black', // Lighter gray when disabled, black when not
+                borderRadius: '4px',
+              })}
             >
               Back
             </Button>
 
             <Button
-                onClick={handleComplete}
-                disabled={
-                    activeStep === 0 &&
-                    (
-                        (Object.keys(announcementDetails.term).length < 0) ||
-                        (courseCode ?? "").trim() === "" ||
-                        !announcementDetails.workHours ||
-                        !(announcementDetails.lastApplicationDate && announcementDetails.lastApplicationTime)
-                    )
-                }
-                sx={(theme) => ({
-                  border: '1px solid',
-                  borderColor: (
-                      activeStep === 0 &&
-                      (
-                          (Object.keys(announcementDetails.term).length < 0) ||
-                          (courseCode ?? "").trim() === "" ||
-                          !announcementDetails.workHours ||
-                          !(announcementDetails.lastApplicationDate && announcementDetails.lastApplicationTime)
-                      )
-                  ) ? '#d3d3d3' : 'black', // Lighter gray when disabled, black when not
-                  borderRadius: '4px',
-                })}
+              onClick={handleComplete}
+              disabled={
+                activeStep === 0 &&
+                (
+                  (Object.keys(announcementDetails.term).length < 0) ||
+                  (courseCode ?? "").trim() === "" ||
+                  !announcementDetails.workHours ||
+                  !(announcementDetails.lastApplicationDate && announcementDetails.lastApplicationTime)
+                )
+              }
+              sx={(theme) => ({
+                border: '1px solid',
+                borderColor: (
+                  activeStep === 0 &&
+                  (
+                    (Object.keys(announcementDetails.term).length < 0) ||
+                    (courseCode ?? "").trim() === "" ||
+                    !announcementDetails.workHours ||
+                    !(announcementDetails.lastApplicationDate && announcementDetails.lastApplicationTime)
+                  )
+                ) ? '#d3d3d3' : 'black', // Lighter gray when disabled, black when not
+                borderRadius: '4px',
+              })}
             >
               {activeStep === steps.length - 1
-                  ? 'Create Application'
-                  : 'Continue'}
+                ? 'Create Application'
+                : 'Continue'}
             </Button>
           </Box>
         </Grid>

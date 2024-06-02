@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import BackButton from "../../components/buttons/BackButton";
-import { Box, Grid, Tab, TableBody } from "@mui/material";
+import { Alert, Box, Grid, Tab, TableBody } from "@mui/material";
 import { useActionData } from "react-router";
 import { useParams } from "react-router";
 import { getAnnouncement, getApplicationRequestsByApplicationId, updateAppEmail, finalizeStatus } from "../../apiCalls";
@@ -27,11 +27,22 @@ import { useNavigate } from "react-router";
 import Chip from '@mui/material/Chip';
 import { renderStatusIcon } from "../../components/excelView/DataGridView";
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import TextEditor from "../textEditor/TextEditory";
 
+import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 
-
-
-
+const dummyRows = [
+    { student: { user: { universityId: 'U001', name: 'John', surname: 'Doe', photoUrl: 'https://via.placeholder.com/50' } }, status: 'Rejected', statusIns: 'Accepted' },
+    { student: { user: { universityId: 'U002', name: 'Jane', surname: 'Smith', photoUrl: 'https://via.placeholder.com/50' } }, status: 'Rejected', statusIns: 'Accepted' },
+    { student: { user: { universityId: 'U003', name: 'Jim', surname: 'Beam', photoUrl: 'https://via.placeholder.com/50' } }, status: 'In Progress', statusIns: 'Rejected' },
+    { student: { user: { universityId: 'U004', name: 'Jack', surname: 'Daniels', photoUrl: 'https://via.placeholder.com/50' } }, status: 'In Progress', statusIns: 'Rejected' },
+    { student: { user: { universityId: 'U001', name: 'John', surname: 'Doe', photoUrl: 'https://via.placeholder.com/50' } }, status: 'Rejected', statusIns: 'Accepted' },
+    { student: { user: { universityId: 'U002', name: 'Jane', surname: 'Smith', photoUrl: 'https://via.placeholder.com/50' } }, status: 'Rejected', statusIns: 'Accepted' },
+    { student: { user: { universityId: 'U003', name: 'Jim', surname: 'Beam', photoUrl: 'https://via.placeholder.com/50' } }, status: 'In Progress', statusIns: 'Rejected' },
+    { student: { user: { universityId: 'U004', name: 'Jack', surname: 'Daniels', photoUrl: 'https://via.placeholder.com/50' } }, status: 'In Progress', statusIns: 'Rejected' }
+];
 function MailingPage(props) {
 
     const { appId } = useParams();
@@ -40,11 +51,13 @@ function MailingPage(props) {
     const [application, setApplication] = React.useState(null);
     const [acc, setAcc] = React.useState(null);
     const [rej, setRej] = React.useState(null);
+    const [changes, setChanges] = React.useState(dummyRows);
     const [accMail, setAccMail] = React.useState("");
     const [rejMail, setRejMail] = React.useState("");
     const [finalizePopoUpOpened, setFinalizePopoUpOpened] = React.useState(false);
     const [finalized, setFinalized] = React.useState(false);
     const navigate = useNavigate();
+    const [value, setValue] = React.useState('');
 
     useEffect(() => {
 
@@ -72,6 +85,7 @@ function MailingPage(props) {
             const rejectedStudents = rows.filter((row) => row.statusIns === "Rejected" && row.status != "Rejected");
             setAcc(acceptedStudents);
             setRej(rejectedStudents);
+            setChanges(acceptedStudents.concat(rejectedStudents));
             console.log("acceptedStudents", acceptedStudents);
             console.log("rejectedStudents", rejectedStudents);
         }
@@ -123,11 +137,11 @@ function MailingPage(props) {
 
                 handleInfo("Changes are successfully finalized and announced to accepted and rejected students.")
                 setFinalized(prev => !prev);
-                flipPopup(); 
-                navigate("/application-of/" + appId); 
+                flipPopup();
+                navigate("/application-of/" + appId);
                 saveEmails();
 
-                
+
             });
         }
         catch (error) {
@@ -142,13 +156,12 @@ function MailingPage(props) {
             <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
                 <Grid item><BackButton to={"/application-of/" + appId} /></Grid>
 
-                <Box sx={{ p: 5, mx: 20, maxHeight: 300 }}>
+                <Box >
 
-                    <Grid container direction="row" alignItems="center" justifyContent="space-between">
-
-                        <Grid item>
+                    <Grid container direction="row" alignItems="flex-start" justifyContent="stretch" spacing={5}>
+                        <Grid item xs={6}>
                             <Box>
-                                <Typography align="center" variant="h5" sx={{}}>Accepted Students</Typography>
+                                <Typography align="center" variant="h5" sx={{ mb: 2 }}>Accepted & Rejected Students</Typography>
                                 <TableContainer component={Paper}>
                                     <Table aria-label="simple table">
                                         <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
@@ -156,12 +169,12 @@ function MailingPage(props) {
                                                 <TableCell></TableCell>
                                                 <TableCell sx={{ fontWeight: 'bold' }}>Student ID</TableCell>
                                                 <TableCell sx={{ fontWeight: 'bold' }}>Student Name</TableCell>
-                                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Previous Status</TableCell>
+                                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status Change</TableCell>
                                             </TableRow>
                                         </TableHead>
 
                                         <TableBody>
-                                            {acc && acc.map((row, index) => (
+                                            {changes && changes.map((row, index) => (
                                                 <TableRow key={index}>
                                                     <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="right">
                                                         <Avatar
@@ -195,64 +208,15 @@ function MailingPage(props) {
                                                                 color: renderStatusIcon(row.status).color
                                                             }}
                                                         />
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-
-                                        </TableBody>
-
-                                    </Table>
-                                </TableContainer>
-                            </Box>
-                        </Grid>
-
-                        <Grid item>
-                            <Box>
-                                <Typography align="center" variant="h5" sx={{}}>Rejected Students</Typography>
-                                <TableContainer component={Paper}>
-                                    <Table aria-label="simple table">
-                                        <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
-                                            <TableRow>
-                                                <TableCell></TableCell>
-                                                <TableCell sx={{ fontWeight: 'bold' }}>Student ID</TableCell>
-                                                <TableCell sx={{ fontWeight: 'bold' }}>Student Name</TableCell>
-                                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Previous Status</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-
-                                        <TableBody>
-                                            {rej && rej.map((row, index) => (
-                                                <TableRow key={index}>
-                                                    <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="right">
-                                                        <Avatar
-                                                            src={row.student.user.photoUrl}
-                                                            alt="Student Photo"
-                                                            sx={{ width: 50, height: 50 }}
-                                                            slotProps={{
-                                                                img: {
-                                                                    style: {
-                                                                        padding: "0px",
-                                                                        height: '100%',
-                                                                        width: '100%',
-                                                                        objectFit: 'fill',
-                                                                    }
-                                                                }
-                                                            }}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell component="th" scope="row">
-                                                        {row.student.user.universityId}
-                                                    </TableCell>
-                                                    <TableCell>{row.student.user.name + " " + row.student.user.surname}</TableCell>
-                                                    <TableCell align="center">
+                                                        <TrendingFlatIcon sx={{ mx: 2 }} />
                                                         <Chip
                                                             variant="outlined"
                                                             size="small"
-                                                            icon={renderStatusIcon(row.status).icon}
-                                                            label={row.status}
+                                                            icon={renderStatusIcon(row.statusIns).icon}
+                                                            label={row.statusIns}
                                                             sx={{
-                                                                borderColor: renderStatusIcon(row.status).color,
-                                                                color: renderStatusIcon(row.status).color
+                                                                borderColor: renderStatusIcon(row.statusIns).color,
+                                                                color: renderStatusIcon(row.statusIns).color
                                                             }}
                                                         />
                                                     </TableCell>
@@ -264,92 +228,68 @@ function MailingPage(props) {
                                     </Table>
                                 </TableContainer>
                             </Box>
-
-                        </Grid>
-                    </Grid>
-
-
-                </Box>
-
-                <Box sx={{ p: 5 }}>
-
-                    <Grid container direction="row" alignItems="center" justifyContent="space-between">
-
-                        <Grid item>
-                            <Box sx={{ ml: 10 }}>
-                                <Typography align="center" variant="h5" sx={{}}>Accepted Mail Edit</Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150, gap: 1 }}>
-                                    <BorderColorOutlinedIcon />
-
-                                    <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 2 }} />
-
-
-
-                                    <TextareaAutosize
-                                        minRows={3}
-                                        maxRows={6}
-                                        name="jobDetails"
-                                        value={accMail}
-                                        placeholder="Enter Accept Mail Content"
-                                        onChange={handleAccMailChange}
-                                        style={{
-                                            minWidth: '400px',
-                                            border: '1px solid #c1c4bc',
-                                            borderRadius: '5px',
-                                            padding: '12px',
-                                            fontFamily: 'Arial, sans-serif',
-                                            fontSize: '15px',
-                                            resize: 'vertical',
-                                            boxSizing: 'border-box',
-                                        }}
-                                    />
-
-
-
-                                </Box>
-                            </Box>
                         </Grid>
 
-                        <Grid item>
-                            <Box sx={{ mr: 10 }}>
-                                <Typography align="center" variant="h5" sx={{ ml: 2 }}>Rejected Mail Edit</Typography>
+                        <Grid item xs={6}>
+
+                            <Grid item>
+                                <Grid
+                                    container
+                                    justifyContent="start"
+                                    alignItems="center"
+                                    sx={{ width: "100%"}}
+                                    mb={2} 
+                                    ml={5}
+                                >
+                                    <Grid item xs={12} md={7}>
+                                        <Alert variant="outlined" severity="info">
+                                            <span style={{fontStyle: "italic"}}> Supported user data fields:</span> [:course:], [:fullname:], [:firstname:], [:lastname:]
+                                        </Alert>
+                                    </Grid>
+                                </Grid>
 
                                 <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150, gap: 1 }}>
-                                    <BorderColorOutlinedIcon />
+                                    <BorderColorOutlinedIcon sx={{ color: "green" }} />
 
-                                    <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 2 }} />
+                                    <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 2, color: "green", borderColor: "green" }} />
+                                    <Box>
 
 
-
-                                    <TextareaAutosize
-                                        minRows={3}
-                                        maxRows={6}
-                                        name="jobDetails"
-                                        value={rejMail}
-                                        placeholder="Enter Accept Mail Content"
-                                        onChange={handleRejMailChange}
-                                        style={{
-                                            minWidth: '400px',
-                                            border: '1px solid #c1c4bc',
-                                            borderRadius: '5px',
-                                            padding: '12px',
-                                            fontFamily: 'Arial, sans-serif',
-                                            fontSize: '15px',
-                                            resize: 'vertical',
-                                            boxSizing: 'border-box',
-                                        }}
-                                    />
-
+                                        <Typography align="start" color="green" variant="h6" sx={{}}>Mail for Accepted Students</Typography>
+                                        <TextEditor theme="snow" value={accMail} setValue={setAccMail} bg={"white"} bc={"green"} id={1} />
+                                    </Box>
 
 
                                 </Box>
 
-                            </Box>
+                            </Grid>
 
+                            <Grid item sx={{ mt: 2 }}>
+                                <Box>
+
+
+                                    <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150, gap: 1 }}>
+                                        <BorderColorOutlinedIcon sx={{ color: "red" }} />
+
+                                        <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 2, borderColor: "red" }} />
+                                        <Box>
+                                            <Typography align="start" color="error" variant="h6">Mail for Rejected Students</Typography>
+                                            <TextEditor theme="snow" value={rejMail} setValue={setRejMail} bg={"white"} bc={"red"} id={2} />
+                                        </Box>
+
+
+
+
+                                    </Box>
+
+                                </Box>
+
+                            </Grid>
                         </Grid>
+
                     </Grid>
 
-                    
+
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
                         <Button
                             variant="outlined"

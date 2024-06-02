@@ -71,7 +71,7 @@ const QuestionAnswer = ({ question, answer, qNo }) => {
             {question.type === 'MULTIPLE_CHOICE' ? (
               <FormControl component="fieldset" style={{ width: "100%" }}>
                 <FormGroup>
-                  {question.choices.map((choice, index) => (
+                  {question.choices.map(e=>e.choice).map((choice, index) => (
                     <FormControlLabel
                       key={index}
                       control={

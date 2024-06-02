@@ -32,6 +32,7 @@ const QuestionPage = (props) => {
   const data = useRef();
   const isLoading = useRef();
   const answerCallback = (value, idx) => {
+  
     console.log('value :>> ', value);
     console.log('idx :>> ', idx);
     setAnswers((answers) => {
@@ -40,17 +41,58 @@ const QuestionPage = (props) => {
       return ans;
     });
   }
+  function checkDisplay2(question) {
+    console.log('checking question :>> ', question);
+    if ((question.depends.length === 0)) {
+        return true;
+    }
+
+    // Conditional Question
+    if (answers.length <= 0) {
+        return false;
+    }
+
+    let index = questions.findIndex((q) => q.questionId === question.depends[0].dependsOnQuestion);
+    console.log('index :>> ', index);
+    if (index === -1) {
+        return false; 
+    }
+
+    const allowsMultipleAnswers = questions[index].allowMultipleAnswers;
+    console.log('allowsMultipleAnswers :>> ', allowsMultipleAnswers);
+    if (allowsMultipleAnswers) {
+        return question.depends.map(c => c.dependsOnChoice).some(element => {
+            return answers[index].includes(element)
+        });
+    } else {
+        console.log('answers[index] :>> ', answers[index]);
+        return question.depends.map(c => c.dependsOnChoice).some(element => {
+            return  answers[index] === element;
+        })
+    }
+}
   const onSubmit = async () => {
     try {
       console.log('answers :>> ', answers);
-      if (answers.length !== questions.length) {
+      if (answers.length !== questions.filter(e=> checkDisplay2(e)).length) {
         throw new Error("Not all questions have answers");
       }
 
       var validator = 0;
+      console.log('"-----------------" :>> ', "-----------------");
+      console.log('questions :>> ', questions);
+      let updQuestions = Array.from(questions);
+      console.log('updQuestions :>> ', updQuestions);
+      
+
+      updQuestions.map((eachQ, idx) => !checkDisplay2(eachQ) && answers.splice(idx, 1))
+      updQuestions = updQuestions.filter(e=> checkDisplay2(e));
+      console.log('updQuestions :>> ', updQuestions);
+      console.log('answersss :>> ', answers);
+    
       const modifiedAnswers = answers.map((answer, idx) => {
         validator++
-        const qType = questions[idx].type;
+        const qType = updQuestions[idx].type;
         console.log('log1', !answer)
         console.log('log2', (typeof answer === 'string' && answer.trim() === ""))
 
@@ -66,7 +108,7 @@ const QuestionPage = (props) => {
               throw new Error(`Multiple choice answer for question ${idx + 1} is empty`);
             }
 
-            return questions[idx].allowMultipleAnswers ?
+            return updQuestions[idx].allowMultipleAnswers ?
               answer.reduce((accumulator, currentValue) => accumulator + currentValue.toString(), "") :
               answer.toString();
 
@@ -80,7 +122,7 @@ const QuestionPage = (props) => {
 
       });
 
-      if (validator !== questions.length) {
+      if (validator !== updQuestions.length) {
         throw new Error("Not all questions have answers");
       }
 
@@ -96,7 +138,10 @@ const QuestionPage = (props) => {
 
     } catch (error) {
       console.error("Submission error:", error.message);
-      toast.info("Complete all the questions before completing the application.");
+      toast.info("Complete all the questions before completing the application.",{
+        containerId: "1618",
+        closeOnClick: true,
+      });
     }
   };
 
@@ -136,24 +181,27 @@ const QuestionPage = (props) => {
 
   return (
     <>
-      {(!announcementInfo) ? (<div>Loading...</div>) :
+      {(!announcementInfo) || (!questions) || !(questions.length > 0) ? (<div>Loading...</div>) :
         (
           <Box sx={{ display: "flex" }}>
             <Sidebar></Sidebar>
             <Box component="main" sx={{ flexGrow: 1, m: 3 }}>
               <BackButton to={`/apply/${id}`} />
               <AppBarHeader />
+
               <Grid container direction="column" alignItems="center" justifyContent="center" paddingY={2}>
                 <Grid item>
                   <Typography variant="h4">{announcementInfo.course.courseCode} LA Application</Typography>
                   <Divider></Divider>
                 </Grid>
 
+
                 <Grid item>
                   <Typography variant="h5">Questions:</Typography>
                 </Grid>
                 <QuestionComponent
                   questions={questions}
+                  setQuestionsAndAnswers={setQuestionsAndAnswers}
                   answers={answers}
                   answerCallback={answerCallback}
                   edit={false}

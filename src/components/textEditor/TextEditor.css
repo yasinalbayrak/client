@@ -1,0 +1,41 @@
+.resizable-editor {
+  resize: vertical;
+  overflow: hidden;
+  min-height: 200px;
+  max-height: 800px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 20px 0;
+}
+
+.quill {
+  border-color: green !important;
+  color:black;
+
+
+}
+
+
+.ql-container {
+  min-height: 70px;
+}
+.ql-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ql-toolbar .ql-formats {
+  display: flex;
+  flex-wrap: wrap;
+  flex-basis: 100%;
+  justify-content: flex-start;
+  
+}
+
+.highlight {
+  background-color: yellow !important;
+  font-weight: bold !important;
+  text-decoration: underline !important;
+}
+
+
