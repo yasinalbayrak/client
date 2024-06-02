@@ -1,12 +1,34 @@
+import { useDispatch } from 'react-redux';
+import react from 'react';
 import { toast } from 'react-toastify';
+import { logout } from "../apiCalls";
 
 export default function handleError(error) {
+ 
   if (error.response.status === 401) {
+    
+    const url = window.location.href;
     toast.error("Please login again.", {
       containerId: "1618",
       closeOnClick: true,
     });
-    window.location.replace("*");
+    if (url.indexOf("pro2") === -1) {
+      window.location.replace("http://localhost:3000/build/");
+    }else{
+      window.location.replace("http:pro2-dev.sabanciuniv.edu/build/");
+      toast.error("Please login again.", {
+        containerId: "1618",
+        closeOnClick: true,
+      });
+    }
+    //console.log(window.location.toString());
+    //window.location.replace("*");
+    // const url = window.location.href;
+    // console.log("URL is:" + url);
+    // const encodedURL = encodeURIComponent(url);
+    // const casLoginBaseURL = "https://login.sabanciuniv.edu/cas/login?service=";
+    // const casLoginURL = casLoginBaseURL + encodedURL;
+    // window.location.replace(casLoginURL);
   }
   if (error.response) {
     //console.log(error.response);

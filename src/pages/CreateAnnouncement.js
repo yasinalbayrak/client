@@ -398,7 +398,7 @@ function CreateAnnouncement() {
       getAnnouncement(copyFromAppId).then(res => {
         setAnnouncementDetails(prev => ({
           ...prev,
-
+          
           course_code: res.course.courseCode,
           lastApplicationDate: "",
           lastApplicationTime: "",
@@ -639,7 +639,9 @@ function CreateAnnouncement() {
   const handleStep = (step) => () => {
     setActiveStep(step);
   };
-
+  useEffect(() => {
+    console.log('announcementDetails?.authInstructor :>> ', announcementDetails?.authInstructor);
+  }, [announcementDetails?.authInstructor])
   const handleComplete = () => {
 
     if (activeStep === steps.length - 1) {
@@ -768,19 +770,7 @@ function CreateAnnouncement() {
           <Grid item xs={8}
             sx={{ backgroundColor: "none" }}
           >
-            {/* <Typography
-              variant="h5"
-              sx={{
-                textDecoration: "underline",
-                marginY: 2,
-                fontWeight: "bold",
-              }}
-            >
-              Announcement Details:
-            </Typography> */}
 
-
-            {/*             TERM INPUT          */}
             {activeStep === 0 && (<>
               <Grid
                 container
@@ -1282,6 +1272,7 @@ function CreateAnnouncement() {
                             backgroundColor: '#a4a2a2', // Change to your desired lighter color
                             color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
                             boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                            fontSize: '14px'
 
                           },
                         },
@@ -1322,6 +1313,7 @@ function CreateAnnouncement() {
                             backgroundColor: '#a4a2a2', // Change to your desired lighter color
                             color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
                             boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                            fontSize: '14px'
 
                           },
                         },
@@ -1370,30 +1362,7 @@ function CreateAnnouncement() {
                       boxSizing: 'border-box',
                     }}
                   />
-                  {/* <TextareaAutosize
-                  rows={1}
-                  size="small"
-                  name="jobDetails"
-                  multiline
-                  value={announcementDetails.jobDetails}
-                  onChange={handleInput}
-                  placeholder="Enter the job details..."
-                  style={{
-                    width: "100%",
-                    border: "1px solid #c1c4bc",
-                    borderRadius: "5px",
-                    padding: "12px",
-                    outline: "none",
-                    fontFamily: "Arial, sans-serif",
-                    fontSize: "15px",
-                    resize: "vertical",
-                    minHeight: "40px",
-                    maxHeight: "900px",
-                    boxSizing: "border-box",
-                    minWidth: "450px"
 
-                  }}
-                /> */}
                   <Typography variant="body2" style={{ width: '100%', fontSize: '11px' }}>
                     Remaining Characters: {MAX_WORD_COUNT - announcementDetails.jobDetails.length}
                     <br />
@@ -1701,18 +1670,19 @@ function CreateAnnouncement() {
                                 label="Allow In Progress Applicants"
                               />
                               <Tooltip
-                                title="Selecting this option enables currently enrolled students to submit applications for Learning Assistantship."
-                                placement="right"
-                                componentsProps={{
-                                  tooltip: {
-                                    sx: {
-                                      backgroundColor: '#a4a2a2', // Change to your desired lighter color
-                                      color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
-                                      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                  title="Selecting this option enables currently enrolled students to submit applications for Learning Assistantship."
+                                  placement="right"
+                                  componentsProps={{
+                                    tooltip: {
+                                      sx: {
+                                        backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                                        color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                        fontSize: '14px'
 
+                                      },
                                     },
-                                  },
-                                }}
+                                  }}
 
                               >
                                 <IconButton>
@@ -1743,18 +1713,19 @@ function CreateAnnouncement() {
                                 label="Allow Not taken Applicants"
                               />
                               <Tooltip
-                                title="Selecting this option enables not taken students to submit applications for Learning Assistantship."
-                                placement="right"
-                                componentsProps={{
-                                  tooltip: {
-                                    sx: {
-                                      backgroundColor: '#a4a2a2', // Change to your desired lighter color
-                                      color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
-                                      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                  title="Selecting this option enables not taken students to submit applications for Learning Assistantship."
+                                  placement="right"
+                                  componentsProps={{
+                                    tooltip: {
+                                      sx: {
+                                        backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                                        color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                        fontSize: '14px'
 
+                                      },
                                     },
-                                  },
-                                }}
+                                  }}
 
                               >
                                 <IconButton>

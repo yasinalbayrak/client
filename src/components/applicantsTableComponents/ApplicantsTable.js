@@ -59,6 +59,7 @@ function CustomRow(props) {
   const [requiredCourses, setRequiredCourses] = React.useState([]);
   const photoUrl = useSelector((state) => state.user.photoUrl);
   const classes = useStyles();
+  const [resetOpened, setResetOpened] = React.useState(false);
   console.log(row);
   console.log(ann);
 
@@ -227,6 +228,10 @@ function CustomRow(props) {
     }).catch((_)=>{})
   }
 
+  const flipPopupReset = () => {
+    setResetOpened((prev) => !prev);
+  };
+
   console.log('row :>> ', row);
   return (
     <>
@@ -274,50 +279,50 @@ function CustomRow(props) {
 
         <TableCell sx={{ borderBottom: "none" }} align="left">
           <Snackbar
-            open={snackOpen}
-            autoHideDuration={3000}
-            onClose={handleSnackClose}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+              open={snackOpen}
+              autoHideDuration={3000}
+              onClose={handleSnackClose}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
           >
             <Alert onClose={handleSnackClose} severity="success">
               Status is successfully changed
             </Alert>
           </Snackbar>
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", position: 'relative' }}>
             <FormControl fullWidth color={row.statusIns !== row.status ? "info" : ""} focused={row.statusIns !== row.status ? "True" : ""}>
               <InputLabel id="demo-simple-select-label">{row.statusIns !== row.status ? "Status (*)" : "Status"}</InputLabel>
               <Select labelId="demo-simple-select-label" id="demo-simple-select" value={row.statusIns} label={row.statusIns !== row.status ? "Status(*)" : "Status"} onChange={handleChange}>
-
                 <MenuItem value={"Accepted"}>Accepted</MenuItem>
                 <MenuItem value={"Rejected"}>Rejected</MenuItem>
                 <MenuItem value={"In Progress"}>In Progress</MenuItem>
                 <MenuItem value={"Waiting List"}>Waiting List</MenuItem>
               </Select>
             </FormControl>
-            {row.statusIns !== row.status ? <Tooltip
-              title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
-              placement="right"
-              sx={{ fontSize: 'small' }}
-              arrow
-              componentsProps={{
-                tooltip: {
-                  sx: {
-                    backgroundColor: '#a4a2a2', // Change to your desired lighter color
-                    color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
-                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-
-                  },
-                },
-              }}
-
-            >
-              <HelpCenterIcon />
-
-            </Tooltip> : null}
+            {row.statusIns !== row.status ? (
+                <Tooltip
+                    title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
+                    placement="top-start"
+                    sx={{ fontSize: 'small' }}
+                    arrow
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                          color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                          boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                          fontSize: '14px',
+                        },
+                      },
+                    }}
+                >
+                  <HelpCenterIcon sx={{ position: 'relative', top: '-25px' }} /> {/* Adjust the top value to move the icon up or down */}
+                </Tooltip>
+            ) : null}
           </Box>
         </TableCell>
+
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} component="th" scope="row">
-          
+
           <TextField
             id="outlined-select-currency"
             name="workHours"
@@ -420,11 +425,22 @@ function CustomRow(props) {
                 variant="outlined"
                 endIcon={<RestartAltIcon />}
                 sx={{ m: "10px" }}
-                onClick={() => resetCommitment()}
+                onClick={() => flipPopupReset()}
+                disabled={determineCommitmentStatus() === "Not Committed"}
               >
                 Reset Commitment
               </Button>
             </Box>
+
+            <Popup
+            opened={resetOpened}
+            flipPopup={flipPopupReset}
+            title={"Confirm Resetting the Commitment?"}
+            text={"Resetting the commitment will make the student's commitment status as 'Not Committed'. Are you sure you want to reset the commitment?"}
+            posAction={() => { resetCommitment(); flipPopupReset(); }}
+            negAction={flipPopupReset}
+            posActionText={"Reset Commitment"}
+          />
 
 
           </Collapse>
@@ -706,26 +722,7 @@ function ApplicantsTable(props) {
               >
                 Announce Final Results
               </Button>
-              <Tooltip
-                title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
-                placement="right"
-                sx={{ fontSize: 'small' }}
-                arrow
-                componentsProps={{
-                  tooltip: {
-                    sx: {
-                      backgroundColor: '#a4a2a2', // Change to your desired lighter color
-                      color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
-                      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
 
-                    },
-                  },
-                }}
-
-              >
-                <HelpCenterIcon />
-
-              </Tooltip>
             </div>
 
           </div>
