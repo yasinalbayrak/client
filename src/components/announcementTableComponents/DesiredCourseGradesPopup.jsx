@@ -185,7 +185,7 @@ export default function DesiredCourseGradesPopup({ previousCourseGrades, courseC
 
                                 <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', marginRight: '-1em' }}>
-                                        <span style={{ marginRight: '0.5em' }}>Not Taken Applicants</span>
+                                        <span style={{ marginRight: '0.5em' }}>Applicants who have not taken</span>
                                         <Tooltip
                                             title="Not Taken applicants stands for students who do not take this course yet."
                                             placement="right"
