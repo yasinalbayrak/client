@@ -1690,7 +1690,6 @@ function CreateAnnouncement() {
                                 </IconButton>
                               </Tooltip>
                             </Grid>
-                            {error && <Alert severity="error">{error}</Alert>}
                           </FormControl>
 
                           <FormControl sx={{ m: 1, minWidth: 120 }}>
