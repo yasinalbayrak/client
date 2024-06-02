@@ -47,7 +47,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 function CustomRow(props) {
-  const { row, index, questions, appId, courseCode, ann } = props;
+  const { row, index, questions, appId, courseCode, ann, setIsThere } = props;
   const [open, setOpen] = React.useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [status, setStatus] = React.useState("");
@@ -129,6 +129,7 @@ function CustomRow(props) {
   };
 
   const handleChange = (event) => {
+    setIsThere(false);
     const toStatus = event.target.value
     updateApplicationRequestStatus(row.applicationRequestId, toStatus).then((res) => {
 
@@ -139,7 +140,6 @@ function CustomRow(props) {
             statusIns: toStatus
           })
         }
-
         return ({...each})
       }))
       setSnackOpen(true);
@@ -231,6 +231,14 @@ function CustomRow(props) {
   const flipPopupReset = () => {
     setResetOpened((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (row.statusIns !== row.status) {
+      setIsThere(true);
+    }
+  }, [row.statusIns, row.status]);
+
+ console.log("RENDERING CUSTOM ROW");
 
   console.log('row :>> ', row);
   return (
@@ -465,6 +473,9 @@ function ApplicantsTable(props) {
   const [finalizePopupOrdinaryOpened, setFinalizePopupOrdinaryOpened] = React.useState(false);
   const ann = props.announcement;
   const navigate = useNavigate();
+  const [isThere, setIsThere] = React.useState(false);
+
+  console.log("RENDERING APPLICANTS TABLE");
 
   const handleSearchChange = (event) => {
     setSearchText(event.target.value.toLowerCase());
@@ -589,7 +600,8 @@ function ApplicantsTable(props) {
         setFinalizeee((prev) => !prev);
         //setSortedRows(null);
         flipPopupOrdinary();
-        handleInfo("Changes are successfully finalized.")
+        handleInfo("Changes are successfully finalized.");
+        setIsThere(false);
 
       });
     }
@@ -681,6 +693,7 @@ function ApplicantsTable(props) {
                     questions={props.questions}
                     key={index}
                     ann={ann}
+                    setIsThere={setIsThere}
                   />
                 ))}
               </TableBody>
@@ -726,6 +739,18 @@ function ApplicantsTable(props) {
             </div>
 
           </div>
+          {isThere&&<div
+          style={{
+            display: "flex",
+            justifyContent: "left",
+            alignItems: "center",
+          }}>
+          <Alert variant="outlined" severity="info" style={{ marginTop:-35, width: "fit-content" }}>
+                    <Typography variant="body2" style={{ fontStyle: 'italic' }}>
+                      There are applications that have different status than the final status. You can finalize the status to make the final status visible to the students.
+                    </Typography>
+                  </Alert>
+          </div>}
 
           <Popup
             opened={finalizePopupOrdinaryOpened}
