@@ -1,4 +1,4 @@
-import { Box, Typography, Grid } from "@mui/material";
+import {Box, Typography, Grid, Button} from "@mui/material";
 import React, { useEffect } from "react";
 import { getAnnouncement, getApplicationRequestsByApplicationId } from "../apiCalls";
 import AppBarHeader from "../components/AppBarHeader";
@@ -9,6 +9,8 @@ import { useSelector } from "react-redux";
 import BackButton from "../components/buttons/BackButton";
 import ViewSwitch from "../components/applicantsTableComponents/ViewSwitch";
 import DataGridView from "../components/excelView/DataGridView";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import {Link} from "react-router-dom";
 
 function ApplicantsPage() {
   const term = useSelector((state) => state.user.term);
@@ -45,7 +47,17 @@ function ApplicantsPage() {
         <Sidebar></Sidebar>
         <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
           <Grid container>
-          <BackButton to={"/applicants"} />,
+            <Link to={"/applicants"}>
+              <Button
+                  startIcon={<ArrowBackIcon />}
+                  variant="contained"
+                  color="primary"
+                  sx={{ position: 'relative', margin: '3rem 0 0 0' }}
+              >
+                See All Applications
+              </Button>
+
+            </Link>
           <ViewSwitch viewMode={viewMode} setViewMode={setViewMode} />
           </Grid>
 
