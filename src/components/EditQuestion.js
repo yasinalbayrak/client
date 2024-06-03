@@ -402,79 +402,76 @@ function EditQuestion(props) {
 
       <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ p: 4 }}>
         <Button
-          variant="contained"
-          startIcon={<UpdateIcon />}
-          color="success"
-          sx={{ m: 2, textDecoration: "none" }}
-          onClick={() => {
-            console.log('props.AnnouncementDetails :>> ', props.AnnouncementDetails);
-            const currentIstanbulTime = new Date(new Date().getTime() );
+            variant="contained"
+            sx={{
+              border: '1px solid',
+              borderColor: 'black',
+              borderRadius: '4px',
+              m: 2,
+              textDecoration: 'none',
+              backgroundColor: 'white',
+              color: 'black', // Text color
+              '&:hover': {
+                backgroundColor: '#f0f0f0', // Light gray hover color
+              },
+            }}
+            onClick={() => {
+              console.log('props.AnnouncementDetails :>> ', props.AnnouncementDetails);
+              const currentIstanbulTime = new Date(new Date().getTime());
 
-            const combinedDateTime = props.AnnouncementDetails.lastApplicationDate + "T" + props.AnnouncementDetails.lastApplicationTime + ":00";
-            const selectedTime = new Date(combinedDateTime);
-            console.log("Selected time:",selectedTime)
-            console.log("current time:",currentIstanbulTime)
-            if (selectedTime < currentIstanbulTime) {
-              handleInfo("Selected last application date and time cannot be before the current Istanbul time.");
-              return;
-            }
-            
-            if (
-              props.AnnouncementDetails.course_code &&
-              props.AnnouncementDetails.lastApplicationDate &&
-              props.AnnouncementDetails.lastApplicationTime &&
-              props.AnnouncementDetails.workHours &&
-              props.AnnouncementDetails.term &&
-              (!props.AnnouncementDetails.isSectionEnabled || (props.AnnouncementDetails.section !== "" && props.AnnouncementDetails.section))
-            ) {
-              updateAnnouncement(
-                props.postID,
-                props.AnnouncementDetails.course_code,
-                props.username,
-                props.AnnouncementDetails.lastApplicationDate,
-                props.AnnouncementDetails.lastApplicationTime,
-                props.AnnouncementDetails.letterGrade,
-                props.AnnouncementDetails.workHours,
-                props.AnnouncementDetails.jobDetails,
-                props.AnnouncementDetails.authInstructor,
-                props.AnnouncementDetails.desiredCourses,
-                questions,
-                props.AnnouncementDetails.term,
-                props.AnnouncementDetails.isInprogressAllowed,
-                props.AnnouncementDetails.isNotTakenAllowed,
-                props.AnnouncementDetails.section
-                
-              ).then((data) => {
-                dispatch(setTerm({ term: props.AnnouncementDetails.term }));
-                navigate("/Home", {
-                  replace: true
-                });
-                toast.success("Your announcement has been successfully updated.", {
-                  containerId: "1618",
-                  closeOnClick: true,
-                })
-              }).catch((_) => {
-                /* Error is already printed */
-              });
+              const combinedDateTime = props.AnnouncementDetails.lastApplicationDate + "T" + props.AnnouncementDetails.lastApplicationTime + ":00";
+              const selectedTime = new Date(combinedDateTime);
+              console.log("Selected time:", selectedTime);
+              console.log("current time:", currentIstanbulTime);
+              if (selectedTime < currentIstanbulTime) {
+                handleInfo("Selected last application date and time cannot be before the current Istanbul time.");
+                return;
+              }
 
-            } else {
-              handleInfo("Please fill out the required fields.")
-            }
-
-          }}
+              if (
+                  props.AnnouncementDetails.course_code &&
+                  props.AnnouncementDetails.lastApplicationDate &&
+                  props.AnnouncementDetails.lastApplicationTime &&
+                  props.AnnouncementDetails.workHours &&
+                  props.AnnouncementDetails.term &&
+                  (!props.AnnouncementDetails.isSectionEnabled || (props.AnnouncementDetails.section !== "" && props.AnnouncementDetails.section))
+              ) {
+                updateAnnouncement(
+                    props.postID,
+                    props.AnnouncementDetails.course_code,
+                    props.username,
+                    props.AnnouncementDetails.lastApplicationDate,
+                    props.AnnouncementDetails.lastApplicationTime,
+                    props.AnnouncementDetails.letterGrade,
+                    props.AnnouncementDetails.workHours,
+                    props.AnnouncementDetails.jobDetails,
+                    props.AnnouncementDetails.authInstructor,
+                    props.AnnouncementDetails.desiredCourses,
+                    questions,
+                    props.AnnouncementDetails.term,
+                    props.AnnouncementDetails.isInprogressAllowed,
+                    props.AnnouncementDetails.isNotTakenAllowed,
+                    props.AnnouncementDetails.section
+                )
+                    .then((data) => {
+                      dispatch(setTerm({ term: props.AnnouncementDetails.term }));
+                      navigate("/Home", { replace: true });
+                      toast.success("Your announcement has been successfully updated.", {
+                        containerId: "1618",
+                        closeOnClick: true,
+                      });
+                    })
+                    .catch((_) => {
+                      // Error is already printed
+                    });
+              } else {
+                handleInfo("Please fill out the required fields.");
+              }
+            }}
         >
-          Update
+          Update Application
         </Button>
 
-        <Button
-          variant="contained"
-          startIcon={<CloseIcon />}
-          color="error"
-          sx={{ mx: 2 }}
-          onClick={() => navigate("/home", { replace: true })}
-        >
-          Cancel
-        </Button>
       </Grid>
 
 
