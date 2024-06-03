@@ -42,6 +42,7 @@ import { useSelector } from "react-redux";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { WorkHour } from "../../pages/CreateAnnouncement";
 import { useStyles } from '../../pages/EligibilityTable';
+import { WrapText } from "@mui/icons-material";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -841,8 +842,8 @@ function ApplicantsTable(props) {
             justifyContent: "left",
             alignItems: "center",
           }}>
-          <Alert variant="outlined" severity="info" style={{ marginTop:-35, width: "fit-content" }}>
-                    <Typography variant="body2" style={{ fontStyle: 'italic' }}>
+          <Alert variant="outlined" severity="info" style={{ marginTop:-35, width: "30rem" }}>
+                    <Typography variant="body2" style={{ fontStyle: 'italic', fontSize:'small' }}>
                       There are applications that have different status than the final status. You can finalize the status to make the final status visible to the students.
                     </Typography>
                   </Alert>
