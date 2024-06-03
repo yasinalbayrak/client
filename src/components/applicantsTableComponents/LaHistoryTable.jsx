@@ -17,7 +17,7 @@ const HistoryTableContainer = styled(TableContainer)(() => ({
   margin: '10px',
 }));
 
-const LaHistoryTable = ({ LaHistory }) => {
+const LaHistoryTable = ({ LaHistory, courseCode }) => {
   return (
     <HistoryTableContainer component={Paper}>
       <Typography variant="h5" align="center" style={{ margin: '10px 0' }}>
@@ -59,8 +59,12 @@ const LaHistoryTable = ({ LaHistory }) => {
 
               <TableCell colSpan={2}>
                 <Grid container direction="column" justifyContent="flex-start">
-                  <Typography>
-                    {appRequest.status}
+                  <Typography style={{color:appRequest.redFlagged && (appRequest.application.course.courseCode === courseCode) ? "red" :""}}>
+                    {appRequest.redFlagged && (appRequest.application.course.courseCode === courseCode) 
+                    ? 
+                    "Red Flagged" 
+                    :
+                    appRequest.status}
                   </Typography>
                 </Grid>
               </TableCell>

@@ -487,6 +487,7 @@ function CustomRow(props) {
               <Stack spacing={0} justifyContent="flex-end">
                 <LaHistoryTable
                   LaHistory={LaHistory}
+                  courseCode={courseCode}
                 />
                 <Pagination count={LaHistory.totalPages} page={laHistoryPage + 1} onChange={handlePageChange} />
 
