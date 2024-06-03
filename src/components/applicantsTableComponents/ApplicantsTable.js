@@ -19,7 +19,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Box from "@mui/material/Box";
-import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory, getApplicationRequestsByApplicationId, resetCommitmentofAppReq, updateWorkHour } from "../../apiCalls";
+import { getApplicationRequestsByStudentId, updateApplicationRequestStatus, getCourseGrades, getCurrentTranscript, getApplicationsByPost, updateApplicationById, getAnnouncement, getTranscript, getApplicationByUsername, getAllAnnouncements, finalizeStatus, acceptAllRequestByAppId, rejectAllRequestByAppId, getStudentLaHistory, getApplicationRequestsByApplicationId, resetCommitmentofAppReq, updateWorkHour, redFlagAppReq, unFlagAppReq } from "../../apiCalls";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from "react-router-dom";
@@ -28,6 +28,7 @@ import LaHistoryTable from "./LaHistoryTable";
 import ReqCourseGrades from "./ReqCourseGrades";
 import TextField from '@mui/material/TextField';
 import Popup from "../../components/popup/Popup";
+import FlagPopup from "../../components/popup/FlagPopup";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
@@ -60,6 +61,10 @@ function CustomRow(props) {
   const photoUrl = useSelector((state) => state.user.photoUrl);
   const classes = useStyles();
   const [resetOpened, setResetOpened] = React.useState(false);
+  const [flagOpened, setFlagOpened] = React.useState(false);
+  const [isInstructor, setIsInstructor] = React.useState(false);
+  const [isStudent, setIsStudent] = React.useState(false);
+  const [toStatusForFlag, setToStatusForFlag] = React.useState("");
   console.log(row);
   console.log(ann);
 
@@ -128,28 +133,35 @@ function CustomRow(props) {
     setSnackOpen(false);
   };
 
+
+  const flagFlipFlop = () => {
+    setFlagOpened((prev) => !prev);
+  };
+
   const handleChange = (event) => {
     setIsThere(false);
     const toStatus = event.target.value
-    updateApplicationRequestStatus(row.applicationRequestId, toStatus).then((res) => {
+    if(row.status === "Accepted" && row.statusIns === "Accepted"){
+      setToStatusForFlag(toStatus);
+      flagFlipFlop();
+    }
+    else{
+      updateApplicationRequestStatus(row.applicationRequestId, toStatus).then((res) => {
 
-      props.setRows((prev) => prev.map((each) => {
-        if (each.applicationRequestId === row.applicationRequestId) {
-          return ({
-            ...each,
-            statusIns: toStatus
-          })
-        }
-
-        return ({...each})
-
-      }))
-      setSnackOpen(true);
-      console.log(res);
-    });
+        props.setRows((prev)=>prev.map((each)=>{
+          if (each.applicationRequestId === row.applicationRequestId){
+            return ({
+              ...each,
+              statusIns: toStatus
+            })
+          }
+          return ({...each})
+        }))
+        setSnackOpen(true);
+        console.log(res);
+      });
+    }
   };
-
-
 
 
 
@@ -239,6 +251,67 @@ function CustomRow(props) {
       setIsThere(true);
     }
   }, [row.statusIns, row.status]);
+
+
+  const redFlagAppReqq = () => {
+    redFlagAppReq(row.applicationRequestId).then((res) => {
+      props.setRows((prev)=>prev.map((each)=>{
+        if (each.applicationRequestId === row.applicationRequestId){
+          return ({
+            ...each,
+            statusIns: toStatusForFlag,
+            redFlagged: true
+          })
+        }
+        return ({...each})
+      }))
+      console.log(res);
+      setSnackOpen(true);
+    }).then(()=>{
+      updateApplicationRequestStatus(row.applicationRequestId, toStatusForFlag).then((res) => {
+
+        props.setRows((prev)=>prev.map((each)=>{
+          if (each.applicationRequestId === row.applicationRequestId){
+            return ({
+              ...each,
+              statusIns: toStatusForFlag
+            })
+          }
+          return ({...each})
+        }))
+        setSnackOpen(true);
+        console.log(res);
+      });
+    });
+  }
+
+  const noFlagChange = () => {
+    updateApplicationRequestStatus(row.applicationRequestId, toStatusForFlag).then((res) => {
+
+      props.setRows((prev)=>prev.map((each)=>{
+        if (each.applicationRequestId === row.applicationRequestId){
+          return ({
+            ...each,
+            statusIns: toStatusForFlag
+          })
+        }
+        return ({...each})
+      }))
+      setSnackOpen(true);
+      console.log(res);
+    });
+  }
+
+  const handleFlagChange = () => {
+    if(isInstructor){
+      noFlagChange();
+    }
+    else{
+      redFlagAppReqq();
+    }
+  }
+
+
 
  console.log("RENDERING CUSTOM ROW");
 
@@ -444,14 +517,29 @@ function CustomRow(props) {
             </Box>
 
             <Popup
-              opened={resetOpened}
-              flipPopup={flipPopupReset}
-              title={"Confirm Resetting the Commitment?"}
-              text={"Resetting the commitment will make the student's commitment status as 'Not Committed'. Are you sure you want to reset the commitment?"}
-              posAction={() => { resetCommitment(); flipPopupReset(); }}
-              negAction={flipPopupReset}
-              posActionText={"Reset Commitment"}
-            />
+            opened={resetOpened}
+            flipPopup={flipPopupReset}
+            title={"Confirm Resetting the Commitment?"}
+            text={"Resetting the commitment will make the student's commitment status as 'Not Committed'. Are you sure you want to reset the commitment?"}
+            posAction={() => { resetCommitment(); flipPopupReset(); }}
+            negAction={flipPopupReset}
+            posActionText={"Reset Commitment"}
+          />
+
+          <FlagPopup 
+            opened={flagOpened}
+            flipPopup={flagFlipFlop}
+            title={"Cannot Change the Status"}
+            text={"You cannot change the status of the student who is already accepted. If you want to change the status, you need to finalize the status of the students first."}
+            posAction={() => { handleFlagChange(); flagFlipFlop(); }}
+            negAction={flagFlipFlop}
+            posActionText={"OK"}
+            isInstructor={isInstructor}
+            isStudent={isStudent}
+            setIsInstructor={setIsInstructor}
+            setIsStudent={setIsStudent}
+
+          />
 
 
           </Collapse>

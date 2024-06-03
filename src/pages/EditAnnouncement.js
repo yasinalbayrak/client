@@ -1079,7 +1079,7 @@ function EditAnnouncement() {
                   control={<Checkbox
                     checked={announcementDetails.isNotTakenAllowed} />}
 
-                  label="Allow Not Taken Applicants"
+                  label="Allow Applicants Who Have Not Taken"
                   sx={{ mt: 2, ml: 2 }}
                   disabled
                   />
@@ -1425,7 +1425,7 @@ function EditAnnouncement() {
 
 
                             control={<Checkbox />}
-                            label="Allow Not Taken Applicants"
+                            label="Allow Applicants Who Have Not Taken"
                           />
                         </Grid>
                         {error && <Alert severity="error">{error}</Alert>}
@@ -1507,7 +1507,7 @@ function EditAnnouncement() {
                               }}
                             />
                             {/* TODO do not enter static values */}
-                            <Typography width={`${"Allowed Not Taken Applicants".length * 8}px`} variant="body2" color={courseSelected.isNotTakenAllowed ? 'textPrimary' : 'error'}>
+                            <Typography width={`${"Allowed Applicants Who Have Not Taken".length * 8}px`} variant="body2" color={courseSelected.isNotTakenAllowed ? 'textPrimary' : 'error'}>
                               {(courseSelected.isNotTakenAllowed ? 'Allowed Not Taken Applicants' : 'Not Allowed Not Taken Applicants')}
                             </Typography>
                           </div>

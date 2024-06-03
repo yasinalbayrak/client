@@ -851,6 +851,40 @@ async function resetCommitmentofAppReq(appReqId){
   }
 }
 
+async function redFlagAppReq(appReqId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/instructor/redFlag/" + appReqId,
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+async function unFlagAppReq(appReqId){
+  try {
+    const token = getJwtFromCookie()
+    const result = await axios.put(
+      apiEndpoint + "/applicationRequest/instructor/unRedFlag/" + appReqId,
+      {},
+      {
+        headers: { "Authorization": "Bearer " + token }
+      }
+    );
+
+    return result.data;
+  } catch (error) {
+    handleError(error)
+  }
+}
+
 
 export {
   updateApplicationRequestStatusMultiple,
@@ -897,5 +931,7 @@ export {
   getStudentLaHistory,
   updateAppEmail,
   resetCommitmentofAppReq,
-  updateWorkHour
+  updateWorkHour,
+  redFlagAppReq,
+  unFlagAppReq
 };
