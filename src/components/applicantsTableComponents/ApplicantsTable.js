@@ -358,7 +358,7 @@ function CustomRow(props) {
         </TableCell>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
           {console.log('studentDetails :>> ', studentDetails)}
-          {studentDetails?.course && studentDetails.course.find(eq => eq.courseCode === props.courseCode).grade}
+          {studentDetails?.course && studentDetails.course.grade}
         </TableCell>
 
         <TableCell sx={{ borderBottom: "none" }} align="left">
