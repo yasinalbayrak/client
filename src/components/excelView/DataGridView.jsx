@@ -206,7 +206,7 @@ const defaultColumns = [
         headerName: 'GPA',
         width: 150,
         editable: false,
-        type: 'string'
+        type: 'number'
     }
 
 
@@ -293,6 +293,8 @@ function CustomFooter(props) {
         </GridFooterContainer>
     );
 }
+
+
 function ExcelExportMenuItem(props) {
     const apiRef = useGridApiContext();
     const { hideMenu } = props;
@@ -306,25 +308,35 @@ function ExcelExportMenuItem(props) {
 
         rows.forEach(row => {
             const rowData = columnsToExport.map(col => {
-
-
-
-
                 if (Array.isArray(row[col.field])) {
                     return row[col.field].join(", ");
                 }
-
-
                 return row[col.field] || '';
             });
-
-            console.log('rowData :>> ', rowData);
             aoa.push(rowData);
         });
 
         const workbook = XLSX.utils.book_new();
         const worksheet = XLSX.utils.aoa_to_sheet(aoa);
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'All Data');
+
+        // Create statistics sheets
+        const statusCounts = {
+            Applied: rows.length,
+            Accepted: rows.filter(row => row.status === 'Accepted').length,
+            Rejected: rows.filter(row => row.status === 'Rejected').length,
+        };
+
+        const statsAoA = [
+            ['Status', 'Count'],
+            ['Applied', statusCounts.Applied],
+            ['Accepted', statusCounts.Accepted],
+            ['Rejected', statusCounts.Rejected],
+        ];
+
+        const statsWorksheet = XLSX.utils.aoa_to_sheet(statsAoA);
+        XLSX.utils.book_append_sheet(workbook, statsWorksheet, 'Statistics');
+
         XLSX.writeFile(workbook, 'DataGridExport.xlsx');
     };
 
@@ -414,22 +426,22 @@ export default function DataGridView({ applicationRequests, announcement, setApp
 
     React.useEffect(() => {
 
-        const dynamicColsQAndA = applicationRequests[0]?.qandA.map((qa, idx) => {
+        const dynamicColsQAndA = announcement.questions.map((question, idx) => {
 
             const obj = {
                 field: `q${idx + 1}`,
-                headerName: `Q${idx + 1}: ${qa.question.question}`,
-                width: calculateWidth(qa.question.question),
+                headerName: `Q${idx + 1}: ${question.question}`,
+                width: calculateWidth(question.question),
                 editable: false,
-                sortable: qa.question.type === "NUMERIC",
-                type: qa.question.type === "NUMERIC" ? 'number'
-                    : qa.question.type !== "MULTIPLE_CHOICE" ? 'string'
+                sortable: question.type === "NUMERIC",
+                type: question.type === "NUMERIC" ? 'number'
+                    : question.type !== "MULTIPLE_CHOICE" ? 'string'
                         : 'singleSelect',
             };
 
 
-            if (qa.question.type === "MULTIPLE_CHOICE") {
-                obj.valueOptions = qa.question.choices;
+            if (question.type === "MULTIPLE_CHOICE") {
+                obj.valueOptions = question.choices.map(c=>c.choice);
             }
 
             return obj;
@@ -467,8 +479,8 @@ export default function DataGridView({ applicationRequests, announcement, setApp
             const QA = appReq.qandA.reduce((acc, qa, idx) => ({
                 ...acc,
                 [`q${idx + 1}`]: qa.question.type === "MULTIPLE_CHOICE" ?
-                    qa.question.allowMultipleAnswers ? [...qa.answer].map(index => qa.question.choices[parseInt(index)])
-                        : qa.question.choices[parseInt(qa.answer)]
+                    qa.question.allowMultipleAnswers ? [...qa.answer].map(index => qa.question.choices.map(ch=> ch.choice)[parseInt(index)])
+                        : qa.question.choices.map(ch=> ch.choice)[parseInt(qa.answer)]
                     : qa.answer,
             }), {});
 
@@ -499,10 +511,10 @@ export default function DataGridView({ applicationRequests, announcement, setApp
                 majors: appReq.transcript.program.majors,
                 minors: appReq.transcript.program.minors,
                 mainCourseGrade: appReq.transcript.course.find((coursefind) => announcement.course.courseCode === coursefind.courseCode).grade,
-                gpa: appReq.transcript.cumulativeGPA,
+                gpa: parseFloat(appReq.transcript.cumulativeGPA) ,
                 ...courseAndGrades,
                 ...QA,
-                appReqId: appReq.applicationRequestId,
+                appReqId:  appReq.applicationRequestId,
                 committed: appReq.committed,
                 forgiven: appReq.forgiven
             };

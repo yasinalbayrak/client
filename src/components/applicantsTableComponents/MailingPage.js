@@ -237,13 +237,13 @@ function MailingPage(props) {
                                     container
                                     justifyContent="start"
                                     alignItems="center"
-                                    sx={{ width: "100%"}}
-                                    mb={2} 
+                                    sx={{ width: "100%" }}
+                                    mb={2}
                                     ml={5}
                                 >
                                     <Grid item xs={12} md={7}>
                                         <Alert variant="outlined" severity="info">
-                                            <span style={{fontStyle: "italic"}}> Supported user data fields:</span> [:course:], [:fullname:], [:firstname:], [:lastname:]
+                                            <span style={{ fontStyle: "italic" }}> Supported user data fields:</span> [:course:], [:fullname:], [:firstname:], [:lastname:]
                                         </Alert>
                                     </Grid>
                                 </Grid>
@@ -291,11 +291,17 @@ function MailingPage(props) {
 
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+
                         <Button
-                            variant="outlined"
+                            color='success'
+                            variant="contained"
+                            disableElevation
                             endIcon={<SaveIcon />}
-                            sx={{ bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, mt: 2 }}
                             onClick={flipPopup}
+                            sx={{
+                                ml: 2,
+                                fontSize: "small"
+                            }}
                         >
                             Announce Final Results
                         </Button>

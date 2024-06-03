@@ -386,14 +386,6 @@ function CreateAnnouncement() {
   const [isDataFetched, setIsDataFetched] = useState(false);
   useEffect(() => {
     // DUPLICATE
-    // const [authPeople, setAuthPeople] = useState([
-    //   {
-    //     display_name: name + " " + surname,
-    //     username: username,
-    //     authOptionValue: name + " " + surname + " (" + username + ")",
-    //     id: userId
-    //   }
-    // ]);
     if (copyFromAppId && allTerms.length > 0 && !isDataFetched) {
       getAnnouncement(copyFromAppId).then(res => {
         setAnnouncementDetails(prev => ({
@@ -1718,8 +1710,8 @@ function CreateAnnouncement() {
                                   componentsProps={{
                                     tooltip: {
                                       sx: {
-                                        backgroundColor: '#a4a2a2', // Change to your desired lighter color
-                                        color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                                        backgroundColor: '#a4a2a2', 
+                                        color: 'rgba(255,255,255,0.87)', 
                                         boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
                                         fontSize: '14px'
 

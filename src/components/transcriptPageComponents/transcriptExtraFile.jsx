@@ -125,9 +125,12 @@ const QuestionPage = (props) => {
       if (validator !== updQuestions.length) {
         throw new Error("Not all questions have answers");
       }
-
-      console.log('modifiedAnswers:>> ', modifiedAnswers);
-      if (await applyToPost(id, state.user.id, modifiedAnswers)) {
+      let answersToPost = updQuestions.map((question, idx) => ({
+        questionId: question.questionId,
+        answer: modifiedAnswers[idx]
+      }))
+      console.log('answersToPost:>> ', answersToPost);
+      if (await applyToPost(id, state.user.id, answersToPost)) {
         navigate("/Home", { replace: true });
         toast.success("Your application has been received successfully.", {
           containerId: "1618",

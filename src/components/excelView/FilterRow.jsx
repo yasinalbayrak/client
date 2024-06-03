@@ -58,6 +58,7 @@ export default function FilterRow({ columns, onRemove, allFilters, setFilters, f
                 allRows.forEach((r, rowIdx) => {
                     const fieldValue = r[f.column.field];
                     let pass = false;
+                    console.log('f.column.field :>> ', f.column.field);
                     console.log('r :>> ', r);
                     switch (f.column.type) {
                         case 'string':
@@ -80,7 +81,7 @@ export default function FilterRow({ columns, onRemove, allFilters, setFilters, f
             }
         });
 
-        let finalIndices = combineFilterResults(filteredIndices, filter.logicOp);        
+        let finalIndices = combineFilterResults(filteredIndices, filter.logicOp);
         if (allFilters.some((f) => typeof f.filterValue === 'string' ? f.filterValue !== "" : f.filterValue.length > 0))
             setRows(allRows.filter((_, idx) => finalIndices.has(idx)));
         else {
@@ -113,6 +114,8 @@ export default function FilterRow({ columns, onRemove, allFilters, setFilters, f
                 return fieldValue.startsWith(f.filterValue);
             case 'Ends With':
                 return fieldValue.endsWith(f.filterValue);
+            case 'is empty':
+                return !fieldValue || fieldValue.trim() === "";
             default:
                 return false;
         }
@@ -132,6 +135,8 @@ export default function FilterRow({ columns, onRemove, allFilters, setFilters, f
                 return numericFieldValue < Number(f.filterValue);
             case '<=':
                 return numericFieldValue <= Number(f.filterValue);
+            case 'is empty':
+                return numericFieldValue === null || numericFieldValue === undefined;
             default:
                 return false;
         }
@@ -145,6 +150,8 @@ export default function FilterRow({ columns, onRemove, allFilters, setFilters, f
                 return f.filterValue[0] !== arrayFieldValue[0];
             case "is any of":
                 return f.filterValue.includes(arrayFieldValue[0]);
+            case "is empty":
+                return !arrayFieldValue || arrayFieldValue.length === 0;
             default:
                 return false;
         }
@@ -202,7 +209,10 @@ export default function FilterRow({ columns, onRemove, allFilters, setFilters, f
     };
 
     const renderFilterValueInput = (filter) => {
-        console.log('filter yasin:>> ', filter);
+        if (filter.operator === "is empty") {
+            
+            return null; 
+        }
         if (filter.column.type === "singleSelect") {
             if (filter.operator === "is any of") {
                 return <Autocomplete

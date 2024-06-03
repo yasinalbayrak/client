@@ -132,15 +132,15 @@ function CustomRow(props) {
     const toStatus = event.target.value
     updateApplicationRequestStatus(row.applicationRequestId, toStatus).then((res) => {
 
-      props.setRows((prev)=>prev.map((each)=>{
-        if (each.applicationRequestId === row.applicationRequestId){
+      props.setRows((prev) => prev.map((each) => {
+        if (each.applicationRequestId === row.applicationRequestId) {
           return ({
             ...each,
             statusIns: toStatus
           })
         }
 
-        return ({...each})
+        return ({ ...each })
       }))
       setSnackOpen(true);
       console.log(res);
@@ -212,20 +212,20 @@ function CustomRow(props) {
   const handleWorkHourUpdate = (e) => {
     console.log('e.target.value :>> ', e.target.value);
     updateWorkHour(row.applicationRequestId, e.target.value)
-      .then(()=>{
-        
+      .then(() => {
+
         handleInfo("Successfully updated the work hour.")
-        props.setRows((prev)=>prev.map((each)=>{
-          if (each.applicationRequestId === row.applicationRequestId){
+        props.setRows((prev) => prev.map((each) => {
+          if (each.applicationRequestId === row.applicationRequestId) {
             return ({
               ...each,
               weeklyWorkHours: e.target.value
             })
           }
 
-          return ({...each})
+          return ({ ...each })
         }))
-    }).catch((_)=>{})
+      }).catch((_) => { })
   }
 
   const flipPopupReset = () => {
@@ -274,15 +274,16 @@ function CustomRow(props) {
           {studentDetails?.cumulativeGPA}
         </TableCell>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="left">
-          {studentDetails?.course && studentDetails.course.grade}
+          {console.log('studentDetails :>> ', studentDetails)}
+          {studentDetails?.course && studentDetails.course.find(eq => eq.courseCode === props.courseCode).grade}
         </TableCell>
 
         <TableCell sx={{ borderBottom: "none" }} align="left">
           <Snackbar
-              open={snackOpen}
-              autoHideDuration={3000}
-              onClose={handleSnackClose}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            open={snackOpen}
+            autoHideDuration={3000}
+            onClose={handleSnackClose}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
           >
             <Alert onClose={handleSnackClose} severity="success">
               Status is successfully changed
@@ -299,24 +300,24 @@ function CustomRow(props) {
               </Select>
             </FormControl>
             {row.statusIns !== row.status ? (
-                <Tooltip
-                    title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
-                    placement="top-start"
-                    sx={{ fontSize: 'small' }}
-                    arrow
-                    componentsProps={{
-                      tooltip: {
-                        sx: {
-                          backgroundColor: '#a4a2a2', // Change to your desired lighter color
-                          color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
-                          boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-                          fontSize: '14px',
-                        },
-                      },
-                    }}
-                >
-                  <HelpCenterIcon sx={{ position: 'relative', top: '-25px' }} /> {/* Adjust the top value to move the icon up or down */}
-                </Tooltip>
+              <Tooltip
+                title="(*) stands for the students who have different status than the final status. Student cannot see this status before finalization (e.g. Accepted but not finalized yet.)"
+                placement="top-start"
+                sx={{ fontSize: 'small' }}
+                arrow
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: '#a4a2a2', // Change to your desired lighter color
+                      color: 'rgba(255,255,255,0.87)', // Adjust text color if needed
+                      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                      fontSize: '14px',
+                    },
+                  },
+                }}
+              >
+                <HelpCenterIcon sx={{ position: 'relative', top: '-25px' }} /> {/* Adjust the top value to move the icon up or down */}
+              </Tooltip>
             ) : null}
           </Box>
         </TableCell>
@@ -433,14 +434,14 @@ function CustomRow(props) {
             </Box>
 
             <Popup
-            opened={resetOpened}
-            flipPopup={flipPopupReset}
-            title={"Confirm Resetting the Commitment?"}
-            text={"Resetting the commitment will make the student's commitment status as 'Not Committed'. Are you sure you want to reset the commitment?"}
-            posAction={() => { resetCommitment(); flipPopupReset(); }}
-            negAction={flipPopupReset}
-            posActionText={"Reset Commitment"}
-          />
+              opened={resetOpened}
+              flipPopup={flipPopupReset}
+              title={"Confirm Resetting the Commitment?"}
+              text={"Resetting the commitment will make the student's commitment status as 'Not Committed'. Are you sure you want to reset the commitment?"}
+              posAction={() => { resetCommitment(); flipPopupReset(); }}
+              negAction={flipPopupReset}
+              posActionText={"Reset Commitment"}
+            />
 
 
           </Collapse>
@@ -714,15 +715,20 @@ function ApplicantsTable(props) {
               direction: "columns",
 
             }}>
+
               <Button
-                variant="outlined"
+                color='success'
+                variant="contained"
+                disableElevation
                 endIcon={<SaveIcon />}
-                sx={{ bgcolor: "green", color: "white", ":hover": { bgcolor: "black" }, float: "right", alignSelf: "center" }}
                 onClick={isThereAnyAcceptedOrRejected}
+                sx={{
+                  ml: 2,
+                  fontSize: "small"
+                }}
               >
                 Announce Final Results
               </Button>
-
             </div>
 
           </div>

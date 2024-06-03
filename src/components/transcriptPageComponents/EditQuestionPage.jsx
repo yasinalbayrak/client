@@ -43,10 +43,12 @@ const EditQuestionPage = (props) => {
     function checkDisplay3(question) {
       console.log('checking question :>> ', question);
       if ((question.depends.length === 0)) {
+          console.log('Length 0 returning true :>> ');
           return true;
       }
   
       // Conditional Question
+      console.log('continuining with checks :>> ');
       if (answers.length <= 0) {
           return false;
       }
@@ -74,18 +76,20 @@ const EditQuestionPage = (props) => {
       const onSubmit = async () => {
         try {
           console.log('answers :>> ', answers);
-          if (answers.length !== questions.filter(e=> checkDisplay3(e)).length) {
+          let updQuestions = Array.from(questions);
+          updQuestions.map((eachQ, idx) => !checkDisplay3(eachQ) && answers.splice(idx, 1))
+          updQuestions = updQuestions.filter(e=> checkDisplay3(e));
+          console.log('updQuestions :>> ', updQuestions);
+          if (answers.length !== updQuestions.length) {
             throw new Error("Not all questions have answers");
           }
           
           var validator = 0;
 
-          let updQuestions = Array.from(questions);
-          console.log('updQuestions :>> ', updQuestions);
+
           
     
-          updQuestions.map((eachQ, idx) => !checkDisplay3(eachQ) && answers.splice(idx, 1))
-          updQuestions = updQuestions.filter(e=> checkDisplay3(e));
+
           console.log('updQuestions :>> ', updQuestions);
           console.log('answersss :>> ', answers);
           const modifiedAnswers = answers.map((answer, idx) => {
@@ -117,13 +121,18 @@ const EditQuestionPage = (props) => {
     
             
           });
-    
+          console.log('updQuestions :>> ', updQuestions);
+          console.log('answers :>> ', answers);
           if(validator !== updQuestions.length){
             throw new Error("Not all questions have answers");
           }
       
+          let answersToPost = updQuestions.map((question, idx) => ({
+            questionId: question.questionId,
+            answer: modifiedAnswers[idx]
+          }))
           console.log('modifiedAnswers:>> ', modifiedAnswers);
-          if(await updateApplicationRequest(id, appReqInfo.application.applicationId , state.user.id, modifiedAnswers)){
+          if(await updateApplicationRequest(id, appReqInfo.application.applicationId , state.user.id, answersToPost)){
             navigate("/Home", { replace: true });
             toast.success("Your application has been edited successfully.", {
               containerId: "1618",

@@ -331,7 +331,7 @@ function AddQuestion({ questions, setQuestions }) {
           <DragDropContext onDragEnd={handleOnDragEnd} >
             <Droppable droppableId="questions" >
               {(provided) => (
-                <Grid item xs={6} {...provided.droppableProps} ref={provided.innerRef} sx={{ borderRight: "2px solid grey", p: 2, pr: 5 }}>
+                <Grid item xs={6} {...provided.droppableProps} ref={provided.innerRef} sx={{ p: 2, pr: 5 }}>
 
                   <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: '10px' }}>
                     Additional Questions for Students:
@@ -516,7 +516,7 @@ function AddQuestion({ questions, setQuestions }) {
                                               inputRefs.current[index] = [];
                                             }
                                             inputRefs.current[index][idx] = el;
-                                            console.log('inputRefs :>> ', inputRefs);
+
                                           }}
                                           onClick={() => handleClick(index, idx)}
                                           onBlur={() => multiple.choice.trim() === "" && handleInputChoice(index, idx, `Choice ${idx + 1}`)}
@@ -602,12 +602,21 @@ function AddQuestion({ questions, setQuestions }) {
                                             <MenuItem value="">
                                               <em>None</em>
                                             </MenuItem>
-
-                                            {questions.map((q, i) => (
-                                              (i !== index && !questions.find((eachQ, eachI) => (eachI !== index) && eachQ.choices.map(qc => qc.conditionallyOpen).includes(i.toString()) || eachQ.choices.map(qc => qc.conditionallyOpen).includes(index.toString()))) && <MenuItem key={i} value={i.toString()}>
-                                                Question {i + 1}
-                                              </MenuItem>
-                                            ))}
+                                            {console.log('questions Yasin Debug:>> ', questions)}
+                                            {questions.map((q, i) => {
+                                              console.log('question inital check:>> ', question);
+                                              console.log('first check :>> ', i !== index);
+                                              return (
+                                                (i !== index
+                                                  && !questions.find((eachQ, eachI) => {
+                                                    console.log('eachQ :>> ', eachQ);
+                                                    console.log('eachI :>> ', eachI);
+                                                    return (eachI !== index) && (eachQ.choices.map(qc => qc.conditionallyOpen).includes(i.toString()) || eachQ.choices.map(qc => qc.conditionallyOpen).includes(index.toString()))
+                                                  })) && <MenuItem key={i+1} value={i.toString()}>
+                                                  Question {i + 1}
+                                                </MenuItem>
+                                              )
+                                            })}
                                           </Select>
                                         </FormControl>
 
@@ -665,7 +674,7 @@ function AddQuestion({ questions, setQuestions }) {
               )}
             </Droppable>
           </DragDropContext>
-          <Grid item xs={4}>
+          {/* <Grid item xs={4}>
             <Box
               sx={{
                 backgroundColor: "#F2F2F2",
@@ -703,7 +712,7 @@ function AddQuestion({ questions, setQuestions }) {
                 );
               })}
             </Box>
-          </Grid>
+          </Grid> */}
         </Grid>
 
 
