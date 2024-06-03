@@ -1291,7 +1291,7 @@ function CreateAnnouncement() {
                         color="success"
                         checked={announcementDetails.isNotTakenAllowed}
                       />}
-                      label="Allow Not Taken Applicants"
+                      label="Allow Applicants Who Have Not Taken"
                       labelPlacement="start"
                       sx={{ m: 0 }}
                     />
@@ -1682,7 +1682,6 @@ function CreateAnnouncement() {
                                 </IconButton>
                               </Tooltip>
                             </Grid>
-                            {error && <Alert severity="error">{error}</Alert>}
                           </FormControl>
 
                           <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -1702,7 +1701,7 @@ function CreateAnnouncement() {
                                 control={<Checkbox
 
                                 />}
-                                label="Allow Not taken Applicants"
+                                label="Allow Applicants Who Have Not Taken"
                               />
                               <Tooltip
                                   title="Selecting this option enables not taken students to submit applications for Learning Assistantship."
@@ -1843,7 +1842,7 @@ function CreateAnnouncement() {
                                   }}
                                 />
                                 {/* TODO do not enter static values */}
-                                <Typography width={`${"Allowed Not Taken Applicants".length * 8}px`} variant="body2"
+                                <Typography width={`${"Allowed Applicants Who Have Not Taken".length * 8}px`} variant="body2"
                                   color={courseSelected.isNotTakenAllowed ? 'textPrimary' : 'error'}>
                                   {(courseSelected.isNotTakenAllowed ? 'Allowed Not Taken Applicants' : 'Not Allowed Not Taken Applicants')}
                                 </Typography>
