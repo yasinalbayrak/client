@@ -128,8 +128,9 @@ export default function Popup({ opened, flipPopup, title, text, negAction, posAc
                 >
                   <FormControlLabel
                     value={isInstructor}
+                    disabled={isStudent}
                     onChange={(_) => {
-                      setIsInstructor((prev) => !prev)
+                        setIsInstructor((prev) => !prev)
                     }}
 
 
@@ -171,8 +172,10 @@ export default function Popup({ opened, flipPopup, title, text, negAction, posAc
                 >
                   <FormControlLabel
                     value={isStudent}
+                    disabled={isInstructor}
                     onChange={(_) => {
                       setIsStudent((prev) => !prev)
+                      
                     }}
 
 
