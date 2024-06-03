@@ -48,8 +48,23 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+const grades = [
+  { value: "A", label: 12 },
+  { value: "A-", label: 11 },
+  { value: "B+", label: 10 },
+  { value: "B", label: 9 },
+  { value: "B-", label: 8 },
+  { value: "C+", label: 7 },
+  { value: "C", label: 6 },
+  { value: "C-", label: 5 },
+  { value: "D+", label: 4 },
+  { value: "D", label: 3 },
+  { value: "S", label: 2 },
+  { value: "W", label: 1 },
+];
+
 function CustomRow(props) {
-  const { row, index, questions, appId, courseCode, ann, setIsThere } = props;
+  const { row, index, questions, appId, courseCode, ann } = props;
   const [open, setOpen] = React.useState(false);
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [status, setStatus] = React.useState("");
@@ -66,6 +81,8 @@ function CustomRow(props) {
   const [isInstructor, setIsInstructor] = React.useState(false);
   const [isStudent, setIsStudent] = React.useState(false);
   const [toStatusForFlag, setToStatusForFlag] = React.useState("");
+  const [courseGradess, setCourseGradess] = React.useState(null);
+  const [numOfHistory, setNumOfHistory] = React.useState(null);
   console.log(row);
   console.log(ann);
 
@@ -140,7 +157,7 @@ function CustomRow(props) {
   };
 
   const handleChange = (event) => {
-    setIsThere(false);
+    props.setIsThere(false);
     const toStatus = event.target.value
     if(row.status === "Accepted" && row.statusIns === "Accepted"){
       setToStatusForFlag(toStatus);
@@ -157,7 +174,34 @@ function CustomRow(props) {
             })
           }
           return ({...each})
-        }))
+        }));
+
+        props.setFiltered((prev)=>prev.map((each)=>{
+          if (each.applicationRequestId === row.applicationRequestId){
+            return ({
+              ...each,
+              statusIns: toStatus
+            })
+          }
+          return ({...each})
+        } ));
+
+        props.setSortedRows((prev)=>prev.map((each)=>{
+          if (each.applicationRequestId === row.applicationRequestId){
+            return (courseGradess &&{
+              ...each,
+              statusIns: toStatus,
+              studentDetails: {
+                ...prev.studentDetails,
+                course: {
+                  courseCode: props.courseCode,
+                  grade: courseGradess??[0].grade,
+                },
+              },
+            })
+          }
+          return ({...each})
+        } ));
         setSnackOpen(true);
         console.log(res);
       });
@@ -179,6 +223,7 @@ function CustomRow(props) {
         setStudentDetails(currentTranscript);
 
         const courseGrades = await getCourseGrades([props.courseCode], userID);
+        setCourseGradess(courseGrades);
         if (courseGrades.length > 0) {
           setStudentDetails((prev) => ({
             ...prev,
@@ -187,6 +232,24 @@ function CustomRow(props) {
               grade: courseGrades[0].grade,
             },
           }));
+
+          props.setRows((prev) => prev.map((each) => {
+            if (each.applicationRequestId === row.applicationRequestId) {
+              return ({
+                ...each,
+                studentDetails: {
+                  ...prev.studentDetails,
+                  course: {
+                    courseCode: props.courseCode,
+                    grade: courseGrades[0].grade,
+                  },
+                },
+              });
+            }
+
+            return ({ ...each });
+          }
+          ));
         }
       } catch (error) {
         // Centralized error handling or log the error
@@ -205,6 +268,17 @@ function CustomRow(props) {
     getStudentLaHistory(row.student.user.id, props.appId, laHistoryPage)
       .then((res) => {
         setLaHistory(res);
+        setNumOfHistory(res.totalElements);
+        props.setRows((prev) => prev.map((each) => {
+          if (each.applicationRequestId === row.applicationRequestId) {
+            return ({
+              ...each,
+              numOfLAHistory: res.totalElements
+            })
+          }
+          return ({ ...each })
+        }
+        ));
       })
       .catch((_) => {
       });
@@ -249,9 +323,9 @@ function CustomRow(props) {
 
   useEffect(() => {
     if (row.statusIns !== row.status) {
-      setIsThere(true);
+      props.setIsThere(true);
     }
-  }, [row.statusIns, row.status]);
+  }, [row.statusIns, row.status, row]);
 
 
   const redFlagAppReqq = () => {
@@ -318,7 +392,7 @@ function CustomRow(props) {
 
   console.log('row :>> ', row);
   return (
-    <>
+    row && numOfHistory &&<>
       <TableRow key={index + 1} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
         <TableCell sx={{ bgcolor: "#FAFAFA", borderBottom: "none" }} align="right">
           <Avatar
@@ -488,6 +562,7 @@ function CustomRow(props) {
                 <LaHistoryTable
                   LaHistory={LaHistory}
                   courseCode={courseCode}
+                  
                 />
                 <Pagination count={LaHistory.totalPages} page={laHistoryPage + 1} onChange={handlePageChange} />
 
@@ -554,6 +629,7 @@ function CustomRow(props) {
 
 function ApplicantsTable(props) {
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [histOrder, setHistOrder] = React.useState(null);
   const [finalizeee, setFinalizeee] = React.useState(false);
   const [sortedRows, setSortedRows] = React.useState([]);
   const [gradeSortOrder, setGradeSortOrder] = React.useState(null);
@@ -567,8 +643,15 @@ function ApplicantsTable(props) {
   const ann = props.announcement;
   const navigate = useNavigate();
   const [isThere, setIsThere] = React.useState(false);
+  const [filtered, setFiltered] = React.useState(null);
 
   console.log("RENDERING APPLICANTS TABLE");
+
+  
+
+  const getHashedValue = (value) => {
+    return grades.find((grade) => grade.value === value)?.label;
+  };
 
   const handleSearchChange = (event) => {
     setSearchText(event.target.value.toLowerCase());
@@ -582,16 +665,43 @@ function ApplicantsTable(props) {
     setFinalizePopupOrdinaryOpened((prev) => !prev);
   };
 
+const handleCallBack = () => {
+  console.log("CALLBACK");
+  console.log(props.rows);
+  console.log("SORTED ROWS",sortedRows);
+  console.log("FILTERED",filtered);
+  setIsThere(false);
+  setFiltered(null);
+  props.setRows(sortedRows.map((row) => {
+    console.log("SEE THE ROW",row);
+    return ({
+      ...row,
+      status: row.statusIns,
+      studentDetails: {
+        ...row.studentDetails,
+        course: {
+          courseCode: props.courseCode,
+          grade: row.studentDetails?.course?.grade,
+        },
+      },
+    });
+  }));
 
+}
+
+useEffect(() => {
   const filteredRows = sortedRows?.filter((row) => {
     const fullName = row.student.user.name.toLowerCase() + " " + row.student.user.surname.toLowerCase();
     return fullName.includes(searchText);
   });
+  setFiltered(filteredRows);
+}, [props.rows,searchText, sortedRows, finalizeee ]);
 
   const sortRows = (rows) => {
     return rows.sort((a, b) => {
       let nameComparison = 0;
       let gradeComparison = 0;
+      let histComparison = 0;
 
       if (sortOrder === "asc" || sortOrder === "desc") {
         const nameA = a.student.user.name.toLowerCase();
@@ -603,17 +713,26 @@ function ApplicantsTable(props) {
       if (gradeSortOrder === "asc" || gradeSortOrder === "desc") {
         const gradeA = a.studentDetails?.course?.grade || 0;
         const gradeB = b.studentDetails?.course?.grade || 0;
-        gradeComparison = gradeA - gradeB;
+        gradeComparison = getHashedValue(gradeA) - getHashedValue(gradeB);
         if (gradeSortOrder === "desc") gradeComparison *= -1;
       }
 
-      return gradeSortOrder ? gradeComparison || nameComparison : nameComparison || gradeComparison;
+      if (histOrder === "asc" || histOrder === "desc") {
+        const histA = a.numOfLAHistory || 0;
+        const histB = b.numOfLAHistory || 0;
+        console.log(histA);
+        console.log(histB);
+        histComparison = histA - histB;
+        if (histOrder === "desc") histComparison *= -1;
+      }
+
+      return gradeSortOrder ? gradeComparison : histOrder ? histComparison : nameComparison;
     });
   };
 
   useEffect(() => {
     setSortedRows(sortRows([...props.rows]));
-  }, [props.rows, sortOrder, gradeSortOrder, finalizeee]);
+  }, [sortOrder, gradeSortOrder, histOrder , finalizeee]);
 
   console.log(props.rows)
 
@@ -623,6 +742,42 @@ function ApplicantsTable(props) {
 
   const toggleGradeSortOrder = () => {
     setGradeSortOrder(gradeSortOrder === "asc" ? "desc" : gradeSortOrder === "desc" ? null : "asc");
+  };
+
+  const gradeSortOrderDesc = () => {
+    setGradeSortOrder("desc");
+    setSortOrder(null);
+    setHistOrder(null);
+  };
+
+  const gradeSortOrderAsc = () => {
+    setGradeSortOrder("asc");
+    setSortOrder(null);
+    setHistOrder(null);
+  };
+
+  const sortOrderDesc = () => {
+    setSortOrder("desc");
+    setGradeSortOrder(null);
+    setHistOrder(null);
+  };
+
+  const sortOrderAsc = () => {
+    setSortOrder("asc");
+    setGradeSortOrder(null);
+    setHistOrder(null);
+  };
+
+  const histOrderDesc = () => {
+    setHistOrder("desc");
+    setSortOrder(null);
+    setGradeSortOrder(null);
+  };
+
+  const histOrderAsc = () => {
+    setHistOrder("asc");
+    setSortOrder(null);
+    setGradeSortOrder(null);
   };
 
   const toggleFilterVisibility = () => {
@@ -686,15 +841,18 @@ function ApplicantsTable(props) {
   const finalizeStatuss = (appId) => {
     try {
       finalizeStatus(appId).then((res) => {
+        setIsThere(false);
+        handleCallBack();
         props.setFinalize((prev) => !prev);
         // refresh the page
-        //window.location.reload();
         props.refresh();
         setFinalizeee((prev) => !prev);
         //setSortedRows(null);
         flipPopupOrdinary();
         handleInfo("Changes are successfully finalized.");
-        setIsThere(false);
+        //window.location.reload();
+        
+        
 
       });
     }
@@ -705,7 +863,7 @@ function ApplicantsTable(props) {
 
 
   return (
-    sortedRows && <Box>
+    sortedRows && filtered && <Box>
       {isApplicantsListEmpty ? (
         <Typography variant="h6" align="center" style={{ padding: 20 }}>
           <Alert severity="info">
@@ -724,17 +882,27 @@ function ApplicantsTable(props) {
               <TableHead>
                 <TableRow sx={{ bgcolor: "#eeeeee" }}>
                   <StyledTableCell align="center" width={10}>
-
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Experience
+                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <IconButton onClick={histOrderAsc} style={{ marginBottom: '-10px' }}>
+                          <ArrowDropUpIcon />
+                        </IconButton>
+                        <IconButton onClick={histOrderDesc} style={{ marginTop: '-8px' }}>
+                          <ArrowDropDownIcon />
+                        </IconButton>
+                      </Box>
+                  </Box>
                   </StyledTableCell>
                   <StyledTableCell align="left">ID</StyledTableCell>
                   <StyledTableCell align="left">
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       Student Name
                       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <IconButton onClick={toggleSortOrder} style={{ marginBottom: '-10px' }}>
+                        <IconButton onClick={sortOrderAsc} style={{ marginBottom: '-10px' }}>
                           <ArrowDropUpIcon />
                         </IconButton>
-                        <IconButton onClick={toggleSortOrder} style={{ marginTop: '-8px' }}>
+                        <IconButton onClick={sortOrderDesc} style={{ marginTop: '-8px' }}>
                           <ArrowDropDownIcon />
                         </IconButton>
                       </Box>
@@ -749,6 +917,7 @@ function ApplicantsTable(props) {
                         value={searchText}
                         onChange={handleSearchChange}
                         placeholder="Search by name..."
+                        autoFocus = {true}
                       />
                     )}
                   </StyledTableCell>
@@ -759,10 +928,10 @@ function ApplicantsTable(props) {
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       Grade
                       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <IconButton onClick={toggleGradeSortOrder} style={{ marginBottom: '-10px' }}>  {/* Decrease marginBottom here */}
+                        <IconButton onClick={gradeSortOrderAsc} style={{ marginBottom: '-10px' }}>  {/* Decrease marginBottom here */}
                           <ArrowDropUpIcon />
                         </IconButton>
-                        <IconButton onClick={toggleGradeSortOrder} style={{ marginTop: '-8px' }}>
+                        <IconButton onClick={gradeSortOrderDesc} style={{ marginTop: '-8px' }}>
                           <ArrowDropDownIcon />
                         </IconButton>
                       </Box>
@@ -776,17 +945,19 @@ function ApplicantsTable(props) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredRows.map((row, index) => (
+                {filtered && filtered.map((row, index) => (
                   <CustomRow
                     appId={props.appId}
                     row={row}
                     setRows={props.setRows}
+                    setSortedRows={setSortedRows}
                     courseCode={props.courseCode}
                     index={index}
                     questions={props.questions}
                     key={index}
                     ann={ann}
                     setIsThere={setIsThere}
+                    setFiltered={setFiltered}
                   />
                 ))}
               </TableBody>
